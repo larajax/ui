@@ -2,8 +2,8 @@
 
 use Lang;
 use Form as FormHelper;
-use Backend\Classes\FormTabs;
-use Backend\Classes\FormField;
+use October\Amber\Classes\FormTabs;
+use October\Amber\Classes\FormField;
 use October\Amber\Classes\WidgetBase;
 use October\Rain\Element\ElementHolder;
 use October\Contracts\Element\FormElement;
@@ -87,13 +87,13 @@ class Form extends WidgetBase implements FormElement
 
     /**
      * @var array allFields used in this form.
-     * @see \Backend\Classes\FormField
+     * @see \October\Amber\Classes\FormField
      */
     protected $allFields = [];
 
     /**
      * @var object allTabs sections used in this form.
-     * @see \Backend\Classes\FormTabs
+     * @see \October\Amber\Classes\FormTabs
      */
     protected $allTabs = [
         'outside' => null,
@@ -290,7 +290,7 @@ class Form extends WidgetBase implements FormElement
      * Options:
      *  - useContainer: Wrap the result in a container, used by AJAX. Default: true
      *
-     * @param \Backend\Classes\FormField|string $field The field name or definition
+     * @param \October\Amber\Classes\FormField|string $field The field name or definition
      * @param array $options
      * @return string|bool The rendered partial contents, or false if suppressing an exception
      */
@@ -321,7 +321,7 @@ class Form extends WidgetBase implements FormElement
 
     /**
      * renderFieldElement renders the HTML element for a field
-     * @param \Backend\Classes\FormField|string $field
+     * @param \October\Amber\Classes\FormField|string $field
      * @return string|bool The rendered partial contents, or false if suppressing an exception
      */
     public function renderFieldElement($field)
@@ -901,7 +901,7 @@ class Form extends WidgetBase implements FormElement
     /**
      * getFieldDepends returns a HTML encoded value containing the other fields
      * this field depends on
-     * @param \Backend\Classes\FormField $field
+     * @param \October\Amber\Classes\FormField $field
      */
     protected function getFieldDepends($field): string
     {
@@ -935,7 +935,7 @@ class Form extends WidgetBase implements FormElement
 
     /**
      * getFieldTooltipValue looks up the field tooltip value
-     * @param \Backend\Classes\FormField $field
+     * @param \October\Amber\Classes\FormField $field
      * @return string
      */
     public function getFieldTooltipValue($field)
@@ -1075,7 +1075,7 @@ class Form extends WidgetBase implements FormElement
              *
              * Example usage:
              *
-             *     $model->bindEvent('model.form.filterFields', function ((\Backend\Widgets\Form) $formWidget, (stdClass) $fields, (string) $context) use (\October\Rain\Database\Model $model) {
+             *     $model->bindEvent('model.form.filterFields', function ((\October\Amber\Widgets\Form) $formWidget, (stdClass) $fields, (string) $context) use (\October\Rain\Database\Model $model) {
              *         if ($model->source_type == 'http') {
              *             $fields->source_url->hidden = false;
              *             $fields->git_branch->hidden = true;

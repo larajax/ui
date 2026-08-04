@@ -75,7 +75,7 @@ trait HasFormWidgets
      * registerFormWidgets manually registers form widget for consideration. Usage:
      *
      *     WidgetManager::registerFormWidgets(function ($manager) {
-     *         $manager->registerFormWidget(\Backend\FormWidgets\CodeEditor::class, 'codeeditor');
+     *         $manager->registerFormWidget(\App\FormWidgets\CodeEditor::class, 'codeeditor');
      *     });
      *
      */

@@ -1,7 +1,7 @@
 <?php namespace October\Amber\Traits;
 
 use Lang;
-use Backend\Classes\FormField;
+use October\Amber\Classes\FormField;
 use Exception;
 
 /**

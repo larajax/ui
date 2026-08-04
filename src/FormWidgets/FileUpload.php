@@ -4,7 +4,7 @@ use Input;
 use System;
 use Response;
 use Validator;
-use Backend\Classes\FormField;
+use October\Amber\Classes\FormField;
 use October\Amber\Classes\FormWidgetBase;
 use System\Models\File as FileModel;
 use October\Rain\Filesystem\Definitions as FileDefinitions;
@@ -21,7 +21,7 @@ use Exception;
  *        label: Some file
  *        type: fileupload
  *
- * @package october\backend
+ * @package october\amber
  * @author Alexey Bobkov, Samuel Georges
  */
 class FileUpload extends FormWidgetBase
@@ -97,7 +97,7 @@ class FileUpload extends FormWidgetBase
     protected $defaultAlias = 'fileupload';
 
     /**
-     * @var \Backend\Widgets\Form configFormWidget is the embedded form for modifying the
+     * @var \October\Amber\Widgets\Form configFormWidget is the embedded form for modifying the
      * properties of the selected file.
      */
     protected $configFormWidget;
@@ -208,7 +208,7 @@ class FileUpload extends FormWidgetBase
         $config->alias = $this->alias . $this->defaultAlias;
         $config->arrayName = 'FileUploadWidget';
 
-        $widget = $this->makeWidget(\Backend\Widgets\Form::class, $config);
+        $widget = $this->makeWidget(\October\Amber\Widgets\Form::class, $config);
         $widget->bindToController();
 
         return $this->configFormWidget = $widget;

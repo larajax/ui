@@ -80,7 +80,7 @@ trait HasFilterWidgets
      * registerFilterWidgets manually registers filter widget for consideration. Usage:
      *
      *     WidgetManager::registerFilterWidgets(function ($manager) {
-     *         $manager->registerFilterWidget(\Backend\FilterWidgets\DateRange::class, 'daterange');
+     *         $manager->registerFilterWidget(\App\FilterWidgets\DateRange::class, 'daterange');
      *     });
      *
      */

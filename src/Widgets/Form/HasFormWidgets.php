@@ -2,7 +2,7 @@
 
 use Lang;
 use SystemException;
-use Backend\Classes\FormField;
+use October\Amber\Classes\FormField;
 use October\Amber\Classes\WidgetManager;
 use October\Amber\Classes\FormWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;

@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Elements;
+<?php namespace October\Amber\Classes;
 
 use Str;
 use October\Rain\Html\Helper as HtmlHelper;
@@ -18,7 +18,7 @@ use October\Rain\Element\Form\FieldsetDefinition;
  * @method FormTabs paneCssClass(array $paneCssClass) paneCssClass specifies a CSS class to an individual tab pane
  * @method FormTabs linkable(bool $linkable) linkable means tab gets url fragment to be linkable
  *
- * @package october\backend
+ * @package october\amber
  * @author Alexey Bobkov, Samuel Georges
  */
 class FormTabs extends FieldsetDefinition

@@ -13,7 +13,13 @@ class AmberServiceProvider extends ServiceProvider
     {
         $this->app->register(\October\Rain\Foundation\Providers\CoreServiceProvider::class);
 
+        $this->app->register(\October\Rain\Html\HtmlServiceProvider::class);
+
         $this->app->scoped('system.widgets', \October\Amber\Classes\WidgetManager::class);
+
+        \Illuminate\Foundation\AliasLoader::getInstance()->alias('Str', \October\Rain\Support\Str::class);
+
+        // $this->app->singleton('string', function () { return new \October\Rain\Support\Str; });
     }
 
     /**

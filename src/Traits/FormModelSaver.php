@@ -2,7 +2,7 @@
 
 use Db;
 use Str;
-use Backend\Classes\FormField;
+use October\Amber\Classes\FormField;
 use October\Rain\Database\Model as DatabaseModel;
 use October\Rain\Exception\ValidationException;
 

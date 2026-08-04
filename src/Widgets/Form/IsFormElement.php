@@ -1,7 +1,7 @@
 <?php namespace October\Amber\Widgets\Form;
 
-use Backend\Classes\FormTabs;
-use Backend\Classes\FormField;
+use October\Amber\Classes\FormTabs;
+use October\Amber\Classes\FormField;
 use October\Rain\Element\Form\FieldDefinition;
 use October\Rain\Element\Form\FieldsetDefinition;
 use SystemException;
@@ -10,7 +10,7 @@ use SystemException;
  * IsFormElement defines all methods to satisfy the FormElement contract
  *
  * @see \October\Contracts\Element\FormElement
- * @package october\backend
+ * @package october\amber
  * @author Alexey Bobkov, Samuel Georges
  */
 trait IsFormElement

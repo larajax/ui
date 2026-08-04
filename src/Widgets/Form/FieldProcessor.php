@@ -1,7 +1,7 @@
 <?php namespace October\Amber\Widgets\Form;
 
 use BackendAuth;
-use Backend\Classes\FormTabs;
+use October\Amber\Classes\FormTabs;
 use October\Rain\Html\Helper as HtmlHelper;
 
 /**

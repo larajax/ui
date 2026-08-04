@@ -55,7 +55,7 @@ abstract class FormWidgetBase extends WidgetBase
     protected $formField;
 
     /**
-     * @var \Backend\Widgets\Form The parent form that contains this field
+     * @var \October\Amber\Widgets\Form The parent form that contains this field
      */
     protected $parentForm = null;
 
@@ -100,7 +100,7 @@ abstract class FormWidgetBase extends WidgetBase
 
     /**
      * getParentForm retrieves the parent form for this formwidget
-     * @return \Backend\Widgets\Form|null
+     * @return \October\Amber\Widgets\Form|null
      */
     public function getParentForm()
     {

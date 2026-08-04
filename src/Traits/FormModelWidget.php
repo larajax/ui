@@ -9,7 +9,7 @@ use Exception;
  *
  * Special logic for for form widgets that use a database stored model.
  *
- * @package october\backend
+ * @package october\amber
  * @author Alexey Bobkov, Samuel Georges
  */
 trait FormModelWidget

@@ -1,7 +1,7 @@
 <?php namespace October\Amber\FormWidgets;
 
 use DbDongle;
-use Backend\Classes\FormField;
+use October\Amber\Classes\FormField;
 use October\Amber\Classes\FormWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
 use SystemException;
@@ -9,7 +9,7 @@ use SystemException;
 /**
  * Relation renders a field pre-populated with a belongsTo and belongsToHasMany relation
  *
- * @package october\backend
+ * @package october\amber
  * @author Alexey Bobkov, Samuel Georges
  */
 class Relation extends FormWidgetBase
