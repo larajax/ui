@@ -18,6 +18,7 @@ class AmberServiceProvider extends ServiceProvider
         $this->app->scoped('system.widgets', \October\Amber\Classes\WidgetManager::class);
 
         \Illuminate\Foundation\AliasLoader::getInstance()->alias('Str', \October\Rain\Support\Str::class);
+        \Illuminate\Foundation\AliasLoader::getInstance()->alias('Ui', \October\Amber\Facades\Ui::class);
 
         // $this->app->singleton('string', function () { return new \October\Rain\Support\Str; });
     }
@@ -27,6 +28,8 @@ class AmberServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'amber');
+
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__ . '/../resources' => public_path('vendor/amber'),

@@ -6,7 +6,6 @@ use Response;
 use Validator;
 use October\Amber\Classes\FormField;
 use October\Amber\Classes\FormWidgetBase;
-use System\Models\File as FileModel;
 use October\Rain\Filesystem\Definitions as FileDefinitions;
 use ApplicationException;
 use ValidationException;
@@ -181,7 +180,7 @@ class FileUpload extends FormWidgetBase
 
     /**
      * getFileRecord for this request, returns false if none available
-     * @return System\Models\File|bool
+     * @return \October\Rain\Database\Attach\File|bool
      */
     protected function getFileRecord()
     {
@@ -525,7 +524,7 @@ class FileUpload extends FormWidgetBase
      * internally by this widget. Added attributes are:
      * - thumbUrl
      * - pathUrl
-     * @return System\Models\File
+     * @return \October\Rain\Database\Attach\File
      */
     protected function decorateFileAttributes($file)
     {
@@ -558,6 +557,6 @@ class FileUpload extends FormWidgetBase
      */
     protected function getUploadMaxFilesize(): float
     {
-        return FileModel::getMaxFilesize() / 1024;
+        return $this->getRelationModel()::getMaxFilesize() / 1024;
     }
 }
