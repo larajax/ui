@@ -15,7 +15,21 @@ class AmberServiceProvider extends ServiceProvider
 
         $this->app->register(\October\Rain\Html\HtmlServiceProvider::class);
 
+        // Registers the `~` (app base) path symbol used in view and config paths
+        $this->app->register(\October\Rain\Filesystem\FilesystemServiceProvider::class);
+
         $this->app->scoped('system.widgets', \October\Amber\Classes\WidgetManager::class);
+
+        // Supports the DbDongle facade used for raw SQL parsing in widgets
+        $this->app->singleton('db.dongle', function ($app) {
+            return new \October\Rain\Database\Dongle(
+                $app['db']->connection()->getDriverName(),
+                $app['db']
+            );
+        });
+
+        // Gives plain Eloquent models the searchWhere methods used by the widgets
+        \October\Amber\Database\SearchWhereMacros::register();
 
         \Illuminate\Foundation\AliasLoader::getInstance()->alias('Str', \October\Rain\Support\Str::class);
         \Illuminate\Foundation\AliasLoader::getInstance()->alias('Ui', \October\Amber\Facades\Ui::class);

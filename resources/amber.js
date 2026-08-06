@@ -11,3 +11,5 @@
 
 import './formwidgets/fileupload/fileupload.js';
 import './formwidgets/relation/relation-quick-create.js';
+import './widgets/list/list.js';
+import './widgets/filter/filter.js';

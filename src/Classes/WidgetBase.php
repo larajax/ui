@@ -18,6 +18,7 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface
     use \October\Amber\Traits\WidgetMaker;
     use \October\Amber\Traits\ErrorMaker;
     use \October\Amber\Traits\ViewMaker;
+    use \October\Rain\Support\Traits\Emitter;
     use \Larajax\Traits\ViewComponent;
 
     /**

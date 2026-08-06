@@ -1,0 +1,48 @@
+/*
+ * List structure widget styles
+ *
+ * Tree indentation is applied inline by the widget; these rules cover the
+ * reorder handle column and the tree expand/collapse control.
+ */
+
+.list-widget .list-reorder {
+    width: 2rem;
+    text-align: center;
+}
+
+.list-widget .list-reorder-handle {
+    cursor: grab;
+    opacity: .4;
+}
+
+.list-widget .list-reorder-handle:hover {
+    opacity: 1;
+}
+
+.list-widget .list-cell-tree {
+    position: relative;
+}
+
+.list-widget .tree-expand-collapse {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.list-widget .tree-expand-collapse span:before {
+    content: "\25B8"; /* collapsed: right triangle */
+    display: inline-block;
+}
+
+.list-widget .tree-expand-collapse.is-expanded span:before {
+    content: "\25BE"; /* expanded: down triangle */
+}
+
+.list-widget .setup-show-structure {
+    width: 2rem;
+}

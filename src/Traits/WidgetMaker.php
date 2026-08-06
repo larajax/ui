@@ -45,7 +45,7 @@ trait WidgetMaker
             ]));
         }
 
-        return new $class($controller, $widgetConfig);
+        return $class::createIn($controller, (array) $widgetConfig);
     }
 
     /**
