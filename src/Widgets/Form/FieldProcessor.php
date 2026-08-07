@@ -1,6 +1,6 @@
 <?php namespace October\Amber\Widgets\Form;
 
-use BackendAuth;
+use Illuminate\Support\Facades\Gate;
 use October\Amber\Classes\FormTabs;
 use October\Rain\Html\Helper as HtmlHelper;
 
@@ -65,13 +65,17 @@ trait FieldProcessor
     /**
      * processPermissionCheck check if user has permissions to show the field
      * and removes it if permission is denied
+     *
+     * Note: October CMS checks backend user permissions here (BackendAuth). Amber
+     * runs standalone, so field permissions map to Laravel gate abilities instead:
+     * the field is kept when the user passes any of the listed abilities.
      */
     protected function processPermissionCheck(array $fields)
     {
         foreach ($fields as $fieldName => $field) {
             if (
                 $field->permissions &&
-                !BackendAuth::userHasAccess($field->permissions, false)
+                !Gate::any((array) $field->permissions)
             ) {
                 $this->removeField($fieldName);
             }
@@ -169,7 +173,7 @@ trait FieldProcessor
             return;
         }
 
-        if (!$this->model->isClassInstanceOf(\October\Contracts\Database\ValidationInterface::class)) {
+        if (!\October\Amber\Helpers\Model::isInstanceOf($this->model, \October\Contracts\Database\ValidationInterface::class)) {
             return;
         }
 

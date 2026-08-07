@@ -20,6 +20,8 @@ class AmberServiceProvider extends ServiceProvider
 
         $this->app->scoped('system.widgets', \October\Amber\Classes\WidgetManager::class);
 
+        $this->app->singleton('system.preset', \October\Amber\Classes\PresetManager::class);
+
         // Supports the DbDongle facade used for raw SQL parsing in widgets
         $this->app->singleton('db.dongle', function ($app) {
             return new \October\Rain\Database\Dongle(
@@ -53,6 +55,13 @@ class AmberServiceProvider extends ServiceProvider
         app('system.widgets')->registerFormWidgets(function ($manager) {
             $manager->registerFormWidget(\October\Amber\FormWidgets\Relation::class, 'relation');
             $manager->registerFormWidget(\October\Amber\FormWidgets\FileUpload::class, 'fileupload');
+        });
+
+        app('system.widgets')->registerFilterWidgets(function ($manager) {
+            $manager->registerFilterWidget(\October\Amber\FilterWidgets\Group::class, 'group');
+            $manager->registerFilterWidget(\October\Amber\FilterWidgets\Date::class, 'date');
+            $manager->registerFilterWidget(\October\Amber\FilterWidgets\Text::class, 'text');
+            $manager->registerFilterWidget(\October\Amber\FilterWidgets\Number::class, 'number');
         });
     }
 }

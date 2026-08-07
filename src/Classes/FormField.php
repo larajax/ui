@@ -467,7 +467,11 @@ class FormField extends FieldDefinition
         // To support relations only the last field should return the
         // relation value, all others will look up the relation object as normal.
         foreach ($keyParts as $key) {
-            if ($result instanceof Model && $result->hasRelation($key)) {
+            if (
+                $result instanceof \Illuminate\Database\Eloquent\Model &&
+                method_exists($result, 'hasRelation') &&
+                $result->hasRelation($key)
+            ) {
                 if ($key === $lastField) {
                     $result = $result->getRelationSimpleValue($key) ?: $default;
                 }
@@ -504,7 +508,7 @@ class FormField extends FieldDefinition
 
         // Preset
         if (is_string($fieldOptions) && str_starts_with($fieldOptions, 'preset:')) {
-            $fieldOptions = \System\Classes\PresetManager::instance()->getPreset($fieldOptions);
+            $fieldOptions = \October\Amber\Classes\PresetManager::instance()->getPreset($fieldOptions);
         }
         // Method name
         elseif (is_string($fieldOptions)) {

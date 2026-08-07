@@ -190,7 +190,7 @@ class Relation extends FormWidgetBase
         }
 
         // Determine if the model uses a tree trait
-        $usesTree = $relationModel->isClassInstanceOf(\October\Contracts\Database\TreeInterface::class);
+        $usesTree = \October\Amber\Helpers\Model::isInstanceOf($relationModel, \October\Contracts\Database\TreeInterface::class);
 
         // The "sqlSelect" config takes precedence over "nameFrom".
         // A virtual column called "selection" will contain the result.
