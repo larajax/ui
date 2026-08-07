@@ -40,6 +40,11 @@ abstract class FilterWidgetBase extends WidgetBase
 
     /**
      * __construct
+     *
+     * Note: October's WidgetBase constructor receives the controller; Amber's
+     * widget lifecycle assigns it before registration, so this constructor
+     * wires the controller and invokes register() itself.
+     *
      * @param Controller $controller
      * @param FilterScope $filterScope
      * @param array $configuration
@@ -49,15 +54,25 @@ abstract class FilterWidgetBase extends WidgetBase
         $this->filterScope = $filterScope;
         $this->scopeName = $filterScope->scopeName;
         $this->valueFrom = $filterScope->valueFrom ?: $this->scopeName;
-        $this->config = $this->makeConfig($configuration);
+
+        $this->controller = $controller;
+        $this->config = $configuration;
+
+        $alias = is_object($configuration)
+            ? ($configuration->alias ?? null)
+            : ($configuration['alias'] ?? null);
+
+        if ($alias) {
+            $this->alias = $alias;
+        }
+
+        $this->register();
 
         $this->fillFromConfig([
             'model',
             'isJsonable',
             'parentFilter',
         ]);
-
-        parent::__construct($controller, $configuration);
     }
 
     /**

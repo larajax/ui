@@ -53,3 +53,112 @@
     width: auto;
     display: inline-block;
 }
+
+/* Popover scopes (text, number, date, group) */
+
+.control-filter a.filter-scope {
+    color: inherit;
+    text-decoration: none;
+    padding: .15rem .4rem;
+    border-radius: .25rem;
+}
+
+.control-filter a.filter-scope:hover,
+.control-filter a.filter-scope.filter-scope-open {
+    background: rgba(0, 0, 0, .06);
+}
+
+.control-filter a.filter-scope .filter-setting {
+    display: inline-block;
+    min-width: 1.2em;
+    margin-left: .35em;
+    padding: 0 .3em;
+    border-radius: 1em;
+    background: #0d6efd;
+    color: #fff;
+    font-size: .75em;
+    text-align: center;
+}
+
+.control-filter .filter-popover {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    min-width: 320px;
+    margin-top: .35rem;
+    padding: .75rem;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: .375rem;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+}
+
+.control-filter .filter-facet {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .5rem;
+}
+
+.control-filter .filter-facet .facet-item.is-grow {
+    flex-grow: 1;
+}
+
+.control-filter .filter-buttons {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-top: .75rem;
+}
+
+.control-filter .filter-popover-loading {
+    display: block;
+    padding: 1rem;
+    text-align: center;
+    opacity: .5;
+}
+
+.control-filter .filter-popover-loading:before {
+    content: "…";
+}
+
+/* Group filter option lists */
+
+.control-filter .filter-items ul,
+.control-filter .filter-active-items ul {
+    list-style: none;
+    margin: .5rem 0 0;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.control-filter .filter-items li a,
+.control-filter .filter-active-items li a {
+    display: block;
+    padding: .2rem .4rem;
+    color: inherit;
+    text-decoration: none;
+    border-radius: .25rem;
+}
+
+.control-filter .filter-items li a:hover,
+.control-filter .filter-active-items li a:hover {
+    background: rgba(0, 0, 0, .06);
+}
+
+.control-filter .filter-active-items li a {
+    font-weight: 600;
+}
+
+.control-filter .filter-active-items li a:after {
+    content: " ✕";
+    opacity: .5;
+}
+
+.control-filter .filter-mode {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: .5rem;
+}
