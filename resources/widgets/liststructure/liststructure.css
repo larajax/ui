@@ -46,3 +46,18 @@
 .list-widget .setup-show-structure {
     width: 2rem;
 }
+
+/* Drag state */
+
+.list-widget tbody.tree-drag-mode tr {
+    user-select: none;
+}
+
+.list-widget tr.tree-drag-row {
+    opacity: .6;
+    background: rgba(13, 110, 253, .08);
+}
+
+.list-widget tr.tree-drag-row td {
+    border-top: 2px solid #0d6efd;
+}

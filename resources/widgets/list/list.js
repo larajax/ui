@@ -8,8 +8,7 @@
  * jax.fetchControl(element, 'listwidget')
  *
  * Ported from October CMS (october.list.js) as vanilla JS. Not yet ported:
- * drag-scrollable headers, shift-click checkbox ranges, checked-trigger
- * button linkage (data-list-checked-trigger / data-list-checked-request).
+ * drag-scrollable headers (native horizontal scrolling applies instead).
  */
 'use strict';
 
@@ -18,18 +17,48 @@ jax.registerControl('listwidget', class extends jax.ControlBase {
         this.checkboxSelector = '.list-checkbox input[type="checkbox"]';
         this.head = this.element.querySelector('thead');
         this.body = this.element.querySelector('tbody');
+        this.lastChecked = null;
     }
 
     connect() {
         this.listen('change', this.onChangeCheckbox);
+        this.listen('click', this.onClickCheckbox);
         this.listen('ajax:setup', this.onAjaxSetup);
 
         this.updateUi();
+        this.notifyCheckedState();
     }
 
     disconnect() {
         this.head = null;
         this.body = null;
+        this.lastChecked = null;
+    }
+
+    // Shift-click selects the range between the previously clicked
+    // checkbox and this one
+    onClickCheckbox(ev) {
+        const el = ev.target;
+        if (!el.matches('input[type="checkbox"]') || !el.closest('.list-checkbox') || !this.body.contains(el)) {
+            return;
+        }
+
+        if (ev.shiftKey && this.lastChecked && this.lastChecked !== el) {
+            const all = this.bodyCheckboxes(),
+                from = all.indexOf(this.lastChecked),
+                to = all.indexOf(el);
+
+            if (from > -1 && to > -1) {
+                all.slice(Math.min(from, to), Math.max(from, to) + 1).forEach((cb) => {
+                    cb.checked = el.checked;
+                    cb.closest('tr').classList.toggle('active', el.checked);
+                });
+                this.checkIndeterminate();
+                this.notifyCheckedState();
+            }
+        }
+
+        this.lastChecked = el;
     }
 
     // Checkbox helpers
@@ -76,6 +105,7 @@ jax.registerControl('listwidget', class extends jax.ControlBase {
                 cb.closest('tr').classList.toggle('active', el.checked);
             });
             this.checkIndeterminate();
+            this.notifyCheckedState();
             return;
         }
 
@@ -90,6 +120,29 @@ jax.registerControl('listwidget', class extends jax.ControlBase {
         }
 
         this.checkIndeterminate();
+        this.notifyCheckedState();
+    }
+
+    // notifyCheckedState updates buttons linked to this list through
+    // a [data-list-linkage] container: [data-list-checked-trigger] buttons
+    // enable when rows are checked, and an optional [data-list-checked-counter]
+    // span displays the count
+    notifyCheckedState() {
+        const listWidget = this.element.closest('.list-widget');
+        if (!listWidget || !listWidget.id) {
+            return;
+        }
+
+        const checkedCount = this.getChecked().length;
+
+        document.querySelectorAll('[data-list-linkage="' + listWidget.id + '"] [data-list-checked-trigger], [data-list-linkage="' + listWidget.id + '"][data-list-checked-trigger]').forEach((button) => {
+            button.disabled = checkedCount === 0;
+
+            const counter = button.querySelector('[data-list-checked-counter]');
+            if (counter) {
+                counter.textContent = checkedCount ? '(' + checkedCount + ')' : '';
+            }
+        });
     }
 
     // Checked value collection
@@ -144,6 +197,35 @@ jax.registerControl('listwidget', class extends jax.ControlBase {
         if (context && context.options && context.options.data) {
             context.options.data.allChecked = this.getAllChecked();
         }
+    }
+});
+
+/*
+ * Checked-request buttons: AJAX requests fired from a [data-list-checked-request]
+ * button inside a [data-list-linkage] container include the checked row ids of
+ * the linked list widget
+ */
+addEventListener('ajax:setup', function(ev) {
+    const button = ev.target.closest('[data-list-checked-request]');
+    if (!button) {
+        return;
+    }
+
+    const linkage = button.closest('[data-list-linkage]');
+    if (!linkage) {
+        return;
+    }
+
+    const listWidget = document.getElementById(linkage.dataset.listLinkage);
+    if (!listWidget) {
+        return;
+    }
+
+    const control = jax.fetchControl(listWidget.querySelector('[data-control="listwidget"]'), 'listwidget');
+    const context = ev.detail && ev.detail.context;
+
+    if (control && context && context.options && context.options.data) {
+        context.options.data.checked = control.getChecked();
     }
 });
 
