@@ -55,6 +55,31 @@ class Toolbar extends WidgetBase
     public $listWidgetId;
 
     /**
+     * bindToListWidget wires toolbar search and list linkage to a list widget.
+     */
+    public function bindToListWidget(Lists $list): void
+    {
+        $this->listWidgetId = $list->getId();
+
+        if (!$search = $this->getSearchWidget()) {
+            return;
+        }
+
+        $list->setSearchOptions([
+            'mode' => $search->mode,
+            'scope' => $search->scope,
+        ]);
+
+        $list->setSearchTerm($search->getActiveTerm());
+
+        $search->bindEvent('search.submit', function () use ($list, $search) {
+            $list->setSearchTerm($search->getActiveTerm(), true);
+
+            return $list->onRefresh();
+        });
+    }
+
+    /**
      * init the widget, called by the constructor and free from its parameters.
      */
     public function init()

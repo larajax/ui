@@ -84,6 +84,11 @@ class Filter extends WidgetBase implements FilterElement
     public $cssClasses = [];
 
     /**
+     * @var Lists|null listWidget connected to this filter.
+     */
+    protected $listWidget;
+
+    /**
      * init the widget, called by the constructor and free from its parameters.
      */
     public function init()
@@ -129,6 +134,17 @@ class Filter extends WidgetBase implements FilterElement
     {
         $this->defineFilterScopes();
         parent::bindToController();
+    }
+
+    /**
+     * bindToListWidget wires this filter to a list widget query and refresh cycle.
+     */
+    public function bindToListWidget(Lists $list): void
+    {
+        $this->listWidget = $list;
+        $this->customPageName = $list->customPageName;
+
+        $list->addFilter([$this, 'applyAllScopesToQuery']);
     }
 
     /**
@@ -643,6 +659,18 @@ class Filter extends WidgetBase implements FilterElement
         }
 
         $result = $this->eventUpdate($result, func_get_args());
+
+        return $result;
+    }
+
+    /**
+     * eventUpdate extends the scope update response with the refreshed list.
+     */
+    protected function eventUpdate(array $result, array $params): array
+    {
+        if ($this->listWidget) {
+            $result = $result + $this->listWidget->onFilter();
+        }
 
         return $result;
     }
