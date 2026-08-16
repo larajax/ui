@@ -16,7 +16,6 @@ class Relation extends FormWidgetBase
 {
     use \October\Amber\Traits\FormModelSaver;
     use \October\Amber\Traits\FormModelWidget;
-    use \October\Amber\FormWidgets\Relation\HasQuickCreate;
 
     //
     // Configurable Properties
@@ -99,8 +98,6 @@ class Relation extends FormWidgetBase
         if (isset($this->config->scope)) {
             $this->modelScope = $this->config->scope;
         }
-
-        $this->initQuickCreate();
     }
 
     /**
@@ -126,10 +123,6 @@ class Relation extends FormWidgetBase
      */
     protected function makeRenderFormField()
     {
-        if ($this->useController) {
-            return null;
-        }
-
         $field = clone $this->formField;
         [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
 
@@ -236,11 +229,6 @@ class Relation extends FormWidgetBase
         }
         else {
             $field->options = $result->pluck($nameFrom, $primaryKeyName)->all();
-        }
-
-        // Add quick create option to dropdown
-        if ($this->hasQuickCreate()) {
-            $field->options = $this->addQuickCreateOption($field->options);
         }
 
         return $this->renderFormField = $field;

@@ -332,12 +332,6 @@ class FileUpload extends FormWidgetBase
             $types = explode(',', $types);
         }
 
-        if (System::checkSafeMode()) {
-            $types = array_filter($types, function ($value) {
-                return !in_array(strtolower(trim($value, ' .')), ['less', 'sass', 'scss']);
-            });
-        }
-
         $types = array_map(function ($value) use ($includeDot) {
             $value = trim($value);
 
@@ -382,52 +376,6 @@ class FileUpload extends FormWidgetBase
             if ($ids) {
                 $this->getRelationModel()->setSortableOrder($ids, $orders);
             }
-        }
-    }
-
-    /**
-     * onLoadAttachmentConfig loads the configuration form for an attachment,
-     * allowing title and description to be set
-     */
-    public function onLoadAttachmentConfig()
-    {
-        $file = $this->getFileRecord();
-        if (!$file) {
-            throw new ApplicationException('Unable to find file, it may no longer exist');
-        }
-
-        $file = $this->decorateFileAttributes($file);
-
-        $this->vars['file'] = $file;
-        $this->vars['displayMode'] = $this->getDisplayMode();
-        $this->vars['cssDimensions'] = $this->getCssDimensions();
-        $this->vars['configFormWidget'] = $this->getConfigFormWidget();
-
-        return $this->makePartial('config_form');
-    }
-
-    /**
-     * onSaveAttachmentConfig commits the changes of the attachment configuration form
-     */
-    public function onSaveAttachmentConfig()
-    {
-        try {
-            $formWidget = $this->getConfigFormWidget();
-
-            $file = $formWidget->getModel();
-            if (!$file) {
-                throw new ApplicationException('Unable to find file, it may no longer exist');
-            }
-
-            $this->performSaveOnModel($file, $formWidget->getSaveData(), $formWidget->getSessionKey());
-
-            return [
-                'displayName' => $file->title ?: $file->file_name,
-                'description' => trim($file->description)
-            ];
-        }
-        catch (Exception $ex) {
-            return json_encode(['error' => $ex->getMessage()]);
         }
     }
 
