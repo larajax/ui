@@ -404,7 +404,7 @@ class ListStructure extends Lists
         }
         else {
             // Simple Tree
-            if (app('amber.model.inspector')->hasRelation($this->model, 'parent')) {
+            if (app('model.inspector')->hasRelation($this->model, 'parent')) {
                 $item->parent = post($multisite ? 'parent_root_id' : 'parent_id');
                 $item->save(['force' => true]);
             }

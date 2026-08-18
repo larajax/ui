@@ -335,7 +335,7 @@ trait HasValueProcessor
 
         if (!is_array($fieldOptions)) {
             $model = $this->isColumnRelated($column)
-                ? app('amber.model.inspector')->makeRelation($this->model, $column->relation)
+                ? app('model.inspector')->makeRelation($this->model, $column->relation)
                 : $this->model;
 
             $fieldOptions = $formField->getOptionsFromModel(

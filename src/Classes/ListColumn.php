@@ -181,7 +181,7 @@ class ListColumn extends ColumnDefinition
          * relation value, all others will look up the relation object as normal.
          */
         foreach ($keyParts as $key) {
-            if ($result instanceof Model && app('amber.model.inspector')->hasRelation($result, $key)) {
+            if ($result instanceof Model && app('model.inspector')->hasRelation($result, $key)) {
                 $result = $result->{$key};
             }
             else {

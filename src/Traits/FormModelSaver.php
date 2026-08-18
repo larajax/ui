@@ -96,7 +96,7 @@ trait FormModelSaver
 
         $attributesToPurge = [];
         foreach ($saveData as $attribute => $value) {
-            $isNested = $attribute === 'pivot' || app('amber.model.inspector')->isRelationTypeSingular($model, $attribute);
+            $isNested = $attribute === 'pivot' || app('model.inspector')->isRelationTypeSingular($model, $attribute);
             if ($isNested && is_array($value)) {
                 $attrChain = $attrName !== '' ? $attrName . '.' . $attribute : $attribute;
                 $this->setModelAttributes($model->{$attribute}, $value, $attrChain);

@@ -1,0 +1,92 @@
+/*
+ * Variables - light theme (default)
+ * --------------------------------------------------*/
+
+:root, [data-bs-theme="light"] {
+    /* --bs-border-color: #d7e1ea; */
+    /* --oc-border-focus: #72809d; */
+    --bs-emphasis-color: #333333;
+    --bs-border-color: #c4ced7;
+    --bs-backdrop-opacity: 0.2;
+    --oc-border-focus: var(--oc-primary-active-bg);
+
+    /*
+    // Primary Colors
+    // --------------------------------------------------*/
+
+    --bs-success: var(--bs-green);
+    --bs-info: var(--bs-blue);
+    --bs-warning: var(--bs-yellow);
+    --bs-danger: var(--bs-red);
+
+    --oc-accent: #3498db;
+    --oc-selection: var(--bs-teal);
+
+    --oc-primary-bg: white;
+    --oc-primary-color: #5e6d8c;
+    --oc-primary-border: #cfd7e1;
+    --oc-primary-hover-bg: #8082f8; /* tint(#6a6cf7, 15%); */
+    --oc-primary-active-bg: #8889f9; /* tint(#6a6cf7, 20%); */
+
+    --bs-secondary: #72809d;
+    --bs-secondary-color: #72809d;
+    --oc-secondary-bg: #d7e1ea;
+    --oc-secondary-hover-bg: #e0e2e4; /* darken(#eeeff0, 5%); */
+    --oc-secondary-active-bg: #d3d6d8; /* darken(#eeeff0, 10%); */
+
+    --oc-color-neutral: #e5a91a;
+    --oc-color-positive: #95b753;
+    --oc-color-negative: #cc3300;
+
+    /*
+    // Form Variables
+    // --------------------------------------------------*/
+
+    --oc-form-control-bg: white;
+    --oc-form-control-disabled-bg: #e9ecef;
+    --oc-input-translatable-color: #75809b;
+    --oc-input-translatable-bg: #ebf0fb;
+
+    /*
+    // Component Variables
+    // --------------------------------------------------*/
+
+    --oc-toolbar-color: #536061;
+    --oc-toolbar-bg: white;
+    /* --oc-toolbar-border: #ecf0f1; */
+    --oc-toolbar-border: #d7e1ea;
+    --oc-toolbar-hover-color: black;
+    --oc-toolbar-hover-bg: rgba(215,225,234,0.7);
+
+    --oc-tab-color: #72809d;
+    --oc-tab-active-color: #35425b;
+    --oc-tab-border: #d7e1eA;
+    --oc-tab-hover-bg: rgba(215,225,234,0.7);
+
+    --oc-dropdown-hover-bg: var(--bs-primary);
+    --oc-dropdown-hover-color: white;
+    --oc-dropdown-active-bg: rgba(var(--bs-primary-rgb), .95);
+
+    &,.table {
+        --bs-table-color: #536061;
+        --bs-table-bg: white;
+        --bs-table-striped-bg: #f7f9fb;
+        /* --bs-table-border-color: #ecf0f1; */
+        --bs-table-border-color: #d7e1ea;
+        --bs-table-hover-bg: #fff5cb;
+        --oc-table-active-bg: #fff0b2; /* darken(#fff5cb, 5%); */
+    }
+
+    &,.pagination {
+        --bs-pagination-active-bg: var(--bs-primary);
+        --bs-pagination-active-border-color: var(--bs-primary);
+    }
+
+    &,.breadcrumb {
+        --bs-breadcrumb-item-padding-x: 0.4rem;
+    }
+
+    &,.modal {
+        --bs-modal-bg: white;
+    }
+}

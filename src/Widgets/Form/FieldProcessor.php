@@ -173,7 +173,7 @@ trait FieldProcessor
             return;
         }
 
-        if (!app('amber.model.inspector')->isInstanceOf($this->model, \October\Contracts\Database\ValidationInterface::class)) {
+        if (!app('model.inspector')->isInstanceOf($this->model, \October\Contracts\Database\ValidationInterface::class)) {
             return;
         }
 

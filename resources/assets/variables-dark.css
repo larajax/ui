@@ -1,0 +1,73 @@
+/*
+ * Variables - dark theme
+ * --------------------------------------------------*/
+
+[data-bs-theme="dark"] {
+    --bs-heading-color: #e0e0e0;
+    --bs-emphasis-color: white;
+    --bs-border-color: #383a3e;
+    --bs-backdrop-opacity: 0.5;
+
+    /*
+    // Primary Colors
+    // --------------------------------------------------*/
+
+    --bs-blue:    #0d6efd;
+    --bs-indigo:  #6610f2;
+    --bs-purple:  #6f42c1;
+    --bs-pink:    #d63384;
+    --bs-red:     #dc3545;
+    --bs-orange:  #fd7e14;
+    --bs-yellow:  #ffc107;
+    --bs-green:   #41b862;
+    --bs-teal:    #24b58a;
+    --bs-cyan:    #0dcaf0;
+
+    --oc-primary-color: rgba(173, 181, 189, 0.85);
+    --oc-primary-bg: #141515;
+    --oc-primary-border: #494c50;
+
+    --bs-secondary-color: rgba(173, 181, 189, 0.75);
+    --oc-secondary-bg: #6f6f6f; /* darken(#888, 10%); */
+    --oc-secondary-hover-bg: #7b7b7b; /* darken(#888, 5%); */
+    --oc-secondary-active-bg: #888;
+
+    /*
+    // Form Variables
+    // --------------------------------------------------*/
+
+    --oc-form-control-bg: #1e2227;
+    --oc-form-control-disabled-bg: #343a40;
+    --oc-input-translatable-color: rgba(173, 181, 189, 0.85);
+    --oc-input-translatable-bg: #272b2e;
+
+    /*
+    // Component Variables
+    // --------------------------------------------------*/
+
+    --oc-toolbar-color: #adb5bd;
+    --oc-toolbar-bg: #1e2227;
+    --oc-toolbar-border: #242a30;
+    --oc-toolbar-hover-color: white;
+    --oc-toolbar-hover-bg: #43484e; /* rgba(215,225,234,0.2); */
+
+    --oc-tab-color: var(--bs-body-color);
+    --oc-tab-active-color: #e0e0e0;
+    --oc-tab-border: #383a3e;
+    --oc-tab-hover-bg: rgba(215,225,234,0.2);
+
+
+    &,.table {
+        --bs-table-color: #adb5bd;
+        --bs-table-bg: #1e2227;
+        --bs-table-striped-bg: rgba(0,0,0,0.05);
+        --bs-table-border-color: #242a30;
+        --bs-table-hover-bg: #35425b;
+        --bs-table-hover-color: #e0e0e0;
+        --oc-table-active-bg: #2c364b; /* darken(#35425b, 5%); */
+    }
+
+    &,.modal {
+        --bs-modal-bg: #1a1d21;
+    }
+}

@@ -469,10 +469,10 @@ class FormField extends FieldDefinition
         foreach ($keyParts as $key) {
             if (
                 $result instanceof \Illuminate\Database\Eloquent\Model &&
-                app('amber.model.inspector')->hasRelation($result, $key)
+                app('model.inspector')->hasRelation($result, $key)
             ) {
                 if ($key === $lastField) {
-                    $result = app('amber.model.inspector')->getRelationSimpleValue($result, $key) ?: $default;
+                    $result = app('model.inspector')->getRelationSimpleValue($result, $key) ?: $default;
                 }
                 else {
                     $result = $result->{$key};

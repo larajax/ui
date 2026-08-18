@@ -58,14 +58,14 @@ trait FormModelWidget
             ]));
         }
 
-        if (!app('amber.model.inspector')->hasRelation($model, $attribute)) {
+        if (!app('model.inspector')->hasRelation($model, $attribute)) {
             throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
                 'class' => get_class($model),
                 'relation' => $attribute
             ]));
         }
 
-        return app('amber.model.inspector')->makeRelation($model, $attribute);
+        return app('model.inspector')->makeRelation($model, $attribute);
     }
 
     /**
@@ -84,14 +84,14 @@ trait FormModelWidget
             ]));
         }
 
-        if (!app('amber.model.inspector')->hasRelation($model, $attribute)) {
+        if (!app('model.inspector')->hasRelation($model, $attribute)) {
             throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
                 'class' => get_class($model),
                 'relation' => $attribute
             ]));
         }
 
-        return app('amber.model.inspector')->getRelationObject($model, $attribute);
+        return app('model.inspector')->getRelationObject($model, $attribute);
     }
 
     /**
@@ -102,7 +102,7 @@ trait FormModelWidget
     protected function getRelationType()
     {
         [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
-        return app('amber.model.inspector')->getRelationType($model, $attribute);
+        return app('model.inspector')->getRelationType($model, $attribute);
     }
 
     /**
@@ -111,6 +111,6 @@ trait FormModelWidget
     protected function isRelationTypeSingular(): bool
     {
         [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
-        return app('amber.model.inspector')->isRelationTypeSingular($model, $attribute);
+        return app('model.inspector')->isRelationTypeSingular($model, $attribute);
     }
 }

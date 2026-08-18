@@ -1,16 +1,25 @@
 /*
  * Amber - entry stylesheet
  *
- * Aggregates per-widget CSS via native @import, layered: elements, then
- * generic controls, then widgets that build on them. The consumer includes
- * only this file; the browser fetches the imports on first paint.
+ * Aggregates per-widget CSS via native @import, layered: variables and brand
+ * theming first, then elements, then generic controls, then widgets that
+ * build on them. The consumer includes only this file; the browser fetches
+ * the imports on first paint.
  */
+
+/* Variables: base bridges to Bootstrap 5 custom properties; light and dark
+   themes follow the data-bs-theme attribute */
+@import "./variables.css";
+@import "./variables-light.css";
+@import "./variables-dark.css";
 
 /* Controls */
 @import "./controls/popover/popover.css";
 @import "./controls/popup/popup.css";
+@import "./controls/tab/tab-control.css";
 
 /* Widgets */
+@import "./widgets/form/form.css";
 @import "./widgets/list/list.css";
 @import "./widgets/filter/filter.css";
 @import "./widgets/liststructure/liststructure.css";

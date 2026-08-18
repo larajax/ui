@@ -13,6 +13,7 @@
 // Controls
 import './controls/popover/popover.js';
 import './controls/popup/popup.js';
+import './controls/tab/tab.js';
 
 // Widgets
 import './widgets/list/list.js';
