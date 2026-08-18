@@ -1,0 +1,28 @@
+/*
+ * Popover control styles
+ */
+
+.control-popover {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    min-width: 200px;
+    margin-top: .35rem;
+    padding: .75rem;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: .375rem;
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+}
+
+.control-popover-loading {
+    display: block;
+    padding: 1rem;
+    text-align: center;
+    opacity: .5;
+}
+
+.control-popover-loading:before {
+    content: "…";
+}

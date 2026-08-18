@@ -42,6 +42,11 @@ class ListStructure extends Lists
     public $includeSortOrders = false;
 
     /**
+     * @var string sortOrderColumn column used to apply default structure ordering.
+     */
+    public $sortOrderColumn = 'sort_order';
+
+    /**
      * @var bool includeReferencePool should be used when sorting within subset of records.
      * For example, sorting with pagination.
      */
@@ -83,6 +88,7 @@ class ListStructure extends Lists
             'showReorder',
             'treeExpanded',
             'includeSortOrders',
+            'sortOrderColumn',
             'permissions'
         ]);
 
@@ -223,6 +229,36 @@ class ListStructure extends Lists
         }
 
         parent::setSearchTerm($term, $resetState);
+    }
+
+    /**
+     * prepareQuery applies structure ordering when no explicit sort is active.
+     */
+    public function prepareQuery()
+    {
+        $query = parent::prepareQuery();
+
+        if ($this->shouldApplySortOrderColumn()) {
+            $query->orderBy($this->sortOrderColumn);
+        }
+
+        return $query;
+    }
+
+    /**
+     * shouldApplySortOrderColumn checks if the default structure sort should be applied.
+     */
+    protected function shouldApplySortOrderColumn(): bool
+    {
+        if (!$this->sortOrderColumn || !$this->useSortOrdering()) {
+            return false;
+        }
+
+        if ($this->useStructure && $this->showTree) {
+            return false;
+        }
+
+        return !$this->getSortColumn();
     }
 
     /**
@@ -368,7 +404,7 @@ class ListStructure extends Lists
         }
         else {
             // Simple Tree
-            if ($this->model->hasRelation('parent')) {
+            if (app('amber.model.inspector')->hasRelation($this->model, 'parent')) {
                 $item->parent = post($multisite ? 'parent_root_id' : 'parent_id');
                 $item->save(['force' => true]);
             }

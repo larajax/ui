@@ -127,8 +127,8 @@ class Relation extends FormWidgetBase
         [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
 
         $relationObject = $this->getRelationObject();
-        $relationType = $model->getRelationType($attribute);
-        $relationModel = $model->makeRelation($attribute);
+        $relationType = app('amber.model.inspector')->getRelationType($model, $attribute);
+        $relationModel = app('amber.model.inspector')->makeRelation($model, $attribute);
         $query = $relationModel->newQuery();
 
         if (in_array($relationType, ['belongsToMany', 'morphedByMany', 'morphToMany', 'hasMany'])) {
@@ -183,7 +183,7 @@ class Relation extends FormWidgetBase
         }
 
         // Determine if the model uses a tree trait
-        $usesTree = \October\Amber\Helpers\Model::isInstanceOf($relationModel, \October\Contracts\Database\TreeInterface::class);
+        $usesTree = app('amber.model.inspector')->isInstanceOf($relationModel, \October\Contracts\Database\TreeInterface::class);
 
         // The "sqlSelect" config takes precedence over "nameFrom".
         // A virtual column called "selection" will contain the result.

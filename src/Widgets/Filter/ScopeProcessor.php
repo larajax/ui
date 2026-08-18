@@ -45,8 +45,8 @@ trait ScopeProcessor
             }
             elseif ($this->model) {
                 [$nestedModel, $nestedField] = $this->makeNestedFilterModel($this->model, $scopeName);
-                if ($nestedModel->hasRelation($nestedField)) {
-                    $this->scopeModels[$scopeName] = $nestedModel->makeRelation($nestedField);
+                if (app('amber.model.inspector')->hasRelation($nestedModel, $nestedField)) {
+                    $this->scopeModels[$scopeName] = app('amber.model.inspector')->makeRelation($nestedModel, $nestedField);
                 }
             }
         }

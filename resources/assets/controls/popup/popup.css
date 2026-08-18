@@ -1,0 +1,17 @@
+/*
+ * Popup control styles
+ *
+ * The dialog itself is styled by Bootstrap 5; these rules cover the
+ * loading state shown while the handler contents load.
+ */
+
+.control-popup .control-popup-loading {
+    display: block;
+    padding: 1.5rem;
+    text-align: center;
+    opacity: .5;
+}
+
+.control-popup .control-popup-loading:before {
+    content: "…";
+}

@@ -1,0 +1,19 @@
+/*
+ * Amber - entry stylesheet
+ *
+ * Aggregates per-widget CSS via native @import, layered: elements, then
+ * generic controls, then widgets that build on them. The consumer includes
+ * only this file; the browser fetches the imports on first paint.
+ */
+
+/* Controls */
+@import "./controls/popover/popover.css";
+@import "./controls/popup/popup.css";
+
+/* Widgets */
+@import "./widgets/list/list.css";
+@import "./widgets/filter/filter.css";
+@import "./widgets/liststructure/liststructure.css";
+
+/* Form widgets */
+@import "./formwidgets/fileupload/fileupload.css";

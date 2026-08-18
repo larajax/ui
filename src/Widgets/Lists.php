@@ -386,7 +386,7 @@ class Lists extends WidgetBase implements ListElement
             foreach ($searchableColumns as $column) {
                 // Related
                 if ($this->isColumnRelated($column)) {
-                    $table = $this->model->makeRelation($column->relation)->getTable();
+                    $table = app('amber.model.inspector')->makeRelation($this->model, $column->relation)->getTable();
                     $columnName = $column->sqlSelect
                         ? DbDongle::raw($this->parseTableName($column->sqlSelect, $table))
                         : $table . '.' . $column->valueFrom;
@@ -474,16 +474,16 @@ class Lists extends WidgetBase implements ListElement
 
             // Relation column
             if ($column->relation) {
-                $relationType = $this->model->getRelationType($column->relation);
+                $relationType = app('amber.model.inspector')->getRelationType($this->model, $column->relation);
                 if ($relationType === 'morphTo') {
                     throw new ApplicationException('The relationship morphTo is not supported for list columns.');
                 }
 
-                $table = $this->model->makeRelation($column->relation)->getTable();
+                $table = app('amber.model.inspector')->makeRelation($this->model, $column->relation)->getTable();
                 $sqlSelect = $this->parseTableName($column->sqlSelect, $table);
 
                 // Manipulate a count query for the sub query
-                $relationObj = $this->model->{$column->relation}();
+                $relationObj = app('amber.model.inspector')->getRelationObject($this->model, $column->relation);
                 $relationQuery = $relationObj->getRelated()->newQuery();
 
                 // Apply related constraints to the sub query
@@ -1022,7 +1022,7 @@ class Lists extends WidgetBase implements ListElement
         // if the value is NULL.
         else {
             if (
-                $record->hasRelation($columnName) &&
+                app('amber.model.inspector')->hasRelation($record, $columnName) &&
                 array_key_exists($columnName, $record->attributes)
             ) {
                 $value = $record->attributes[$columnName];
@@ -1197,7 +1197,7 @@ class Lists extends WidgetBase implements ListElement
             return false;
         }
 
-        if (!$this->model->hasRelation($column->relation)) {
+        if (!app('amber.model.inspector')->hasRelation($this->model, $column->relation)) {
             throw new ApplicationException(Lang::get(
                 'backend::lang.model.missing_relation',
                 ['class'=>get_class($this->model), 'relation'=>$column->relation]
@@ -1205,7 +1205,7 @@ class Lists extends WidgetBase implements ListElement
         }
 
         if ($isMulti) {
-            return !$this->model->isRelationTypeSingular($column->relation);
+            return !app('amber.model.inspector')->isRelationTypeSingular($this->model, $column->relation);
         }
 
         return true;

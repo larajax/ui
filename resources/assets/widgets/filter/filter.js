@@ -16,6 +16,8 @@
  */
 'use strict';
 
+import { Popover } from '../../controls/popover/popover.js';
+
 jax.registerControl('filterwidget', class extends jax.ControlBase {
     init() {
         this.config = Object.assign({
@@ -26,20 +28,16 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
 
         this.popover = null;
         this.activeScope = null;
-        this.onDocumentClick = this.onDocumentClick.bind(this);
     }
 
     connect() {
         this.listen('change', this.onChange);
         this.listen('click', this.onClick);
 
-        addEventListener('click', this.onDocumentClick);
-
         this.bindCheckboxes();
     }
 
     disconnect() {
-        removeEventListener('click', this.onDocumentClick);
         this.closePopover();
     }
 
@@ -47,7 +45,7 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
         const el = ev.target,
             scope = el.closest('.filter-scope');
 
-        if (!scope || this.element.querySelector('.filter-popover')?.contains(el)) {
+        if (!scope || this.popover?.element?.contains(el)) {
             return;
         }
 
@@ -79,26 +77,16 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
 
         // Apply / clear buttons inside the popover
         const actionEl = ev.target.closest('[data-filter-action]');
-        if (actionEl && this.popover && this.popover.contains(actionEl)) {
+        if (actionEl && this.popover?.element?.contains(actionEl)) {
             ev.preventDefault();
 
             if (actionEl.dataset.filterAction === 'apply') {
-                this.submitUpdate(this.activeScope, jax.values(this.popover.querySelector('form')));
+                this.submitUpdate(this.activeScope, jax.values(this.popover.element.querySelector('form')));
             }
             else {
                 this.submitUpdate(this.activeScope, { clearScope: true });
             }
 
-            this.closePopover();
-        }
-    }
-
-    onDocumentClick(ev) {
-        if (!this.popover) {
-            return;
-        }
-
-        if (!this.popover.contains(ev.target) && !ev.target.closest('a.filter-scope')) {
             this.closePopover();
         }
     }
@@ -120,23 +108,32 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
 
         const scopeName = scopeLink.dataset.scopeName;
 
-        this.popover = document.createElement('div');
-        this.popover.className = 'filter-popover';
-        this.popover.innerHTML = '<form data-request-parent-form>'
-            + '<input type="hidden" name="scopeName" value="" />'
-            + '<div class="filter-popover-content"><span class="filter-popover-loading"></span></div>'
-            + '</form>';
-        this.popover.querySelector('[name="scopeName"]').value = scopeName;
+        const popover = new Popover(scopeLink, {
+            extraClass: 'filter-popover',
+            content: '<form data-request-parent-form>'
+                + '<input type="hidden" name="scopeName" value="" />'
+                + '<div class="filter-popover-content"><span class="control-popover-loading"></span></div>'
+                + '</form>',
+            onClose: () => {
+                scopeLink.classList.remove('filter-scope-open');
+                if (this.activeScope === scopeLink) {
+                    this.activeScope = null;
+                }
+                if (this.popover === popover) {
+                    this.popover = null;
+                }
+            }
+        });
 
-        // Position below the scope link
-        scopeLink.parentNode.style.position = 'relative';
-        scopeLink.parentNode.appendChild(this.popover);
+        this.popover = popover;
+        popover.show();
+        popover.element.querySelector('[name="scopeName"]').value = scopeName;
 
         // Load form contents
-        jax.request(this.popover.querySelector('form'), this.config.loadHandler, {
+        jax.request(popover.element.querySelector('form'), this.config.loadHandler, {
             success: (data) => {
-                if (this.popover && typeof data.result === 'string') {
-                    this.popover.querySelector('.filter-popover-content').innerHTML = data.result;
+                if (popover.element && typeof data.result === 'string') {
+                    popover.element.querySelector('.filter-popover-content').innerHTML = data.result;
                     this.bindPopoverContent();
                 }
             }
@@ -145,7 +142,7 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
 
     closePopover() {
         if (this.popover) {
-            this.popover.remove();
+            this.popover.hide();
             this.popover = null;
         }
 
@@ -159,7 +156,7 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
     // trigger API and filter widget scripts: condition-based visibility,
     // native date mirrors and group option loading.
     bindPopoverContent() {
-        const root = this.popover;
+        const root = this.popover.element;
 
         // Condition select show/hide (data-trigger)
         const conditionSelect = root.querySelector('select[name="Filter[condition]"]');

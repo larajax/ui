@@ -22,6 +22,9 @@ class AmberServiceProvider extends ServiceProvider
 
         $this->app->singleton('system.preset', \October\Amber\Classes\PresetManager::class);
 
+        $this->app->singleton(\October\Amber\Classes\ModelInspector::class);
+        $this->app->alias(\October\Amber\Classes\ModelInspector::class, 'amber.model.inspector');
+
         // Supports the DbDongle facade used for raw SQL parsing in widgets
         $this->app->singleton('db.dongle', function ($app) {
             return new \October\Rain\Database\Dongle(
@@ -48,7 +51,7 @@ class AmberServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../resources' => public_path('vendor/amber'),
+                __DIR__ . '/../resources/assets' => public_path('vendor/amber'),
             ], 'amber-assets');
         }
 

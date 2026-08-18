@@ -250,7 +250,7 @@ class FileUpload extends FormWidgetBase
         }
 
         [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
-        if (!$model->hasRelation($attribute)) {
+        if (!app('amber.model.inspector')->hasRelation($model, $attribute)) {
             return;
         }
 
@@ -259,7 +259,7 @@ class FileUpload extends FormWidgetBase
             return $model->newCollection();
         }
 
-        if ($model->isRelationTypeSingular($attribute)) {
+        if (app('amber.model.inspector')->isRelationTypeSingular($model, $attribute)) {
             return $model->newCollection([$value]);
         }
 

@@ -80,18 +80,9 @@
     text-align: center;
 }
 
+/* Base popover container styles come from controls/popover */
 .control-filter .filter-popover {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 1000;
     min-width: 320px;
-    margin-top: .35rem;
-    padding: .75rem;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, .15);
-    border-radius: .375rem;
-    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
 }
 
 .control-filter .filter-facet {
@@ -110,17 +101,6 @@
     align-items: center;
     gap: .5rem;
     margin-top: .75rem;
-}
-
-.control-filter .filter-popover-loading {
-    display: block;
-    padding: 1rem;
-    text-align: center;
-    opacity: .5;
-}
-
-.control-filter .filter-popover-loading:before {
-    content: "…";
 }
 
 /* Group filter option lists */
