@@ -58,10 +58,6 @@ class Filter extends WidgetBase implements FilterElement
     // Object Properties
     //
 
-    /**
-     * @inheritDoc
-     */
-    protected $defaultAlias = 'filter';
 
     /**
      * @var boolean scopesDefined determines if scope definitions have been created.

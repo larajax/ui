@@ -75,10 +75,6 @@ class Form extends WidgetBase implements FormElement
     // Object Properties
     //
 
-    /**
-     * @inheritDoc
-     */
-    protected $defaultAlias = 'form';
 
     /**
      * @var boolean fieldsDefined determines if field definitions have been created.

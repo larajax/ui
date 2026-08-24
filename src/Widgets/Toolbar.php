@@ -34,10 +34,6 @@ class Toolbar extends WidgetBase
     // Object Properties
     //
 
-    /**
-     * @inheritDoc
-     */
-    protected $defaultAlias = 'toolbar';
 
     /**
      * @var WidgetBase searchWidget reference

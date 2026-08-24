@@ -91,11 +91,6 @@ class FileUpload extends FormWidgetBase
     //
 
     /**
-     * @inheritDoc
-     */
-    protected $defaultAlias = 'fileupload';
-
-    /**
      * @var \October\Amber\Widgets\Form configFormWidget is the embedded form for modifying the
      * properties of the selected file.
      */
@@ -204,7 +199,7 @@ class FileUpload extends FormWidgetBase
 
         $config = $this->makeConfig('~/modules/system/models/file/fields.yaml');
         $config->model = $this->getFileRecord() ?: $this->getRelationModel();
-        $config->alias = $this->alias . $this->defaultAlias;
+        $config->alias = $this->alias . $this->getDefaultAlias();
         $config->arrayName = 'FileUploadWidget';
 
         $widget = $this->makeWidget(\October\Amber\Widgets\Form::class, $config);

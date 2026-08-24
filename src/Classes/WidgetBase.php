@@ -39,6 +39,7 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface
     public function register()
     {
         $this->config = $this->makeConfig($this->config);
+        $this->alias = $this->getConfig('alias', $this->getDefaultAlias());
         $this->viewPath = $this->configPath = $this->guessViewPath('/partials');
 
         // Boot extensions
@@ -95,7 +96,7 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface
     {
         $id = class_basename(get_called_class());
 
-        if ($this->alias !== $this->defaultAlias) {
+        if ($this->alias !== $this->getDefaultAlias()) {
             $id .= '-' . $this->alias;
         }
 
@@ -104,6 +105,14 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface
         }
 
         return HtmlHelper::nameToId($id);
+    }
+
+    /**
+     * getDefaultAlias returns the inferred package alias for this widget.
+     */
+    protected function getDefaultAlias(): string
+    {
+        return strtolower(class_basename(static::class));
     }
 
     /**

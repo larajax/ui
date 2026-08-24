@@ -128,10 +128,6 @@ class Lists extends WidgetBase implements ListElement
     // Object Properties
     //
 
-    /**
-     * @inheritDoc
-     */
-    protected $defaultAlias = 'list';
 
     /**
      * @var array allColumns collection of all list columns used in this list.
@@ -168,6 +164,14 @@ class Lists extends WidgetBase implements ListElement
      * @var array cssClasses to apply to the list container element
      */
     public $cssClasses = [];
+
+    /**
+     * getDefaultAlias keeps the historical list widget alias singular.
+     */
+    protected function getDefaultAlias(): string
+    {
+        return 'list';
+    }
 
     /**
      * init the widget, called by the constructor and free from its parameters.

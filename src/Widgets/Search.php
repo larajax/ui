@@ -51,10 +51,6 @@ class Search extends WidgetBase
     // Object Properties
     //
 
-    /**
-     * @inheritDoc
-     */
-    protected $defaultAlias = 'search';
 
     /**
      * @var string activeTerm pulled from session data.
