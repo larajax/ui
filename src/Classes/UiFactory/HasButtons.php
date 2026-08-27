@@ -1,6 +1,6 @@
-<?php namespace October\Amber\Classes\UiFactory;
+<?php namespace Amber\Classes\UiFactory;
 
-use October\Amber\Classes\ViewComponent;
+use Amber\Classes\ViewComponent;
 
 /**
  * HasButtons
@@ -28,9 +28,9 @@ trait HasButtons
         bool $danger = false,
         string|array $hotkey = '',
         ...$attributes
-    ): ViewComponent|\October\Amber\Classes\UiFactory\Migrate\Button {
+    ): ViewComponent|\Amber\Classes\UiFactory\Migrate\Button {
         if ($_migrate !== '') {
-            return new \October\Amber\Classes\UiFactory\Migrate\Button($_migrate, $label);
+            return new \Amber\Classes\UiFactory\Migrate\Button($_migrate, $label);
         }
 
         return new ViewComponent('button', compact(
@@ -65,9 +65,9 @@ trait HasButtons
         string|array $hotkey = '',
         array $requestData = [],
         ...$attributes
-    ): ViewComponent|\October\Amber\Classes\UiFactory\Migrate\PopupButton {
+    ): ViewComponent|\Amber\Classes\UiFactory\Migrate\PopupButton {
         if ($_migrate !== '') {
-            return new \October\Amber\Classes\UiFactory\Migrate\PopupButton($_migrate, $label);
+            return new \Amber\Classes\UiFactory\Migrate\PopupButton($_migrate, $label);
         }
 
         return new ViewComponent('button.popup-button', compact(
@@ -103,9 +103,9 @@ trait HasButtons
         string|array $hotkey = '',
         array $requestData = [],
         ...$attributes
-    ): ViewComponent|\October\Amber\Classes\UiFactory\Migrate\AjaxButton {
+    ): ViewComponent|\Amber\Classes\UiFactory\Migrate\AjaxButton {
         if ($_migrate !== '') {
-            return new \October\Amber\Classes\UiFactory\Migrate\AjaxButton($_migrate, $label);
+            return new \Amber\Classes\UiFactory\Migrate\AjaxButton($_migrate, $label);
         }
 
         return new ViewComponent('button.ajax-button', compact(

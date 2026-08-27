@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Helpers;
+<?php namespace Amber\Helpers;
 
 use Date;
 use Carbon\Carbon;

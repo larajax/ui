@@ -1,9 +1,9 @@
-<?php namespace October\Amber\Widgets\Filter;
+<?php namespace Amber\Widgets\Filter;
 
 use Lang;
-use October\Amber\Classes\FilterScope;
-use October\Amber\Classes\WidgetManager;
-use October\Amber\Classes\FilterWidgetBase;
+use Amber\Classes\FilterScope;
+use Amber\Classes\WidgetManager;
+use Amber\Classes\FilterWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
 use SystemException;
 
@@ -18,7 +18,7 @@ trait HasFilterWidgets
     protected $filterWidgets = [];
 
     /**
-     * @var \October\Amber\Classes\WidgetManager widgetManager
+     * @var \Amber\Classes\WidgetManager widgetManager
      */
     protected $widgetManager;
 
@@ -72,7 +72,7 @@ trait HasFilterWidgets
      * @param string $class Widget class name
      * @param mixed $scopeConfig A field name, an array of config or a FileScope object.
      * @param array $widgetConfig An array of config.
-     * @return \October\Amber\Classes\FilterWidgetBase The widget object
+     * @return \Amber\Classes\FilterWidgetBase The widget object
      */
     public function makeFilterWidget($class, $scopeConfig = [], $widgetConfig = [])
     {
@@ -124,7 +124,7 @@ trait HasFilterWidgets
             return false;
         }
 
-        if (is_subclass_of($widgetClass, \October\Amber\Classes\FilterWidgetBase::class)) {
+        if (is_subclass_of($widgetClass, \Amber\Classes\FilterWidgetBase::class)) {
             return true;
         }
 

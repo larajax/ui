@@ -1,6 +1,6 @@
-<?php namespace October\Amber\Classes\UiFactory;
+<?php namespace Amber\Classes\UiFactory;
 
-use October\Amber\Classes\ViewComponent;
+use Amber\Classes\ViewComponent;
 
 /**
  * HasInputs

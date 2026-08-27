@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes;
+<?php namespace Amber\Classes;
 
 /**
  * UiFactory creates view-based UI components.
@@ -16,8 +16,8 @@
  */
 class UiFactory
 {
-    use \October\Amber\Classes\UiFactory\HasInputs;
-    use \October\Amber\Classes\UiFactory\HasButtons;
+    use \Amber\Classes\UiFactory\HasInputs;
+    use \Amber\Classes\UiFactory\HasButtons;
 
     /**
      * slot switches to a named slot on the current component
@@ -40,6 +40,6 @@ class UiFactory
      */
     public static function callout()
     {
-        return new \October\Amber\Classes\UiFactory\Migrate\Callout();
+        return new \Amber\Classes\UiFactory\Migrate\Callout();
     }
 }

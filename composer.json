@@ -8,13 +8,13 @@
     },
     "autoload": {
         "psr-4": {
-            "October\\Amber\\": "src"
+            "Amber\\": "src"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "October\\Amber\\AmberServiceProvider"
+                "Amber\\AmberServiceProvider"
             ]
         }
     },

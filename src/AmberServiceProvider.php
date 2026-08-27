@@ -1,6 +1,6 @@
 <?php
 
-namespace October\Amber;
+namespace Amber;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -18,12 +18,12 @@ class AmberServiceProvider extends ServiceProvider
         // Registers the `~` (app base) path symbol used in view and config paths
         $this->app->register(\October\Rain\Filesystem\FilesystemServiceProvider::class);
 
-        $this->app->scoped('system.widgets', \October\Amber\Classes\WidgetManager::class);
+        $this->app->scoped('system.widgets', \Amber\Classes\WidgetManager::class);
 
-        $this->app->singleton('system.preset', \October\Amber\Classes\PresetManager::class);
+        $this->app->singleton('system.preset', \Amber\Classes\PresetManager::class);
 
-        $this->app->singleton(\October\Amber\Classes\ModelInspector::class);
-        $this->app->alias(\October\Amber\Classes\ModelInspector::class, 'model.inspector');
+        $this->app->singleton(\Amber\Classes\ModelInspector::class);
+        $this->app->alias(\Amber\Classes\ModelInspector::class, 'model.inspector');
 
         // Supports the DbDongle facade used for raw SQL parsing in widgets
         $this->app->singleton('db.dongle', function ($app) {
@@ -34,10 +34,10 @@ class AmberServiceProvider extends ServiceProvider
         });
 
         // Gives plain Eloquent models the searchWhere methods used by the widgets
-        \October\Amber\Database\SearchWhereMacros::register();
+        \Amber\Database\SearchWhereMacros::register();
 
         \Illuminate\Foundation\AliasLoader::getInstance()->alias('Str', \October\Rain\Support\Str::class);
-        \Illuminate\Foundation\AliasLoader::getInstance()->alias('Ui', \October\Amber\Facades\Ui::class);
+        \Illuminate\Foundation\AliasLoader::getInstance()->alias('Ui', \Amber\Facades\Ui::class);
     }
 
     /**
@@ -54,15 +54,15 @@ class AmberServiceProvider extends ServiceProvider
         }
 
         app('system.widgets')->registerFormWidgets(function ($manager) {
-            $manager->registerFormWidget(\October\Amber\FormWidgets\Relation::class, 'relation');
-            $manager->registerFormWidget(\October\Amber\FormWidgets\FileUpload::class, 'fileupload');
+            $manager->registerFormWidget(\Amber\FormWidgets\Relation::class, 'relation');
+            $manager->registerFormWidget(\Amber\FormWidgets\FileUpload::class, 'fileupload');
         });
 
         app('system.widgets')->registerFilterWidgets(function ($manager) {
-            $manager->registerFilterWidget(\October\Amber\FilterWidgets\Group::class, 'group');
-            $manager->registerFilterWidget(\October\Amber\FilterWidgets\Date::class, 'date');
-            $manager->registerFilterWidget(\October\Amber\FilterWidgets\Text::class, 'text');
-            $manager->registerFilterWidget(\October\Amber\FilterWidgets\Number::class, 'number');
+            $manager->registerFilterWidget(\Amber\FilterWidgets\Group::class, 'group');
+            $manager->registerFilterWidget(\Amber\FilterWidgets\Date::class, 'date');
+            $manager->registerFilterWidget(\Amber\FilterWidgets\Text::class, 'text');
+            $manager->registerFilterWidget(\Amber\FilterWidgets\Number::class, 'number');
         });
     }
 }

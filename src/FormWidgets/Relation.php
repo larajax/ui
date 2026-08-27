@@ -1,8 +1,8 @@
-<?php namespace October\Amber\FormWidgets;
+<?php namespace Amber\FormWidgets;
 
 use DbDongle;
-use October\Amber\Classes\FormField;
-use October\Amber\Classes\FormWidgetBase;
+use Amber\Classes\FormField;
+use Amber\Classes\FormWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
 use SystemException;
 
@@ -14,8 +14,8 @@ use SystemException;
  */
 class Relation extends FormWidgetBase
 {
-    use \October\Amber\Traits\FormModelSaver;
-    use \October\Amber\Traits\FormModelWidget;
+    use \Amber\Traits\FormModelSaver;
+    use \Amber\Traits\FormModelWidget;
 
     //
     // Configurable Properties
@@ -64,6 +64,7 @@ class Relation extends FormWidgetBase
     //
     // Object Properties
     //
+
 
     /**
      * @var FormField renderFormField object used for rendering a simple field type

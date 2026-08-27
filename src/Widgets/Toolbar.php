@@ -1,6 +1,6 @@
-<?php namespace October\Amber\Widgets;
+<?php namespace Amber\Widgets;
 
-use October\Amber\Classes\WidgetBase;
+use Amber\Classes\WidgetBase;
 
 /**
  * Toolbar Widget
@@ -96,7 +96,7 @@ class Toolbar extends WidgetBase
             }
 
             $searchConfig->alias = $this->alias . 'Search';
-            $this->searchWidget = $this->makeWidget(\October\Amber\Widgets\Search::class, $searchConfig);
+            $this->searchWidget = $this->makeWidget(\Amber\Widgets\Search::class, $searchConfig);
             $this->searchWidget->bindToController();
         }
     }

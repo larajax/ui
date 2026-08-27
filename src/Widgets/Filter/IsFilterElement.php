@@ -1,6 +1,6 @@
-<?php namespace October\Amber\Widgets\Filter;
+<?php namespace Amber\Widgets\Filter;
 
-use October\Amber\Classes\FilterScope;
+use Amber\Classes\FilterScope;
 use October\Rain\Element\Filter\ScopeDefinition;
 
 /**

@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Widgets\Filter;
+<?php namespace Amber\Widgets\Filter;
 
 use Illuminate\Support\Facades\Gate;
 use October\Rain\Html\Helper as HtmlHelper;

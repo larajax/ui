@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes\PresetManager;
+<?php namespace Amber\Classes\PresetManager;
 
 /**
  * Locales is a resource file with minimal dependencies

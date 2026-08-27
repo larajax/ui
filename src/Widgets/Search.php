@@ -1,8 +1,8 @@
-<?php namespace October\Amber\Widgets;
+<?php namespace Amber\Widgets;
 
 use Lang;
 use Throwable;
-use October\Amber\Classes\WidgetBase;
+use Amber\Classes\WidgetBase;
 
 /**
  * Search Widget

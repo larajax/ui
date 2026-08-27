@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes;
+<?php namespace Amber\Classes;
 
 use Str;
 use Arr;
@@ -507,7 +507,7 @@ class FormField extends FieldDefinition
 
         // Preset
         if (is_string($fieldOptions) && str_starts_with($fieldOptions, 'preset:')) {
-            $fieldOptions = \October\Amber\Classes\PresetManager::instance()->getPreset($fieldOptions);
+            $fieldOptions = \Amber\Classes\PresetManager::instance()->getPreset($fieldOptions);
         }
         // Method name
         elseif (is_string($fieldOptions)) {

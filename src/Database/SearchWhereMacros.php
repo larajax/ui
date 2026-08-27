@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Database;
+<?php namespace Amber\Database;
 
 use DbDongle;
 use Illuminate\Database\Eloquent\Builder;

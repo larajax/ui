@@ -1,7 +1,7 @@
-<?php namespace October\Amber\Traits;
+<?php namespace Amber\Traits;
 
 use Lang;
-use October\Amber\Classes\FormField;
+use Amber\Classes\FormField;
 use Exception;
 
 /**
@@ -31,7 +31,7 @@ trait WidgetMaker
      * makeWidget object with the supplied configuration file.
      * @param string $class
      * @param array $widgetConfig
-     * @return \October\Amber\Classes\WidgetBase
+     * @return \Amber\Classes\WidgetBase
      */
     public function makeWidget($class, $widgetConfig = [])
     {
@@ -54,7 +54,7 @@ trait WidgetMaker
      * @param string $class
      * @param mixed $fieldConfig
      * @param array|object $widgetConfig
-     * @return \October\Amber\Classes\FormWidgetBase
+     * @return \Amber\Classes\FormWidgetBase
      */
     public function makeFormWidget($class, $fieldConfig = [], $widgetConfig = [])
     {

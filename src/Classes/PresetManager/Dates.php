@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes\PresetManager;
+<?php namespace Amber\Classes\PresetManager;
 
 use DateTime as PhpDateTime;
 use DateTimeZone;

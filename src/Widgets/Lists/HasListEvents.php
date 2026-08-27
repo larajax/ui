@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Widgets\Lists;
+<?php namespace Amber\Widgets\Lists;
 
 /**
  * HasListEvents declares the list's extension points as overridable methods.

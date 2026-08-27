@@ -1,7 +1,7 @@
-<?php namespace October\Amber\Widgets\Form;
+<?php namespace Amber\Widgets\Form;
 
 use Illuminate\Support\Facades\Gate;
-use October\Amber\Classes\FormTabs;
+use Amber\Classes\FormTabs;
 use October\Rain\Html\Helper as HtmlHelper;
 
 /**

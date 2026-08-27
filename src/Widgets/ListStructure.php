@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Widgets;
+<?php namespace Amber\Widgets;
 
 use Illuminate\Support\Facades\Gate;
 use ApplicationException;

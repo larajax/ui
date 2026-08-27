@@ -1,6 +1,6 @@
-<?php namespace October\Amber\Classes\ModelInspector;
+<?php namespace Amber\Classes\ModelInspector;
 
-use October\Amber\Classes\ModelInspector;
+use Amber\Classes\ModelInspector;
 
 /**
  * Inspection is a read-only metadata view over a model.

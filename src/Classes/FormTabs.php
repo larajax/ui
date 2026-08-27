@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes;
+<?php namespace Amber\Classes;
 
 use Str;
 use October\Rain\Html\Helper as HtmlHelper;

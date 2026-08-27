@@ -1,8 +1,8 @@
-<?php namespace October\Amber\FilterWidgets;
+<?php namespace Amber\FilterWidgets;
 
 use Db;
 use DbDongle;
-use October\Amber\Classes\FilterWidgetBase;
+use Amber\Classes\FilterWidgetBase;
 
 /**
  * Text filter

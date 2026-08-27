@@ -1,6 +1,6 @@
-<?php namespace October\Amber\Classes\UiFactory\Migrate;
+<?php namespace Amber\Classes\UiFactory\Migrate;
 
-use October\Amber\Classes\UiElement;
+use Amber\Classes\UiElement;
 
 /**
  * Callout

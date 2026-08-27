@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes;
+<?php namespace Amber\Classes;
 
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;

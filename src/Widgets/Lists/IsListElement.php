@@ -1,6 +1,6 @@
-<?php namespace October\Amber\Widgets\Lists;
+<?php namespace Amber\Widgets\Lists;
 
-use October\Amber\Classes\ListColumn;
+use Amber\Classes\ListColumn;
 use October\Rain\Element\Lists\ColumnDefinition;
 
 /**

@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes;
+<?php namespace Amber\Classes;
 
 use File;
 use October\Rain\Html\Helper as HtmlHelper;
@@ -13,11 +13,11 @@ use Larajax\Contracts\ViewComponentInterface;
  */
 abstract class WidgetBase extends Extendable implements ViewComponentInterface
 {
-    use \October\Amber\Traits\SessionMaker;
-    use \October\Amber\Traits\ConfigMaker;
-    use \October\Amber\Traits\WidgetMaker;
-    use \October\Amber\Traits\ErrorMaker;
-    use \October\Amber\Traits\ViewMaker;
+    use \Amber\Traits\SessionMaker;
+    use \Amber\Traits\ConfigMaker;
+    use \Amber\Traits\WidgetMaker;
+    use \Amber\Traits\ErrorMaker;
+    use \Amber\Traits\ViewMaker;
     use \October\Rain\Support\Traits\Emitter;
     use \Larajax\Traits\ViewComponent;
 

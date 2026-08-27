@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Widgets\Filter;
+<?php namespace Amber\Widgets\Filter;
 
 /**
  * HasFilterEvents declares the filter's extension points as overridable methods.

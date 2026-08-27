@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Facades;
+<?php namespace Amber\Facades;
 
 /**
  * Ui helper
@@ -6,6 +6,6 @@
  * @package october\amber
  * @author Alexey Bobkov, Samuel Georges
  */
-class Ui extends \October\Amber\Classes\UiFactory
+class Ui extends \Amber\Classes\UiFactory
 {
 }

@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes;
+<?php namespace Amber\Classes;
 
 use App;
 
@@ -7,11 +7,11 @@ use App;
  */
 class WidgetManager
 {
-    use \October\Amber\Classes\WidgetManager\HasFormWidgets;
-    use \October\Amber\Classes\WidgetManager\HasFilterWidgets;
+    use \Amber\Classes\WidgetManager\HasFormWidgets;
+    use \Amber\Classes\WidgetManager\HasFilterWidgets;
 
     /**
-     * @var \October\Amber\Classes\WidgetManager|null parent manager that this
+     * @var \Amber\Classes\WidgetManager|null parent manager that this
      * manager falls back to when a widget is not found in its own registry.
      */
     protected $parent;

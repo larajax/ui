@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Widgets;
+<?php namespace Amber\Widgets;
 
 use Db;
 use Str;
@@ -7,8 +7,8 @@ use Lang;
 use DbDongle;
 use October\Rain\Html\Helper as HtmlHelper;
 use October\Rain\Router\Helper as RouterHelper;
-use October\Amber\Classes\ListColumn;
-use October\Amber\Classes\WidgetBase;
+use Amber\Classes\ListColumn;
+use Amber\Classes\WidgetBase;
 use Illuminate\Database\Eloquent\Model;
 use October\Contracts\Element\ListElement;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -26,14 +26,14 @@ use UnitEnum;
  */
 class Lists extends WidgetBase implements ListElement
 {
-    use \October\Amber\Widgets\Lists\IsListElement;
-    use \October\Amber\Widgets\Lists\ColumnProcessor;
-    use \October\Amber\Widgets\Lists\HasListSetup;
-    use \October\Amber\Widgets\Lists\HasListEvents;
-    use \October\Amber\Widgets\Lists\HasValueProcessor;
-    use \October\Amber\Widgets\Lists\HasSorting;
-    use \October\Amber\Widgets\Lists\HasSearch;
-    use \October\Amber\Traits\PreferenceMaker;
+    use \Amber\Widgets\Lists\IsListElement;
+    use \Amber\Widgets\Lists\ColumnProcessor;
+    use \Amber\Widgets\Lists\HasListSetup;
+    use \Amber\Widgets\Lists\HasListEvents;
+    use \Amber\Widgets\Lists\HasValueProcessor;
+    use \Amber\Widgets\Lists\HasSorting;
+    use \Amber\Widgets\Lists\HasSearch;
+    use \Amber\Traits\PreferenceMaker;
 
     //
     // Configurable Properties
@@ -131,7 +131,7 @@ class Lists extends WidgetBase implements ListElement
 
     /**
      * @var array allColumns collection of all list columns used in this list.
-     * @see \October\Amber\Classes\ListColumn
+     * @see \Amber\Classes\ListColumn
      */
     protected $allColumns;
 

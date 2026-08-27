@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes;
+<?php namespace Amber\Classes;
 
 /**
  * FilterWidgetBase class contains widgets used specifically for filters
@@ -34,7 +34,7 @@ abstract class FilterWidgetBase extends WidgetBase
     protected $valueFrom;
 
     /**
-     * @var \October\Amber\Widgets\Filter parentFilter that contains this scope
+     * @var \Amber\Widgets\Filter parentFilter that contains this scope
      */
     protected $parentFilter = null;
 
@@ -77,7 +77,7 @@ abstract class FilterWidgetBase extends WidgetBase
 
     /**
      * getParentFilter retrieves the parent filter for this filter widget
-     * @return \October\Amber\Widgets\Filter|null
+     * @return \Amber\Widgets\Filter|null
      */
     public function getParentFilter()
     {

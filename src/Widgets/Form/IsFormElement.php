@@ -1,7 +1,7 @@
-<?php namespace October\Amber\Widgets\Form;
+<?php namespace Amber\Widgets\Form;
 
-use October\Amber\Classes\FormTabs;
-use October\Amber\Classes\FormField;
+use Amber\Classes\FormTabs;
+use Amber\Classes\FormField;
 use October\Rain\Element\Form\FieldDefinition;
 use October\Rain\Element\Form\FieldsetDefinition;
 use SystemException;

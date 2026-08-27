@@ -1,9 +1,9 @@
-<?php namespace October\Amber\Widgets\Lists;
+<?php namespace Amber\Widgets\Lists;
 
 /**
  * HasSorting concern
  *
- * @mixin \October\Amber\Traits\SessionMaker
+ * @mixin \Amber\Traits\SessionMaker
  */
 trait HasSorting
 {

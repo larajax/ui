@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Traits;
+<?php namespace Amber\Traits;
 
 use Str;
 use Session;

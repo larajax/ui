@@ -1,8 +1,8 @@
-<?php namespace October\Amber\Traits;
+<?php namespace Amber\Traits;
 
 use Db;
 use Str;
-use October\Amber\Classes\FormField;
+use Amber\Classes\FormField;
 use October\Rain\Database\Model as DatabaseModel;
 use October\Rain\Exception\ValidationException;
 

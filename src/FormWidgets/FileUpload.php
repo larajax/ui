@@ -1,11 +1,11 @@
-<?php namespace October\Amber\FormWidgets;
+<?php namespace Amber\FormWidgets;
 
 use Input;
 use System;
 use Response;
 use Validator;
-use October\Amber\Classes\FormField;
-use October\Amber\Classes\FormWidgetBase;
+use Amber\Classes\FormField;
+use Amber\Classes\FormWidgetBase;
 use October\Rain\Filesystem\Definitions as FileDefinitions;
 use ApplicationException;
 use ValidationException;
@@ -25,8 +25,8 @@ use Exception;
  */
 class FileUpload extends FormWidgetBase
 {
-    use \October\Amber\Traits\FormModelSaver;
-    use \October\Amber\Traits\FormModelWidget;
+    use \Amber\Traits\FormModelSaver;
+    use \Amber\Traits\FormModelWidget;
 
     //
     // Configurable Properties
@@ -91,7 +91,7 @@ class FileUpload extends FormWidgetBase
     //
 
     /**
-     * @var \October\Amber\Widgets\Form configFormWidget is the embedded form for modifying the
+     * @var \Amber\Widgets\Form configFormWidget is the embedded form for modifying the
      * properties of the selected file.
      */
     protected $configFormWidget;
@@ -202,7 +202,7 @@ class FileUpload extends FormWidgetBase
         $config->alias = $this->alias . $this->getDefaultAlias();
         $config->arrayName = 'FileUploadWidget';
 
-        $widget = $this->makeWidget(\October\Amber\Widgets\Form::class, $config);
+        $widget = $this->makeWidget(\Amber\Widgets\Form::class, $config);
         $widget->bindToController();
 
         return $this->configFormWidget = $widget;

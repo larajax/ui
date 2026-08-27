@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes;
+<?php namespace Amber\Classes;
 
 use App;
 
@@ -25,17 +25,17 @@ class PresetManager
      */
     public function __construct()
     {
-        $this->registerPreset('icons', [\October\Amber\Classes\PresetManager\Icons::class, 'icons']);
-        $this->registerPreset('icons@phosphor', [\October\Amber\Classes\PresetManager\Icons::class, 'iconsPhosphor']);
-        $this->registerPreset('icons@bootstrap', [\October\Amber\Classes\PresetManager\Icons::class, 'bootstrapIcons']);
-        $this->registerPreset('locales', [\October\Amber\Classes\PresetManager\Locales::class, 'locales']);
-        $this->registerPreset('flags', [\October\Amber\Classes\PresetManager\Locales::class, 'flags']);
-        $this->registerPreset('flags@short', [\October\Amber\Classes\PresetManager\Locales::class, 'flagsShort']);
-        $this->registerPreset('timezones', [\October\Amber\Classes\PresetManager\Dates::class, 'timezones']);
+        $this->registerPreset('icons', [\Amber\Classes\PresetManager\Icons::class, 'icons']);
+        $this->registerPreset('icons@phosphor', [\Amber\Classes\PresetManager\Icons::class, 'iconsPhosphor']);
+        $this->registerPreset('icons@bootstrap', [\Amber\Classes\PresetManager\Icons::class, 'bootstrapIcons']);
+        $this->registerPreset('locales', [\Amber\Classes\PresetManager\Locales::class, 'locales']);
+        $this->registerPreset('flags', [\Amber\Classes\PresetManager\Locales::class, 'flags']);
+        $this->registerPreset('flags@short', [\Amber\Classes\PresetManager\Locales::class, 'flagsShort']);
+        $this->registerPreset('timezones', [\Amber\Classes\PresetManager\Dates::class, 'timezones']);
 
         // Deprecated aliases
-        $this->registerPreset('phosphorIcons', [\October\Amber\Classes\PresetManager\Icons::class, 'iconsPhosphor']);
-        $this->registerPreset('localeIcons', [\October\Amber\Classes\PresetManager\Locales::class, 'flags']);
+        $this->registerPreset('phosphorIcons', [\Amber\Classes\PresetManager\Icons::class, 'iconsPhosphor']);
+        $this->registerPreset('localeIcons', [\Amber\Classes\PresetManager\Locales::class, 'flags']);
     }
 
     /**

@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes\WidgetManager;
+<?php namespace Amber\Classes\WidgetManager;
 
 use Str;
 

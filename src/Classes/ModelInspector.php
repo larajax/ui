@@ -1,7 +1,7 @@
-<?php namespace October\Amber\Classes;
+<?php namespace Amber\Classes;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
-use October\Amber\Classes\ModelInspector\Inspection;
+use Amber\Classes\ModelInspector\Inspection;
 use Throwable;
 
 /**

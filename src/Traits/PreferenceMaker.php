@@ -1,7 +1,7 @@
-<?php namespace October\Amber\Traits;
+<?php namespace Amber\Traits;
 
 use Str;
-use October\Amber\Classes\PreferenceStore;
+use Amber\Classes\PreferenceStore;
 
 /**
  * PreferenceMaker Trait adds methods for modifying user preferences in a controller class,
@@ -127,7 +127,7 @@ trait PreferenceMaker
 
     /**
      * Specifies the storage used for the user preferences.
-     * @return \October\Amber\Classes\PreferenceStore
+     * @return \Amber\Classes\PreferenceStore
      */
     protected function getPreferenceStorage()
     {

@@ -1,9 +1,9 @@
-<?php namespace October\Amber\FilterWidgets;
+<?php namespace Amber\FilterWidgets;
 
 use Db;
 use DbDongle;
 use Date as DateFacade;
-use October\Amber\Classes\FilterWidgetBase;
+use Amber\Classes\FilterWidgetBase;
 use Exception;
 
 /**

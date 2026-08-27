@@ -1,11 +1,11 @@
-<?php namespace October\Amber\Widgets;
+<?php namespace Amber\Widgets;
 
 use Lang;
 use DbDongle;
-use October\Amber\Classes\WidgetBase;
+use Amber\Classes\WidgetBase;
 use October\Rain\Element\ElementHolder;
 use October\Contracts\Element\FilterElement;
-use October\Amber\Classes\FilterScope;
+use Amber\Classes\FilterScope;
 use ApplicationException;
 use SystemException;
 
@@ -17,11 +17,11 @@ use SystemException;
  */
 class Filter extends WidgetBase implements FilterElement
 {
-    use \October\Amber\Widgets\Filter\IsFilterElement;
-    use \October\Amber\Widgets\Filter\ScopeProcessor;
-    use \October\Amber\Widgets\Filter\HasFilterEvents;
-    use \October\Amber\Widgets\Filter\HasFilterWidgets;
-    use \October\Amber\Widgets\Filter\HasLegacyDefinitions;
+    use \Amber\Widgets\Filter\IsFilterElement;
+    use \Amber\Widgets\Filter\ScopeProcessor;
+    use \Amber\Widgets\Filter\HasFilterEvents;
+    use \Amber\Widgets\Filter\HasFilterWidgets;
+    use \Amber\Widgets\Filter\HasLegacyDefinitions;
 
     //
     // Configurable Properties
@@ -746,7 +746,7 @@ class Filter extends WidgetBase implements FilterElement
              *
              * Example usage:
              *
-             *     $model->bindEvent('model.filter.filterScopes', function ((\October\Amber\Widgets\Filter) $filterWidget, (stdClass) $scopes, (string) $context) use (\October\Rain\Database\Model $model) {
+             *     $model->bindEvent('model.filter.filterScopes', function ((\Amber\Widgets\Filter) $filterWidget, (stdClass) $scopes, (string) $context) use (\October\Rain\Database\Model $model) {
              *         if ($someCondition) {
              *             $scopes->roles->hidden = false;
              *         }

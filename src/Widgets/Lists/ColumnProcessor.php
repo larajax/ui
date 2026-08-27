@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Widgets\Lists;
+<?php namespace Amber\Widgets\Lists;
 
 use Illuminate\Support\Facades\Gate;
 

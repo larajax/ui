@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Widgets\Form;
+<?php namespace Amber\Widgets\Form;
 
 use stdClass;
 use October\Rain\Element\ElementHolder;

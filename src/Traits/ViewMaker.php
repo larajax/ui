@@ -1,9 +1,9 @@
-<?php namespace October\Amber\Traits;
+<?php namespace Amber\Traits;
 
 use File;
 use Exception;
 use Throwable;
-use October\Amber\Classes\ViewPathGuesser;
+use Amber\Classes\ViewPathGuesser;
 
 // @todo move to Filesystem
 use System;

@@ -1,4 +1,4 @@
-<?php namespace October\Amber\Classes;
+<?php namespace Amber\Classes;
 
 use October\Rain\Html\Helper as HtmlHelper;
 use October\Rain\Extension\Extendable;
@@ -55,7 +55,7 @@ abstract class FormWidgetBase extends WidgetBase
     protected $formField;
 
     /**
-     * @var \October\Amber\Widgets\Form The parent form that contains this field
+     * @var \Amber\Widgets\Form The parent form that contains this field
      */
     protected $parentForm = null;
 
@@ -100,7 +100,7 @@ abstract class FormWidgetBase extends WidgetBase
 
     /**
      * getParentForm retrieves the parent form for this formwidget
-     * @return \October\Amber\Widgets\Form|null
+     * @return \Amber\Widgets\Form|null
      */
     public function getParentForm()
     {

@@ -1,10 +1,10 @@
-<?php namespace October\Amber\Widgets\Form;
+<?php namespace Amber\Widgets\Form;
 
 use Lang;
 use SystemException;
-use October\Amber\Classes\FormField;
-use October\Amber\Classes\WidgetManager;
-use October\Amber\Classes\FormWidgetBase;
+use Amber\Classes\FormField;
+use Amber\Classes\WidgetManager;
+use Amber\Classes\FormWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
 
 /**
@@ -18,7 +18,7 @@ trait HasFormWidgets
     protected $formWidgets = [];
 
     /**
-     * @var \October\Amber\Classes\WidgetManager widgetManager
+     * @var \Amber\Classes\WidgetManager widgetManager
      */
     protected $widgetManager;
 
@@ -99,7 +99,7 @@ trait HasFormWidgets
             return false;
         }
 
-        if (is_subclass_of($widgetClass, \October\Amber\Classes\FormWidgetBase::class)) {
+        if (is_subclass_of($widgetClass, \Amber\Classes\FormWidgetBase::class)) {
             return true;
         }
 
