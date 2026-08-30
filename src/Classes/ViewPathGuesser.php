@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use File;
 

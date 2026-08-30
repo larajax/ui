@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes\UiFactory\Migrate;
+<?php namespace Larajax\Ui\Classes\UiFactory\Migrate;
 
 /**
  * AjaxButton
@@ -12,7 +12,7 @@
  * @method AjaxButton attachLoading(bool $attachLoading) attachLoading attach loading indicator when an AJAX request is running
  * @method AjaxButton attachPopupLoading(bool $attachPopupLoading) attachPopupLoading
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class AjaxButton extends Button

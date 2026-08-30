@@ -1,10 +1,10 @@
-<?php namespace Amber\Widgets\Form;
+<?php namespace Larajax\Ui\Widgets\Form;
 
 use Lang;
 use SystemException;
-use Amber\Classes\FormField;
-use Amber\Classes\WidgetManager;
-use Amber\Classes\FormWidgetBase;
+use Larajax\Ui\Classes\FormField;
+use Larajax\Ui\Classes\WidgetManager;
+use Larajax\Ui\Classes\FormWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
 
 /**
@@ -18,7 +18,7 @@ trait HasFormWidgets
     protected $formWidgets = [];
 
     /**
-     * @var \Amber\Classes\WidgetManager widgetManager
+     * @var \Larajax\Ui\Classes\WidgetManager widgetManager
      */
     protected $widgetManager;
 
@@ -99,7 +99,7 @@ trait HasFormWidgets
             return false;
         }
 
-        if (is_subclass_of($widgetClass, \Amber\Classes\FormWidgetBase::class)) {
+        if (is_subclass_of($widgetClass, \Larajax\Ui\Classes\FormWidgetBase::class)) {
             return true;
         }
 

@@ -1,9 +1,9 @@
-<?php namespace Amber\Widgets\Lists;
+<?php namespace Larajax\Ui\Widgets\Lists;
 
 /**
  * HasListEvents declares the list's extension points as overridable methods.
  *
- * Amber consumers extend the list by subclassing and overriding these methods.
+ * Larajax UI consumers extend the list by subclassing and overriding these methods.
  * October's backend list subclass overrides them to additionally fire global
  * events (e.g. `backend.list.extendColumns`) for plugin-based extensibility.
  */

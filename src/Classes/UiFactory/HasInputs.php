@@ -1,11 +1,11 @@
-<?php namespace Amber\Classes\UiFactory;
+<?php namespace Larajax\Ui\Classes\UiFactory;
 
-use Amber\Classes\ViewComponent;
+use Larajax\Ui\Classes\ViewComponent;
 
 /**
  * HasInputs
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait HasInputs

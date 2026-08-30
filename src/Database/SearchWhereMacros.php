@@ -1,4 +1,4 @@
-<?php namespace Amber\Database;
+<?php namespace Larajax\Ui\Database;
 
 use DbDongle;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
  * real methods take precedence over macros, so registering both is harmless.
  *
  * @see \October\Rain\Database\Builder
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class SearchWhereMacros

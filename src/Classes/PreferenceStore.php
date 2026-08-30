@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use Illuminate\Support\Facades\Session;
 
@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Session;
  * PreferenceStore is a session-backed store for widget user preferences.
  *
  * October CMS stores these in the backend user preferences database model
- * (Backend\Models\UserPreference). Amber runs standalone, so preferences are
+ * (Backend\Models\UserPreference). Larajax UI runs standalone, so preferences are
  * kept in the session by default. Override `getPreferenceStorage` on the
  * consuming class to supply a durable per-user store.
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class PreferenceStore
@@ -18,7 +18,7 @@ class PreferenceStore
     /**
      * @var string sessionKey base for stored preferences
      */
-    protected string $sessionKey = 'amber.preferences';
+    protected string $sessionKey = 'larajax.ui.preferences';
 
     /**
      * get a preference value

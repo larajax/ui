@@ -1,27 +1,27 @@
-<?php namespace Amber\Widgets;
+<?php namespace Larajax\Ui\Widgets;
 
 use Lang;
 use DbDongle;
-use Amber\Classes\WidgetBase;
+use Larajax\Ui\Classes\WidgetBase;
 use October\Rain\Element\ElementHolder;
 use October\Contracts\Element\FilterElement;
-use Amber\Classes\FilterScope;
+use Larajax\Ui\Classes\FilterScope;
 use ApplicationException;
 use SystemException;
 
 /**
  * Filter Widget renders a container used for filtering things
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Filter extends WidgetBase implements FilterElement
 {
-    use \Amber\Widgets\Filter\IsFilterElement;
-    use \Amber\Widgets\Filter\ScopeProcessor;
-    use \Amber\Widgets\Filter\HasFilterEvents;
-    use \Amber\Widgets\Filter\HasFilterWidgets;
-    use \Amber\Widgets\Filter\HasLegacyDefinitions;
+    use \Larajax\Ui\Widgets\Filter\IsFilterElement;
+    use \Larajax\Ui\Widgets\Filter\ScopeProcessor;
+    use \Larajax\Ui\Widgets\Filter\HasFilterEvents;
+    use \Larajax\Ui\Widgets\Filter\HasFilterWidgets;
+    use \Larajax\Ui\Widgets\Filter\HasLegacyDefinitions;
 
     //
     // Configurable Properties
@@ -746,7 +746,7 @@ class Filter extends WidgetBase implements FilterElement
              *
              * Example usage:
              *
-             *     $model->bindEvent('model.filter.filterScopes', function ((\Amber\Widgets\Filter) $filterWidget, (stdClass) $scopes, (string) $context) use (\October\Rain\Database\Model $model) {
+             *     $model->bindEvent('model.filter.filterScopes', function ((\Larajax\Ui\Widgets\Filter) $filterWidget, (stdClass) $scopes, (string) $context) use (\October\Rain\Database\Model $model) {
              *         if ($someCondition) {
              *             $scopes->roles->hidden = false;
              *         }

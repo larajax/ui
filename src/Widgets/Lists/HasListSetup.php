@@ -1,4 +1,4 @@
-<?php namespace Amber\Widgets\Lists;
+<?php namespace Larajax\Ui\Widgets\Lists;
 
 /**
  * HasListSetup concern

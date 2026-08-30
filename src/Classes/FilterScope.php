@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use Arr;
 use Lang;
@@ -13,7 +13,7 @@ use SystemException;
  * @method ScopeDefinition arrayName(string $arrayName) arrayName if the scope element names should be contained in an array.
  * @method ScopeDefinition idPrefix(string $prefix) idPrefix to the scope identifier so it can be totally unique.
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class FilterScope extends ScopeDefinition

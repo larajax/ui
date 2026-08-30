@@ -1,4 +1,4 @@
-<?php namespace Amber\Traits;
+<?php namespace Larajax\Ui\Traits;
 
 use Log;
 use October\Rain\Exception\ApplicationException;
@@ -10,7 +10,7 @@ use System\Classes\ErrorHandler;
 /**
  * ErrorMaker Trait adds exception based methods to a class, goes well with `ViewMaker`
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait ErrorMaker

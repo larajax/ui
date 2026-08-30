@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes\UiFactory\Migrate;
+<?php namespace Larajax\Ui\Classes\UiFactory\Migrate;
 
 /**
  * PopupButton
@@ -8,7 +8,7 @@
  * @method PopupButton size(string $size) size of the popup
  * @method PopupButton keyboard(bool $keyboard) keyboard can close the popup
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class PopupButton extends AjaxButton

@@ -1,8 +1,8 @@
-<?php namespace Amber\Classes\UiFactory\Migrate;
+<?php namespace Larajax\Ui\Classes\UiFactory\Migrate;
 
 use Html;
 use Backend;
-use Amber\Classes\UiElement;
+use Larajax\Ui\Classes\UiElement;
 
 /**
  * Button
@@ -23,7 +23,7 @@ use Amber\Classes\UiElement;
  * @method Button listCheckedTrigger(bool $listCheckedTrigger) listCheckedTrigger enables the button when a list checkbox is selected
  * @method Button labelHtml(bool $labelHtml) labelHtml
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Button extends UiElement

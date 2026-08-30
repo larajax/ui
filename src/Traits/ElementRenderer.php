@@ -1,4 +1,4 @@
-<?php namespace Amber\Traits;
+<?php namespace Larajax\Ui\Traits;
 
 /**
  * @deprecated

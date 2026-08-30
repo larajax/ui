@@ -1,9 +1,9 @@
-<?php namespace Amber\Widgets\Filter;
+<?php namespace Larajax\Ui\Widgets\Filter;
 
 use Lang;
-use Amber\Classes\FilterScope;
-use Amber\Classes\WidgetManager;
-use Amber\Classes\FilterWidgetBase;
+use Larajax\Ui\Classes\FilterScope;
+use Larajax\Ui\Classes\WidgetManager;
+use Larajax\Ui\Classes\FilterWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
 use SystemException;
 
@@ -18,7 +18,7 @@ trait HasFilterWidgets
     protected $filterWidgets = [];
 
     /**
-     * @var \Amber\Classes\WidgetManager widgetManager
+     * @var \Larajax\Ui\Classes\WidgetManager widgetManager
      */
     protected $widgetManager;
 
@@ -72,7 +72,7 @@ trait HasFilterWidgets
      * @param string $class Widget class name
      * @param mixed $scopeConfig A field name, an array of config or a FileScope object.
      * @param array $widgetConfig An array of config.
-     * @return \Amber\Classes\FilterWidgetBase The widget object
+     * @return \Larajax\Ui\Classes\FilterWidgetBase The widget object
      */
     public function makeFilterWidget($class, $scopeConfig = [], $widgetConfig = [])
     {
@@ -124,7 +124,7 @@ trait HasFilterWidgets
             return false;
         }
 
-        if (is_subclass_of($widgetClass, \Amber\Classes\FilterWidgetBase::class)) {
+        if (is_subclass_of($widgetClass, \Larajax\Ui\Classes\FilterWidgetBase::class)) {
             return true;
         }
 

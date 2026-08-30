@@ -1,4 +1,4 @@
-<?php namespace Amber\Widgets;
+<?php namespace Larajax\Ui\Widgets;
 
 use Illuminate\Support\Facades\Gate;
 use ApplicationException;
@@ -11,7 +11,7 @@ use ForbiddenException;
  * - Multisite structure syncing is not supported (no CMS site manager).
  * - Structure permissions map to Laravel gate abilities instead of backend permissions.
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class ListStructure extends Lists
@@ -443,7 +443,7 @@ class ListStructure extends Lists
     /**
      * hasStructurePermission checks if the user has permissions to modify the structure.
      *
-     * Note: October CMS checks backend user permissions here (BackendAuth). Amber
+     * Note: October CMS checks backend user permissions here (BackendAuth). Larajax UI
      * runs standalone, so permissions map to Laravel gate abilities instead.
      */
     protected function hasStructurePermission(): bool

@@ -1,13 +1,13 @@
-<?php namespace Amber\Widgets\Filter;
+<?php namespace Larajax\Ui\Widgets\Filter;
 
-use Amber\Classes\FilterScope;
+use Larajax\Ui\Classes\FilterScope;
 use October\Rain\Element\Filter\ScopeDefinition;
 
 /**
  * IsFilterElement defines all methods to satisfy the FilterElement contract
  *
  * @see \October\Contracts\Element\FilterElement
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait IsFilterElement

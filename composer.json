@@ -1,20 +1,20 @@
 {
-    "name": "october/amber",
+    "name": "larajax/ui",
     "description": "Form, List and UI tools",
-    "homepage": "https://github.com/octobercms/amber",
+    "homepage": "https://github.com/larajax/ui",
     "require": {
         "php": "^8.2",
         "october/rain": "dev-next as 4.4.0"
     },
     "autoload": {
         "psr-4": {
-            "Amber\\": "src"
+            "Larajax\\Ui\\": "src"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Amber\\AmberServiceProvider"
+                "Larajax\\Ui\\UiServiceProvider"
             ]
         }
     },

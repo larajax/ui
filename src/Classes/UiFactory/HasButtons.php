@@ -1,11 +1,11 @@
-<?php namespace Amber\Classes\UiFactory;
+<?php namespace Larajax\Ui\Classes\UiFactory;
 
-use Amber\Classes\ViewComponent;
+use Larajax\Ui\Classes\ViewComponent;
 
 /**
  * HasButtons
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait HasButtons
@@ -28,9 +28,9 @@ trait HasButtons
         bool $danger = false,
         string|array $hotkey = '',
         ...$attributes
-    ): ViewComponent|\Amber\Classes\UiFactory\Migrate\Button {
+    ): ViewComponent|\Larajax\Ui\Classes\UiFactory\Migrate\Button {
         if ($_migrate !== '') {
-            return new \Amber\Classes\UiFactory\Migrate\Button($_migrate, $label);
+            return new \Larajax\Ui\Classes\UiFactory\Migrate\Button($_migrate, $label);
         }
 
         return new ViewComponent('button', compact(
@@ -65,9 +65,9 @@ trait HasButtons
         string|array $hotkey = '',
         array $requestData = [],
         ...$attributes
-    ): ViewComponent|\Amber\Classes\UiFactory\Migrate\PopupButton {
+    ): ViewComponent|\Larajax\Ui\Classes\UiFactory\Migrate\PopupButton {
         if ($_migrate !== '') {
-            return new \Amber\Classes\UiFactory\Migrate\PopupButton($_migrate, $label);
+            return new \Larajax\Ui\Classes\UiFactory\Migrate\PopupButton($_migrate, $label);
         }
 
         return new ViewComponent('button.popup-button', compact(
@@ -103,9 +103,9 @@ trait HasButtons
         string|array $hotkey = '',
         array $requestData = [],
         ...$attributes
-    ): ViewComponent|\Amber\Classes\UiFactory\Migrate\AjaxButton {
+    ): ViewComponent|\Larajax\Ui\Classes\UiFactory\Migrate\AjaxButton {
         if ($_migrate !== '') {
-            return new \Amber\Classes\UiFactory\Migrate\AjaxButton($_migrate, $label);
+            return new \Larajax\Ui\Classes\UiFactory\Migrate\AjaxButton($_migrate, $label);
         }
 
         return new ViewComponent('button.ajax-button', compact(

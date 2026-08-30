@@ -1,13 +1,13 @@
-<?php namespace Amber\FilterWidgets;
+<?php namespace Larajax\Ui\FilterWidgets;
 
 use Db;
 use DbDongle;
-use Amber\Classes\FilterWidgetBase;
+use Larajax\Ui\Classes\FilterWidgetBase;
 
 /**
  * Number filter
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Number extends FilterWidgetBase

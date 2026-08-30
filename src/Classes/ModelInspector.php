@@ -1,7 +1,7 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Amber\Classes\ModelInspector\Inspection;
+use Larajax\Ui\Classes\ModelInspector\Inspection;
 use Throwable;
 
 /**

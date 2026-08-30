@@ -1,21 +1,21 @@
-<?php namespace Amber\FormWidgets;
+<?php namespace Larajax\Ui\FormWidgets;
 
 use DbDongle;
-use Amber\Classes\FormField;
-use Amber\Classes\FormWidgetBase;
+use Larajax\Ui\Classes\FormField;
+use Larajax\Ui\Classes\FormWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
 use SystemException;
 
 /**
  * Relation renders a field pre-populated with a belongsTo and belongsToHasMany relation
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Relation extends FormWidgetBase
 {
-    use \Amber\Traits\FormModelSaver;
-    use \Amber\Traits\FormModelWidget;
+    use \Larajax\Ui\Traits\FormModelSaver;
+    use \Larajax\Ui\Traits\FormModelWidget;
 
     //
     // Configurable Properties

@@ -1,13 +1,13 @@
-<?php namespace Amber\Traits;
+<?php namespace Larajax\Ui\Traits;
 
 use Str;
-use Amber\Classes\PreferenceStore;
+use Larajax\Ui\Classes\PreferenceStore;
 
 /**
  * PreferenceMaker Trait adds methods for modifying user preferences in a controller class,
  * or a class that contains a `$controller` property referencing a controller.
  *
- * Note: October CMS backs this with the backend user preference model. Amber uses a
+ * Note: October CMS backs this with the backend user preference model. Larajax UI uses a
  * session-backed store by default; override `getPreferenceStorage` for durable storage.
  */
 trait PreferenceMaker
@@ -127,7 +127,7 @@ trait PreferenceMaker
 
     /**
      * Specifies the storage used for the user preferences.
-     * @return \Amber\Classes\PreferenceStore
+     * @return \Larajax\Ui\Classes\PreferenceStore
      */
     protected function getPreferenceStorage()
     {

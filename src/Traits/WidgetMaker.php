@@ -1,7 +1,7 @@
-<?php namespace Amber\Traits;
+<?php namespace Larajax\Ui\Traits;
 
 use Lang;
-use Amber\Classes\FormField;
+use Larajax\Ui\Classes\FormField;
 use Exception;
 
 /**
@@ -10,7 +10,7 @@ use Exception;
  * Adds widget based methods to a controller class, or a class that
  * contains a `$controller` property referencing a controller.
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait WidgetMaker
@@ -31,7 +31,7 @@ trait WidgetMaker
      * makeWidget object with the supplied configuration file.
      * @param string $class
      * @param array $widgetConfig
-     * @return \Amber\Classes\WidgetBase
+     * @return \Larajax\Ui\Classes\WidgetBase
      */
     public function makeWidget($class, $widgetConfig = [])
     {
@@ -54,7 +54,7 @@ trait WidgetMaker
      * @param string $class
      * @param mixed $fieldConfig
      * @param array|object $widgetConfig
-     * @return \Amber\Classes\FormWidgetBase
+     * @return \Larajax\Ui\Classes\FormWidgetBase
      */
     public function makeFormWidget($class, $fieldConfig = [], $widgetConfig = [])
     {

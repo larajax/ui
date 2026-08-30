@@ -1,13 +1,13 @@
-<?php namespace Amber\Widgets\Lists;
+<?php namespace Larajax\Ui\Widgets\Lists;
 
-use Amber\Classes\ListColumn;
+use Larajax\Ui\Classes\ListColumn;
 use October\Rain\Element\Lists\ColumnDefinition;
 
 /**
  * IsListElement defines all methods to satisfy the ListElement contract
  *
  * @see \October\Contracts\Element\ListElement
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait IsListElement

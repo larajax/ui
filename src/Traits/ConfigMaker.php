@@ -1,4 +1,4 @@
-<?php namespace Amber\Traits;
+<?php namespace Larajax\Ui\Traits;
 
 use Yaml;
 use File;
@@ -11,7 +11,7 @@ use October\Rain\Html\Helper as HtmlHelper;
 /**
  * ConfigMaker trait adds configuration based methods to a class
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait ConfigMaker

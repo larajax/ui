@@ -1,8 +1,8 @@
-<?php namespace Amber\Traits;
+<?php namespace Larajax\Ui\Traits;
 
 use Db;
 use Str;
-use Amber\Classes\FormField;
+use Larajax\Ui\Classes\FormField;
 use October\Rain\Database\Model as DatabaseModel;
 use October\Rain\Exception\ValidationException;
 
@@ -11,7 +11,7 @@ use October\Rain\Exception\ValidationException;
  * from postback, and filling the model attributes and attributes of any related
  * models. This is a customized, safer and simplified version of `$model->push()`
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait FormModelSaver

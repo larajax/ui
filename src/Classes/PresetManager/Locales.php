@@ -1,12 +1,12 @@
-<?php namespace Amber\Classes\PresetManager;
+<?php namespace Larajax\Ui\Classes\PresetManager;
 
 /**
  * Locales is a resource file with minimal dependencies
  *
  * Note: October CMS resolves locale labels through its backend language files;
- * Amber inlines the native labels directly.
+ * Larajax UI inlines the native labels directly.
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Locales

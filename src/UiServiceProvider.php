@@ -1,10 +1,10 @@
 <?php
 
-namespace Amber;
+namespace Larajax\Ui;
 
 use Illuminate\Support\ServiceProvider;
 
-class AmberServiceProvider extends ServiceProvider
+class UiServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -18,12 +18,12 @@ class AmberServiceProvider extends ServiceProvider
         // Registers the `~` (app base) path symbol used in view and config paths
         $this->app->register(\October\Rain\Filesystem\FilesystemServiceProvider::class);
 
-        $this->app->scoped('system.widgets', \Amber\Classes\WidgetManager::class);
+        $this->app->scoped('system.widgets', \Larajax\Ui\Classes\WidgetManager::class);
 
-        $this->app->singleton('system.preset', \Amber\Classes\PresetManager::class);
+        $this->app->singleton('system.preset', \Larajax\Ui\Classes\PresetManager::class);
 
-        $this->app->singleton(\Amber\Classes\ModelInspector::class);
-        $this->app->alias(\Amber\Classes\ModelInspector::class, 'model.inspector');
+        $this->app->singleton(\Larajax\Ui\Classes\ModelInspector::class);
+        $this->app->alias(\Larajax\Ui\Classes\ModelInspector::class, 'model.inspector');
 
         // Supports the DbDongle facade used for raw SQL parsing in widgets
         $this->app->singleton('db.dongle', function ($app) {
@@ -34,10 +34,10 @@ class AmberServiceProvider extends ServiceProvider
         });
 
         // Gives plain Eloquent models the searchWhere methods used by the widgets
-        \Amber\Database\SearchWhereMacros::register();
+        \Larajax\Ui\Database\SearchWhereMacros::register();
 
         \Illuminate\Foundation\AliasLoader::getInstance()->alias('Str', \October\Rain\Support\Str::class);
-        \Illuminate\Foundation\AliasLoader::getInstance()->alias('Ui', \Amber\Facades\Ui::class);
+        \Illuminate\Foundation\AliasLoader::getInstance()->alias('Ui', \Larajax\Ui\Facades\Ui::class);
     }
 
     /**
@@ -45,24 +45,24 @@ class AmberServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'amber');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'ui');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../resources/assets' => public_path('vendor/amber'),
-            ], 'amber-assets');
+                __DIR__ . '/../resources/assets' => public_path('vendor/larajax/ui'),
+            ], 'larajax-ui-assets');
         }
 
         app('system.widgets')->registerFormWidgets(function ($manager) {
-            $manager->registerFormWidget(\Amber\FormWidgets\Relation::class, 'relation');
-            $manager->registerFormWidget(\Amber\FormWidgets\FileUpload::class, 'fileupload');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\Relation::class, 'relation');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\FileUpload::class, 'fileupload');
         });
 
         app('system.widgets')->registerFilterWidgets(function ($manager) {
-            $manager->registerFilterWidget(\Amber\FilterWidgets\Group::class, 'group');
-            $manager->registerFilterWidget(\Amber\FilterWidgets\Date::class, 'date');
-            $manager->registerFilterWidget(\Amber\FilterWidgets\Text::class, 'text');
-            $manager->registerFilterWidget(\Amber\FilterWidgets\Number::class, 'number');
+            $manager->registerFilterWidget(\Larajax\Ui\FilterWidgets\Group::class, 'group');
+            $manager->registerFilterWidget(\Larajax\Ui\FilterWidgets\Date::class, 'date');
+            $manager->registerFilterWidget(\Larajax\Ui\FilterWidgets\Text::class, 'text');
+            $manager->registerFilterWidget(\Larajax\Ui\FilterWidgets\Number::class, 'number');
         });
     }
 }

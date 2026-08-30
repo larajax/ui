@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes\PresetManager;
+<?php namespace Larajax\Ui\Classes\PresetManager;
 
 use DateTime as PhpDateTime;
 use DateTimeZone;
@@ -6,7 +6,7 @@ use DateTimeZone;
 /**
  * Dates is a resource file with minimal dependencies
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Dates

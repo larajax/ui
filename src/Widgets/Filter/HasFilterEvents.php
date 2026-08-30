@@ -1,9 +1,9 @@
-<?php namespace Amber\Widgets\Filter;
+<?php namespace Larajax\Ui\Widgets\Filter;
 
 /**
  * HasFilterEvents declares the filter's extension points as overridable methods.
  *
- * Amber consumers extend the filter by subclassing and overriding these methods.
+ * Larajax UI consumers extend the filter by subclassing and overriding these methods.
  * October's backend filter subclass overrides them to additionally fire global
  * events (e.g. `backend.filter.extendScopes`) for plugin-based extensibility.
  */

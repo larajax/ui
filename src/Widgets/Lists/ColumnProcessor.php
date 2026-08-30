@@ -1,4 +1,4 @@
-<?php namespace Amber\Widgets\Lists;
+<?php namespace Larajax\Ui\Widgets\Lists;
 
 use Illuminate\Support\Facades\Gate;
 
@@ -23,7 +23,7 @@ trait ColumnProcessor
      * processPermissionCheck check if user has permissions to show the column
      * and removes it if permission is denied
      *
-     * Note: October CMS checks backend user permissions here (BackendAuth). Amber
+     * Note: October CMS checks backend user permissions here (BackendAuth). Larajax UI
      * runs standalone, so column permissions map to Laravel gate abilities instead:
      * the column is kept when the user passes any of the listed abilities.
      */

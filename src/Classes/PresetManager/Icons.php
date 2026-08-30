@@ -1,9 +1,9 @@
-<?php namespace Amber\Classes\PresetManager;
+<?php namespace Larajax\Ui\Classes\PresetManager;
 
 /**
  * Icons is a resource file with minimal dependencies
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Icons

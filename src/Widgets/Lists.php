@@ -1,4 +1,4 @@
-<?php namespace Amber\Widgets;
+<?php namespace Larajax\Ui\Widgets;
 
 use Db;
 use Str;
@@ -7,8 +7,8 @@ use Lang;
 use DbDongle;
 use October\Rain\Html\Helper as HtmlHelper;
 use October\Rain\Router\Helper as RouterHelper;
-use Amber\Classes\ListColumn;
-use Amber\Classes\WidgetBase;
+use Larajax\Ui\Classes\ListColumn;
+use Larajax\Ui\Classes\WidgetBase;
 use Illuminate\Database\Eloquent\Model;
 use October\Contracts\Element\ListElement;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -21,19 +21,19 @@ use UnitEnum;
 /**
  * Lists Widget used for building back end lists, renders a list of model objects
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Lists extends WidgetBase implements ListElement
 {
-    use \Amber\Widgets\Lists\IsListElement;
-    use \Amber\Widgets\Lists\ColumnProcessor;
-    use \Amber\Widgets\Lists\HasListSetup;
-    use \Amber\Widgets\Lists\HasListEvents;
-    use \Amber\Widgets\Lists\HasValueProcessor;
-    use \Amber\Widgets\Lists\HasSorting;
-    use \Amber\Widgets\Lists\HasSearch;
-    use \Amber\Traits\PreferenceMaker;
+    use \Larajax\Ui\Widgets\Lists\IsListElement;
+    use \Larajax\Ui\Widgets\Lists\ColumnProcessor;
+    use \Larajax\Ui\Widgets\Lists\HasListSetup;
+    use \Larajax\Ui\Widgets\Lists\HasListEvents;
+    use \Larajax\Ui\Widgets\Lists\HasValueProcessor;
+    use \Larajax\Ui\Widgets\Lists\HasSorting;
+    use \Larajax\Ui\Widgets\Lists\HasSearch;
+    use \Larajax\Ui\Traits\PreferenceMaker;
 
     //
     // Configurable Properties
@@ -131,7 +131,7 @@ class Lists extends WidgetBase implements ListElement
 
     /**
      * @var array allColumns collection of all list columns used in this list.
-     * @see \Amber\Classes\ListColumn
+     * @see \Larajax\Ui\Classes\ListColumn
      */
     protected $allColumns;
 

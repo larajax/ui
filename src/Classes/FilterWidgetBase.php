@@ -1,9 +1,9 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 /**
  * FilterWidgetBase class contains widgets used specifically for filters
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 abstract class FilterWidgetBase extends WidgetBase
@@ -34,14 +34,14 @@ abstract class FilterWidgetBase extends WidgetBase
     protected $valueFrom;
 
     /**
-     * @var \Amber\Widgets\Filter parentFilter that contains this scope
+     * @var \Larajax\Ui\Widgets\Filter parentFilter that contains this scope
      */
     protected $parentFilter = null;
 
     /**
      * __construct
      *
-     * Note: October's WidgetBase constructor receives the controller; Amber's
+     * Note: October's WidgetBase constructor receives the controller; Larajax UI's
      * widget lifecycle assigns it before registration, so this constructor
      * wires the controller and invokes register() itself.
      *
@@ -77,7 +77,7 @@ abstract class FilterWidgetBase extends WidgetBase
 
     /**
      * getParentFilter retrieves the parent filter for this filter widget
-     * @return \Amber\Widgets\Filter|null
+     * @return \Larajax\Ui\Widgets\Filter|null
      */
     public function getParentFilter()
     {

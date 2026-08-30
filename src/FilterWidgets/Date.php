@@ -1,15 +1,15 @@
-<?php namespace Amber\FilterWidgets;
+<?php namespace Larajax\Ui\FilterWidgets;
 
 use Db;
 use DbDongle;
 use Date as DateFacade;
-use Amber\Classes\FilterWidgetBase;
+use Larajax\Ui\Classes\FilterWidgetBase;
 use Exception;
 
 /**
  * Date filter
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Date extends FilterWidgetBase

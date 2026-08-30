@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use App;
 
@@ -7,11 +7,11 @@ use App;
  */
 class WidgetManager
 {
-    use \Amber\Classes\WidgetManager\HasFormWidgets;
-    use \Amber\Classes\WidgetManager\HasFilterWidgets;
+    use \Larajax\Ui\Classes\WidgetManager\HasFormWidgets;
+    use \Larajax\Ui\Classes\WidgetManager\HasFilterWidgets;
 
     /**
-     * @var \Amber\Classes\WidgetManager|null parent manager that this
+     * @var \Larajax\Ui\Classes\WidgetManager|null parent manager that this
      * manager falls back to when a widget is not found in its own registry.
      */
     protected $parent;

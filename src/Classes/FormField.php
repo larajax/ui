@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use Str;
 use Arr;
@@ -34,7 +34,7 @@ use Exception;
  * @method FormField valuePopulate(bool $valuePopulate) valuePopulate determines if the value should be populated from the data source (default: true)
  * @method FormField tooltip(array|string $tooltip) tooltip to display next to the field label, as an array supports: title, placement, icon, isHtml
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class FormField extends FieldDefinition
@@ -507,7 +507,7 @@ class FormField extends FieldDefinition
 
         // Preset
         if (is_string($fieldOptions) && str_starts_with($fieldOptions, 'preset:')) {
-            $fieldOptions = \Amber\Classes\PresetManager::instance()->getPreset($fieldOptions);
+            $fieldOptions = \Larajax\Ui\Classes\PresetManager::instance()->getPreset($fieldOptions);
         }
         // Method name
         elseif (is_string($fieldOptions)) {

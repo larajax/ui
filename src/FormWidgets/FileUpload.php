@@ -1,11 +1,11 @@
-<?php namespace Amber\FormWidgets;
+<?php namespace Larajax\Ui\FormWidgets;
 
 use Input;
 use System;
 use Response;
 use Validator;
-use Amber\Classes\FormField;
-use Amber\Classes\FormWidgetBase;
+use Larajax\Ui\Classes\FormField;
+use Larajax\Ui\Classes\FormWidgetBase;
 use October\Rain\Filesystem\Definitions as FileDefinitions;
 use ApplicationException;
 use ValidationException;
@@ -20,13 +20,13 @@ use Exception;
  *        label: Some file
  *        type: fileupload
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class FileUpload extends FormWidgetBase
 {
-    use \Amber\Traits\FormModelSaver;
-    use \Amber\Traits\FormModelWidget;
+    use \Larajax\Ui\Traits\FormModelSaver;
+    use \Larajax\Ui\Traits\FormModelWidget;
 
     //
     // Configurable Properties
@@ -91,7 +91,7 @@ class FileUpload extends FormWidgetBase
     //
 
     /**
-     * @var \Amber\Widgets\Form configFormWidget is the embedded form for modifying the
+     * @var \Larajax\Ui\Widgets\Form configFormWidget is the embedded form for modifying the
      * properties of the selected file.
      */
     protected $configFormWidget;
@@ -202,7 +202,7 @@ class FileUpload extends FormWidgetBase
         $config->alias = $this->alias . $this->getDefaultAlias();
         $config->arrayName = 'FileUploadWidget';
 
-        $widget = $this->makeWidget(\Amber\Widgets\Form::class, $config);
+        $widget = $this->makeWidget(\Larajax\Ui\Widgets\Form::class, $config);
         $widget->bindToController();
 
         return $this->configFormWidget = $widget;

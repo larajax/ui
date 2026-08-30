@@ -1,11 +1,11 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use App;
 
 /**
  * PresetManager class manages preset lists
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class PresetManager
@@ -25,17 +25,17 @@ class PresetManager
      */
     public function __construct()
     {
-        $this->registerPreset('icons', [\Amber\Classes\PresetManager\Icons::class, 'icons']);
-        $this->registerPreset('icons@phosphor', [\Amber\Classes\PresetManager\Icons::class, 'iconsPhosphor']);
-        $this->registerPreset('icons@bootstrap', [\Amber\Classes\PresetManager\Icons::class, 'bootstrapIcons']);
-        $this->registerPreset('locales', [\Amber\Classes\PresetManager\Locales::class, 'locales']);
-        $this->registerPreset('flags', [\Amber\Classes\PresetManager\Locales::class, 'flags']);
-        $this->registerPreset('flags@short', [\Amber\Classes\PresetManager\Locales::class, 'flagsShort']);
-        $this->registerPreset('timezones', [\Amber\Classes\PresetManager\Dates::class, 'timezones']);
+        $this->registerPreset('icons', [\Larajax\Ui\Classes\PresetManager\Icons::class, 'icons']);
+        $this->registerPreset('icons@phosphor', [\Larajax\Ui\Classes\PresetManager\Icons::class, 'iconsPhosphor']);
+        $this->registerPreset('icons@bootstrap', [\Larajax\Ui\Classes\PresetManager\Icons::class, 'bootstrapIcons']);
+        $this->registerPreset('locales', [\Larajax\Ui\Classes\PresetManager\Locales::class, 'locales']);
+        $this->registerPreset('flags', [\Larajax\Ui\Classes\PresetManager\Locales::class, 'flags']);
+        $this->registerPreset('flags@short', [\Larajax\Ui\Classes\PresetManager\Locales::class, 'flagsShort']);
+        $this->registerPreset('timezones', [\Larajax\Ui\Classes\PresetManager\Dates::class, 'timezones']);
 
         // Deprecated aliases
-        $this->registerPreset('phosphorIcons', [\Amber\Classes\PresetManager\Icons::class, 'iconsPhosphor']);
-        $this->registerPreset('localeIcons', [\Amber\Classes\PresetManager\Locales::class, 'flags']);
+        $this->registerPreset('phosphorIcons', [\Larajax\Ui\Classes\PresetManager\Icons::class, 'iconsPhosphor']);
+        $this->registerPreset('localeIcons', [\Larajax\Ui\Classes\PresetManager\Locales::class, 'flags']);
     }
 
     /**

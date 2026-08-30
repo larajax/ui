@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use October\Rain\Html\Helper as HtmlHelper;
 use October\Rain\Extension\Extendable;
@@ -55,7 +55,7 @@ abstract class FormWidgetBase extends WidgetBase
     protected $formField;
 
     /**
-     * @var \Amber\Widgets\Form The parent form that contains this field
+     * @var \Larajax\Ui\Widgets\Form The parent form that contains this field
      */
     protected $parentForm = null;
 
@@ -100,7 +100,7 @@ abstract class FormWidgetBase extends WidgetBase
 
     /**
      * getParentForm retrieves the parent form for this formwidget
-     * @return \Amber\Widgets\Form|null
+     * @return \Larajax\Ui\Widgets\Form|null
      */
     public function getParentForm()
     {

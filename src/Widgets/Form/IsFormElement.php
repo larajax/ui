@@ -1,7 +1,7 @@
-<?php namespace Amber\Widgets\Form;
+<?php namespace Larajax\Ui\Widgets\Form;
 
-use Amber\Classes\FormTabs;
-use Amber\Classes\FormField;
+use Larajax\Ui\Classes\FormTabs;
+use Larajax\Ui\Classes\FormField;
 use October\Rain\Element\Form\FieldDefinition;
 use October\Rain\Element\Form\FieldsetDefinition;
 use SystemException;
@@ -10,7 +10,7 @@ use SystemException;
  * IsFormElement defines all methods to satisfy the FormElement contract
  *
  * @see \October\Contracts\Element\FormElement
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait IsFormElement

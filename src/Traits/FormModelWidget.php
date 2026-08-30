@@ -1,4 +1,4 @@
-<?php namespace Amber\Traits;
+<?php namespace Larajax\Ui\Traits;
 
 use Lang;
 use ApplicationException;
@@ -9,7 +9,7 @@ use Exception;
  *
  * Special logic for for form widgets that use a database stored model.
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait FormModelWidget

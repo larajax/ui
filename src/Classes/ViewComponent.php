@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
@@ -18,7 +18,7 @@ use Illuminate\Contracts\Support\Htmlable;
  *
  * Implements Htmlable so Blade's escaped {{ }} output renders it as raw HTML.
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class ViewComponent implements Htmlable
@@ -155,6 +155,6 @@ class ViewComponent implements Htmlable
         $vars['slots'] = $slots;
         $vars['slot'] = $slot;
 
-        return View::make("amber::ui.{$this->name}", $vars)->render();
+        return View::make("ui::ui.{$this->name}", $vars)->render();
     }
 }

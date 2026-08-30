@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use Closure;
 use October\Rain\Element\ElementBase;
@@ -11,7 +11,7 @@ use Illuminate\Contracts\Support\Htmlable;
  */
 class UiElement extends ElementBase implements Htmlable
 {
-    use \Amber\Traits\ElementRenderer;
+    use \Larajax\Ui\Traits\ElementRenderer;
 
     /**
      * toHtml renders the element as raw HTML for Htmlable consumers (e.g. Blade {{ }})

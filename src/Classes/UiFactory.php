@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 /**
  * UiFactory creates view-based UI components.
@@ -11,13 +11,13 @@
  *         <p>Content</p>
  *     <?php UiFactory::end() ?>
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class UiFactory
 {
-    use \Amber\Classes\UiFactory\HasInputs;
-    use \Amber\Classes\UiFactory\HasButtons;
+    use \Larajax\Ui\Classes\UiFactory\HasInputs;
+    use \Larajax\Ui\Classes\UiFactory\HasButtons;
 
     /**
      * slot switches to a named slot on the current component
@@ -40,6 +40,6 @@ class UiFactory
      */
     public static function callout()
     {
-        return new \Amber\Classes\UiFactory\Migrate\Callout();
+        return new \Larajax\Ui\Classes\UiFactory\Migrate\Callout();
     }
 }

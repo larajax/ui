@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes;
+<?php namespace Larajax\Ui\Classes;
 
 use October\Rain\Database\Model;
 use October\Rain\Html\Helper as HtmlHelper;
@@ -23,7 +23,7 @@ use October\Rain\Element\Lists\ColumnDefinition;
  * @method ListColumn valueTrans(bool $valueTrans) valueTrans determines if display values (model attributes) should be translated
  * @method ListColumn tooltip(array|string $tooltip) tooltip to display next to the column header, as an array supports: title, placement, icon, isHtml
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class ListColumn extends ColumnDefinition

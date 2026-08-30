@@ -1,4 +1,4 @@
-<?php namespace Amber\Traits;
+<?php namespace Larajax\Ui\Traits;
 
 use Str;
 use Session;
@@ -9,7 +9,7 @@ use Session;
  * Adds session management based methods to a controller class, or a class
  * that contains a `$controller` property referencing a controller.
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 trait SessionMaker

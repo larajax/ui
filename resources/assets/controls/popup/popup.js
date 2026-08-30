@@ -41,7 +41,7 @@ export class Popup {
      */
     static open(options = {}) {
         if (!window.bootstrap || !window.bootstrap.Modal) {
-            console.error('[amber] The popup control requires the Bootstrap 5 bundle to be loaded.');
+            console.error('[larajax.ui] The popup control requires the Bootstrap 5 bundle to be loaded.');
             return null;
         }
 

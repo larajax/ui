@@ -1,4 +1,4 @@
-<?php /* Amber uses a native date input instead of October's Pikaday date picker */ ?>
+<?php /* Larajax UI uses a native date input instead of October's Pikaday date picker */ ?>
 <div class="facet-item">
     <input
         type="date"

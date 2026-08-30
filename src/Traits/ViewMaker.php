@@ -1,9 +1,9 @@
-<?php namespace Amber\Traits;
+<?php namespace Larajax\Ui\Traits;
 
 use File;
 use Exception;
 use Throwable;
-use Amber\Classes\ViewPathGuesser;
+use Larajax\Ui\Classes\ViewPathGuesser;
 
 // @todo move to Filesystem
 use System;
@@ -11,7 +11,7 @@ use System;
 /**
  * ViewMaker Trait adds view based methods to a class
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Samuel Georges
  */
 trait ViewMaker

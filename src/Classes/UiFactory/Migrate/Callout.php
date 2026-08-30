@@ -1,6 +1,6 @@
-<?php namespace Amber\Classes\UiFactory\Migrate;
+<?php namespace Larajax\Ui\Classes\UiFactory\Migrate;
 
-use Amber\Classes\UiElement;
+use Larajax\Ui\Classes\UiElement;
 
 /**
  * Callout
@@ -12,7 +12,7 @@ use Amber\Classes\UiElement;
  * @method Callout commentHtml(string $commentHtml) commentHtml
  * @method Callout cssClass(string $cssClass) cssClass
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Callout extends UiElement

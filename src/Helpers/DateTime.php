@@ -1,4 +1,4 @@
-<?php namespace Amber\Helpers;
+<?php namespace Larajax\Ui\Helpers;
 
 use Date;
 use Carbon\Carbon;
@@ -9,7 +9,7 @@ use Exception;
 /**
  * DateTime helper
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class DateTime

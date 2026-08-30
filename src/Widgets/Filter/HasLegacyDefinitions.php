@@ -1,4 +1,4 @@
-<?php namespace Amber\Widgets\Filter;
+<?php namespace Larajax\Ui\Widgets\Filter;
 
 use Date;
 use Exception;

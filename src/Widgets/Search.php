@@ -1,14 +1,14 @@
-<?php namespace Amber\Widgets;
+<?php namespace Larajax\Ui\Widgets;
 
 use Lang;
 use Throwable;
-use Amber\Classes\WidgetBase;
+use Larajax\Ui\Classes\WidgetBase;
 
 /**
  * Search Widget
  * Used for building a toolbar, Renders a search container.
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Search extends WidgetBase

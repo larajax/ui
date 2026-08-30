@@ -1,5 +1,5 @@
 /*
- * Amber - entry script
+ * Larajax UI - entry script
  *
  * Modules register themselves with jax.registerControl() on import. Imports
  * are layered: generic controls first, then widgets that build on them.

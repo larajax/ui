@@ -1,10 +1,10 @@
-<?php namespace Amber\FilterWidgets;
+<?php namespace Larajax\Ui\FilterWidgets;
 
 use Db;
 use Str;
 use Lang;
 use DbDongle;
-use Amber\Classes\FilterWidgetBase;
+use Larajax\Ui\Classes\FilterWidgetBase;
 use October\Rain\Element\ElementHolder;
 use October\Rain\Html\Helper as HtmlHelper;
 use ApplicationException;
@@ -12,7 +12,7 @@ use ApplicationException;
 /**
  * Group filter
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Group extends FilterWidgetBase

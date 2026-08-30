@@ -1,10 +1,10 @@
-<?php namespace Amber\Widgets;
+<?php namespace Larajax\Ui\Widgets;
 
 use Lang;
 use Form as FormHelper;
-use Amber\Classes\FormTabs;
-use Amber\Classes\FormField;
-use Amber\Classes\WidgetBase;
+use Larajax\Ui\Classes\FormTabs;
+use Larajax\Ui\Classes\FormField;
+use Larajax\Ui\Classes\WidgetBase;
 use October\Rain\Element\ElementHolder;
 use October\Contracts\Element\FormElement;
 use October\Rain\Database\Model;
@@ -18,11 +18,11 @@ use UnitEnum;
  */
 class Form extends WidgetBase implements FormElement
 {
-    use \Amber\Widgets\Form\HasFormWidgets;
-    use \Amber\Widgets\Form\HasFormEvents;
-    use \Amber\Widgets\Form\FieldProcessor;
-    use \Amber\Widgets\Form\IsFormElement;
-    use \Amber\Traits\FormModelSaver;
+    use \Larajax\Ui\Widgets\Form\HasFormWidgets;
+    use \Larajax\Ui\Widgets\Form\HasFormEvents;
+    use \Larajax\Ui\Widgets\Form\FieldProcessor;
+    use \Larajax\Ui\Widgets\Form\IsFormElement;
+    use \Larajax\Ui\Traits\FormModelSaver;
 
     //
     // Configurable Properties
@@ -83,13 +83,13 @@ class Form extends WidgetBase implements FormElement
 
     /**
      * @var array allFields used in this form.
-     * @see \Amber\Classes\FormField
+     * @see \Larajax\Ui\Classes\FormField
      */
     protected $allFields = [];
 
     /**
      * @var object allTabs sections used in this form.
-     * @see \Amber\Classes\FormTabs
+     * @see \Larajax\Ui\Classes\FormTabs
      */
     protected $allTabs = [
         'outside' => null,
@@ -286,7 +286,7 @@ class Form extends WidgetBase implements FormElement
      * Options:
      *  - useContainer: Wrap the result in a container, used by AJAX. Default: true
      *
-     * @param \Amber\Classes\FormField|string $field The field name or definition
+     * @param \Larajax\Ui\Classes\FormField|string $field The field name or definition
      * @param array $options
      * @return string|bool The rendered partial contents, or false if suppressing an exception
      */
@@ -317,7 +317,7 @@ class Form extends WidgetBase implements FormElement
 
     /**
      * renderFieldElement renders the HTML element for a field
-     * @param \Amber\Classes\FormField|string $field
+     * @param \Larajax\Ui\Classes\FormField|string $field
      * @return string|bool The rendered partial contents, or false if suppressing an exception
      */
     public function renderFieldElement($field)
@@ -897,7 +897,7 @@ class Form extends WidgetBase implements FormElement
     /**
      * getFieldDepends returns a HTML encoded value containing the other fields
      * this field depends on
-     * @param \Amber\Classes\FormField $field
+     * @param \Larajax\Ui\Classes\FormField $field
      */
     protected function getFieldDepends($field): string
     {
@@ -931,7 +931,7 @@ class Form extends WidgetBase implements FormElement
 
     /**
      * getFieldTooltipValue looks up the field tooltip value
-     * @param \Amber\Classes\FormField $field
+     * @param \Larajax\Ui\Classes\FormField $field
      * @return string
      */
     public function getFieldTooltipValue($field)
@@ -1071,7 +1071,7 @@ class Form extends WidgetBase implements FormElement
              *
              * Example usage:
              *
-             *     $model->bindEvent('model.form.filterFields', function ((\Amber\Widgets\Form) $formWidget, (stdClass) $fields, (string) $context) use (\October\Rain\Database\Model $model) {
+             *     $model->bindEvent('model.form.filterFields', function ((\Larajax\Ui\Widgets\Form) $formWidget, (stdClass) $fields, (string) $context) use (\October\Rain\Database\Model $model) {
              *         if ($model->source_type == 'http') {
              *             $fields->source_url->hidden = false;
              *             $fields->git_branch->hidden = true;

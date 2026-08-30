@@ -1,6 +1,6 @@
-<?php namespace Amber\Classes\ModelInspector;
+<?php namespace Larajax\Ui\Classes\ModelInspector;
 
-use Amber\Classes\ModelInspector;
+use Larajax\Ui\Classes\ModelInspector;
 
 /**
  * Inspection is a read-only metadata view over a model.

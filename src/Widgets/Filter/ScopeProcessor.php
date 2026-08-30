@@ -1,4 +1,4 @@
-<?php namespace Amber\Widgets\Filter;
+<?php namespace Larajax\Ui\Widgets\Filter;
 
 use Illuminate\Support\Facades\Gate;
 use October\Rain\Html\Helper as HtmlHelper;
@@ -56,7 +56,7 @@ trait ScopeProcessor
      * processPermissionCheck check if user has permissions to show the scope
      * and removes it if permission is denied
      *
-     * Note: October CMS checks backend user permissions here (BackendAuth). Amber
+     * Note: October CMS checks backend user permissions here (BackendAuth). Larajax UI
      * runs standalone, so scope permissions map to Laravel gate abilities instead:
      * the scope is kept when the user passes any of the listed abilities.
      */

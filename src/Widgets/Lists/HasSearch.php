@@ -1,9 +1,9 @@
-<?php namespace Amber\Widgets\Lists;
+<?php namespace Larajax\Ui\Widgets\Lists;
 
 /**
  * HasSearch concern
  *
- * @mixin \Amber\Traits\SessionMaker
+ * @mixin \Larajax\Ui\Traits\SessionMaker
  */
 trait HasSearch
 {

@@ -1,4 +1,4 @@
-<?php namespace Amber\Classes\WidgetManager;
+<?php namespace Larajax\Ui\Classes\WidgetManager;
 
 use Str;
 

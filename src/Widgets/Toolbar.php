@@ -1,12 +1,12 @@
-<?php namespace Amber\Widgets;
+<?php namespace Larajax\Ui\Widgets;
 
-use Amber\Classes\WidgetBase;
+use Larajax\Ui\Classes\WidgetBase;
 
 /**
  * Toolbar Widget
  * Used for building a toolbar, renders a toolbar.
  *
- * @package october\amber
+ * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
 class Toolbar extends WidgetBase
@@ -96,7 +96,7 @@ class Toolbar extends WidgetBase
             }
 
             $searchConfig->alias = $this->alias . 'Search';
-            $this->searchWidget = $this->makeWidget(\Amber\Widgets\Search::class, $searchConfig);
+            $this->searchWidget = $this->makeWidget(\Larajax\Ui\Widgets\Search::class, $searchConfig);
             $this->searchWidget->bindToController();
         }
     }
