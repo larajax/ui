@@ -1,11 +1,11 @@
 <?php namespace Larajax\Ui\Widgets\Lists;
 
 /**
- * HasListEvents declares the list's extension points as overridable methods.
+ * HasListEvents declares the list's extension points as overridable methods
+ * backed by widget-local events.
  *
- * Larajax UI consumers extend the list by subclassing and overriding these methods.
- * October's backend list subclass overrides them to additionally fire global
- * events (e.g. `backend.list.extendColumns`) for plugin-based extensibility.
+ * Larajax UI consumers may either extend the list by subclassing and overriding
+ * these methods, or bind callbacks directly to the widget with bindEvent().
  */
 trait HasListEvents
 {
@@ -15,6 +15,7 @@ trait HasListEvents
      */
     protected function eventExtendColumns(): void
     {
+        $this->fireEvent('list.extendColumns');
     }
 
     /**
@@ -23,6 +24,7 @@ trait HasListEvents
      */
     protected function eventExtendQueryBefore($query): void
     {
+        $this->fireEvent('list.extendQueryBefore', [$query]);
     }
 
     /**
@@ -31,6 +33,7 @@ trait HasListEvents
      */
     protected function eventExtendSearchQuery($query): void
     {
+        $this->fireEvent('list.extendSearchQuery', [$query]);
     }
 
     /**
@@ -38,6 +41,7 @@ trait HasListEvents
      */
     protected function eventExtendSortColumn($query, string $sortColumn, string $sortDirection): void
     {
+        $this->fireEvent('list.extendSortColumn', [$query, $sortColumn, $sortDirection]);
     }
 
     /**
@@ -46,7 +50,11 @@ trait HasListEvents
      */
     protected function eventExtendQuery($query)
     {
-        return null;
+        if (!$this->hasListEventListeners('list.extendQuery')) {
+            return null;
+        }
+
+        return $this->fireEvent('list.extendQuery', [&$query], true) ?? $query;
     }
 
     /**
@@ -55,7 +63,11 @@ trait HasListEvents
      */
     protected function eventExtendRecords($records)
     {
-        return null;
+        if (!$this->hasListEventListeners('list.extendRecords')) {
+            return null;
+        }
+
+        return $this->fireEvent('list.extendRecords', [&$records], true) ?? $records;
     }
 
     /**
@@ -64,6 +76,16 @@ trait HasListEvents
      */
     protected function eventRefresh(array $result): array
     {
+        $eventResults = $this->fireEvent('list.refresh', [&$result]);
+
+        foreach ($eventResults as $eventResult) {
+            if (!is_array($eventResult)) {
+                continue;
+            }
+
+            $result = $eventResult + $result;
+        }
+
         return $result;
     }
 
@@ -74,7 +96,7 @@ trait HasListEvents
      */
     protected function eventOverrideRecordAction($record, $url, $onClick)
     {
-        return null;
+        return $this->fireEvent('list.overrideRecordAction', [$record, $url, $onClick], true);
     }
 
     /**
@@ -82,7 +104,11 @@ trait HasListEvents
      */
     protected function eventOverrideHeaderValue($column, $value)
     {
-        return null;
+        if (!$this->hasListEventListeners('list.overrideHeaderValue')) {
+            return null;
+        }
+
+        return $this->fireEvent('list.overrideHeaderValue', [$column, &$value], true) ?? $value;
     }
 
     /**
@@ -90,7 +116,11 @@ trait HasListEvents
      */
     protected function eventOverrideColumnValueRaw($record, $column, $value)
     {
-        return null;
+        if (!$this->hasListEventListeners('list.overrideColumnValueRaw')) {
+            return null;
+        }
+
+        return $this->fireEvent('list.overrideColumnValueRaw', [$record, $column, &$value], true) ?? $value;
     }
 
     /**
@@ -98,7 +128,11 @@ trait HasListEvents
      */
     protected function eventOverrideColumnValue($record, $column, $value)
     {
-        return null;
+        if (!$this->hasListEventListeners('list.overrideColumnValue')) {
+            return null;
+        }
+
+        return $this->fireEvent('list.overrideColumnValue', [$record, $column, &$value], true) ?? $value;
     }
 
     /**
@@ -106,6 +140,18 @@ trait HasListEvents
      */
     protected function eventInjectRowClass($record, $value)
     {
-        return null;
+        if (!$this->hasListEventListeners('list.injectRowClass')) {
+            return null;
+        }
+
+        return $this->fireEvent('list.injectRowClass', [$record, &$value], true) ?? $value;
+    }
+
+    /**
+     * hasListEventListeners checks if the widget has callbacks for a local event.
+     */
+    protected function hasListEventListeners(string $event): bool
+    {
+        return isset($this->emitterEventCollection[$event]) || isset($this->emitterSingleEventCollection[$event]);
     }
 }
