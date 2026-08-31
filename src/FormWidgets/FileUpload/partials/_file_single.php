@@ -5,6 +5,7 @@
     data-upload-handler="<?= $this->getEventHandler('onUpload') ?>"
     data-template="#<?= $this->getId('template') ?>"
     data-error-template="#<?= $this->getId('errorTemplate') ?>"
+    data-error-icon="<?= e(\Larajax\Ui\Facades\Ui::iconClass('fileupload.error')) ?>"
     data-unique-id="<?= $this->getId() ?>"
     data-max-filesize="<?= $maxFilesize ?>"
     <?php if ($externalToolbarBus): ?>data-external-toolbar-bus="<?= e($externalToolbarBus)?>"<?php endif ?>
@@ -21,7 +22,7 @@
     <div class="uploader-control-container <?= $externalToolbarBus ? 'external-toolbar' : null ?>">
         <div class="uploader-control-toolbar">
             <a href="javascript:;" class="backend-toolbar-button control-button toolbar-upload-button">
-                <i class="icon-common-file-upload"></i>
+                <?= \Larajax\Ui\Facades\Ui::icon('fileupload.upload') ?>
                 <span
                     class="button-label"
                     data-upload-label="<?= __("Upload") ?>"
@@ -35,7 +36,7 @@
                 data-request="<?= $this->getEventHandler('onRemoveAttachment') ?>"
                 data-request-confirm="<?= __("Are you sure?") ?>"
             >
-                <i class="icon-common-file-remove"></i>
+                <?= \Larajax\Ui\Facades\Ui::icon('fileupload.remove') ?>
                 <span class="button-label"><?= __("Clear") ?></span>
             </button>
         </div>

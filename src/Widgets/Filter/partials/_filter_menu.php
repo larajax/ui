@@ -3,7 +3,7 @@
     <a href="javascript:;"
         data-toggle="dropdown"
         title="<?= __("Filter Setup") ?>">
-        <span><i class="ph ph-funnel-simple"></i></span>
+        <span><?= \Larajax\Ui\Facades\Ui::icon('filter.menu') ?></span>
     </a>
     <ul class="dropdown-menu" role="menu">
         <li role="presentation">
@@ -14,7 +14,7 @@
                 data-request="<?= $this->getEventHandler('onFilterClearAll') ?>"
                 data-stripe-load-indicator
                 tabindex="-1">
-                <i class="icon-eraser"></i>
+                <?= \Larajax\Ui\Facades\Ui::icon('filter.clear') ?>
                 <?= __("Clear Filters") ?>
             </a>
         </li>

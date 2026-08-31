@@ -7,11 +7,11 @@
                 class="list-file-item"
                 title="<?= e($fileItem['name']) ?>"
             >
-                <i class="ph ph-<?= e($fileItem['icon']) ?>"></i>
+                <?= \Larajax\Ui\Facades\Ui::icon($fileItem['icon']) ?>
             </a>
         <?php else: ?>
             <span class="list-file-item" title="<?= e($fileItem['name']) ?>">
-                <i class="ph ph-<?= e($fileItem['icon']) ?>"></i>
+                <?= \Larajax\Ui\Facades\Ui::icon($fileItem['icon']) ?>
             </span>
         <?php endif ?>
     <?php endforeach ?>

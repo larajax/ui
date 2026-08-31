@@ -117,6 +117,30 @@ It is now packaged as a standalone Laravel library.
 - Documentation and examples: https://larajax.org
 - Source code: https://github.com/larajax/ui
 
+
+### Icon packs
+
+Larajax UI resolves widget icons through `Ui::icon()` and `Ui::iconClass()`. Publish the icon config when you want to switch packs or override individual icons:
+
+```bash
+php artisan vendor:publish --tag=larajax-ui-config
+```
+
+Then select a default pack in `config/larajax-icons.php` or with `LARAJAX_ICONS`:
+
+```php
+'default' => env('LARAJAX_ICONS', 'phosphor'),
+```
+
+The package ships `october`, `phosphor`, and `bootstrap` packs. Unknown icon names fall back to the provided value as a raw CSS class, so existing code can still pass `icon-pencil`, `ph ph-pencil`, or a project-specific class. To customize icons, add flat global overrides. At runtime, `Ui::extendIcons([...])` can apply the same kind of overlay from a service provider:
+
+```php
+'overrides' => [
+    'tooltip.info' => 'my-icon my-info',
+    'pagination.next' => 'my-icon my-next',
+],
+```
+
 ## License
 
 Larajax UI is open-sourced software licensed under the [MIT license](LICENSE.md).

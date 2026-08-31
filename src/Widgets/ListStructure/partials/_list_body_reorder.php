@@ -2,6 +2,6 @@
     <span
         class="list-reorder-handle"
         title="<?= e(__('Reorder')) ?>">
-        <i class="icon-list-reorder"></i>
+        <?= \Larajax\Ui\Facades\Ui::icon('list.reorder') ?>
     </span>
 </td>

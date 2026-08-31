@@ -30,7 +30,7 @@ include __DIR__.'/_hotkey.php';
     'data-tooltip-position' => $hotkeyStr ? 'top' : null,
 ])) ?>>
     <?php if ($icon): ?>
-        <i class="<?= e($icon) ?>"></i>
+        <?= \Larajax\Ui\Facades\Ui::icon($icon) ?>
     <?php endif ?>
     <?= e($label) ?>
 </button>

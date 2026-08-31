@@ -11,134 +11,138 @@
     flex-wrap: wrap;
     gap: .25rem 1rem;
     padding: .5rem 0;
-}
 
-.control-filter.is-loading {
-    opacity: .6;
-    pointer-events: none;
-}
+    &.is-loading {
+        opacity: .6;
+        pointer-events: none;
+    }
 
-.control-filter .filter-group {
-    display: flex;
-    align-items: center;
-}
+    .filter-group {
+        display: flex;
+        align-items: center;
+    }
 
-/* Clear-all menu */
+    /* Clear-all menu */
 
-.control-filter .filter-setup > a {
-    display: inline-block;
-    color: inherit;
-    text-decoration: none;
-    opacity: .55;
-}
+    .filter-setup > a {
+        display: inline-block;
+        color: inherit;
+        text-decoration: none;
+        opacity: .55;
 
-.control-filter .filter-setup > a:hover {
-    opacity: 1;
-}
+        &:hover {
+            opacity: 1;
+        }
+    }
 
-/* Scopes */
+    /* Scopes */
 
-.control-filter .filter-scope {
-    display: flex;
-    align-items: center;
-    gap: .35rem;
-    white-space: nowrap;
-}
+    .filter-scope {
+        display: flex;
+        align-items: center;
+        gap: .35rem;
+        white-space: nowrap;
 
-.control-filter .filter-scope.active {
-    font-weight: 600;
-}
+        &.active {
+            font-weight: 600;
+        }
+    }
 
-.control-filter .scope-dropdown select {
-    width: auto;
-    display: inline-block;
-}
+    .scope-dropdown {
+        select {
+            width: auto;
+            display: inline-block;
+        }
+    }
 
-/* Popover scopes (text, number, date, group) */
+    /* Popover scopes (text, number, date, group) */
 
-.control-filter a.filter-scope {
-    color: inherit;
-    text-decoration: none;
-    padding: .15rem .4rem;
-    border-radius: .25rem;
-}
+    a.filter-scope {
+        color: inherit;
+        text-decoration: none;
+        padding: .15rem .4rem;
+        border-radius: .25rem;
 
-.control-filter a.filter-scope:hover,
-.control-filter a.filter-scope.filter-scope-open {
-    background: rgba(0, 0, 0, .06);
-}
+        &:hover,
+        &.filter-scope-open {
+            background: rgba(0, 0, 0, .06);
+        }
 
-.control-filter a.filter-scope .filter-setting {
-    display: inline-block;
-    min-width: 1.2em;
-    margin-left: .35em;
-    padding: 0 .3em;
-    border-radius: 1em;
-    background: #0d6efd;
-    color: #fff;
-    font-size: .75em;
-    text-align: center;
-}
+        .filter-setting {
+            display: inline-block;
+            min-width: 1.2em;
+            margin-left: .35em;
+            padding: 0 .3em;
+            border-radius: 1em;
+            background: #0d6efd;
+            color: #fff;
+            font-size: .75em;
+            text-align: center;
+        }
+    }
 
-/* Base popover container styles come from controls/popover */
-.control-filter .filter-popover {
-    min-width: 320px;
-}
+    /* Base popover container styles come from controls/popover */
+    .filter-popover {
+        min-width: 320px;
+    }
 
-.control-filter .filter-facet {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    margin-bottom: .5rem;
-}
+    .filter-facet {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        margin-bottom: .5rem;
 
-.control-filter .filter-facet .facet-item.is-grow {
-    flex-grow: 1;
-}
+        .facet-item.is-grow {
+            flex-grow: 1;
+        }
+    }
 
-.control-filter .filter-buttons {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    margin-top: .75rem;
-}
+    .filter-buttons {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        margin-top: .75rem;
+    }
 
-/* Group filter option lists */
+    /* Group filter option lists */
 
-.control-filter .filter-items ul,
-.control-filter .filter-active-items ul {
-    list-style: none;
-    margin: .5rem 0 0;
-    padding: 0;
-    max-height: 200px;
-    overflow-y: auto;
-}
+    .filter-items,
+    .filter-active-items {
+        ul {
+            list-style: none;
+            margin: .5rem 0 0;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
 
-.control-filter .filter-items li a,
-.control-filter .filter-active-items li a {
-    display: block;
-    padding: .2rem .4rem;
-    color: inherit;
-    text-decoration: none;
-    border-radius: .25rem;
-}
+        li a {
+            display: block;
+            padding: .2rem .4rem;
+            color: inherit;
+            text-decoration: none;
+            border-radius: .25rem;
 
-.control-filter .filter-items li a:hover,
-.control-filter .filter-active-items li a:hover {
-    background: rgba(0, 0, 0, .06);
-}
+            &:hover {
+                background: rgba(0, 0, 0, .06);
+            }
+        }
+    }
 
-.control-filter .filter-active-items li a {
-    font-weight: 600;
-}
+    .filter-active-items {
+        li a {
+            font-weight: 600;
 
-.control-filter .filter-active-items li a:after {
-    content: " ✕";
-    opacity: .5;
-}
+            &:after {
+                content: " \00d7";
+                opacity: .5;
+            }
+        }
+    }
 
-.control-filter .filter-mode {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: .5rem;
+    .filter-mode {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: .5rem;
+    }
 }

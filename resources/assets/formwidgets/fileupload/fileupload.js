@@ -7,6 +7,7 @@
  *   appear in the postback variable called X_OCTOBER_FILEUPLOAD
  * - data-template - a Dropzone.js template to use for each item
  * - data-error-template - a popover template used to show an error
+ * - data-error-icon - icon CSS classes to add to failed previews
  * - data-sort-handler - AJAX handler for sorting postbacks
  * - data-config-handler - AJAX handler for configuration popup
  *
@@ -152,7 +153,7 @@ jax.registerControl('fileupload', class extends jax.ControlBase {
 
         $buttons.each(function() {
             var $button = $(this),
-                $icon = $button.find('i[class^=icon]');
+                $icon = $button.find('i').first();
 
             that.toolbarExtensionPoint.push(
                 {
@@ -339,7 +340,7 @@ jax.registerControl('fileupload', class extends jax.ControlBase {
         const iconContainer = preview.querySelector('.icon-container');
         if (iconContainer && !iconContainer.querySelector('.error-icon')) {
             const errorIcon = document.createElement('i');
-            errorIcon.className = 'ph ph-warning error-icon';
+            errorIcon.className = `${this.config.errorIcon || 'ph ph-warning'} error-icon`.trim();
             iconContainer.appendChild(errorIcon);
         }
     }

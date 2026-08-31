@@ -1,5 +1,7 @@
 <?php namespace Larajax\Ui\Classes\UiFactory\Migrate;
 
+use Larajax\Ui\Facades\Ui;
+
 /**
  * AjaxButton
  *
@@ -74,7 +76,7 @@ class AjaxButton extends Button
     {
         $this->label('');
 
-        $this->replaceCssClass('oc-icon-delete btn-icon danger pull-right');
+        $this->replaceCssClass(Ui::iconClass('action.delete').' btn-icon danger pull-right');
 
         return $this;
     }

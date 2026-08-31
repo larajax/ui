@@ -15,7 +15,7 @@
         <?php elseif ($option->image): ?>
             data-image="<?= e($option->image) ?>"
         <?php elseif ($option->icon): ?>
-            data-icon="<?= e($option->icon) ?>"
+            data-icon="<?= e(\Larajax\Ui\Facades\Ui::iconClass($option->icon)) ?>"
         <?php endif ?>
         value="<?= e($value) ?>"
     ><?= $indentStr ?><?= $field->getDisplayValue($option->label) ?></option>
@@ -36,7 +36,7 @@
             <?php elseif ($option->image): ?>
                 <img src="<?= e($option->image) ?>" alt="" />
             <?php elseif ($option->icon): ?>
-                <i class="<?= e($option->icon) ?>"></i>
+                <?= \Larajax\Ui\Facades\Ui::icon($option->icon) ?>
             <?php endif ?>
             <?= $field->getDisplayValue($option->label) ?>
         <?php endif ?>

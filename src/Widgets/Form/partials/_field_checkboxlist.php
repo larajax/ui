@@ -74,7 +74,7 @@
                     <?= $field->disabled ? 'disabled' : '' ?>
                     <?= $field->readOnly ? 'readonly' : '' ?>
                     data-field-checkboxlist-all>
-                    <i class="icon-check-multi"></i>
+                    <?= \Larajax\Ui\Facades\Ui::icon('checkboxlist.select_all') ?>
                     <span class="button-label"><?= e(trans('backend::lang.form.select_all')) ?></span>
                 </a>
 
@@ -83,7 +83,7 @@
                     <?= $field->disabled ? 'disabled' : '' ?>
                     <?= $field->readOnly ? 'readonly' : '' ?>
                     data-field-checkboxlist-none>
-                    <i class="icon-eraser"></i>
+                    <?= \Larajax\Ui\Facades\Ui::icon('checkboxlist.clear') ?>
                     <span class="button-label"><?= e(trans('backend::lang.form.select_none')) ?></span>
                 </a>
             </div>

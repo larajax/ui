@@ -17,7 +17,7 @@
                             data-request-<?= $transportMethod ?>="{ <?= e($pageName) ?>: 1 }"
                             data-load-indicator="<?= e(__('Loading...')) ?>"
                             title="<?= e(__('First page')) ?>">
-                            <i class="icon-angle-double-left"></i>
+                            <?= \Larajax\Ui\Facades\Ui::icon('pagination.first') ?>
                         </a>
                     </li>
                 <?php else: ?>
@@ -25,7 +25,7 @@
                         <span
                             class="page-link page-first"
                             title="<?= e(__('First page')) ?>">
-                            <i class="icon-angle-double-left"></i>
+                            <?= \Larajax\Ui\Facades\Ui::icon('pagination.first') ?>
                         </span>
                     </li>
                 <?php endif ?>
@@ -38,7 +38,7 @@
                             data-request-<?= $transportMethod ?>="{ <?= e($pageName) ?>: <?= $pageCurrent - 1 ?> }"
                             data-load-indicator="<?= e(__('Loading...')) ?>"
                             title="<?= e(__('Previous page')) ?>">
-                            <i class="icon-angle-left"></i>
+                            <?= \Larajax\Ui\Facades\Ui::icon('pagination.previous') ?>
                         </a>
                     </li>
                 <?php else: ?>
@@ -46,7 +46,7 @@
                         <span
                             class="page-link page-back"
                             title="<?= e(__('Previous page')) ?>">
-                            <i class="icon-angle-left"></i>
+                            <?= \Larajax\Ui\Facades\Ui::icon('pagination.previous') ?>
                         </span>
                     </li>
                 <?php endif ?>
@@ -97,7 +97,7 @@
                             data-request="<?= $this->getEventHandler('onPaginate') ?>"
                             data-load-indicator="<?= e(__('Loading...')) ?>"
                             title="<?= e(__('Next page')) ?>">
-                            <i class="icon-angle-right"></i>
+                            <?= \Larajax\Ui\Facades\Ui::icon('pagination.next') ?>
                         </a>
                     </li>
                 <?php else: ?>
@@ -105,7 +105,7 @@
                         <span
                             class="page-link page-next"
                             title="<?= e(__('Next page')) ?>">
-                            <i class="icon-angle-right"></i>
+                            <?= \Larajax\Ui\Facades\Ui::icon('pagination.next') ?>
                         </span>
                     </li>
                 <?php endif ?>
@@ -118,7 +118,7 @@
                             data-request="<?= $this->getEventHandler('onPaginate') ?>"
                             data-load-indicator="<?= e(__('Loading...')) ?>"
                             title="<?= e(__('Last page')) ?>">
-                            <i class="icon-angle-double-right"></i>
+                            <?= \Larajax\Ui\Facades\Ui::icon('pagination.last') ?>
                         </a>
                     </li>
                 <?php else: ?>
@@ -126,7 +126,7 @@
                         <span
                             class="page-link page-last"
                             title="<?= e(__('Last page')) ?>">
-                            <i class="icon-angle-double-right"></i>
+                            <?= \Larajax\Ui\Facades\Ui::icon('pagination.last') ?>
                         </span>
                     </li>
                 <?php endif ?>

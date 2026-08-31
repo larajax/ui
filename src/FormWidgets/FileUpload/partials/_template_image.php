@@ -11,7 +11,7 @@
                 />
             </div>
             <div class="drag-handle">
-                <i class="icon-list-reorder"></i>
+                <?= \Larajax\Ui\Facades\Ui::icon('fileupload.reorder') ?>
             </div>
         <?php endif ?>
 

@@ -17,7 +17,7 @@ elseif ($secondary) $classes[] = 'btn-secondary';
         'data-toggle' => 'dropdown',
     ])) ?>>
         <?php if ($icon): ?>
-            <i class="<?= e($icon) ?>"></i>
+            <?= \Larajax\Ui\Facades\Ui::icon($icon) ?>
             <?= e($label) ?>
         <?php else: ?>
             <?= e($label) ?>

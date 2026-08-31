@@ -439,7 +439,7 @@ trait HasValueProcessor
     }
 
     /**
-     * getFileTypeIcon returns the appropriate Phosphor icon for a file extension
+     * getFileTypeIcon returns the appropriate semantic icon for a file extension
      */
     protected function getFileTypeIcon(string $extension): string
     {
@@ -517,6 +517,8 @@ trait HasValueProcessor
             'yml' => 'file-code',
         ];
 
-        return $iconMap[$extension] ?? 'file';
+        $icon = $iconMap[$extension] ?? 'default';
+
+        return 'file.type.' . (str_starts_with($icon, 'file-') ? substr($icon, 5) : $icon);
     }
 }

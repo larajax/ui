@@ -1,0 +1,64 @@
+<?php namespace Larajax\Ui\Classes\Icons;
+
+class OctoberIconPack implements IconPack
+{
+    public function icons(): array
+    {
+        return [
+            'action.delete' => 'oc-icon-delete',
+
+            'search.clear' => 'storm-icon',
+
+            'filter.menu' => 'ph ph-funnel-simple',
+            'filter.clear' => 'icon-eraser',
+
+            'checkboxlist.select_all' => 'icon-check-multi',
+            'checkboxlist.clear' => 'icon-eraser',
+
+            'tooltip.info' => 'icon-info-circle',
+
+            'fileupload.upload' => 'icon-common-file-upload',
+            'fileupload.remove' => 'icon-common-file-remove',
+            'fileupload.reorder' => 'icon-list-reorder',
+            'fileupload.attachment' => 'icon-attachment',
+            'fileupload.error' => 'ph ph-warning',
+
+            'list.reorder' => 'icon-list-reorder',
+            'list.switch.true' => 'icon-check',
+            'list.switch.false' => 'icon-times',
+
+            'pagination.first' => 'icon-angle-double-left',
+            'pagination.previous' => 'icon-angle-left',
+            'pagination.prev' => 'icon-angle-left',
+            'pagination.next' => 'icon-angle-right',
+            'pagination.last' => 'icon-angle-double-right',
+
+            'file.type.default' => 'ph ph-file',
+            'file.type.file' => 'ph ph-file',
+            'file.type.zip' => 'ph ph-file-zip',
+            'file.type.archive' => 'ph ph-file-archive',
+            'file.type.pdf' => 'ph ph-file-pdf',
+            'file.type.doc' => 'ph ph-file-doc',
+            'file.type.text' => 'ph ph-file-text',
+            'file.type.xls' => 'ph ph-file-xls',
+            'file.type.csv' => 'ph ph-file-csv',
+            'file.type.ppt' => 'ph ph-file-ppt',
+            'file.type.jpg' => 'ph ph-file-jpg',
+            'file.type.png' => 'ph ph-file-png',
+            'file.type.image' => 'ph ph-file-image',
+            'file.type.svg' => 'ph ph-file-svg',
+            'file.type.audio' => 'ph ph-file-audio',
+            'file.type.video' => 'ph ph-file-video',
+            'file.type.html' => 'ph ph-file-html',
+            'file.type.css' => 'ph ph-file-css',
+            'file.type.js' => 'ph ph-file-js',
+            'file.type.jsx' => 'ph ph-file-jsx',
+            'file.type.ts' => 'ph ph-file-ts',
+            'file.type.tsx' => 'ph ph-file-tsx',
+            'file.type.vue' => 'ph ph-file-vue',
+            'file.type.sql' => 'ph ph-file-sql',
+            'file.type.rs' => 'ph ph-file-rs',
+            'file.type.code' => 'ph ph-file-code',
+        ];
+    }
+}

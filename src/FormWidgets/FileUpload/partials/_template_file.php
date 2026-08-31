@@ -11,14 +11,14 @@
                 />
             </div>
             <div class="drag-handle">
-                <i class="icon-list-reorder"></i>
+                <?= \Larajax\Ui\Facades\Ui::icon('fileupload.reorder') ?>
             </div>
         <?php endif ?>
 
         <div class="file-data-container">
             <div class="file-data-container-inner">
                 <div class="icon-container">
-                    <i class="icon-attachment"></i>
+                    <?= \Larajax\Ui\Facades\Ui::icon('fileupload.attachment') ?>
                 </div>
 
                 <div class="info">

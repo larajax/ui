@@ -3,6 +3,7 @@
 use Html;
 use Backend;
 use Larajax\Ui\Classes\UiElement;
+use Larajax\Ui\Facades\Ui;
 
 /**
  * Button
@@ -86,7 +87,7 @@ class Button extends UiElement
         $html = '';
 
         if ($iconName = $this->icon) {
-            $html .= '<i class="'.$iconName.'"></i> ';
+            $html .= Ui::icon($iconName).' ';
         }
 
         if (!$this->circleIcon) {

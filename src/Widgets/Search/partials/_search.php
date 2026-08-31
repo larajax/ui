@@ -23,7 +23,7 @@
             style="display:none"
             data-search-clear
         >
-            <i class="storm-icon"></i>
+            <?= \Larajax\Ui\Facades\Ui::icon('search.clear') ?>
         </button>
     </div>
 </div>

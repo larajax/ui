@@ -5,13 +5,15 @@
  * loading state shown while the handler contents load.
  */
 
-.control-popup .control-popup-loading {
-    display: block;
-    padding: 1.5rem;
-    text-align: center;
-    opacity: .5;
-}
+.control-popup {
+    .control-popup-loading {
+        display: block;
+        padding: 1.5rem;
+        text-align: center;
+        opacity: .5;
 
-.control-popup .control-popup-loading:before {
-    content: "…";
+        &:before {
+            content: "\2026";
+        }
+    }
 }

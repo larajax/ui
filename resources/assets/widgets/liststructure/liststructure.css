@@ -5,59 +5,63 @@
  * reorder handle column and the tree expand/collapse control.
  */
 
-.list-widget .list-reorder {
-    width: 2rem;
-    text-align: center;
-}
+.list-widget {
+    .list-reorder {
+        width: 2rem;
+        text-align: center;
+    }
 
-.list-widget .list-reorder-handle {
-    cursor: grab;
-    opacity: .4;
-}
+    .list-reorder-handle {
+        cursor: grab;
+        opacity: .4;
 
-.list-widget .list-reorder-handle:hover {
-    opacity: 1;
-}
+        &:hover {
+            opacity: 1;
+        }
+    }
 
-.list-widget .list-cell-tree {
-    position: relative;
-}
+    .list-cell-tree {
+        position: relative;
+    }
 
-.list-widget .tree-expand-collapse {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 15px;
-    text-align: center;
-    text-decoration: none;
-    color: inherit;
-}
+    .tree-expand-collapse {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 15px;
+        text-align: center;
+        text-decoration: none;
+        color: inherit;
 
-.list-widget .tree-expand-collapse span:before {
-    content: "\25B8"; /* collapsed: right triangle */
-    display: inline-block;
-}
+        span:before {
+            content: "\25B8"; /* collapsed: right triangle */
+            display: inline-block;
+        }
 
-.list-widget .tree-expand-collapse.is-expanded span:before {
-    content: "\25BE"; /* expanded: down triangle */
-}
+        &.is-expanded span:before {
+            content: "\25BE"; /* expanded: down triangle */
+        }
+    }
 
-.list-widget .setup-show-structure {
-    width: 2rem;
-}
+    .setup-show-structure {
+        width: 2rem;
+    }
 
-/* Drag state */
+    /* Drag state */
 
-.list-widget tbody.tree-drag-mode tr {
-    user-select: none;
-}
+    tbody.tree-drag-mode {
+        tr {
+            user-select: none;
+        }
+    }
 
-.list-widget tr.tree-drag-row {
-    opacity: .6;
-    background: rgba(13, 110, 253, .08);
-}
+    tr.tree-drag-row {
+        opacity: .6;
+        background: rgba(13, 110, 253, .08);
 
-.list-widget tr.tree-drag-row td {
-    border-top: 2px solid #0d6efd;
+        td {
+            border-top: 2px solid #0d6efd;
+        }
+    }
 }

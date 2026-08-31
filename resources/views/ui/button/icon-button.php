@@ -7,7 +7,7 @@ $hotkey ??= '';
 $handler ??= '';
 $danger ??= false;
 
-$classes = ['btn-icon', $icon];
+$classes = ['btn-icon', \Larajax\Ui\Facades\Ui::iconClass($icon)];
 if ($danger) $classes[] = 'danger';
 
 include __DIR__.'/_hotkey.php';

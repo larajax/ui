@@ -13,7 +13,7 @@
                 <?php foreach ($columns as $key => $column): ?>
                     <li>
                         <span class="drag-handle" title="<?= __("Reorder") ?>">
-                            <i class="icon-list-reorder"></i>
+                            <?= \Larajax\Ui\Facades\Ui::icon('list.reorder') ?>
                         </span>
                         <div class="form-check">
                             <input

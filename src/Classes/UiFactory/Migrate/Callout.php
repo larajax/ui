@@ -42,7 +42,7 @@ class Callout extends UiElement
                     <div class="header">
                         <?php if (is_string($this->icon)): ?>
                             <div class="custom-icon">
-                                <i class="<?= $this->icon ?>"></i>
+                                <?= \Larajax\Ui\Facades\Ui::icon($this->icon) ?>
                             </div>
                         <?php endif ?>
                         <?php if ($this->label): ?>

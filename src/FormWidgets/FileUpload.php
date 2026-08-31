@@ -162,7 +162,7 @@ class FileUpload extends FormWidgetBase
         $this->vars['singleFile'] = $fileList->first();
         $this->vars['size'] = $this->formField->size;
         $this->vars['displayMode'] = $this->getDisplayMode();
-        $this->vars['emptyIcon'] = $this->getConfig('emptyIcon', 'icon-upload');
+        $this->vars['emptyIcon'] = \Larajax\Ui\Facades\Ui::iconClass($this->getConfig('emptyIcon', 'fileupload.upload'));
         $this->vars['imageHeight'] = $this->imageHeight;
         $this->vars['imageWidth'] = $this->imageWidth;
         $this->vars['acceptedFileTypes'] = $this->getAcceptedFileTypes(true);

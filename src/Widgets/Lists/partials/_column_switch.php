@@ -1,7 +1,7 @@
 <span class="list-switch <?= $value ? 'is-true' : 'is-false' ?>">
     <?php if ($value): ?>
-        <i class="icon-check" data-bs-toggle="tooltip" title="<?= e($trueValue) ?>"></i>
+        <?= \Larajax\Ui\Facades\Ui::icon('list.switch.true', ['data-bs-toggle' => 'tooltip', 'title' => $trueValue]) ?>
     <?php else: ?>
-        <i class="icon-times" data-bs-toggle="tooltip" title="<?= e($falseValue) ?>"></i>
+        <?= \Larajax\Ui\Facades\Ui::icon('list.switch.false', ['data-bs-toggle' => 'tooltip', 'title' => $falseValue]) ?>
     <?php endif ?>
 </span>

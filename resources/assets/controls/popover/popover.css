@@ -21,8 +21,8 @@
     padding: 1rem;
     text-align: center;
     opacity: .5;
-}
 
-.control-popover-loading:before {
-    content: "…";
+    &:before {
+        content: "\2026";
+    }
 }

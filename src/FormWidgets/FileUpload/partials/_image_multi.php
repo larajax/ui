@@ -5,6 +5,7 @@
     data-upload-handler="<?= $this->getEventHandler('onUpload') ?>"
     data-template="#<?= $this->getId('template') ?>"
     data-error-template="#<?= $this->getId('errorTemplate') ?>"
+    data-error-icon="<?= e(\Larajax\Ui\Facades\Ui::iconClass('fileupload.error')) ?>"
     data-sort-handler="<?= $this->getEventHandler('onSortAttachments') ?>"
     data-unique-id="<?= $this->getId() ?>"
     data-max-filesize="<?= $maxFilesize ?>"
@@ -24,7 +25,7 @@
     <div class="uploader-control-container <?= $externalToolbarBus ? 'external-toolbar' : null ?>">
         <div class="uploader-control-toolbar">
             <a href="javascript:;" class="backend-toolbar-button control-button toolbar-upload-button">
-                <i class="icon-common-file-upload"></i>
+                <?= \Larajax\Ui\Facades\Ui::icon('fileupload.upload') ?>
                 <span class="button-label"><?= __("Upload") ?></span>
             </a>
 
@@ -35,7 +36,7 @@
                 data-request="<?= $this->getEventHandler('onRemoveAttachment') ?>"
                 disabled
             >
-                <i class="icon-common-file-remove"></i>
+                <?= \Larajax\Ui\Facades\Ui::icon('fileupload.remove') ?>
                 <span class="button-label"><?= __("Delete Selected") ?> <span></span></span>
             </button>
         </div>

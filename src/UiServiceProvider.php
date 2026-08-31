@@ -3,6 +3,7 @@
 namespace Larajax\Ui;
 
 use Illuminate\Support\ServiceProvider;
+use Larajax\Ui\Classes\IconManager;
 
 class UiServiceProvider extends ServiceProvider
 {
@@ -11,6 +12,8 @@ class UiServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->mergeIconConfig();
+
         $this->app->register(\October\Rain\Foundation\Providers\CoreServiceProvider::class);
 
         $this->app->register(\October\Rain\Html\HtmlServiceProvider::class);
@@ -21,6 +24,9 @@ class UiServiceProvider extends ServiceProvider
         $this->app->scoped('system.widgets', \Larajax\Ui\Classes\WidgetManager::class);
 
         $this->app->singleton('system.preset', \Larajax\Ui\Classes\PresetManager::class);
+
+        $this->app->singleton(IconManager::class);
+        $this->app->alias(IconManager::class, 'larajax.ui.icons');
 
         $this->app->singleton(\Larajax\Ui\Classes\ModelInspector::class);
         $this->app->alias(\Larajax\Ui\Classes\ModelInspector::class, 'model.inspector');
@@ -41,6 +47,24 @@ class UiServiceProvider extends ServiceProvider
     }
 
     /**
+     * mergeIconConfig loads defaults while preserving nested application overrides.
+     */
+    protected function mergeIconConfig(): void
+    {
+        $configPath = __DIR__ . '/../config/larajax-icons.php';
+
+        $this->mergeConfigFrom($configPath, 'larajax-icons');
+
+        $defaults = require $configPath;
+        $configured = $this->app['config']->get('larajax-icons', []);
+
+        $this->app['config']->set(
+            'larajax-icons',
+            array_replace_recursive($defaults, $configured)
+        );
+    }
+
+    /**
      * Bootstrap any application services.
      */
     public function boot(): void
@@ -51,6 +75,10 @@ class UiServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../resources/assets' => public_path('vendor/larajax/ui'),
             ], 'larajax-ui-assets');
+
+            $this->publishes([
+                __DIR__ . '/../config/larajax-icons.php' => config_path('larajax-icons.php'),
+            ], 'larajax-ui-config');
         }
 
         app('system.widgets')->registerFormWidgets(function ($manager) {

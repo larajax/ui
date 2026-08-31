@@ -461,7 +461,7 @@ class ListStructure extends Lists
      */
     protected function eventBeforeReorderStructure($item)
     {
-        return null;
+        return $this->fireEvent('list.beforeReorderStructure', [$item], true);
     }
 
     /**
@@ -469,6 +469,7 @@ class ListStructure extends Lists
      */
     protected function eventReorderStructure($item): void
     {
+        $this->fireEvent('list.reorderStructure', [$item]);
     }
 
     /**

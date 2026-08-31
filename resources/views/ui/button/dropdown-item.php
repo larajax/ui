@@ -10,7 +10,7 @@ $icon ??= null;
         'data-request' => $handler ?: null,
     ])) ?>>
         <?php if ($icon): ?>
-            <i class="<?= e($icon) ?>"></i>
+            <?= \Larajax\Ui\Facades\Ui::icon($icon) ?>
         <?php endif ?>
         <?= e($label) ?>
     </a>
