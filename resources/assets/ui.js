@@ -14,6 +14,8 @@
 import './controls/popover/popover.js';
 import './controls/popup/popup.js';
 import './controls/tab/tab.js';
+import './controls/drag-scroll/drag-scroll-control.js';
+import './controls/toolbar/toolbar-control.js';
 
 // Widgets
 import './widgets/list/list.js';

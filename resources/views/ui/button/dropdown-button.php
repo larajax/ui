@@ -14,7 +14,7 @@ elseif ($secondary) $classes[] = 'btn-secondary';
     <button <?= $attributes->merge(array_filter([
         'class' => implode(' ', $classes),
         'type' => 'button',
-        'data-toggle' => 'dropdown',
+        'data-bs-toggle' => 'dropdown',
     ])) ?>>
         <?php if ($icon): ?>
             <?= \Larajax\Ui\Facades\Ui::icon($icon) ?>
@@ -23,7 +23,7 @@ elseif ($secondary) $classes[] = 'btn-secondary';
             <?= e($label) ?>
         <?php endif ?>
     </button>
-    <ul class="dropdown-menu">
+    <ul class="dropdown-menu control-dropdown">
         <?= $slot ?>
     </ul>
 </div>

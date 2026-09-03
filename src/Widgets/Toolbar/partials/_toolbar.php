@@ -12,7 +12,7 @@
 
         <!-- List Search -->
         <?php if ($search): ?>
-            <div class="toolbar-item" data-calculate-width>
+            <div class="toolbar-item">
                 <?= $search ?>
             </div>
         <?php endif ?>
