@@ -33,4 +33,8 @@ await bundle('pikaday', 'pikaday/pikaday.esm.js', {
     plugins: [stubMomentPlugin]
 });
 
+// Popper (popover/tooltip positioning engine) — bundled as ESM for the
+// controls/popover control, matching October's vendored @popperjs/core.
+await bundle('@popperjs/core', 'popperjs/popper.esm.js');
+
 console.log('\n  Done.\n');

@@ -22,6 +22,8 @@
  */
 'use strict';
 
+import { createPopper } from '../../vendor/popperjs/popper.esm.js';
+
 export class Popover {
     static activeInstance = null;
 
@@ -35,6 +37,7 @@ export class Popover {
         }, options);
 
         this.element = null;
+        this.popper = null;
         this.onDocumentClick = this.onDocumentClick.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
     }
@@ -55,7 +58,14 @@ export class Popover {
 
         // Attach to the body so overflow-clipping containers cannot hide it
         document.body.appendChild(this.element);
-        this.position();
+
+        this.popper = createPopper(this.trigger, this.element, {
+            placement: 'bottom-start',
+            modifiers: [
+                { name: 'offset', options: { offset: [0, 6] } },
+                { name: 'preventOverflow', options: { padding: 8 } }
+            ]
+        });
 
         // Outside detection uses mousedown so a click handler that detaches its
         // own target (e.g. group filter items) cannot read as an outside click.
@@ -76,18 +86,9 @@ export class Popover {
             this.element.innerHTML = content;
         }
 
-        if (this.element.isConnected) {
-            this.position();
+        if (this.popper) {
+            this.popper.update();
         }
-    }
-
-    // Places the panel below the trigger, clamped to the viewport width.
-    position() {
-        const rect = this.trigger.getBoundingClientRect(),
-            maxLeft = scrollX + document.documentElement.clientWidth - this.element.offsetWidth - 8;
-
-        this.element.style.top = (rect.bottom + scrollY) + 'px';
-        this.element.style.left = Math.max(8, Math.min(rect.left + scrollX, maxLeft)) + 'px';
     }
 
     hide() {
@@ -97,6 +98,11 @@ export class Popover {
 
         removeEventListener('mousedown', this.onDocumentClick);
         removeEventListener('keydown', this.onKeyDown);
+
+        if (this.popper) {
+            this.popper.destroy();
+            this.popper = null;
+        }
 
         this.element.remove();
         this.element = null;

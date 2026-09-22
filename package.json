@@ -9,6 +9,7 @@
         "esbuild": "^0.28.2"
     },
     "dependencies": {
+        "@popperjs/core": "^2.11.8",
         "pikaday": "^1.8.2"
     }
 }
