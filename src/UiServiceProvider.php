@@ -47,6 +47,27 @@ class UiServiceProvider extends ServiceProvider
     }
 
     /**
+     * swapTranslator replaces Laravel's translator with Rain's, which the trans() helper in Rain's init functions expects
+     */
+    protected function swapTranslator(): void
+    {
+        if ($this->app['translator'] instanceof \October\Rain\Translation\Translator) {
+            return;
+        }
+
+        $current = $this->app['translator'];
+
+        $trans = new \October\Rain\Translation\Translator(
+            $current->getLoader(),
+            $current->getLocale()
+        );
+
+        $trans->setFallback($current->getFallback());
+
+        $this->app->instance('translator', $trans);
+    }
+
+    /**
      * mergeIconConfig loads defaults while preserving nested application overrides.
      */
     protected function mergeIconConfig(): void
@@ -69,6 +90,8 @@ class UiServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->swapTranslator();
+
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'ui');
 
         if ($this->app->runningInConsole()) {
