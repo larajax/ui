@@ -24,6 +24,10 @@ class OctoberIconPack implements IconPack
             'fileupload.error' => 'ph ph-warning',
 
             'list.reorder' => 'icon-list-reorder',
+            'list.setup' => 'icon-list-ul',
+            'list.structure' => 'icon-sitemap',
+            'list.sort.asc' => 'icon-angle-up',
+            'list.sort.desc' => 'icon-angle-down',
             'list.switch.true' => 'icon-check',
             'list.switch.false' => 'icon-times',
 

@@ -23,7 +23,7 @@
                 <a href="javascript:;"
                     title="<?= __("List Setup") ?>"
                     data-control="popup"
-                    data-handler="<?= $setupHandler ?>"><span></span></a>
+                    data-handler="<?= $setupHandler ?>"><span><?= \Larajax\Ui\Facades\Ui::icon('list.setup') ?></span></a>
             </div>
         <?php endif ?>
 

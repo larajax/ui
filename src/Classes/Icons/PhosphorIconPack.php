@@ -24,6 +24,10 @@ class PhosphorIconPack implements IconPack
             'fileupload.error' => 'ph ph-warning',
 
             'list.reorder' => 'ph ph-dots-six-vertical',
+            'list.setup' => 'ph ph-sliders-horizontal',
+            'list.structure' => 'ph ph-tree-structure',
+            'list.sort.asc' => 'ph ph-caret-up',
+            'list.sort.desc' => 'ph ph-caret-down',
             'list.switch.true' => 'ph ph-check',
             'list.switch.false' => 'ph ph-x',
 

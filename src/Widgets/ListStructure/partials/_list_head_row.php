@@ -33,9 +33,11 @@
         ?>
         <?php if ($showSorting && $column->sortable): ?>
             <?php
-                $classes[] = $this->sortColumn == $column->columnName
+                $isSorted = $this->sortColumn == $column->columnName;
+                $classes[] = $isSorted
                     ? 'sort-'.$this->sortDirection.' active'
                     : 'sort-desc';
+                $sortIcon = 'list.sort.'.($isSorted ? $this->sortDirection : 'desc');
             ?>
             <th style="<?= implode(';', $styles) ?>" class="<?= implode(' ', $classes) ?>">
                 <a
@@ -45,7 +47,7 @@
                     data-request-data="sortColumn: '<?= $column->columnName ?>', page: <?= $pageCurrent ?>"
                 ><?= $this->getHeaderValue($column) ?><?php if ($column->tooltip): ?><?=
                     $this->makePartial('list_head_tooltip', ['column' => $column])
-                ?><?php endif ?></a>
+                ?><?php endif ?><?= \Larajax\Ui\Facades\Ui::icon($sortIcon, ['class' => 'sort-icon']) ?></a>
             </th>
         <?php else: ?>
             <th style="<?= implode(';', $styles) ?>" class="<?= implode(' ', $classes) ?>">
@@ -60,7 +62,7 @@
         <th class="list-setup setup-show-structure">
             <a href="javascript:;"
                 title="<?= __("Show Structure") ?>"
-                data-request="<?= $this->getEventHandler('onShowStructure') ?>"><span></span></a>
+                data-request="<?= $this->getEventHandler('onShowStructure') ?>"><span><?= \Larajax\Ui\Facades\Ui::icon('list.structure') ?></span></a>
         </th>
     <?php endif ?>
 </tr>

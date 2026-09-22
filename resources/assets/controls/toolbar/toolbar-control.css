@@ -86,16 +86,7 @@
                     text-align: center;
                     border-radius: 3px;
 
-                    &::before {
-                        font-family: 'octo-icon' !important;
-                        speak: none;
-                        font-style: normal;
-                        font-weight: normal;
-                        font-variant: normal;
-                        text-transform: none;
-                        line-height: 1;
-                        -webkit-font-smoothing: antialiased;
-                        content: "\e90c";
+                    > i {
                         font-size: 14px;
                         line-height: 24px;
                         display: inline-block;
@@ -242,18 +233,15 @@
         }
 
         &.has-menu::after {
-            font-family: 'octo-icon' !important;
-            speak: none;
-            font-style: normal;
-            font-weight: normal;
-            font-variant: normal;
-            text-transform: none;
-            line-height: 1;
-            -webkit-font-smoothing: antialiased;
-            content: "\e90a";
-            font-size: 16px;
+            content: '';
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-top: .32em solid currentColor;
+            border-left: .32em solid transparent;
+            border-right: .32em solid transparent;
             vertical-align: middle;
-            margin-left: 0;
+            margin-left: 3px;
             margin-right: -3px;
             position: relative;
             top: -1px;

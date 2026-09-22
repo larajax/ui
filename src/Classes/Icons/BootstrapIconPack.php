@@ -24,6 +24,10 @@ class BootstrapIconPack implements IconPack
             'fileupload.error' => 'bi bi-exclamation-triangle',
 
             'list.reorder' => 'bi bi-grip-vertical',
+            'list.setup' => 'bi bi-sliders',
+            'list.structure' => 'bi bi-diagram-3',
+            'list.sort.asc' => 'bi bi-chevron-up',
+            'list.sort.desc' => 'bi bi-chevron-down',
             'list.switch.true' => 'bi bi-check-lg',
             'list.switch.false' => 'bi bi-x-lg',
 

@@ -17,21 +17,22 @@
         position: absolute;
         top: 10px;
         margin-top: 0;
-        height: 9px;
-        font-size: 10px;
+        width: 0;
+        height: 0;
+        border-top: 4.5px solid transparent;
+        border-bottom: 4.5px solid transparent;
         color: var(--tab-scroll-indicator-color);
+        content: '';
     }
 
     &:before {
         left: -6px;
-        font-family: 'octo-icon';
-        content: "\f104"; /* angle-left */
+        border-right: 5px solid currentColor;
     }
 
     &:after {
         right: -8px;
-        font-family: 'octo-icon';
-        content: "\f105"; /* angle-right */
+        border-left: 5px solid currentColor;
     }
 
     &.scroll-before:before { display: block; }
