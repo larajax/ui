@@ -176,16 +176,6 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
             applyTriggers();
         }
 
-        // Native date inputs mirror to their hidden ISO targets
-        root.querySelectorAll('[data-datepicker]').forEach((el) => {
-            el.addEventListener('change', () => {
-                const target = document.getElementById(el.dataset.datepickerTarget);
-                if (target) {
-                    target.value = el.value;
-                }
-            });
-        });
-
         // Group filter option management
         const group = root.querySelector('[data-control="groupfilter"]');
         if (group) {

@@ -1,40 +1,47 @@
-<?php /* Larajax UI uses native date inputs instead of October's Pikaday date picker */ ?>
 <div class="facet-item">
-    <input
-        type="date"
-        name="Filter[afterRaw]"
-        value="<?= e($scope->afterRaw) ?>"
-        min="<?= e($scope->minDate) ?>"
-        max="<?= e($scope->maxDate) ?>"
-        class="form-control form-control-sm popup-allow-focus w-120"
-        autocomplete="off"
-        data-datepicker
-        data-datepicker-target="<?= $scope->getId('after') ?>" />
-    <input
-        type="hidden"
-        name="Filter[after]"
-        id="<?= $scope->getId('after') ?>"
-        value="<?= e($scope->after) ?>"
-        />
+    <div
+        data-control="datepicker"
+        data-min-date="<?= e($scope->minDate) ?>"
+        data-max-date="<?= e($scope->maxDate) ?>"
+        data-first-day="<?= e($scope->firstDay) ?>"
+        data-year-range="<?= e($scope->yearRange) ?>"
+        data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
+        <input
+            type="text"
+            value="<?= e($scope->afterRaw) ?>"
+            class="form-control form-control-sm popup-allow-focus w-120"
+            autocomplete="off"
+            data-datepicker />
+        <input
+            type="hidden"
+            name="Filter[after]"
+            id="<?= $scope->getId('after') ?>"
+            value="<?= e($scope->after) ?>"
+            data-datetime-value />
+    </div>
 </div>
 <div class="facet-item">
     <span><?= __('and') ?></span>
 </div>
 <div class="facet-item">
-    <input
-        type="date"
-        name="Filter[beforeRaw]"
-        value="<?= e($scope->beforeRaw) ?>"
-        min="<?= e($scope->minDate) ?>"
-        max="<?= e($scope->maxDate) ?>"
-        class="form-control form-control-sm popup-allow-focus w-120"
-        autocomplete="off"
-        data-datepicker
-        data-datepicker-target="<?= $scope->getId('before') ?>" />
-    <input
-        type="hidden"
-        name="Filter[before]"
-        id="<?= $scope->getId('before') ?>"
-        value="<?= e($scope->before) ?>"
-        />
+    <div
+        data-control="datepicker"
+        data-min-date="<?= e($scope->minDate) ?>"
+        data-max-date="<?= e($scope->maxDate) ?>"
+        data-first-day="<?= e($scope->firstDay) ?>"
+        data-year-range="<?= e($scope->yearRange) ?>"
+        data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
+        <input
+            type="text"
+            value="<?= e($scope->beforeRaw) ?>"
+            class="form-control form-control-sm popup-allow-focus w-120"
+            autocomplete="off"
+            data-datepicker />
+        <input
+            type="hidden"
+            name="Filter[before]"
+            id="<?= $scope->getId('before') ?>"
+            value="<?= e($scope->before) ?>"
+            data-datetime-value />
+    </div>
 </div>

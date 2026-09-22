@@ -14,6 +14,7 @@
 import './controls/popover/popover.js';
 import './controls/popup/popup.js';
 import './controls/tab/tab.js';
+import './controls/datepicker/datepicker.js';
 import './controls/drag-scroll/drag-scroll-control.js';
 import './controls/toolbar/toolbar-control.js';
 

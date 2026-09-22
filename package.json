@@ -1,0 +1,14 @@
+{
+    "name": "larajax-ui",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "node build.js"
+    },
+    "devDependencies": {
+        "esbuild": "^0.28.2"
+    },
+    "dependencies": {
+        "pikaday": "^1.8.2"
+    }
+}

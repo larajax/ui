@@ -1,19 +1,22 @@
-<?php /* Larajax UI uses a native date input instead of October's Pikaday date picker */ ?>
 <div class="facet-item">
-    <input
-        type="date"
-        name="Filter[valueRaw]"
-        value="<?= e($scope->valueRaw) ?>"
-        min="<?= e($scope->minDate) ?>"
-        max="<?= e($scope->maxDate) ?>"
-        class="form-control form-control-sm popup-allow-focus w-120"
-        autocomplete="off"
-        data-datepicker
-        data-datepicker-target="<?= $scope->getId('value') ?>" />
-    <input
-        type="hidden"
-        name="Filter[value]"
-        id="<?= $scope->getId('value') ?>"
-        value="<?= e($scope->value) ?>"
-    />
+    <div
+        data-control="datepicker"
+        data-min-date="<?= e($scope->minDate) ?>"
+        data-max-date="<?= e($scope->maxDate) ?>"
+        data-first-day="<?= e($scope->firstDay) ?>"
+        data-year-range="<?= e($scope->yearRange) ?>"
+        data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
+        <input
+            type="text"
+            value="<?= e($scope->valueRaw) ?>"
+            class="form-control form-control-sm popup-allow-focus w-120"
+            autocomplete="off"
+            data-datepicker />
+        <input
+            type="hidden"
+            name="Filter[value]"
+            id="<?= $scope->getId('value') ?>"
+            value="<?= e($scope->value) ?>"
+            data-datetime-value />
+    </div>
 </div>
