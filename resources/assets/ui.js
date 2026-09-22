@@ -13,6 +13,7 @@
 // Controls
 import './controls/loader-container/loader-container-control.js';
 import './controls/search-input/search-input-control.js';
+import './controls/custom-select/custom-select-control.js';
 import './controls/popover/popover.js';
 import './controls/popup/popup.js';
 import './controls/tab/tab.js';

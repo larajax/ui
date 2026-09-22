@@ -9,7 +9,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { bundle } from './build-util.js';
+import { bundle, bundleVirtual } from './build-util.js';
 
 console.log('\n  Building vendor files...\n');
 
@@ -36,5 +36,18 @@ await bundle('pikaday', 'pikaday/pikaday.esm.js', {
 // Popper (popover/tooltip positioning engine) — bundled as ESM for the
 // controls/popover control, matching October's vendored @popperjs/core.
 await bundle('@popperjs/core', 'popperjs/popper.esm.js');
+
+// Select2 with a private jQuery instance in a single ESM bundle. The
+// custom-select control imports the returned jQuery; window.jQuery is never
+// touched, so jQuery stays an implementation detail of this one control.
+await bundleVirtual(
+    [
+        "import $ from 'jquery';",
+        "import select2 from 'select2/dist/js/select2.full.js';",
+        "select2(window, $);",
+        "export default $;"
+    ].join('\n'),
+    'select2/select2.esm.js'
+);
 
 console.log('\n  Done.\n');

@@ -27,6 +27,29 @@ export function copy(src, dest) {
 }
 
 /**
+ * Bundles an inline entry script into a browser-ready ESM file in the vendor
+ * directory, resolving its imports against this package's node_modules.
+ */
+export async function bundleVirtual(contents, outfile, options = {}) {
+    const destPath = path.join(vendorDir, outfile);
+    fs.mkdirSync(path.dirname(destPath), { recursive: true });
+
+    await esbuild.build({
+        stdin: {
+            contents,
+            resolveDir: __dirname,
+            sourcefile: path.basename(outfile)
+        },
+        bundle: true,
+        format: 'esm',
+        outfile: destPath,
+        minify: true,
+        ...options
+    });
+    console.log(`  ✓ ${outfile} (bundled)`);
+}
+
+/**
  * Bundles an npm package into a browser-ready ESM file in the vendor directory.
  */
 export async function bundle(entry, outfile, options = {}) {

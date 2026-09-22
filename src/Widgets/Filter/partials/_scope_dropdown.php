@@ -10,6 +10,7 @@
     <select
         id="<?= $scope->getId() ?>"
         class="select custom-select select-no-search select-dropdown-auto-width"
+        style="opacity:0"
     >
         <?php foreach ($scopeOptions as $value => $option): ?>
             <option
