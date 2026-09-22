@@ -107,6 +107,7 @@ class UiServiceProvider extends ServiceProvider
         app('system.widgets')->registerFormWidgets(function ($manager) {
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\Relation::class, 'relation');
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\FileUpload::class, 'fileupload');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\Repeater::class, 'repeater');
         });
 
         app('system.widgets')->registerFilterWidgets(function ($manager) {

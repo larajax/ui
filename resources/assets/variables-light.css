@@ -63,6 +63,9 @@
     --oc-tab-border: #d7e1eA;
     --oc-tab-hover-bg: rgba(215,225,234,0.7);
 
+    --oc-dropdown-trigger-border: #bcc3c7;
+    --oc-dropdown-trigger-color: #536061;
+    --oc-dropdown-trigger-bg: white;
     --oc-dropdown-hover-bg: var(--bs-primary);
     --oc-dropdown-hover-color: white;
     --oc-dropdown-active-bg: rgba(var(--bs-primary-rgb), .95);

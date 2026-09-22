@@ -1008,11 +1008,14 @@ class Form extends WidgetBase implements FormElement
         $result = [];
         $data = $this->getSaveDataSourceInternal();
 
-        // Spin over each field and extract the postback value
+        // Spin over each field and extract the postback value, where a present
+        // key holding null is an emptied field, not an omitted one
         foreach ($this->allFields as $name => $field) {
             // Handle HTML array, eg: item[key][another]
             $parts = HtmlHelper::nameToArray($name);
-            if (($value = $this->dataArrayGet($data, $parts)) !== null) {
+            if ($this->dataArrayExists($data, $parts)) {
+                $value = $this->dataArrayGet($data, $parts) ?? '';
+
                 // Convert number to float
                 if ($field->type === 'number') {
                     $value = !strlen(trim($value)) ? null : (float) $value;
@@ -1026,8 +1029,8 @@ class Form extends WidgetBase implements FormElement
         foreach ($this->formWidgets as $field => $widget) {
             // Handle HTML array, eg: item[key][another]
             $parts = HtmlHelper::nameToArray($field);
-            if (($value = $this->dataArrayGet($data, $parts)) !== null) {
-                $widgetValue = $widget->getSaveValue($value);
+            if ($this->dataArrayExists($data, $parts)) {
+                $widgetValue = $widget->getSaveValue($this->dataArrayGet($data, $parts) ?? '');
                 $this->dataArraySet($result, $parts, $widgetValue);
             }
         }
@@ -1178,6 +1181,22 @@ class Form extends WidgetBase implements FormElement
     public function getContext()
     {
         return $this->context;
+    }
+
+    /**
+     * Variant to array_has() but preserves dots in key names.
+     */
+    protected function dataArrayExists(array $array, array $parts): bool
+    {
+        foreach ($parts as $segment) {
+            if (!is_array($array) || !array_key_exists($segment, $array)) {
+                return false;
+            }
+
+            $array = $array[$segment];
+        }
+
+        return true;
     }
 
     /**

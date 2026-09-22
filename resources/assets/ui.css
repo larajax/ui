@@ -39,3 +39,4 @@
 
 /* Form widgets */
 @import "./formwidgets/fileupload/fileupload.css";
+@import "./formwidgets/repeater/repeater.css";

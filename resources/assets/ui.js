@@ -36,4 +36,6 @@ import './widgets/liststructure/liststructure.js';
 
 // Form widgets
 import './formwidgets/fileupload/fileupload.js';
+import './formwidgets/repeater/repeater-accordion.js';
+import './formwidgets/repeater/repeater-builder.js';
 
