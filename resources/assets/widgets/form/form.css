@@ -103,11 +103,18 @@
 .search-input-container {
     position: relative;
 
-    &:before {
+    > input.form-control[type=text] {
+        padding-right: 30px;
+    }
+
+    > .search-icon {
         position: absolute;
         width: 16px;
         height: 16px;
-        background-position: 0 -38px;
+        font-size: 16px;
+        line-height: 1;
+        color: var(--bs-secondary-color);
+        pointer-events: none;
         z-index: 1;
         right: 8px;
         top: 11px;

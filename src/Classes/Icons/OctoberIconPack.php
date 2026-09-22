@@ -7,6 +7,7 @@ class OctoberIconPack implements IconPack
         return [
             'action.delete' => 'oc-icon-delete',
 
+            'search.icon' => 'icon-search',
             'search.clear' => 'storm-icon',
 
             'filter.menu' => 'ph ph-funnel-simple',

@@ -7,6 +7,7 @@ class PhosphorIconPack implements IconPack
         return [
             'action.delete' => 'ph ph-trash',
 
+            'search.icon' => 'ph ph-magnifying-glass',
             'search.clear' => 'ph ph-x',
 
             'filter.menu' => 'ph ph-funnel-simple',

@@ -1,7 +1,7 @@
 <div class="control-search loading-indicator-container size-input-text">
     <div
         id="<?= $this->getId() ?>"
-        class="search-input-container storm-icon-pseudo"
+        class="search-input-container"
         data-control="search-input"
     >
         <input
@@ -25,5 +25,6 @@
         >
             <?= \Larajax\Ui\Facades\Ui::icon('search.clear') ?>
         </button>
+        <?= \Larajax\Ui\Facades\Ui::icon('search.icon', ['class' => 'search-icon']) ?>
     </div>
 </div>

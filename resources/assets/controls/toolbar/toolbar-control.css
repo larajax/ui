@@ -292,7 +292,8 @@
         opacity: 1;
         width: 16px;
         height: 16px;
-        background-position: -16px -38px;
+        font-size: 16px;
+        line-height: 1;
         display: block;
     }
 

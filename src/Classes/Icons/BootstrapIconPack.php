@@ -7,6 +7,7 @@ class BootstrapIconPack implements IconPack
         return [
             'action.delete' => 'bi bi-trash',
 
+            'search.icon' => 'bi bi-search',
             'search.clear' => 'bi bi-x',
 
             'filter.menu' => 'bi bi-funnel',
