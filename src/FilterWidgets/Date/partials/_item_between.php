@@ -4,6 +4,8 @@
         type="date"
         name="Filter[afterRaw]"
         value="<?= e($scope->afterRaw) ?>"
+        min="<?= e($scope->minDate) ?>"
+        max="<?= e($scope->maxDate) ?>"
         class="form-control form-control-sm popup-allow-focus w-120"
         autocomplete="off"
         data-datepicker
@@ -23,6 +25,8 @@
         type="date"
         name="Filter[beforeRaw]"
         value="<?= e($scope->beforeRaw) ?>"
+        min="<?= e($scope->minDate) ?>"
+        max="<?= e($scope->maxDate) ?>"
         class="form-control form-control-sm popup-allow-focus w-120"
         autocomplete="off"
         data-datepicker

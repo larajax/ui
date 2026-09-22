@@ -4,6 +4,8 @@
         type="date"
         name="Filter[valueRaw]"
         value="<?= e($scope->valueRaw) ?>"
+        min="<?= e($scope->minDate) ?>"
+        max="<?= e($scope->maxDate) ?>"
         class="form-control form-control-sm popup-allow-focus w-120"
         autocomplete="off"
         data-datepicker
