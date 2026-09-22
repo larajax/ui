@@ -26,6 +26,8 @@ class PhosphorIconPack implements IconPack
             'list.reorder' => 'ph ph-dots-six-vertical',
             'list.setup' => 'ph ph-sliders-horizontal',
             'list.structure' => 'ph ph-tree-structure',
+            'list.tree.expand' => 'ph ph-caret-right',
+            'list.tree.collapse' => 'ph ph-caret-down',
             'list.sort.asc' => 'ph ph-caret-up',
             'list.sort.desc' => 'ph ph-caret-down',
             'list.switch.true' => 'ph ph-check',

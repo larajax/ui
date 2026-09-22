@@ -1,67 +1,135 @@
 /*
- * List structure widget styles
- *
- * Tree indentation is applied inline by the widget; these rules cover the
- * reorder handle column and the tree expand/collapse control.
+ * List Structure
+ * --------------------------------------------------
  */
 
-.list-widget {
-    .list-reorder {
-        width: 2rem;
-        text-align: center;
-    }
+.list-hidden-drag-ghost {
+    opacity: 0 !important;
+}
 
-    .list-reorder-handle {
-        cursor: grab;
-        opacity: .4;
+table.table.data {
+    /*
+     * Trees
+     */
 
-        &:hover {
-            opacity: 1;
+    tr:hover .list-reorder {
+        span.list-reorder-handle {
+            display: block;
         }
     }
-
-    .list-cell-tree {
-        position: relative;
-    }
-
-    .tree-expand-collapse {
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 15px;
-        text-align: center;
-        text-decoration: none;
-        color: inherit;
-
-        span:before {
-            content: "\25B8"; /* collapsed: right triangle */
-            display: inline-block;
-        }
-
-        &.is-expanded span:before {
-            content: "\25BE"; /* expanded: down triangle */
-        }
-    }
-
-    .setup-show-structure {
-        width: 2rem;
-    }
-
-    /* Drag state */
 
     tbody.tree-drag-mode {
-        tr {
-            user-select: none;
+        &, * {
+            cursor: move!important;
+        }
+
+        td.list-reorder span.list-reorder-handle {
+            display: none;
+        }
+
+        tr.sortable-chosen td.list-reorder span.list-reorder-handle {
+            display: block;
         }
     }
 
-    tr.tree-drag-row {
-        opacity: .6;
-        background: rgba(13, 110, 253, .08);
+    tbody.tree-drag-updated {
+        td.list-reorder span.list-reorder-handle {
+            display: none !important;
+        }
+    }
 
-        td {
-            border-top: 2px solid #0d6efd;
+    th.list-reorder,
+    td.list-reorder {
+        width: 24px;
+        min-width: 24px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    td.list-reorder {
+        vertical-align: middle;
+        position: relative;
+
+        span.list-reorder-handle {
+            display: none;
+            background: var(--oc-toolbar-bg);
+            text-align: center;
+            cursor: move;
+            left: -6px;
+
+            width: 24px;
+            height: 24px;
+            position: absolute;
+            top: calc(50% - 12px);
+            border-radius: 3px;
+            text-decoration: none;
+
+            i {
+                position: relative;
+                font-size: 24px;
+                top: 2px;
+            }
+
+            &:active {
+                background: var(--oc-toolbar-hover-bg);
+            }
+        }
+    }
+
+    td.list-cell-tree {
+        vertical-align: middle;
+        position: relative;
+        transition: padding 0.3s ease;
+
+        a.tree-expand-collapse {
+            width: 24px;
+            height: 24px;
+            display: block;
+            position: absolute;
+            top: calc(50% - 12px);
+            border-radius: 3px;
+            text-decoration: none;
+        }
+
+        a.tree-expand-collapse {
+            margin-left: -25px;
+
+            > span {
+                position: absolute;
+                display: inline-block;
+                left: 0;
+                top: 0;
+                width: 24px;
+                height: 24px;
+
+                > i {
+                    position: absolute;
+                    left: calc(100% - 15px);
+                    top: 5px;
+                    width: 24px;
+                    height: 24px;
+                    font-size: 15px;
+                    color: var(--bs-body-color);
+                    text-indent: 0;
+                }
+            }
+
+            &.is-expanded > span > i {
+                left: calc(100% - 17px);
+            }
+        }
+    }
+}
+
+.control-list.list-checkboxes table.table.data {
+    th.list-reorder,
+    td.list-reorder {
+        width: 18px;
+    }
+
+    td.list-reorder {
+        span.list-reorder-handle {
+            left: -13px;
         }
     }
 }

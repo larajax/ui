@@ -143,7 +143,7 @@ jax.registerControl('liststructurewidget', class extends jax.ControlBase {
         const row = drag.row;
         const proposedLevel = this.clampLevel(drag.proposedLevel);
 
-        row.classList.remove('tree-drag-row');
+        row.classList.remove('sortable-chosen');
         this.body.classList.remove('tree-drag-mode');
 
         row.dataset.treeLevel = proposedLevel;
@@ -195,7 +195,7 @@ jax.registerControl('liststructurewidget', class extends jax.ControlBase {
             child.style.display = 'none';
         });
 
-        drag.row.classList.add('tree-drag-row');
+        drag.row.classList.add('sortable-chosen');
         this.body.classList.add('tree-drag-mode');
     }
 

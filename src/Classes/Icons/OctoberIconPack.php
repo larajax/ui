@@ -26,6 +26,8 @@ class OctoberIconPack implements IconPack
             'list.reorder' => 'icon-list-reorder',
             'list.setup' => 'icon-list-ul',
             'list.structure' => 'icon-sitemap',
+            'list.tree.expand' => 'icon-angle-right',
+            'list.tree.collapse' => 'icon-angle-down',
             'list.sort.asc' => 'icon-angle-up',
             'list.sort.desc' => 'icon-angle-down',
             'list.switch.true' => 'icon-check',

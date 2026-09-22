@@ -26,6 +26,8 @@ class BootstrapIconPack implements IconPack
             'list.reorder' => 'bi bi-grip-vertical',
             'list.setup' => 'bi bi-sliders',
             'list.structure' => 'bi bi-diagram-3',
+            'list.tree.expand' => 'bi bi-chevron-right',
+            'list.tree.collapse' => 'bi bi-chevron-down',
             'list.sort.asc' => 'bi bi-chevron-up',
             'list.sort.desc' => 'bi bi-chevron-down',
             'list.switch.true' => 'bi bi-check-lg',

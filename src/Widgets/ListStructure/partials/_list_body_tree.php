@@ -7,7 +7,7 @@
             data-request="<?= $this->getEventHandler('onToggleTreeNode') ?>"
             data-request-data="node_id: '<?= $record->getKey() ?>', status: <?= $expanded ? 1 : 0 ?>"
             title="<?= e(__($expanded ? 'Collapse' : 'Expand')) ?>">
-            <span></span>
+            <span><?= \Larajax\Ui\Facades\Ui::icon($expanded ? 'list.tree.collapse' : 'list.tree.expand') ?></span>
         </a>
     </div>
 <?php endif ?>
