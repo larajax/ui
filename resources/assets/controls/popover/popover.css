@@ -4,8 +4,6 @@
 
 .control-popover {
     position: absolute;
-    top: 100%;
-    left: 0;
     z-index: var(--oc-zindex-popover, 1000);
     min-width: 200px;
     margin-top: .35rem;

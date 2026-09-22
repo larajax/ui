@@ -23,6 +23,9 @@
     --bs-teal:    #24b58a;
     --bs-cyan:    #0dcaf0;
 
+    --oc-accent: #3498db;
+    --oc-selection: var(--bs-teal);
+
     --oc-primary-color: rgba(173, 181, 189, 0.85);
     --oc-primary-bg: #141515;
     --oc-primary-border: #494c50;

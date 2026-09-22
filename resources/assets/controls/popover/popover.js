@@ -30,7 +30,8 @@ export class Popover {
         this.options = Object.assign({
             extraClass: '',
             content: null,
-            onClose: null
+            onClose: null,
+            onCheckDocumentClickTarget: null
         }, options);
 
         this.element = null;
@@ -52,16 +53,16 @@ export class Popover {
             this.element.innerHTML = '<span class="control-popover-loading"></span>';
         }
 
-        const parent = this.trigger.parentNode;
-        if (getComputedStyle(parent).position === 'static') {
-            parent.style.position = 'relative';
-        }
-        parent.appendChild(this.element);
+        // Attach to the body so overflow-clipping containers cannot hide it
+        document.body.appendChild(this.element);
+        this.position();
 
-        // Defer binding so the click that opened the popover cannot close it
+        // Outside detection uses mousedown so a click handler that detaches its
+        // own target (e.g. group filter items) cannot read as an outside click.
+        // Defer binding so the interaction that opened the popover cannot close it.
         setTimeout(() => {
             if (this.element) {
-                addEventListener('click', this.onDocumentClick);
+                addEventListener('mousedown', this.onDocumentClick);
                 addEventListener('keydown', this.onKeyDown);
             }
         }, 0);
@@ -74,6 +75,19 @@ export class Popover {
         else {
             this.element.innerHTML = content;
         }
+
+        if (this.element.isConnected) {
+            this.position();
+        }
+    }
+
+    // Places the panel below the trigger, clamped to the viewport width.
+    position() {
+        const rect = this.trigger.getBoundingClientRect(),
+            maxLeft = scrollX + document.documentElement.clientWidth - this.element.offsetWidth - 8;
+
+        this.element.style.top = (rect.bottom + scrollY) + 'px';
+        this.element.style.left = Math.max(8, Math.min(rect.left + scrollX, maxLeft)) + 'px';
     }
 
     hide() {
@@ -81,7 +95,7 @@ export class Popover {
             return;
         }
 
-        removeEventListener('click', this.onDocumentClick);
+        removeEventListener('mousedown', this.onDocumentClick);
         removeEventListener('keydown', this.onKeyDown);
 
         this.element.remove();
@@ -104,6 +118,10 @@ export class Popover {
 
     onDocumentClick(ev) {
         if (!this.element) {
+            return;
+        }
+
+        if (this.options.onCheckDocumentClickTarget && this.options.onCheckDocumentClickTarget(ev.target)) {
             return;
         }
 

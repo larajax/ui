@@ -72,23 +72,27 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
         if (scopeLink && this.element.contains(scopeLink)) {
             ev.preventDefault();
             this.openPopover(scopeLink);
+        }
+    }
+
+    // Bound on the popover element directly since it is attached to the body,
+    // outside this widget's own click delegation.
+    onPopoverClick(ev) {
+        const actionEl = ev.target.closest('[data-filter-action]');
+        if (!actionEl || !this.popover) {
             return;
         }
 
-        // Apply / clear buttons inside the popover
-        const actionEl = ev.target.closest('[data-filter-action]');
-        if (actionEl && this.popover?.element?.contains(actionEl)) {
-            ev.preventDefault();
+        ev.preventDefault();
 
-            if (actionEl.dataset.filterAction === 'apply') {
-                this.submitUpdate(this.activeScope, jax.values(this.popover.element.querySelector('form')));
-            }
-            else {
-                this.submitUpdate(this.activeScope, { clearScope: true });
-            }
-
-            this.closePopover();
+        if (actionEl.dataset.filterAction === 'apply') {
+            this.submitUpdate(this.activeScope, jax.values(this.popover.element.querySelector('form')));
         }
+        else {
+            this.submitUpdate(this.activeScope, { clearScope: true });
+        }
+
+        this.closePopover();
     }
 
     //
@@ -104,7 +108,7 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
 
         this.closePopover();
         this.activeScope = scopeLink;
-        scopeLink.classList.add('filter-scope-open');
+        scopeLink.classList.add('popover-highlight');
 
         const scopeName = scopeLink.dataset.scopeName;
 
@@ -112,10 +116,11 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
             extraClass: 'filter-popover',
             content: '<form data-request-parent-form>'
                 + '<input type="hidden" name="scopeName" value="" />'
-                + '<div class="filter-popover-content"><span class="control-popover-loading"></span></div>'
+                + '<div class="filter-popover-content control-filter-popover"><span class="control-popover-loading"></span></div>'
                 + '</form>',
+            onCheckDocumentClickTarget: (target) => this.onCheckDocumentClickTargetDatePicker(target),
             onClose: () => {
-                scopeLink.classList.remove('filter-scope-open');
+                scopeLink.classList.remove('popover-highlight');
                 if (this.activeScope === scopeLink) {
                     this.activeScope = null;
                 }
@@ -127,6 +132,7 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
 
         this.popover = popover;
         popover.show();
+        popover.element.addEventListener('click', (ev) => this.onPopoverClick(ev));
         popover.element.querySelector('[name="scopeName"]').value = scopeName;
 
         // Load form contents
@@ -140,6 +146,20 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
         });
     }
 
+    // If the click happens on a pikaday element, do not close the popover
+    onCheckDocumentClickTargetDatePicker(target) {
+        if (!target.classList) {
+            return false;
+        }
+
+        return target.classList.contains('pika-next') ||
+            target.classList.contains('pika-prev') ||
+            target.classList.contains('pika-select') ||
+            target.classList.contains('pika-button') ||
+            !!target.closest('.pika-table') ||
+            !!target.closest('.pika-title');
+    }
+
     closePopover() {
         if (this.popover) {
             this.popover.hide();
@@ -147,7 +167,7 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
         }
 
         if (this.activeScope) {
-            this.activeScope.classList.remove('filter-scope-open');
+            this.activeScope.classList.remove('popover-highlight');
             this.activeScope = null;
         }
     }
@@ -203,7 +223,14 @@ jax.registerControl('filterwidget', class extends jax.ControlBase {
             li.dataset.itemId = option.id;
             li.className = isActive ? 'is-active' : '';
             li.innerHTML = '<a href="javascript:;"></a>';
-            li.firstChild.textContent = option.name;
+            const iconClass = isActive ? group.dataset.removeIcon : group.dataset.addIcon;
+            if (iconClass) {
+                const icon = document.createElement('i');
+                icon.className = iconClass;
+                icon.setAttribute('aria-hidden', 'true');
+                li.firstChild.appendChild(icon);
+            }
+            li.firstChild.appendChild(document.createTextNode(option.name));
             li.addEventListener('click', () => {
                 const ids = activeIds(),
                     index = ids.indexOf(option.id);

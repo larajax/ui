@@ -1,0 +1,36 @@
+.control-filter {
+    .filter-group > .filter-scope.scope-dropdown {
+        padding: 8px 0 4px;
+
+        &:after {
+            content: '';
+        }
+
+        /* Native select replaces the select2 enhancement used by October */
+        select {
+            width: 100%;
+            display: inline-block;
+            position: relative;
+            top: -2px;
+            height: 29px;
+            line-height: 29px;
+            padding: 0 28px 0 12px;
+            border: none;
+            font-size: 14px;
+            border-radius: 0;
+            box-shadow: none;
+            background-color: transparent;
+            color: var(--oc-filter-text);
+
+            &:focus-visible {
+                outline: auto 1px;
+            }
+        }
+
+        &:hover, &.active {
+            select {
+                color: var(--oc-filter-text-active);
+            }
+        }
+    }
+}

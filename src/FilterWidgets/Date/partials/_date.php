@@ -7,4 +7,5 @@
     <?php if ($scope->scopeValue): ?>
         <span class="filter-setting">1</span>
     <?php endif ?>
+    <?= \Larajax\Ui\Facades\Ui::icon('filter.caret', ['class' => 'filter-caret']) ?>
 </a>

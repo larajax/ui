@@ -11,6 +11,9 @@ class OctoberIconPack implements IconPack
 
             'filter.menu' => 'ph ph-funnel-simple',
             'filter.clear' => 'icon-eraser',
+            'filter.caret' => 'icon-angle-down',
+            'filter.item.add' => 'icon-plus',
+            'filter.item.remove' => 'icon-times',
 
             'checkboxlist.select_all' => 'icon-check-multi',
             'checkboxlist.clear' => 'icon-eraser',

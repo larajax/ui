@@ -1,6 +1,8 @@
 <div
     data-control="groupfilter"
     data-options-handler="<?= $this->getEventHandler('onGetGroupOptions') ?>"
+    data-add-icon="<?= e(\Larajax\Ui\Facades\Ui::iconClass('filter.item.add')) ?>"
+    data-remove-icon="<?= e(\Larajax\Ui\Facades\Ui::iconClass('filter.item.remove')) ?>"
 >
     <input
         type="hidden"
