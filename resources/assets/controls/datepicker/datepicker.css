@@ -1,12 +1,12 @@
 /*
  * Date Picker
  * --------------------------------------------------
- * Themes Pikaday's base layout with the --oc-* bridge variables. Ported from
- * October's toolbox; the Clockpicker (time) rules are omitted since the time
- * picker is not part of this date-only control.
+ * Themes Pikaday's and Clockpicker's base layouts with the --oc-* bridge
+ * variables. Ported from October's toolbox.
  */
 
 @import "datepicker.date.css";
+@import "datepicker.time.css";
 
 .pika-single {
     border: var(--oc-popup-border) !important;
@@ -72,6 +72,75 @@
             font-size: 11px;
         }
     }
+}
+
+.clockpicker-popover {
+    z-index: var(--oc-zindex-datepicker);
+    box-shadow: 0 0 32px rgba(67, 86, 100, 0.2);
+    border-radius: 8px;
+    border: var(--oc-popup-border) !important;
+    background-color: var(--oc-popup-bg);
+
+    .popover-title {
+        background-color: var(--oc-popup-bg);
+        font-size: 20px;
+        font-weight: normal;
+        border: none;
+    }
+
+    .popover-content {
+        background-color: var(--bs-tertiary-bg);
+    }
+
+    &.top {
+        margin-top: -5px;
+    }
+    &.right {
+        margin-left: 5px;
+    }
+    &.bottom {
+        margin-top: 5px;
+    }
+    &.left {
+        margin-left: -5px;
+    }
+
+    > .arrow {
+        display: none;
+    }
+}
+
+.clockpicker-plate {
+    background-color: var(--oc-popup-bg);
+    border: var(--oc-popup-border);
+}
+
+.clockpicker-tick {
+    color: var(--oc-text-color);
+
+    &.active,
+    &:hover {
+        background-color: var(--bs-secondary-bg);
+        color: var(--oc-emphasis-color);
+    }
+}
+
+.clockpicker-canvas-bg {
+    fill: var(--bs-secondary-bg);
+}
+.clockpicker-canvas-bg-trans {
+    fill: rgba(0, 149, 221, .25);
+}
+
+.clockpicker-hours .clockpicker-tick {
+    font-size: 12px;
+
+    &.tick-inner {
+        font-size: 16px;
+    }
+}
+.clockpicker-minutes .clockpicker-tick {
+    font-size: 16px;
 }
 
 [data-bs-theme="dark"] {
