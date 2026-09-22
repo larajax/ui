@@ -11,13 +11,22 @@
  */
 
 // Controls
+import './controls/loader-container/loader-container-control.js';
+import './controls/search-input/search-input-control.js';
 import './controls/popover/popover.js';
 import './controls/popup/popup.js';
 import './controls/tab/tab.js';
 import './controls/datepicker/datepicker.js';
+import './controls/input-preset/input-preset.js';
+import './controls/input-hotkey/hotkey-control.js';
+import './controls/input-trigger/input-trigger-control.js';
+import './controls/change-monitor/change-monitor-control.js';
 import './controls/drag-scroll/drag-scroll-control.js';
 import './controls/toolbar/toolbar-control.js';
 import './controls/rowlink/rowlink-control.js';
+import './controls/checkbox/checkbox-control.js';
+import './controls/checkbox/checkbox-range.js';
+import './controls/dropdown/dropdown.js';
 
 // Widgets
 import './widgets/list/list.js';

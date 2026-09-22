@@ -14,10 +14,15 @@
 @import "./variables-dark.css";
 
 /* Elements */
+@import "./elements/scoreboard/scoreboard.css";
 @import "./elements/buttons/buttons.css";
 
 /* Controls */
 @import "./controls/datepicker/datepicker.css";
+@import "./controls/loader-container/loader-container-control.css";
+@import "./controls/search-input/search-input-control.css";
+@import "./controls/checkbox/checkbox-control.css";
+@import "./controls/input-trigger/input-trigger.css";
 @import "./controls/dropdown/dropdown.css";
 @import "./controls/popover/popover.css";
 @import "./controls/popup/popup.css";

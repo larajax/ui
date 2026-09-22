@@ -6,9 +6,9 @@
  * The element width should be fixed with the CSS or JavaScript.
  *
  * Events dispatched on the element:
- * - start.oc.dragScroll
- * - drag.oc.dragScroll
- * - stop.oc.dragScroll
+ * - drag-scroll:start
+ * - drag-scroll:drag
+ * - drag-scroll:stop
  *
  * Options:
  * - start - callback function to execute when the drag starts
@@ -299,7 +299,7 @@ export default class DragScroll {
         if (Math.abs(offset) > 3) {
             if (!this.dragging) {
                 this.dragging = true;
-                this.dispatch('start.oc.dragScroll');
+                this.dispatch('drag-scroll:start');
                 this.options.start();
                 document.body.classList.add(this.options.dragClass);
             }
@@ -315,7 +315,7 @@ export default class DragScroll {
 
             this.fixScrollClasses(true);
 
-            this.dispatch('drag.oc.dragScroll');
+            this.dispatch('drag-scroll:drag');
             this.options.drag();
         }
     }
@@ -341,7 +341,7 @@ export default class DragScroll {
         window.setTimeout(() => {
             if (!click) {
                 document.body.classList.remove(this.options.dragClass);
-                this.dispatch('stop.oc.dragScroll');
+                this.dispatch('drag-scroll:stop');
                 this.options.stop();
                 this.fixScrollClasses();
             }
@@ -368,7 +368,7 @@ export default class DragScroll {
             ? el.scrollTop !== this.startOffset
             : el.scrollLeft !== this.startOffset;
 
-        this.dispatch('drag.oc.dragScroll');
+        this.dispatch('drag-scroll:drag');
         this.options.drag();
 
         if (scrolled) {

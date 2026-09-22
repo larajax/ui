@@ -17,7 +17,6 @@ jax.registerControl('listwidget', class extends jax.ControlBase {
         this.checkboxSelector = '.list-checkbox input[type="checkbox"]';
         this.head = this.element.querySelector('thead');
         this.body = this.element.querySelector('tbody');
-        this.lastChecked = null;
     }
 
     connect() {
@@ -32,7 +31,6 @@ jax.registerControl('listwidget', class extends jax.ControlBase {
     disconnect() {
         this.head = null;
         this.body = null;
-        this.lastChecked = null;
     }
 
     // Shift-click selects the range between the previously clicked
@@ -43,22 +41,7 @@ jax.registerControl('listwidget', class extends jax.ControlBase {
             return;
         }
 
-        if (ev.shiftKey && this.lastChecked && this.lastChecked !== el) {
-            const all = this.bodyCheckboxes(),
-                from = all.indexOf(this.lastChecked),
-                to = all.indexOf(el);
-
-            if (from > -1 && to > -1) {
-                all.slice(Math.min(from, to), Math.max(from, to) + 1).forEach((cb) => {
-                    cb.checked = el.checked;
-                    cb.closest('tr').classList.toggle('active', el.checked);
-                });
-                this.checkIndeterminate();
-                this.notifyCheckedState();
-            }
-        }
-
-        this.lastChecked = el;
+        jax.checkboxRangeRegisterClick(ev, 'tr', this.checkboxSelector);
     }
 
     // Checkbox helpers
