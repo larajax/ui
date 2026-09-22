@@ -166,6 +166,39 @@ class Lists extends WidgetBase implements ListElement
     public $cssClasses = [];
 
     /**
+     * make the list widget from named arguments, other configuration keys pass
+     * through the variadic tail.
+     *
+     * @param \Illuminate\Database\Eloquent\Model|null $model
+     * @param array|string|null $columns definitions array or YAML file path
+     * @param int|null $recordsPerPage
+     * @param bool|null $showCheckboxes
+     * @param string|null $recordUrl link for each record, `:id` substitutes the key
+     * @param string|null $recordOnClick JavaScript for the record click
+     * @param string|null $noRecordsMessage
+     * @param array|string|null $defaultSort
+     * @param bool|null $showSetup
+     * @param bool|string|null $showPagination
+     * @param string|null $alias
+     */
+    public static function make(
+        $model = null,
+        $columns = null,
+        $recordsPerPage = null,
+        $showCheckboxes = null,
+        $recordUrl = null,
+        $recordOnClick = null,
+        $noRecordsMessage = null,
+        $defaultSort = null,
+        $showSetup = null,
+        $showPagination = null,
+        $alias = null,
+        ...$config
+    ): static {
+        return static::makeFromNamedArgs(get_defined_vars(), $config);
+    }
+
+    /**
      * getDefaultAlias keeps the historical list widget alias singular.
      */
     protected function getDefaultAlias(): string

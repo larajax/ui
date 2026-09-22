@@ -63,6 +63,31 @@ class Search extends WidgetBase
     public $cssClasses = [];
 
     /**
+     * make the search widget from named arguments, other configuration keys pass
+     * through the variadic tail.
+     *
+     * @param string|null $prompt placeholder text
+     * @param string|null $mode search strategy: all, any or exact
+     * @param string|null $scope custom model query scope method
+     * @param bool|null $searchOnEnter
+     * @param bool|null $growable
+     * @param string|null $partial custom partial to render instead
+     * @param string|null $alias
+     */
+    public static function make(
+        $prompt = null,
+        $mode = null,
+        $scope = null,
+        $searchOnEnter = null,
+        $growable = null,
+        $partial = null,
+        $alias = null,
+        ...$config
+    ): static {
+        return static::makeFromNamedArgs(get_defined_vars(), $config);
+    }
+
+    /**
      * init the widget, called by the constructor and free from its parameters.
      */
     public function init()

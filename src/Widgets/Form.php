@@ -138,6 +138,37 @@ class Form extends WidgetBase implements FormElement
     public $useFilterFields = true;
 
     /**
+     * make the form widget from named arguments, other configuration keys pass
+     * through the variadic tail.
+     *
+     * @param \Illuminate\Database\Eloquent\Model|null $model
+     * @param array|string|null $fields definitions array or YAML file path
+     * @param string|null $context
+     * @param array|object|null $data values to fill instead of the model data
+     * @param string|null $sessionKey
+     * @param string|null $arrayName HTML array name for the field inputs
+     * @param bool|null $isNested
+     * @param bool|null $previewMode
+     * @param bool|null $horizontalMode
+     * @param string|null $alias
+     */
+    public static function make(
+        $model = null,
+        $fields = null,
+        $context = null,
+        $data = null,
+        $sessionKey = null,
+        $arrayName = null,
+        $isNested = null,
+        $previewMode = null,
+        $horizontalMode = null,
+        $alias = null,
+        ...$config
+    ): static {
+        return static::makeFromNamedArgs(get_defined_vars(), $config);
+    }
+
+    /**
      * @inheritDoc
      */
     public function init()

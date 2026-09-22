@@ -68,6 +68,47 @@ class ListStructure extends Lists
     protected $permissions;
 
     /**
+     * make the list structure widget from named arguments; repeats the parent
+     * list parameters and adds the structure options.
+     *
+     * @param \Illuminate\Database\Eloquent\Model|null $model
+     * @param array|string|null $columns definitions array or YAML file path
+     * @param int|null $recordsPerPage
+     * @param bool|null $showCheckboxes
+     * @param string|null $recordUrl link for each record, `:id` substitutes the key
+     * @param string|null $recordOnClick JavaScript for the record click
+     * @param string|null $noRecordsMessage
+     * @param array|string|null $defaultSort
+     * @param bool|null $showSetup
+     * @param bool|string|null $showPagination
+     * @param string|null $alias
+     * @param bool|null $showTree
+     * @param bool|null $showReorder
+     * @param int|null $maxDepth
+     * @param bool|null $treeExpanded
+     */
+    public static function make(
+        $model = null,
+        $columns = null,
+        $recordsPerPage = null,
+        $showCheckboxes = null,
+        $recordUrl = null,
+        $recordOnClick = null,
+        $noRecordsMessage = null,
+        $defaultSort = null,
+        $showSetup = null,
+        $showPagination = null,
+        $alias = null,
+        $showTree = null,
+        $showReorder = null,
+        $maxDepth = null,
+        $treeExpanded = null,
+        ...$config
+    ): static {
+        return static::makeFromNamedArgs(get_defined_vars(), $config);
+    }
+
+    /**
      * init the widget, called by the constructor and free from its parameters.
      */
     public function init()

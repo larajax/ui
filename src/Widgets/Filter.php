@@ -85,6 +85,25 @@ class Filter extends WidgetBase implements FilterElement
     protected $listWidget;
 
     /**
+     * make the filter widget from named arguments, other configuration keys pass
+     * through the variadic tail.
+     *
+     * @param \Illuminate\Database\Eloquent\Model|null $model
+     * @param array|string|null $scopes definitions array or YAML file path
+     * @param string|null $context
+     * @param string|null $alias
+     */
+    public static function make(
+        $model = null,
+        $scopes = null,
+        $context = null,
+        $alias = null,
+        ...$config
+    ): static {
+        return static::makeFromNamedArgs(get_defined_vars(), $config);
+    }
+
+    /**
      * init the widget, called by the constructor and free from its parameters.
      */
     public function init()
