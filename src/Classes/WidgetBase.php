@@ -3,6 +3,7 @@
 use File;
 use October\Rain\Html\Helper as HtmlHelper;
 use October\Rain\Extension\Extendable;
+use Illuminate\Contracts\Support\Htmlable;
 use Larajax\Contracts\ViewComponentInterface;
 
 /**
@@ -11,7 +12,7 @@ use Larajax\Contracts\ViewComponentInterface;
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
-abstract class WidgetBase extends Extendable implements ViewComponentInterface
+abstract class WidgetBase extends Extendable implements ViewComponentInterface, Htmlable
 {
     use \Larajax\Ui\Traits\SessionMaker;
     use \Larajax\Ui\Traits\ConfigMaker;
@@ -65,6 +66,23 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface
      */
     public function render()
     {
+    }
+
+    /**
+     * toHtml renders the widget for Blade `{{ }}` output, mirroring the Ui
+     * factory components (Htmlable contract).
+     */
+    public function toHtml(): string
+    {
+        return (string) $this->render();
+    }
+
+    /**
+     * __toString renders the widget when cast to a string.
+     */
+    public function __toString(): string
+    {
+        return $this->toHtml();
     }
 
     /**
