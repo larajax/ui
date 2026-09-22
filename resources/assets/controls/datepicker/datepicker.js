@@ -182,7 +182,15 @@ jax.registerControl('datepicker', class extends jax.ControlBase {
             return;
         }
 
-        const [datePart, timePart] = stored.split(' ');
+        // Without a date facade the locker holds a bare time value
+        let datePart = null,
+            timePart = null;
+        if (this.hasDate) {
+            [datePart, timePart] = stored.split(' ');
+        }
+        else {
+            timePart = stored;
+        }
 
         if (this.hasDate && datePart) {
             const date = this.parseDate(datePart);
@@ -267,6 +275,12 @@ jax.registerControl('datepicker', class extends jax.ControlBase {
         const pad = (n) => String(n).padStart(2, '0');
 
         if (forDisplay) {
+            // Clockpicker expects "hh:mm AM/PM" in twelve hour mode
+            if (this.config.twelveHour) {
+                const displayMeridiem = hours >= 12 ? 'PM' : 'AM',
+                    displayHours = (hours % 12) || 12;
+                return pad(displayHours) + ':' + minutes + ' ' + displayMeridiem;
+            }
             return pad(hours) + ':' + minutes;
         }
 

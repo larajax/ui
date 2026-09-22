@@ -18,6 +18,7 @@ jax.registerControl('rowlink', class extends jax.ControlBase {
         this.target = this.config.target || 'a';
         this.excludeClass = this.config.excludeClass || 'nolink';
         this.linkedClass = this.config.linkedClass || 'rowlink';
+        this.rows = [];
 
         const rows = this.element.tagName === 'TR'
             ? [this.element]
@@ -26,9 +27,13 @@ jax.registerControl('rowlink', class extends jax.ControlBase {
         rows.forEach((row) => this.linkRow(row));
 
         // Add keyboard navigation to list rows
-        this.element.querySelectorAll('tr.' + this.linkedClass).forEach((row) => {
+        this.rows.forEach((row) => {
             row.setAttribute('tabindex', 0);
         });
+    }
+
+    disconnect() {
+        this.rows = null;
     }
 
     // Wires up a single row when it contains an eligible anchor.
@@ -59,10 +64,6 @@ jax.registerControl('rowlink', class extends jax.ControlBase {
         };
 
         const handleClick = (ev) => {
-            if (!activeCell(ev)) {
-                return;
-            }
-
             if (state.skipNextBubble) {
                 state.skipNextBubble = false;
                 return;
@@ -73,13 +74,14 @@ jax.registerControl('rowlink', class extends jax.ControlBase {
             }
 
             if (onclick) {
-                onclick.apply(link, [ev]);
+                onclick.apply(link);
             }
             else if (isRequest) {
                 jax.request(link);
             }
             else if (isPopup) {
-                link.click();
+                // Non-bubbling so the popup control fires without re-triggering this row handler.
+                link.dispatchEvent(new MouseEvent('click', { bubbles: false, cancelable: true }));
             }
             else if (ev.ctrlKey || ev.metaKey) {
                 window.open(href);
@@ -101,7 +103,12 @@ jax.registerControl('rowlink', class extends jax.ControlBase {
             }
         });
 
-        this.listen('click', row, handleClick);
+        this.listen('click', row, (ev) => {
+            // Delegation guard: only clicks inside a linkable cell activate the row.
+            if (activeCell(ev)) {
+                handleClick(ev);
+            }
+        });
 
         this.listen('mousedown', row, (ev) => {
             if (ev.button === 1 && activeCell(ev)) {
@@ -113,10 +120,12 @@ jax.registerControl('rowlink', class extends jax.ControlBase {
             if (ev.key === ' ' || ev.key === 'Spacebar') {
                 handleClick(ev);
                 ev.preventDefault();
+                ev.stopPropagation();
             }
         });
 
         row.classList.add(this.linkedClass);
+        this.rows.push(row);
 
         // Reveal the link contents in place (order preserved), then hide the redundant anchor.
         const contents = document.createDocumentFragment();

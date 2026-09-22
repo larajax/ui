@@ -200,7 +200,7 @@ export class Clockpicker {
             return;
         }
 
-        const doneButton = parseHtml('<button type="button" class="btn btn-sm btn-secondary btn-block clockpicker-button">' + this.options.donetext + '</button>');
+        const doneButton = parseHtml('<button type="button" class="btn btn-sm btn-secondary w-100 clockpicker-button">' + this.options.donetext + '</button>');
         doneButton.addEventListener('click', () => this.done());
         this.popover.appendChild(doneButton);
     }
@@ -332,6 +332,9 @@ export class Clockpicker {
         }
         e.preventDefault();
 
+        // Drop any stale drag listeners from an interrupted drag
+        this.unbindDrag();
+
         const movingTimer = setTimeout(() => {
             document.body.classList.add('clockpicker-moving');
         }, 200);
@@ -356,10 +359,7 @@ export class Clockpicker {
         };
 
         this.onDocUp = (ev) => {
-            document.removeEventListener('mousemove', this.onDocMove);
-            document.removeEventListener('touchmove', this.onDocMove);
-            document.removeEventListener('mouseup', this.onDocUp);
-            document.removeEventListener('touchend', this.onDocUp);
+            this.unbindDrag();
             ev.preventDefault();
             const evTouch = /^touch/.test(ev.type),
                 p = evTouch ? ev.changedTouches[0] : ev,
@@ -380,15 +380,28 @@ export class Clockpicker {
             }
             clearTimeout(movingTimer);
             document.body.classList.remove('clockpicker-moving');
-            document.removeEventListener('mousemove', this.onDocMove);
-            document.removeEventListener('touchmove', this.onDocMove);
         };
 
+        // touchmove on document is passive by default, which would ignore the
+        // preventDefault needed to stop the page scrolling during a drag
         document.addEventListener('mousemove', this.onDocMove);
         document.addEventListener('mouseup', this.onDocUp);
         if (touchSupported) {
-            document.addEventListener('touchmove', this.onDocMove);
+            document.addEventListener('touchmove', this.onDocMove, { passive: false });
             document.addEventListener('touchend', this.onDocUp);
+        }
+    }
+
+    unbindDrag() {
+        if (this.onDocMove) {
+            document.removeEventListener('mousemove', this.onDocMove);
+            document.removeEventListener('touchmove', this.onDocMove);
+            this.onDocMove = null;
+        }
+        if (this.onDocUp) {
+            document.removeEventListener('mouseup', this.onDocUp);
+            document.removeEventListener('touchend', this.onDocUp);
+            this.onDocUp = null;
         }
     }
 
@@ -495,8 +508,8 @@ export class Clockpicker {
 
         this.onDocInteract = (e) => {
             const target = e.target;
-            if (!target.closest('.clockpicker-popover') &&
-                !(this.addon && target.closest('.input-group-addon')) &&
+            if (!this.popover.contains(target) &&
+                !(this.addon && this.addon.contains(target)) &&
                 target !== this.input) {
                 this.hide();
             }
@@ -694,7 +707,7 @@ export class Clockpicker {
         }
 
         if (this.options.autoclose) {
-            this.input.dispatchEvent(new Event('blur', { bubbles: true }));
+            this.input.blur();
         }
 
         this.raiseCallback(this.options.afterDone);
@@ -709,6 +722,8 @@ export class Clockpicker {
         if (this.isShown) {
             this.hide();
         }
+        this.unbindDrag();
+        clearTimeout(this.toggleViewTimer);
         if (this.isAppended) {
             window.removeEventListener('resize', this.onWinResize);
             this.popover.remove();
