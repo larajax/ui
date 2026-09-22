@@ -57,7 +57,7 @@ trait HasFilterWidgets
 
         if (!class_exists($widgetClass)) {
             throw new SystemException(Lang::get(
-                'backend::lang.widget.not_registered',
+                "A widget class name ':name' has not been registered",
                 ['name' => $widgetClass]
             ));
         }
@@ -81,7 +81,7 @@ trait HasFilterWidgets
             : $this;
 
         if (!class_exists($class)) {
-            throw new SystemException(Lang::get('backend::lang.widget.not_registered', [
+            throw new SystemException(Lang::get("A widget class name ':name' has not been registered", [
                 'name' => $class
             ]));
         }

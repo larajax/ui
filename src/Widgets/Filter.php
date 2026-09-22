@@ -437,7 +437,7 @@ class Filter extends WidgetBase implements FilterElement
         if (is_string($scope)) {
             if (!isset($this->allScopes[$scope])) {
                 throw new SystemException(Lang::get(
-                    'backend::lang.form.missing_definition',
+                    "Form behavior does not contain a field for ':field'.",
                     compact('scope')
                 ));
             }
@@ -458,7 +458,7 @@ class Filter extends WidgetBase implements FilterElement
         if (is_string($scope)) {
             if (!isset($this->allScopes[$scope])) {
                 throw new SystemException(Lang::get(
-                    'backend::lang.form.missing_definition',
+                    "Form behavior does not contain a field for ':field'.",
                     compact('scope')
                 ));
             }

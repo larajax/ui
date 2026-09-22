@@ -536,7 +536,7 @@ class FormField extends FieldDefinition
             $fieldOptions = $callableMethod($model, $this);
 
             if (!is_array($fieldOptions)) {
-                throw new SystemException(Lang::get('backend::lang.field.options_static_method_invalid_value', [
+                throw new SystemException(Lang::get("The static method ':method()' on :class does not return a valid options array.", [
                     'class' => $callableMethod[0],
                     'method' => $callableMethod[1]
                 ]));
@@ -545,7 +545,7 @@ class FormField extends FieldDefinition
         // Calling via $model->method
         else {
             if (!$this->objectMethodExists($model, $methodName)) {
-                throw new SystemException(Lang::get('backend::lang.field.options_method_not_exists', [
+                throw new SystemException(Lang::get("The model class :model must define a method :method() returning options for the ':field' form field.", [
                     'model' => get_class($model),
                     'method' => $methodName,
                     'field' => $this->fieldName
@@ -567,7 +567,7 @@ class FormField extends FieldDefinition
             [$model, $attribute] = $this->resolveModelAttributeInternal($model, $this->fieldName, ['objectOnly' => true]);
         }
         catch (Exception $ex) {
-            throw new SystemException(Lang::get('backend::lang.field.options_method_invalid_model', [
+            throw new SystemException(Lang::get("The attribute ':field' does not resolve to a valid model. Try specifying the options method for model class :model explicitly.", [
                 'model' => get_class($model),
                 'field' => $this->fieldName
             ]));
@@ -578,7 +578,7 @@ class FormField extends FieldDefinition
             !$this->objectMethodExists($model, $methodName) &&
             !$this->objectMethodExists($model, 'getDropdownOptions')
         ) {
-            throw new SystemException(Lang::get('backend::lang.field.options_method_not_exists', [
+            throw new SystemException(Lang::get("The model class :model must define a method :method() returning options for the ':field' form field.", [
                 'model' => get_class($model),
                 'method' => $methodName,
                 'field' => $this->fieldName

@@ -375,14 +375,14 @@ class Lists extends WidgetBase implements ListElement
     {
         if (!$this->model) {
             throw new ApplicationException(Lang::get(
-                'backend::lang.list.missing_model',
+                'List behavior used in :class does not have a model defined.',
                 ['class'=>get_class($this->controller)]
             ));
         }
 
         if (!$this->model instanceof Model) {
             throw new ApplicationException(Lang::get(
-                'backend::lang.model.invalid_class',
+                'Model :model used in :class is not valid, it must inherit the \Model class.',
                 ['model'=>get_class($this->model), 'class'=>get_class($this->controller)]
             ));
         }
@@ -835,7 +835,7 @@ class Lists extends WidgetBase implements ListElement
             $invalidColumns = array_diff($this->columnOverride, array_keys($definitions));
             if (!count($definitions)) {
                 throw new ApplicationException(Lang::get(
-                    'backend::lang.list.missing_column',
+                    'There are no column definitions for :columns.',
                     ['columns'=>implode(',', $invalidColumns)]
                 ));
             }
@@ -879,7 +879,7 @@ class Lists extends WidgetBase implements ListElement
 
         if (!$this->allColumns) {
             $class = get_class($this->model instanceof Model ? $this->model : $this->controller);
-            throw new ApplicationException(Lang::get('backend::lang.list.missing_columns', compact('class')));
+            throw new ApplicationException(Lang::get('List used in :class has no list columns defined.', compact('class')));
         }
 
         $this->eventExtendColumns();
@@ -1236,7 +1236,7 @@ class Lists extends WidgetBase implements ListElement
 
         if (!app('model.inspector')->hasRelation($this->model, $column->relation)) {
             throw new ApplicationException(Lang::get(
-                'backend::lang.model.missing_relation',
+                "Model ':class' does not contain a definition for ':relation'.",
                 ['class'=>get_class($this->model), 'relation'=>$column->relation]
             ));
         }

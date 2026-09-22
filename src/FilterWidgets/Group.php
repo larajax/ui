@@ -259,7 +259,7 @@ class Group extends FilterWidgetBase
                 $options = $staticMethod($model, $scope);
 
                 if (!is_array($options)) {
-                    throw new ApplicationException(Lang::get('backend::lang.field.options_static_method_invalid_value', [
+                    throw new ApplicationException(Lang::get("The static method ':method()' on :class does not return a valid options array.", [
                         'class' => $staticMethod[0],
                         'method' => $staticMethod[1]
                     ]));
@@ -274,7 +274,7 @@ class Group extends FilterWidgetBase
                     : method_exists($model, $methodName);
 
                 if (!$methodExists) {
-                    throw new ApplicationException(Lang::get('backend::lang.filter.options_method_not_exists', [
+                    throw new ApplicationException(Lang::get("The model class :model must define a method :method() returning options for the ':filter' filter.", [
                         'model'  => get_class($model),
                         'method' => $methodName,
                         'filter' => $scope->scopeName

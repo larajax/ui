@@ -1,6 +1,6 @@
 <?php if ($this->previewMode && !$fileList->count()): ?>
 
-    <span class="form-control"><?= e(trans('backend::lang.form.preview_no_files_message')) ?></span>
+    <span class="form-control"><?= e(__("There are no files uploaded.")) ?></span>
 
 <?php else: ?>
 

@@ -27,7 +27,7 @@ trait FormModelWidget
             return $this->formField->resolveModelAttribute($this->model, $attribute);
         }
         catch (Exception $ex) {
-            throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
+            throw new ApplicationException(Lang::get("Model ':class' does not contain a definition for ':relation'.", [
                 'class' => get_class($this->model),
                 'relation' => $attribute
             ]));
@@ -52,14 +52,14 @@ trait FormModelWidget
         [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
 
         if (!$model) {
-            throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
+            throw new ApplicationException(Lang::get("Model ':class' does not contain a definition for ':relation'.", [
                 'class' => get_class($this->model),
                 'relation' => $this->valueFrom
             ]));
         }
 
         if (!app('model.inspector')->hasRelation($model, $attribute)) {
-            throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
+            throw new ApplicationException(Lang::get("Model ':class' does not contain a definition for ':relation'.", [
                 'class' => get_class($model),
                 'relation' => $attribute
             ]));
@@ -78,14 +78,14 @@ trait FormModelWidget
         [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
 
         if (!$model) {
-            throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
+            throw new ApplicationException(Lang::get("Model ':class' does not contain a definition for ':relation'.", [
                 'class' => get_class($this->model),
                 'relation' => $this->valueFrom
             ]));
         }
 
         if (!app('model.inspector')->hasRelation($model, $attribute)) {
-            throw new ApplicationException(Lang::get('backend::lang.model.missing_relation', [
+            throw new ApplicationException(Lang::get("Model ':class' does not contain a definition for ':relation'.", [
                 'class' => get_class($model),
                 'relation' => $attribute
             ]));

@@ -75,7 +75,7 @@
                     <?= $field->readOnly ? 'readonly' : '' ?>
                     data-field-checkboxlist-all>
                     <?= \Larajax\Ui\Facades\Ui::icon('checkboxlist.select_all') ?>
-                    <span class="button-label"><?= e(trans('backend::lang.form.select_all')) ?></span>
+                    <span class="button-label"><?= e(__("Select All")) ?></span>
                 </a>
 
                 <a
@@ -84,7 +84,7 @@
                     <?= $field->readOnly ? 'readonly' : '' ?>
                     data-field-checkboxlist-none>
                     <?= \Larajax\Ui\Facades\Ui::icon('checkboxlist.clear') ?>
-                    <span class="button-label"><?= e(trans('backend::lang.form.select_none')) ?></span>
+                    <span class="button-label"><?= e(__("Select None")) ?></span>
                 </a>
             </div>
         <?php endif ?>

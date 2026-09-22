@@ -56,7 +56,7 @@ class FilterScope extends ScopeDefinition
             $scopeOptions = $staticMethod($model, $this);
 
             if (!is_array($scopeOptions)) {
-                throw new SystemException(Lang::get('backend::lang.field.options_static_method_invalid_value', [
+                throw new SystemException(Lang::get("The static method ':method()' on :class does not return a valid options array.", [
                     'class' => $staticMethod[0],
                     'method' => $staticMethod[1]
                 ]));
@@ -65,7 +65,7 @@ class FilterScope extends ScopeDefinition
         // Calling via $model->method
         else {
             if (!$this->objectMethodExists($model, $methodName)) {
-                throw new SystemException(Lang::get('backend::lang.filter.options_method_not_exists', [
+                throw new SystemException(Lang::get("The model class :model must define a method :method() returning options for the ':filter' filter.", [
                     'model' => get_class($model),
                     'method' => $methodName,
                     'filter' => $this->fieldName

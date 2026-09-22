@@ -15,10 +15,6 @@
             </label>
         <?php endif ?>
 
-        <?php if ($this->useTranslatable !== false && $field->translatable && !$this->previewMode): ?>
-            <?= $this->makePartial('translate_button', ['field' => $field]) ?>
-        <?php endif ?>
-
         <?php if ($fieldComment = $field->commentAbove): ?>
             <p class="form-text before-field"><?= $field->commentHtml ? trans($fieldComment) : e(__($fieldComment)) ?></p>
         <?php endif ?>
