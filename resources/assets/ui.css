@@ -32,6 +32,7 @@
 
 /* Widgets */
 @import "./widgets/form/form.css";
+@import "./widgets/search/search.css";
 @import "./widgets/list/list.css";
 @import "./widgets/filter/filter.css";
 @import "./widgets/liststructure/liststructure.css";
