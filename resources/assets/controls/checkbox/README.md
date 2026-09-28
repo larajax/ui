@@ -12,11 +12,21 @@ The control auto-discovers `.form-check.is-indeterminate` elements. Set the init
 - `data-checked="1"` - Indeterminate
 - `data-checked="2"` - Checked
 
+Without `data-checked`, the initial state follows the input's `checked` attribute.
+
 ```html
 <div class="form-check is-indeterminate">
-    <input type="checkbox" class="form-check-input" data-checked="1" />
-    <label class="form-check-label">Indeterminate checkbox</label>
+    <input type="checkbox" class="form-check-input" id="featured" data-checked="1" />
+    <label class="form-check-label" for="featured">Indeterminate checkbox</label>
 </div>
+```
+
+The control advances `data-checked` on click, before the native `change` event fires, so a `change` listener reads the new state from the attribute. An indeterminate checkbox is never `checked`, so it is left out of form submissions.
+
+```js
+input.addEventListener('change', () => {
+    const state = parseInt(input.dataset.checked);
+});
 ```
 
 ## Range Selection

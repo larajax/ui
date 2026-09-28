@@ -288,7 +288,7 @@ export function registerFilterWidget(jax) {
                 const scope = el.closest('.filter-scope');
 
                 if (scope.classList.contains('is-indeterminate')) {
-                    this.applySwitchVisual(el, parseInt(el.dataset.checked) || 0);
+                    scope.classList.toggle('active', !!this.getSwitchValue(el));
                 }
                 else {
                     scope.classList.toggle('active', el.checked);
@@ -302,23 +302,19 @@ export function registerFilterWidget(jax) {
             scope.classList.toggle('active', el.checked);
         }
 
-        // Switch cycles through three states: 0 = unfiltered (indeterminate),
-        // 1 = the off condition (unchecked), 2 = the on condition (checked)
+        // Switch value is the checkbox control state, already advanced by its click
+        // handler: 0 = unfiltered (unchecked), 1 = first condition (indeterminate),
+        // 2 = second condition (checked)
         switchToggle(el, scope) {
-            const current = parseInt(el.dataset.checked) || 0,
-                next = (current + 1) % 3;
+            const switchValue = this.getSwitchValue(el);
 
-            el.dataset.checked = next;
-            this.applySwitchVisual(el, next);
+            this.submitUpdate(scope, { value: switchValue });
 
-            this.submitUpdate(scope, { value: next });
-
-            scope.classList.toggle('active', !!next);
+            scope.classList.toggle('active', !!switchValue);
         }
 
-        applySwitchVisual(el, value) {
-            el.indeterminate = value === 0;
-            el.checked = value === 2;
+        getSwitchValue(el) {
+            return parseInt(el.dataset.checked) || 0;
         }
 
         //
