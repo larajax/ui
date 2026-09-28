@@ -3,13 +3,15 @@
  *
  * Registers every control and widget against a provided Larajax framework
  * instance without touching globals, so build tools and native ESM consumers
- * can import it statically:
+ * can import it statically from the Composer-installed package source:
  *
  *     import { jax } from "larajax";
- *     import { registerUi } from "larajax-ui";
+ *     import { registerUi } from "./vendor/larajax/ui/resources/assets/index.js";
  *
  *     registerUi(jax);
  *     jax.start();
+ *
+ * Bundler configs may shorten the path with an alias (see the README).
  *
  * Importing this module has no side effects; registration happens only when
  * registerUi() is called, and starting the framework stays with the caller.

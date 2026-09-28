@@ -104,12 +104,15 @@ Include them in your layout, after the larajax framework bundle:
 
 ### Using a bundler (Vite)
 
+Larajax UI is Composer-only. Vite applications import the package source straight from the vendor directory.
+
 `index.js` is the **explicit registration entry**: importing it has no side effects and needs no global. It exports `registerUi(jax)`, which registers every control against the framework instance you pass, so registration happens before you start observation:
 
 ```js
+// resources/js/app.js
 import { jax } from "larajax";
-import { registerUi } from "larajax-ui";
-import "larajax-ui/ui.css";
+import { registerUi } from "../../vendor/larajax/ui/resources/assets/index.js";
+import "../../vendor/larajax/ui/resources/assets/ui.css";
 
 registerUi(jax);
 jax.start();
@@ -117,13 +120,17 @@ jax.start();
 
 The application owns startup: `registerUi()` never starts or stops the framework. Repeated calls for the same instance are ignored, and an instance without the control API produces a clear error. One framework instance per page is assumed.
 
-For Composer-only applications (no npm package), alias the names to the installed package source in `vite.config.js`; the JS alias must be exact so it does not intercept the CSS subpath:
+The framework comes from the [larajax npm package](https://www.npmjs.com/package/larajax); keep its version aligned with the Composer `larajax/larajax` package. Importing it from the Composer source also works: `vendor/larajax/larajax/resources/src/index.js`.
+
+Optionally, shorten the paths with aliases in `vite.config.js`. The `larajax-ui` alias must be exact so it does not intercept the CSS subpath:
 
 ```js
+import path from "node:path";
+
 resolve: {
     alias: [
-        { find: /^larajax-ui$/, replacement: "/vendor/larajax/ui/resources/assets/index.js" },
-        { find: /^larajax-ui\/ui\.css$/, replacement: "/vendor/larajax/ui/resources/assets/ui.css" },
+        { find: /^larajax-ui$/, replacement: path.resolve(import.meta.dirname, "vendor/larajax/ui/resources/assets/index.js") },
+        { find: /^larajax-ui\/ui\.css$/, replacement: path.resolve(import.meta.dirname, "vendor/larajax/ui/resources/assets/ui.css") },
     ],
 },
 ```
