@@ -29,18 +29,20 @@ use Larajax\Ui\Widgets\Lists;
 
 public function index()
 {
-    $widget = Lists::make([
-        'model' => new User,
-        'columns' => '~/resources/ui/user/columns.yaml',
-        'recordsPerPage' => 10,
-    ]);
+    $widget = Lists::make(
+        model: new User,
+        columns: '~/resources/ui/user/columns.yaml',
+        recordsPerPage: 10,
+    );
 
     return view('users.index', ['widget' => $widget]);
 }
 ```
 
+Widgets render as safe HTML, so Blade's escaped output works directly:
+
 ```blade
-{!! $widget->render() !!}
+{{ $widget }}
 ```
 
 That renders a sortable, searchable, paginated table of users. Forms work the same way from a `fields.yaml`, and filters from a `scopes.yaml`.
@@ -57,17 +59,17 @@ Each widget is a [Larajax](https://larajax.org) view component, so its AJAX hand
 
 ## Included widgets
 
-- **Form** - YAML or array-driven form builder with field widgets (text, dropdown, relation, file upload, etc.)
+- **Form** - YAML or array-driven form builder with field widgets (text, dropdown, relation, file upload, repeater, etc.)
 - **Lists** - sortable, paginated record lists with column types and row actions
 - **ListStructure** - tree and reorderable list variants
-- **Filter** - scope-based filtering for list views
-- **Toolbar** - action buttons and search bar
+- **Filter** - scope-based filtering for list views, including popover scopes (date, text, number, group)
+- **Toolbar** - declarative action buttons and search bar
 - **Ui facade** - buttons, inputs, dropdowns and callouts for your own views
 
 ## Requirements
 
 - PHP 8.2 or higher
-- Laravel 12
+- Laravel 12 or later
 - [larajax/larajax](https://larajax.org) (provides the view component interface and the `window.jax` browser API)
 - [october/rain](https://github.com/octobercms/library) (database, validation and HTML helpers)
 - [Bootstrap 5](https://getbootstrap.com) (styling foundation; the popup control wraps the Bootstrap Modal)
@@ -106,18 +108,6 @@ Alternatively, applications using Vite can import the entries directly from the 
 import '../../vendor/larajax/ui/resources/assets/ui.js';
 ```
 
-## Background
-
-Larajax UI was extracted from the widget engine used in [October CMS](https://github.com/octobercms), where it has rendered admin panel forms and lists in production for many years.
-
-It is now packaged as a standalone Laravel library.
-
-## Resources
-
-- Documentation and examples: https://larajax.org
-- Source code: https://github.com/larajax/ui
-
-
 ### Icon packs
 
 Larajax UI resolves widget icons through `Ui::icon()` and `Ui::iconClass()`. Publish the icon config when you want to switch packs or override individual icons:
@@ -140,6 +130,17 @@ The package ships `october`, `phosphor`, and `bootstrap` packs. Unknown icon nam
     'pagination.next' => 'my-icon my-next',
 ],
 ```
+
+## Background
+
+Larajax UI was extracted from the widget engine used in [October CMS](https://github.com/octobercms), where it has rendered admin panel forms and lists in production for many years.
+
+It is now packaged as a standalone Laravel library.
+
+## Resources
+
+- Documentation and examples: https://larajax.org
+- Source code: https://github.com/larajax/ui
 
 ## License
 
