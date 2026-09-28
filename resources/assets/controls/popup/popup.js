@@ -27,6 +27,9 @@
  */
 'use strict';
 
+// Framework instance bound by registerPopup
+let jax = null;
+
 const SIZE_CLASSES = {
     small: 'modal-sm',
     tiny: 'modal-sm',
@@ -97,33 +100,37 @@ export class Popup {
 /*
  * Declarative binding: opens a popup from the clicked element's data attributes
  */
-jax.registerControl('popup', class extends jax.ControlBase {
-    connect() {
-        this.listen('click', this.onClick);
-    }
+export function registerPopup(framework) {
+    jax = framework;
 
-    onClick(ev) {
-        ev.preventDefault();
-
-        Popup.open({
-            handler: this.config.handler,
-            size: this.config.size,
-            extraData: this.parseRequestData(),
-            sourceElement: this.element
-        });
-    }
-
-    parseRequestData() {
-        const raw = this.element.dataset.requestData || '';
-        if (!raw) {
-            return {};
+    jax.registerControl('popup', class extends jax.ControlBase {
+        connect() {
+            this.listen('click', this.onClick);
         }
 
-        try {
-            return jax.parseJSON(raw.trim().startsWith('{') ? raw : '{' + raw + '}');
+        onClick(ev) {
+            ev.preventDefault();
+
+            Popup.open({
+                handler: this.config.handler,
+                size: this.config.size,
+                extraData: this.parseRequestData(),
+                sourceElement: this.element
+            });
         }
-        catch (e) {
-            return {};
+
+        parseRequestData() {
+            const raw = this.element.dataset.requestData || '';
+            if (!raw) {
+                return {};
+            }
+
+            try {
+                return jax.parseJSON(raw.trim().startsWith('{') ? raw : '{' + raw + '}');
+            }
+            catch (e) {
+                return {};
+            }
         }
-    }
-});
+    });
+}

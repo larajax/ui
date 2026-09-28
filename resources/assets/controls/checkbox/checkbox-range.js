@@ -10,6 +10,9 @@
  */
 'use strict';
 
+// Framework instance bound by registerCheckboxRange
+let jax = null;
+
 export class CheckboxRange
 {
     constructor() {
@@ -71,6 +74,9 @@ export class CheckboxRange
     }
 }
 
-// Instances
-jax.CheckboxRange = new CheckboxRange;
-jax.checkboxRangeRegisterClick = (ev, containerSelector, checkboxSelector) => jax.CheckboxRange.registerClick(ev, containerSelector, checkboxSelector);
+export function registerCheckboxRange(framework) {
+    jax = framework;
+
+    jax.CheckboxRange = new CheckboxRange;
+    jax.checkboxRangeRegisterClick = (ev, containerSelector, checkboxSelector) => jax.CheckboxRange.registerClick(ev, containerSelector, checkboxSelector);
+}

@@ -22,8 +22,8 @@ $('#form').changeMonitor()
 
 ### Static Methods
 
-- `ChangeMonitorControl.disable()` — Globally disable all change monitors
-- `ChangeMonitorControl.enable()` — Re-enable all change monitors
+- `ChangeMonitorControl.disable()` - Globally disable all change monitors
+- `ChangeMonitorControl.enable()` - Re-enable all change monitors
 
 ### Data Attributes
 

@@ -24,7 +24,10 @@
  */
 'use strict';
 
-import './input-preset-engine.js';
+import { InputPresetEngine } from './input-preset-engine.js';
+
+// Framework instance bound by registerInputPreset
+let jax = null;
 
 export class InputPreset {
     static DEFAULTS = {
@@ -99,23 +102,28 @@ export class InputPreset {
     }
 }
 
-// Instances
-jax.InputPreset = InputPreset;
+export function registerInputPreset(framework) {
+    jax = framework;
 
-// CUSTOM RENDERER
-// ============================
+    // Instances
+    jax.InputPresetEngine = new InputPresetEngine;
+    jax.InputPreset = InputPreset;
 
-addEventListener('render', function() {
-    document.querySelectorAll('[data-input-preset]:not([data-oc-input-preset])').forEach(function(element) {
-        element.dataset.ocInputPreset = '';
+    // CUSTOM RENDERER
+    // ============================
 
-        const options = Object.assign({}, InputPreset.DEFAULTS);
-        for (const key in element.dataset) {
-            if (key.startsWith('inputPreset')) {
-                options[key] = element.dataset[key] === 'false' ? false : element.dataset[key];
+    addEventListener('render', function() {
+        document.querySelectorAll('[data-input-preset]:not([data-oc-input-preset])').forEach(function(element) {
+            element.dataset.ocInputPreset = '';
+
+            const options = Object.assign({}, InputPreset.DEFAULTS);
+            for (const key in element.dataset) {
+                if (key.startsWith('inputPreset')) {
+                    options[key] = element.dataset[key] === 'false' ? false : element.dataset[key];
+                }
             }
-        }
 
-        new InputPreset(element, options);
+            new InputPreset(element, options);
+        });
     });
-});
+}

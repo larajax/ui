@@ -15,50 +15,52 @@
 
 import DragScroll from '../drag-scroll/drag-scroll.js';
 
-jax.registerControl('toolbar', class extends jax.ControlBase {
-    connect() {
-        this.toolbar = this.element.closest('.control-toolbar');
-        this.scrollClassContainer = this.element.parentNode;
+export function registerToolbar(jax) {
+    jax.registerControl('toolbar', class extends jax.ControlBase {
+        connect() {
+            this.toolbar = this.element.closest('.control-toolbar');
+            this.scrollClassContainer = this.element.parentNode;
 
-        const noDragSupport = this.config.noDragSupport !== undefined && this.config.noDragSupport;
+            const noDragSupport = this.config.noDragSupport !== undefined && this.config.noDragSupport;
 
-        if (this.config.useNativeDrag) {
-            this.element.classList.add('is-native-drag');
-        }
+            if (this.config.useNativeDrag) {
+                this.element.classList.add('is-native-drag');
+            }
 
-        this.instance = new DragScroll(this.element, {
-            scrollClassContainer: this.scrollClassContainer,
-            useDrag: !noDragSupport,
-            useNative: this.config.useNativeDrag,
-            vertical: this.config.vertical,
-            noOverScroll: this.config.vertical
-        });
-
-        if (this.toolbar) {
-            this.growables = this.toolbar.querySelectorAll('.form-control.is-growable');
-            this.growables.forEach((el) => {
-                this.listen('focus', el, this.onGrowableFocus);
-                this.listen('blur', el, this.onGrowableFocus);
-                this.listen('transitionend', el, this.onGrowableFocus);
+            this.instance = new DragScroll(this.element, {
+                scrollClassContainer: this.scrollClassContainer,
+                useDrag: !noDragSupport,
+                useNative: this.config.useNativeDrag,
+                vertical: this.config.vertical,
+                noOverScroll: this.config.vertical
             });
-        }
-    }
 
-    disconnect() {
-        if (this.instance) {
-            this.instance.dispose();
-            this.instance = null;
+            if (this.toolbar) {
+                this.growables = this.toolbar.querySelectorAll('.form-control.is-growable');
+                this.growables.forEach((el) => {
+                    this.listen('focus', el, this.onGrowableFocus);
+                    this.listen('blur', el, this.onGrowableFocus);
+                    this.listen('transitionend', el, this.onGrowableFocus);
+                });
+            }
         }
 
-        this.toolbar = null;
-        this.growables = null;
-    }
+        disconnect() {
+            if (this.instance) {
+                this.instance.dispose();
+                this.instance = null;
+            }
 
-    // Growable inputs resize the primary item as they animate; refresh the
-    // scroll classes once the transition settles
-    onGrowableFocus() {
-        if (this.instance) {
-            this.instance.fixScrollClasses();
+            this.toolbar = null;
+            this.growables = null;
         }
-    }
-});
+
+        // Growable inputs resize the primary item as they animate; refresh the
+        // scroll classes once the transition settles
+        onGrowableFocus() {
+            if (this.instance) {
+                this.instance.fixScrollClasses();
+            }
+        }
+    });
+}

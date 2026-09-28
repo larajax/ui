@@ -15,32 +15,34 @@
 
 import DragScroll from './drag-scroll.js';
 
-jax.registerControl('drag-scroll', class extends jax.ControlBase {
-    init() {
-        this.scrollClassContainer = this.element.parentNode;
-        this.instance = null;
-    }
-
-    connect() {
-        const noDragSupport = this.config.noDragSupport !== undefined && this.config.noDragSupport;
-
-        if (this.config.useNativeDrag) {
-            this.element.classList.add('is-native-drag');
-        }
-
-        this.instance = new DragScroll(this.element, {
-            scrollClassContainer: this.scrollClassContainer,
-            useDrag: !noDragSupport,
-            useNative: this.config.useNativeDrag,
-            vertical: this.config.vertical,
-            noOverScroll: this.config.vertical
-        });
-    }
-
-    disconnect() {
-        if (this.instance) {
-            this.instance.dispose();
+export function registerDragScroll(jax) {
+    jax.registerControl('drag-scroll', class extends jax.ControlBase {
+        init() {
+            this.scrollClassContainer = this.element.parentNode;
             this.instance = null;
         }
-    }
-});
+
+        connect() {
+            const noDragSupport = this.config.noDragSupport !== undefined && this.config.noDragSupport;
+
+            if (this.config.useNativeDrag) {
+                this.element.classList.add('is-native-drag');
+            }
+
+            this.instance = new DragScroll(this.element, {
+                scrollClassContainer: this.scrollClassContainer,
+                useDrag: !noDragSupport,
+                useNative: this.config.useNativeDrag,
+                vertical: this.config.vertical,
+                noOverScroll: this.config.vertical
+            });
+        }
+
+        disconnect() {
+            if (this.instance) {
+                this.instance.dispose();
+                this.instance = null;
+            }
+        }
+    });
+}

@@ -4,7 +4,7 @@ Customizes Bootstrap dropdown menus with consistent styling, body-container repo
 
 ## Basic Usage
 
-Standard Bootstrap dropdown markup — the control hooks in automatically.
+Standard Bootstrap dropdown markup - the control hooks in automatically.
 
 ```html
 <div class="dropdown">

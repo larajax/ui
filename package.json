@@ -2,10 +2,17 @@
     "name": "larajax-ui",
     "private": true,
     "type": "module",
+    "exports": {
+        ".": "./resources/assets/index.js",
+        "./ui.css": "./resources/assets/ui.css",
+        "./package.json": "./package.json"
+    },
     "scripts": {
-        "build": "node build.js"
+        "build": "node build.js",
+        "test": "bun test"
     },
     "devDependencies": {
+        "@happy-dom/global-registrator": "^20.14.5",
         "esbuild": "^0.28.2"
     },
     "dependencies": {

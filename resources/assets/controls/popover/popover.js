@@ -146,46 +146,48 @@ export class Popover {
 /*
  * Declarative binding: toggles a popover with content cloned from a template
  */
-jax.registerControl('popover', class extends jax.ControlBase {
-    init() {
-        this.popover = null;
-    }
-
-    connect() {
-        this.listen('click', this.onClick);
-    }
-
-    disconnect() {
-        if (this.popover) {
-            this.popover.hide();
-        }
-        this.popover = null;
-    }
-
-    onClick(ev) {
-        ev.preventDefault();
-
-        // Second click closes
-        if (this.popover && Popover.activeInstance === this.popover) {
-            this.popover.hide();
-            return;
+export function registerPopover(jax) {
+    jax.registerControl('popover', class extends jax.ControlBase {
+        init() {
+            this.popover = null;
         }
 
-        let content = null;
-        if (this.config.contentFrom) {
-            const template = document.querySelector(this.config.contentFrom);
-            if (template) {
-                content = template.innerHTML;
+        connect() {
+            this.listen('click', this.onClick);
+        }
+
+        disconnect() {
+            if (this.popover) {
+                this.popover.hide();
+            }
+            this.popover = null;
+        }
+
+        onClick(ev) {
+            ev.preventDefault();
+
+            // Second click closes
+            if (this.popover && Popover.activeInstance === this.popover) {
+                this.popover.hide();
+                return;
+            }
+
+            let content = null;
+            if (this.config.contentFrom) {
+                const template = document.querySelector(this.config.contentFrom);
+                if (template) {
+                    content = template.innerHTML;
+                }
+            }
+
+            this.popover = new Popover(this.element, { content: content });
+            this.popover.show();
+
+            // Focus any autofocus input in the content
+            const focusEl = this.popover.element.querySelector('[data-popover-autofocus]');
+            if (focusEl) {
+                focusEl.focus();
             }
         }
-
-        this.popover = new Popover(this.element, { content: content });
-        this.popover.show();
-
-        // Focus any autofocus input in the content
-        const focusEl = this.popover.element.querySelector('[data-popover-autofocus]');
-        if (focusEl) {
-            focusEl.focus();
-        }
-    }
-});
+    });
+}

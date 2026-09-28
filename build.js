@@ -27,13 +27,13 @@ const stubMomentPlugin = {
     }
 };
 
-// Pikaday (dependency-free date picker) — bundled as ESM for the vanilla
+// Pikaday (dependency-free date picker) - bundled as ESM for the vanilla
 // controls/datepicker control to import via a relative path.
 await bundle('pikaday', 'pikaday/pikaday.esm.js', {
     plugins: [stubMomentPlugin]
 });
 
-// Popper (popover/tooltip positioning engine) — bundled as ESM for the
+// Popper (popover/tooltip positioning engine) - bundled as ESM for the
 // controls/popover control, matching October's vendored @popperjs/core.
 await bundle('@popperjs/core', 'popperjs/popper.esm.js');
 

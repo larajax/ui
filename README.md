@@ -1,6 +1,6 @@
 # Larajax UI – Form and List widgets for Laravel
 
-Larajax UI builds data-driven interfaces from configuration. Describe a form's fields or a list's columns in YAML, bind a model, and the widget renders working markup with AJAX behavior — sorting, pagination, searching, validation — wired up automatically.
+Larajax UI builds data-driven interfaces from configuration. Describe a form's fields or a list's columns in YAML, bind a model, and the widget renders working markup with AJAX behavior (sorting, pagination, searching, validation) wired up automatically.
 
 It is designed for developers who want admin-quality forms and lists in a regular Laravel application, without hand-writing markup, adopting a frontend framework, or running a build step.
 
@@ -51,9 +51,9 @@ Each widget is a [Larajax](https://larajax.org) view component, so its AJAX hand
 
 ## Key ideas
 
-- Configuration over hand-written markup — YAML or PHP arrays
+- Configuration over hand-written markup, as YAML or PHP arrays
 - Controller-based AJAX handlers, HTML over the wire
-- Plain CSS and ES modules — no build step, no JavaScript framework
+- Plain CSS and ES modules with no build step and no JavaScript framework
 - Works with plain Eloquent models
 - Styled on top of Bootstrap 5, with light and dark themes
 
@@ -82,7 +82,7 @@ composer require larajax/ui
 
 The package registers a `UiServiceProvider` automatically via Laravel's package discovery.
 
-### Publishing assets
+### Publishing assets (no build step)
 
 The widgets ship a small CSS + JS bundle that the browser loads at runtime. Publish it once after installing (and again after upgrading):
 
@@ -100,13 +100,35 @@ Include them in your layout, after the larajax framework bundle:
 <script type="module" src="{{ asset('vendor/larajax/ui/ui.js') }}"></script>
 ```
 
-Larajax exposes the `window.jax` API that the widgets register their controls against, so it must load first. Use the bundle build — the plain `framework.js` build does not include the control API (`jax.registerControl`) that Larajax UI requires.
+`ui.js` is the **auto-registering browser entry**: on load it registers every control against `window.jax` and throws if the framework is missing, so the framework bundle must load first. Use the bundle build: the plain `framework.js` build does not include the control API (`jax.registerControl`) that Larajax UI requires. Startup stays with the framework bundle; `ui.js` only registers.
 
-Alternatively, applications using Vite can import the entries directly from the vendor directory instead of publishing - `resources/assets` is the browser-consumable root, so the source tree resolves the same way the published tree does:
+### Using a bundler (Vite)
+
+`index.js` is the **explicit registration entry**: importing it has no side effects and needs no global. It exports `registerUi(jax)`, which registers every control against the framework instance you pass, so registration happens before you start observation:
 
 ```js
-import '../../vendor/larajax/ui/resources/assets/ui.js';
+import { jax } from "larajax";
+import { registerUi } from "larajax-ui";
+import "larajax-ui/ui.css";
+
+registerUi(jax);
+jax.start();
 ```
+
+The application owns startup: `registerUi()` never starts or stops the framework. Repeated calls for the same instance are ignored, and an instance without the control API produces a clear error. One framework instance per page is assumed.
+
+For Composer-only applications (no npm package), alias the names to the installed package source in `vite.config.js`; the JS alias must be exact so it does not intercept the CSS subpath:
+
+```js
+resolve: {
+    alias: [
+        { find: /^larajax-ui$/, replacement: "/vendor/larajax/ui/resources/assets/index.js" },
+        { find: /^larajax-ui\/ui\.css$/, replacement: "/vendor/larajax/ui/resources/assets/ui.css" },
+    ],
+},
+```
+
+Vite consumers import the package source (`resources/assets`) directly, so publishing is not required for this path. The stylesheet is imported separately so the application controls ordering: load Bootstrap 5 CSS before `ui.css`. The popup control and dropdown behaviors also require the Bootstrap 5 JS bundle as a global (`window.bootstrap`); a module-only Bootstrap import is not sufficient.
 
 ### Icon packs
 

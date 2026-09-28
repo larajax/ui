@@ -8,9 +8,9 @@ An indeterminate checkbox cycles through three states: **unchecked → indetermi
 
 The control auto-discovers `.form-check.is-indeterminate` elements. Set the initial state using `data-checked` on the input.
 
-- `data-checked="0"` — Unchecked (default)
-- `data-checked="1"` — Indeterminate
-- `data-checked="2"` — Checked
+- `data-checked="0"` - Unchecked (default)
+- `data-checked="1"` - Indeterminate
+- `data-checked="2"` - Checked
 
 ```html
 <div class="form-check is-indeterminate">

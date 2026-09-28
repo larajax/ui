@@ -315,5 +315,3 @@ export class InputPresetEngine {
     }
 }
 
-// Instances
-jax.InputPresetEngine = new InputPresetEngine;
