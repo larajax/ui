@@ -11,7 +11,6 @@
     data-max-filesize="<?= $maxFilesize ?>"
     <?php if ($externalToolbarBus): ?>data-external-toolbar-bus="<?= e($externalToolbarBus)?>"<?php endif ?>
     <?php if ($maxFiles): ?>data-max-files="<?= $maxFiles ?>"<?php endif ?>
-    <?php if ($useCaption): ?>data-config-handler="<?= $this->getEventHandler('onLoadAttachmentConfig') ?>"<?php endif ?>
     <?php if ($acceptedFileTypes): ?>data-file-types="<?= $acceptedFileTypes ?>"<?php endif ?>
     <?= $this->formField->getAttributes() ?>
 >
@@ -46,8 +45,8 @@
             <?php foreach ($fileList as $file): ?>
                 <div class="server-file"
                     data-id="<?= $file->id ?>"
-                    data-path="<?= $file->pathUrl ?>"
-                    data-thumb="<?= $file->thumbUrl ?>"
+                    data-path="<?= e($file->pathUrl) ?>"
+                    data-thumb="<?= e($file->thumbUrl) ?>"
                     data-name="<?= e($file->title ?: $file->file_name) ?>"
                     data-description="<?= e($file->description) ?>"
                     data-size="<?= e($file->file_size) ?>"

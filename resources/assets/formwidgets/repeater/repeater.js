@@ -383,9 +383,8 @@ export function createRepeaterFormWidgetBase(jax) {
                     result = option ? option.text : '';
                 }
                 else if (textInput.matches('textarea')) {
-                    const div = document.createElement('div');
-                    div.innerHTML = textInput.value;
-                    result = div.textContent.substring(0, 255);
+                    // Strip tags using an inert document so no markup is executed
+                    result = (new DOMParser().parseFromString(String(textInput.value), 'text/html').body.textContent || '').substring(0, 255);
                 }
                 else {
                     result = textInput.value;

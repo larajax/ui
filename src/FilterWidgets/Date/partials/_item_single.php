@@ -8,6 +8,7 @@
         data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
         <input
             type="text"
+            name="Filter[valueRaw]"
             value="<?= e($scope->valueRaw) ?>"
             class="form-control form-control-sm popup-allow-focus w-120"
             autocomplete="off"

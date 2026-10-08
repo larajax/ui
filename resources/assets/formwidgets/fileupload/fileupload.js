@@ -9,7 +9,6 @@
  * - data-error-template - a popover template used to show an error
  * - data-error-icon - icon CSS classes to add to failed previews
  * - data-sort-handler - AJAX handler for sorting postbacks
- * - data-config-handler - AJAX handler for configuration popup
  *
  * JavaScript API:
  * jax.fetchControl(element, 'fileupload')
@@ -550,24 +549,7 @@ export function registerFileUpload(jax) {
 
             var $target = $(ev.target).closest('.upload-object');
 
-            if (!this.config.configHandler) {
-                window.open($target.data('path'));
-                return;
-            }
-
-            $target.popup({
-                handler: this.config.configHandler,
-                extraData: { file_id: $target.data('id') }
-            });
-
-            $target.one('popupComplete', function(event, element, modal){
-                modal.one('ajaxDone', 'button[type=submit]', function(e, context, data) {
-                    if (data.displayName) {
-                        $('[data-dz-name]', $target).text(data.displayName)
-                        $('[data-description]', $target).text(data.description)
-                    }
-                });
-            });
+            window.open($target.data('path'));
         }
 
         onClickErrorObject(ev) {

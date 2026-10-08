@@ -8,6 +8,7 @@
         data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
         <input
             type="text"
+            name="Filter[afterRaw]"
             value="<?= e($scope->afterRaw) ?>"
             class="form-control form-control-sm popup-allow-focus w-120"
             autocomplete="off"
@@ -33,6 +34,7 @@
         data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
         <input
             type="text"
+            name="Filter[beforeRaw]"
             value="<?= e($scope->beforeRaw) ?>"
             class="form-control form-control-sm popup-allow-focus w-120"
             autocomplete="off"

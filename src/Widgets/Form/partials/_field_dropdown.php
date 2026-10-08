@@ -45,7 +45,7 @@
         <input
             type="hidden"
             name="<?= $field->getName() ?>"
-            value="<?= $field->value ?>" />
+            value="<?= e($field->value) ?>" />
     <?php endif ?>
 <?php else: ?>
     <select

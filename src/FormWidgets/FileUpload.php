@@ -1,7 +1,6 @@
 <?php namespace Larajax\Ui\FormWidgets;
 
 use Input;
-use System;
 use Response;
 use Validator;
 use Larajax\Ui\Classes\FormField;
@@ -9,6 +8,7 @@ use Larajax\Ui\Classes\FormWidgetBase;
 use October\Rain\Filesystem\Definitions as FileDefinitions;
 use ApplicationException;
 use ValidationException;
+use ForbiddenException;
 use Exception;
 
 /**
@@ -77,24 +77,9 @@ class FileUpload extends FormWidgetBase
     ];
 
     /**
-     * @var boolean useCaption allows the user to set a caption
-     */
-    public $useCaption = true;
-
-    /**
      * @var bool deferredBinding defers the upload action using a session key
      */
     public $deferredBinding = true;
-
-    //
-    // Object Properties
-    //
-
-    /**
-     * @var \Larajax\Ui\Widgets\Form configFormWidget is the embedded form for modifying the
-     * properties of the selected file.
-     */
-    protected $configFormWidget;
 
     /**
      * @inheritDoc
@@ -111,7 +96,6 @@ class FileUpload extends FormWidgetBase
             'maxFiles',
             'mimeTypes',
             'thumbOptions',
-            'useCaption',
             'deferredBinding',
             'externalToolbarBus'
         ]);
@@ -123,10 +107,6 @@ class FileUpload extends FormWidgetBase
 
         if ($this->formField->disabled) {
             $this->previewMode = true;
-        }
-
-        if (post('fileupload_flag')) {
-            $this->getConfigFormWidget();
         }
     }
 
@@ -148,10 +128,6 @@ class FileUpload extends FormWidgetBase
             $this->previewMode = true;
         }
 
-        if ($this->previewMode) {
-            $this->useCaption = false;
-        }
-
         $maxPhpSetting = $this->getUploadMaxFilesize();
         if ($maxPhpSetting && $this->maxFilesize > $maxPhpSetting) {
             throw new ApplicationException('Maximum allowed size for uploaded files: ' . $maxPhpSetting);
@@ -169,7 +145,6 @@ class FileUpload extends FormWidgetBase
         $this->vars['maxFilesize'] = $this->maxFilesize;
         $this->vars['maxFiles'] = $this->maxFiles;
         $this->vars['cssDimensions'] = $this->getCssDimensions();
-        $this->vars['useCaption'] = $this->useCaption;
         $this->vars['externalToolbarBus'] = $this->externalToolbarBus;
     }
 
@@ -182,30 +157,12 @@ class FileUpload extends FormWidgetBase
         $record = false;
 
         if ($fileId = post('file_id')) {
-            $record = $this->getRelationObject()->find($fileId) ?: false;
+            $record = $this->getRelationObject()
+                ->withDeferred($this->getSessionKey())
+                ->find($fileId) ?: false;
         }
 
         return $record;
-    }
-
-    /**
-     * getConfigFormWidget for the instantiated Form widget
-     */
-    public function getConfigFormWidget()
-    {
-        if ($this->configFormWidget) {
-            return $this->configFormWidget;
-        }
-
-        $config = $this->makeConfig('~/modules/system/models/file/fields.yaml');
-        $config->model = $this->getFileRecord() ?: $this->getRelationModel();
-        $config->alias = $this->alias . $this->getDefaultAlias();
-        $config->arrayName = 'FileUploadWidget';
-
-        $widget = $this->makeWidget(\Larajax\Ui\Widgets\Form::class, $config);
-        $widget->bindToController();
-
-        return $this->configFormWidget = $widget;
     }
 
     /**
@@ -349,9 +306,25 @@ class FileUpload extends FormWidgetBase
      */
     public function onRemoveAttachment()
     {
-        if (($fileId = post('file_id')) && ($file = $this->getRelationObject()->find($fileId))) {
-            $this->getRelationObject()->remove($file, $this->getSessionKey());
+        if ($this->previewMode) {
+            throw new ForbiddenException;
         }
+
+        $fileId = post('file_id');
+        if (!$fileId) {
+            return;
+        }
+
+        $file = $this->getRelationObject()
+            ->withDeferred($this->getSessionKey())
+            ->find($fileId)
+        ;
+
+        if (!$file) {
+            return;
+        }
+
+        $this->getRelationObject()->remove($file, $this->getSessionKey());
     }
 
     /**
@@ -359,13 +332,22 @@ class FileUpload extends FormWidgetBase
      */
     public function onSortAttachments()
     {
+        if ($this->previewMode) {
+            throw new ForbiddenException;
+        }
+
         if ($sortData = post('sortOrder')) {
             asort($sortData);
             $ids = array_keys($sortData);
             $orders = array_values($sortData);
 
             // Validate IDs against existing ones
-            $relationIds = $this->getRelationObject()->pluck('id')->all();
+            $relationIds = $this->getRelationObject()
+                ->withDeferred($this->getSessionKey())
+                ->pluck('id')
+                ->all()
+            ;
+
             $ids = array_intersect($ids, $relationIds);
 
             if ($ids) {
@@ -387,6 +369,10 @@ class FileUpload extends FormWidgetBase
      */
     public function onUpload()
     {
+        if ($this->previewMode) {
+            throw new ForbiddenException;
+        }
+
         try {
             if (!Input::hasFile('file_data')) {
                 throw new ApplicationException('File missing from request');
@@ -422,8 +408,7 @@ class FileUpload extends FormWidgetBase
             // Check and clean vector files
             // @deprecated v4 this should be moved to a post processing method on the file model
             $extension = strtolower($uploadedFile->getClientOriginalExtension());
-            // @deprecated media.clean_vectors set default to true in v4
-            if ($extension === 'svg' && \Config::get('media.clean_vectors', false)) {
+            if ($extension === 'svg' && \Config::get('media.clean_vectors', true)) {
                 // getRealPath() can be empty for some environments (IIS)
                 $realPath = empty(trim($uploadedFile->getRealPath()))
                     ? $uploadedFile->getPath() . DIRECTORY_SEPARATOR . $uploadedFile->getFileName()
