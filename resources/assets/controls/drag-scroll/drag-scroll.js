@@ -115,7 +115,6 @@ export default class DragScroll {
 
         if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             this.listen(element, 'touchstart', this.onTouchStart);
-            this.listen(window, 'touchmove', this.onTouchMove, { passive: false });
         }
 
         // Suppress item clicks while dragging
@@ -240,6 +239,9 @@ export default class DragScroll {
             this.startDrag(event.touches[0]);
             this.touchDragStarted = true;
 
+            // Listen only while dragging since a non-passive window listener delays page scrolling
+            window.addEventListener('touchmove', this.onTouchMove, { passive: false });
+
             event.stopPropagation();
         }
     }
@@ -260,6 +262,7 @@ export default class DragScroll {
 
         if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             window.addEventListener('touchend', this.onTouchEnd);
+            window.addEventListener('touchcancel', this.onTouchEnd);
         }
 
         window.addEventListener('mousemove', this.onMouseMove);
@@ -324,6 +327,8 @@ export default class DragScroll {
         window.removeEventListener('mousemove', this.onMouseMove);
         window.removeEventListener('mouseup', this.onMouseUp);
         window.removeEventListener('touchend', this.onTouchEnd);
+        window.removeEventListener('touchcancel', this.onTouchEnd);
+        window.removeEventListener('touchmove', this.onTouchMove, { passive: false });
     }
 
     stopDrag(click) {

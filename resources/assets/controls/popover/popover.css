@@ -7,7 +7,7 @@
     z-index: var(--oc-zindex-popover, 1000);
     min-width: 200px;
     padding: .75rem;
-    background: #fff;
+    background: var(--oc-popup-bg);
     border: 1px solid rgba(0, 0, 0, .15);
     border-radius: .375rem;
     box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);

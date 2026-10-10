@@ -11,6 +11,7 @@
  *     const popover = new Popover(triggerEl, {
  *         extraClass: 'my-popover',
  *         content: '<p>Hello</p>',    // optional, shows a loading state otherwise
+ *         container: element,          // optional, defaults to the enclosing modal or the body
  *         onClose: () => { ... }
  *     });
  *     popover.show();
@@ -32,6 +33,7 @@ export class Popover {
         this.options = Object.assign({
             extraClass: '',
             content: null,
+            container: null,
             onClose: null,
             onCheckDocumentClickTarget: null
         }, options);
@@ -56,8 +58,10 @@ export class Popover {
             this.element.innerHTML = '<span class="control-popover-loading"></span>';
         }
 
-        // Attach to the body so overflow-clipping containers cannot hide it
-        document.body.appendChild(this.element);
+        // Attach to the body so overflow-clipping containers cannot hide it, or inside
+        // an enclosing modal so the popover stacks above the modal backdrop
+        const container = this.options.container || this.trigger.closest('.modal') || document.body;
+        container.appendChild(this.element);
 
         this.popper = createPopper(this.trigger, this.element, {
             placement: 'bottom-start',

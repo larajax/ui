@@ -85,7 +85,11 @@ export function registerInputHotkey(jax) {
                     return;
                 }
 
-                var activeContainer = jax.popupStacker && jax.popupStacker.getFirstPopup();
+                // Without the popup stacker, the last open modal in the DOM is the topmost
+                var activeContainer = jax.popupStacker
+                    ? jax.popupStacker.getFirstPopup()
+                    : Array.from(document.querySelectorAll('.modal.show')).pop();
+
                 if (activeContainer && !activeContainer.contains(this.element)) {
                     return;
                 }

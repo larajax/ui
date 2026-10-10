@@ -129,6 +129,7 @@ class ListStructure extends Lists
             'showReorder',
             'treeExpanded',
             'includeSortOrders',
+            'includeReferencePool',
             'sortOrderColumn',
             'permissions'
         ]);

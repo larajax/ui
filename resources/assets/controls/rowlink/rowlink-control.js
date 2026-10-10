@@ -39,6 +39,10 @@ export function registerRowlink(jax) {
 
         // Wires up a single row when it contains an eligible anchor.
         linkRow(row) {
+            if (row.classList.contains(this.excludeClass)) {
+                return;
+            }
+
             const link = Array.from(row.querySelectorAll(this.target)).find((anchor) => {
                 const cell = anchor.closest('td');
                 return !(cell && cell.classList.contains(this.excludeClass)) &&

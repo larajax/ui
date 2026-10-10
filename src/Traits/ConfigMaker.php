@@ -3,7 +3,6 @@
 use Yaml;
 use File;
 use Event;
-use System;
 use stdClass;
 use Exception;
 use October\Rain\Html\Helper as HtmlHelper;

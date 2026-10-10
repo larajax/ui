@@ -29,7 +29,7 @@
 
 <!-- Dropdown -->
 <?php if ($this->previewMode || $field->readOnly): ?>
-    <div class="form-control" <?= $field->readOnly ? 'disabled' : '' ?>>
+    <div class="form-control" <?= $field->readOnly ? 'readonly' : '' ?>>
         <?php if ($option = $fieldOptions[$field->value] ?? null): ?>
             <?php if ($option->color): ?>
                 <span class="status-indicator" style="background:<?= e($option->color) ?>"></span>

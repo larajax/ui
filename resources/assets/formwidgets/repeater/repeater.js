@@ -41,8 +41,9 @@ export function createRepeaterFormWidgetBase(jax) {
                 maxItems: null
             };
 
+            // Only missing attributes take the default; an empty attribute is PHP's false
             for (const key in defaults) {
-                if (this.config[key] === undefined || this.config[key] === '') {
+                if (this.config[key] === undefined) {
                     this.config[key] = defaults[key];
                 }
             }
@@ -279,6 +280,8 @@ export function createRepeaterFormWidgetBase(jax) {
 
             popover.show();
 
+            this.addGroupButton = target;
+
             // The popover mounts outside this element, so its clicks are routed here
             popover.element.addEventListener('click', (ev) => {
                 const addLink = ev.target.closest('[data-repeater-add]');
@@ -302,7 +305,15 @@ export function createRepeaterFormWidgetBase(jax) {
 
             this.eventOnAddItem();
 
-            jax.request(this.element, this.config.addHandler, {
+            // ajax:promise fires synchronously only when the request is actually sent
+            let isSent = false;
+            const onSent = (ev) => {
+                isSent = isSent || ev.target === this.element;
+            };
+
+            this.element.addEventListener('ajax:promise', onSent);
+
+            const request = jax.request(this.element, this.config.addHandler, {
                 data: {
                     _repeater_group: target.dataset.repeaterAddGroup
                 },
@@ -311,6 +322,15 @@ export function createRepeaterFormWidgetBase(jax) {
                     this.triggerChange();
                 }
             });
+
+            this.element.removeEventListener('ajax:promise', onSent);
+
+            // Prevent adding new items until the last one is finished
+            const addButton = this.addGroupButton;
+            if (isSent && addButton) {
+                addButton.classList.add('oc-loading');
+                request.finally(() => addButton.classList.remove('oc-loading')).catch(() => {});
+            }
         }
 
         //

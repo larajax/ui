@@ -14,39 +14,49 @@ Monitors form inputs for unsaved changes and warns the user before leaving the p
 </form>
 ```
 
+A successful AJAX request from a `[data-change-monitor-commit]` element also marks the changes as saved.
+
 ## JavaScript API
 
 ```js
-$('#form').changeMonitor()
+jax.fetchControl(element, 'change-monitor')
 ```
 
 ### Static Methods
 
-- `ChangeMonitorControl.disable()` - Globally disable all change monitors
-- `ChangeMonitorControl.enable()` - Re-enable all change monitors
+- `jax.changeMonitor.disable()` - Globally disable all change monitors
+- `jax.changeMonitor.enable()` - Re-enable all change monitors
 
 ### Data Attributes
 
 | Attribute | Description |
 |---|---|
-| `data-change-monitor` | Enables the plugin on a form |
+| `data-change-monitor` | Enables the control on a form |
 | `data-change-monitor-commit` | Marks changes as saved when clicked |
 
 ### Events (listened)
 
+Dispatch these on the monitored form element.
+
 | Event | Description |
 |---|---|
 | `change` | Marks form data as changed |
-| `unchange.oc.changeMonitor` | Marks form data as unchanged |
-| `pause.oc.changeMonitor` | Temporarily pauses monitoring |
-| `resume.oc.changeMonitor` | Resumes monitoring |
-| `pauseUnloadListener.oc.changeMonitor` | Pauses the beforeunload warning |
-| `resumeUnloadListener.oc.changeMonitor` | Resumes the beforeunload warning |
+| `change-monitor:unchange` | Marks form data as unchanged |
+| `change-monitor:pause` | Temporarily pauses monitoring |
+| `change-monitor:resume` | Resumes monitoring |
+| `change-monitor:pause-unload` | Pauses the beforeunload warning |
+| `change-monitor:resume-unload` | Resumes the beforeunload warning |
+
+```js
+form.dispatchEvent(new CustomEvent('change-monitor:pause'));
+```
 
 ### Events (triggered)
 
+Dispatched on the monitored form element.
+
 | Event | Description |
 |---|---|
-| `changed.oc.changeMonitor` | Fired when form data changes |
-| `unchanged.oc.changeMonitor` | Fired when form data is uncommitted |
-| `ready.oc.changeMonitor` | Fired when initialization completes |
+| `change-monitor:changed` | Fired when form data changes |
+| `change-monitor:unchanged` | Fired when form data is marked as saved |
+| `change-monitor:ready` | Fired when initialization completes |

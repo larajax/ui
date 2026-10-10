@@ -5,9 +5,6 @@ use Exception;
 use Throwable;
 use Larajax\Ui\Classes\ViewPathGuesser;
 
-// @todo move to Filesystem
-use System;
-
 /**
  * ViewMaker Trait adds view based methods to a class
  *

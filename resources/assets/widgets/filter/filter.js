@@ -17,6 +17,7 @@
 'use strict';
 
 import { Popover } from '../../controls/popover/popover.js';
+import DragScroll from '../../controls/drag-scroll/drag-scroll.js';
 
 export function registerFilterWidget(jax) {
     jax.registerControl('filterwidget', class extends jax.ControlBase {
@@ -34,12 +35,41 @@ export function registerFilterWidget(jax) {
         connect() {
             this.listen('change', this.onChange);
             this.listen('click', this.onClick);
+            this.listen('ajax:update', this.onContainerUpdate);
 
+            this.bindScrollable();
             this.bindCheckboxes();
         }
 
         disconnect() {
             this.closePopover();
+            this.unbindScrollable();
+        }
+
+        bindScrollable() {
+            this.scrollable = this.element.querySelector('.filter-scopes');
+            if (this.scrollable) {
+                this.dragScroll = new DragScroll(this.scrollable, {
+                    scrollClassContainer: this.scrollable.parentNode
+                });
+            }
+        }
+
+        unbindScrollable() {
+            if (this.dragScroll) {
+                this.dragScroll.dispose();
+            }
+
+            this.dragScroll = null;
+            this.scrollable = null;
+        }
+
+        onContainerUpdate(ev) {
+            // Rebind the scrollable area when the entire container is replaced
+            if (ev.target === this.element) {
+                this.unbindScrollable();
+                this.bindScrollable();
+            }
         }
 
         onChange(ev) {

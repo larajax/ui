@@ -43,7 +43,11 @@
     // --------------------------------------------------*/
 
     --oc-form-control-bg: white;
+    --oc-form-control-readonly-bg: #f5f7f9;
+    --oc-form-control-readonly-border: #dde4ea;
+    --oc-form-control-readonly-color: #5b6675;
     --oc-form-control-disabled-bg: #e9ecef;
+    --oc-form-control-disabled-color: #899c9d;
     --oc-input-translatable-color: #75809b;
     --oc-input-translatable-bg: #ebf0fb;
 
