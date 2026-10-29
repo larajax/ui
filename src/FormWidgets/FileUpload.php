@@ -146,6 +146,13 @@ class FileUpload extends FormWidgetBase
         $this->vars['maxFiles'] = $this->maxFiles;
         $this->vars['cssDimensions'] = $this->getCssDimensions();
         $this->vars['externalToolbarBus'] = $this->externalToolbarBus;
+        $this->vars['uploadMessages'] = [
+            'maxFiles' => __('You can not upload any more files.'),
+            'invalidFileType' => __("You can't upload files of this type."),
+            'fileTooBig' => __('File is too big ({{filesize}}MB). Max filesize: {{maxFilesize}}MB.'),
+            'responseError' => __('Server responded with {{statusCode}} code.'),
+            'removeFile' => __('Remove file'),
+        ];
     }
 
     /**

@@ -56,6 +56,10 @@ export function registerRepeaterBuilder(jax) {
 
         clickBuilderItem(item) {
             this.selectBuilderItem(item.dataset.repeaterIndex);
+
+            // Relayout controls revealed by the selected item, as the framework render cycle does
+            jax.Events.dispatch('render');
+            dispatchEvent(new Event('resize'));
         }
 
         selectBuilderItem(itemIndex) {

@@ -31,7 +31,7 @@ function makeFakeJax() {
         },
         request(element, handler, options) {
             requests.push({ handler, data: { ...options.data } });
-            return { always(callback) { callback(); } };
+            return { always(callback) { callback(); return this; }, done() { return this; } };
         },
     };
 }
@@ -158,7 +158,8 @@ describe('filter switch scope', () => {
         input.click();
         input.click();
 
-        expect(jax.requests.map((request) => request.data)).toEqual([
+        // The filter preloads its popover content on connect
+        expect(jax.requests.filter((request) => !request.data.preload).map((request) => request.data)).toEqual([
             { value: 1, scopeName: 'is_approved' },
             { value: 2, scopeName: 'is_approved' },
             { value: 0, scopeName: 'is_approved' },

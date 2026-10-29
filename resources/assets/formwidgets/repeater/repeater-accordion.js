@@ -109,6 +109,10 @@ export function registerRepeaterAccordion(jax) {
 
         expand(item) {
             item.classList.remove('collapsed');
+
+            // Relayout controls revealed by expanding, as the framework render cycle does
+            jax.Events.dispatch('render');
+            dispatchEvent(new Event('resize'));
         }
 
         //

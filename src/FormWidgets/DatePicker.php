@@ -52,10 +52,10 @@ class DatePicker extends FormWidgetBase
     public $disableDays;
 
     /**
-     * @var int firstDay of the week
+     * @var int|null firstDay of the week, the page locale's first day when not set
      * eg: 0 (Sunday), 1 (Monday), 2 (Tuesday), etc.
      */
-    public $firstDay = 0;
+    public $firstDay;
 
     /**
      * @var bool twelveHour clock

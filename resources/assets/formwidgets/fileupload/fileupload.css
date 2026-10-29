@@ -228,6 +228,7 @@
 
     .empty-state {
         display: none;
+        color: var(--bs-border-color);
     }
 }
 

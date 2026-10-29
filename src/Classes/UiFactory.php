@@ -1,6 +1,7 @@
 <?php namespace Larajax\Ui\Classes;
 
 use Larajax\Ui\Helpers\DateTime as DateTimeHelper;
+use Larajax\Ui\Helpers\Url as UrlHelper;
 
 /**
  * UiFactory creates view-based UI components.
@@ -67,6 +68,38 @@ class UiFactory
     public static function timezone(): string
     {
         return DateTimeHelper::userTimezone();
+    }
+
+    /**
+     * resolveUrlUsing sets the callback that turns widget paths, such as record and toolbar URLs, into addresses.
+     */
+    public static function resolveUrlUsing(?callable $resolver): void
+    {
+        UrlHelper::resolveUrlUsing($resolver);
+    }
+
+    /**
+     * resolveLinkUsing sets the callback that turns links with an application scheme, such as `page://about`, into addresses.
+     */
+    public static function resolveLinkUsing(string $scheme, ?callable $resolver): void
+    {
+        UrlHelper::resolveLinkUsing($scheme, $resolver);
+    }
+
+    /**
+     * url returns the address for a widget path.
+     */
+    public static function url(string $path): string
+    {
+        return UrlHelper::to($path);
+    }
+
+    /**
+     * renderAssets returns the `<link>` and `<script>` tags for the assets that widgets added during the request, stylesheets first.
+     */
+    public static function renderAssets(?string $type = null): \Illuminate\Support\HtmlString
+    {
+        return new \Illuminate\Support\HtmlString((string) app(AssetCollector::class)->makeAssets($type));
     }
 
     /**

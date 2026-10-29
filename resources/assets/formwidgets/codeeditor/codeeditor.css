@@ -1,0 +1,113 @@
+.field-codeeditor {
+    --codeeditor-min-height: 200px;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 4px;
+    background: var(--oc-form-control-bg);
+    transition: border-color ease-in-out .15s;
+    textarea { opacity: 0; }
+
+    &.editor-focus { border-color: var(--oc-border-focus); }
+
+    &.is-stretch {
+        height: 100%;
+    }
+
+    &.size-tiny { --codeeditor-min-height: 50px; }
+    &.size-small { --codeeditor-min-height: 100px; }
+    &.size-large { --codeeditor-min-height: 200px; }
+    &.size-huge { --codeeditor-min-height: 250px; }
+    &.size-giant { --codeeditor-min-height: 350px; }
+
+    .editor-code {
+        position: relative;
+        flex: 1;
+        min-height: var(--codeeditor-min-height);
+        overflow: hidden;
+        border-radius: 0 0 4px 4px;
+    }
+
+    .editor-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 2px;
+        padding: 5px 6px;
+        border-bottom: 1px solid var(--oc-toolbar-border);
+        border-radius: 4px 4px 0 0;
+        background: var(--oc-toolbar-bg);
+    }
+
+    .editor-toolbar-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border: none;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--oc-toolbar-color);
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+
+        &:hover:not(:disabled) {
+            background: var(--oc-toolbar-hover-bg);
+            color: var(--oc-toolbar-hover-color);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--oc-border-focus);
+            outline-offset: -2px;
+        }
+
+        &.is-active,
+        &.is-active:hover:not(:disabled) {
+            color: var(--bs-primary);
+            background: rgba(var(--bs-primary-rgb), .12);
+        }
+
+        &:disabled {
+            opacity: .4;
+            cursor: default;
+        }
+    }
+
+    .editor-toolbar-separator {
+        width: 1px;
+        height: 18px;
+        margin: 0 4px;
+        background: var(--oc-toolbar-border);
+    }
+
+    .editor-toolbar-language {
+        margin-left: auto;
+        padding: 0 6px;
+        font-size: 12px;
+        color: var(--bs-secondary-color);
+        white-space: nowrap;
+    }
+
+    .editor-toolbar-icon-exit { display: none; }
+
+    &.editor-fullscreen {
+        z-index: calc(var(--oc-zindex-fullscreen) + 1);
+        position: fixed !important;
+        inset: 0;
+        height: 100%;
+        border-width: 0;
+        border-radius: 0;
+
+        .editor-toolbar,
+        .editor-code { border-radius: 0; }
+
+        .editor-toolbar-icon-enter { display: none; }
+        .editor-toolbar-icon-exit { display: inline; }
+    }
+}

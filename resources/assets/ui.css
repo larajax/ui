@@ -42,4 +42,10 @@
 /* Form widgets */
 @import "./formwidgets/fileupload/fileupload.css";
 @import "./formwidgets/recordfinder/recordfinder.css";
+@import "./formwidgets/nestedform/nestedform.css";
+@import "./formwidgets/sensitive/sensitive.css";
+@import "./formwidgets/colorpicker/colorpicker.css";
+@import "./formwidgets/richeditor/richeditor.css";
+@import "./formwidgets/codeeditor/codeeditor.css";
+@import "./formwidgets/markdowneditor/markdowneditor.css";
 @import "./formwidgets/repeater/repeater.css";

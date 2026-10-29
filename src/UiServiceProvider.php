@@ -23,6 +23,10 @@ class UiServiceProvider extends ServiceProvider
 
         $this->app->scoped('system.widgets', \Larajax\Ui\Classes\WidgetManager::class);
 
+        // Collects the assets that widgets add during a request
+        $this->app->scoped(\Larajax\Ui\Classes\AssetCollector::class);
+        $this->app->alias(\Larajax\Ui\Classes\AssetCollector::class, 'larajax.ui.assets');
+
         $this->app->singleton('system.preset', \Larajax\Ui\Classes\PresetManager::class);
 
         $this->app->singleton(IconManager::class);
@@ -94,6 +98,13 @@ class UiServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'ui');
 
+        // Sends the widget assets added during an AJAX request with its response
+        $this->app['events']->listen(\Illuminate\Routing\Events\PreparingResponse::class, function ($event) {
+            if ($event->response instanceof \Larajax\Classes\AjaxResponse && $this->app->resolved(\Larajax\Ui\Classes\AssetCollector::class)) {
+                $this->app->make(\Larajax\Ui\Classes\AssetCollector::class)->addToAjaxResponse($event->response);
+            }
+        });
+
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__ . '/../resources/assets' => public_path('vendor/larajax/ui'),
@@ -111,6 +122,12 @@ class UiServiceProvider extends ServiceProvider
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\DatePicker::class, 'datepicker');
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\TagList::class, 'taglist');
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\RecordFinder::class, 'recordfinder');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\NestedForm::class, 'nestedform');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\Sensitive::class, 'sensitive');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\ColorPicker::class, 'colorpicker');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\RichEditor::class, 'richeditor');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\CodeEditor::class, 'codeeditor');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\MarkdownEditor::class, 'markdown');
         });
 
         app('system.widgets')->registerFilterWidgets(function ($manager) {

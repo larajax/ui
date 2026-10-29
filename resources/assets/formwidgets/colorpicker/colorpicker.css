@@ -1,0 +1,27 @@
+/*
+ * Color Picker
+ * --------------------------------------------------
+ */
+
+@import "../../vendor/coloris/coloris.css";
+
+.field-colorpicker {
+    .clr-field {
+        display: block;
+
+        button {
+            width: 36px;
+            border-top-right-radius: var(--bs-border-radius);
+            border-bottom-right-radius: var(--bs-border-radius);
+        }
+
+        input {
+            padding-right: 44px;
+        }
+    }
+}
+
+.clr-picker {
+    z-index: var(--oc-zindex-datepicker);
+    font-family: var(--bs-body-font-family);
+}

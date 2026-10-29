@@ -9,41 +9,56 @@
  * - data-error-template - a popover template used to show an error
  * - data-error-icon - icon CSS classes to add to failed previews
  * - data-sort-handler - AJAX handler for sorting postbacks
+ * - data-messages - the upload messages, as JSON
  *
  * JavaScript API:
  * jax.fetchControl(element, 'fileupload')
  *
  * Dependencies:
- * - Dropzone.js
+ * - Dropzone.js (vendor/dropzone/dropzone.esm.js)
+ * - SortableJS (vendor/sortablejs/sortable.esm.js)
  */
 'use strict';
+
+import { Popover } from '../../controls/popover/popover.js';
+
+// Messages shown by Dropzone when the field supplies none
+const DEFAULT_MESSAGES = {
+    maxFiles: 'You can not upload any more files.',
+    invalidFileType: "You can't upload files of this type.",
+    fileTooBig: 'File is too big ({{filesize}}MB). Max filesize: {{maxFilesize}}MB.',
+    responseError: 'Server responded with {{statusCode}} code.',
+    removeFile: 'Remove file'
+};
+
+// Dropzone and SortableJS are shared by every field, loaded on first use
+let dependenciesPromise = null;
 
 export function registerFileUpload(jax) {
     jax.registerControl('fileupload', class extends jax.ControlBase {
         init() {
-            this.$el = $(this.element);
             this.isLoaded = false;
             this.pendingCount = 0;
 
             if (this.config.isMulti === undefined) {
-                this.config.isMulti = this.$el.hasClass('is-multi');
+                this.config.isMulti = this.element.classList.contains('is-multi');
             }
 
             if (this.config.isPreview === undefined) {
-                this.config.isPreview = this.$el.hasClass('is-preview');
+                this.config.isPreview = this.element.classList.contains('is-preview');
             }
 
             if (this.config.isSortable === undefined) {
-                this.config.isSortable = this.$el.hasClass('is-sortable');
+                this.config.isSortable = this.element.classList.contains('is-sortable');
             }
 
             this.uploaderOptions = {};
         }
 
         connect() {
-            this.$el = $(this.element);
-            this.$uploadButton = $('.toolbar-upload-button', this.$el);
-            this.$filesContainer = $('.upload-files-container', this.$el);
+            this.uploadButton = this.element.querySelector('.toolbar-upload-button');
+            this.filesContainer = this.element.querySelector('.upload-files-container');
+            this.fileObjects = new WeakMap();
 
             this.listen('click', '.upload-object.is-success .file-data-container-inner', this.onClickSuccessObject);
             this.listen('click', '.upload-object.is-error', this.onClickErrorObject);
@@ -52,20 +67,27 @@ export function registerFileUpload(jax) {
             this.listen('click', 'input[data-record-selector]', this.onClickCheckbox);
             this.listen('change', 'input[data-record-selector]', this.onSelectionChanged);
 
-            this.bindUploader();
+            loadDependencies().then(({ Dropzone, Sortable }) => {
+                // The field may have left the page while the dependencies loaded
+                if (!this.filesContainer) {
+                    return;
+                }
 
-            if (this.config.isSortable) {
-                this.bindSortable();
-            }
+                this.bindUploader(Dropzone);
 
-            this.isLoaded = true;
+                if (this.config.isSortable) {
+                    this.bindSortable(Sortable);
+                }
 
-            // External toolbar
-            setTimeout(() => {
-                this.initToolbarExtensionPoint();
-                this.mountExternalToolbarEventBusEvents();
-                this.extendExternalToolbar();
-            }, 0);
+                this.isLoaded = true;
+
+                // External toolbar
+                setTimeout(() => {
+                    this.initToolbarExtensionPoint();
+                    this.mountExternalToolbarEventBusEvents();
+                    this.extendExternalToolbar();
+                }, 0);
+            });
         }
 
         disconnect() {
@@ -75,11 +97,20 @@ export function registerFileUpload(jax) {
                 this.dropzone.destroy();
             }
 
+            if (this.sortable) {
+                this.sortable.destroy();
+            }
+
+            if (this.errorPopover) {
+                this.errorPopover.hide();
+            }
+
             this.sortable = null;
             this.dropzone = null;
-            this.$el = null;
-            this.$uploadButton = null;
-            this.$filesContainer = null;
+            this.errorPopover = null;
+            this.uploadButton = null;
+            this.filesContainer = null;
+            this.fileObjects = null;
             this.uploaderOptions = null;
             this.toolbarExtensionPoint = null;
             this.externalToolbarEventBusObj = null;
@@ -91,11 +122,12 @@ export function registerFileUpload(jax) {
         //
 
         initToolbarExtensionPoint() {
-            if (!this.config.externalToolbarBus) {
+            const vueUtils = window.oc && window.oc.vueUtils;
+            if (!this.config.externalToolbarBus || !vueUtils) {
                 return;
             }
 
-            const point = $.oc.vueUtils.getToolbarExtensionPoint(
+            const point = vueUtils.getToolbarExtensionPoint(
                 this.config.externalToolbarBus,
                 this.element,
                 'both'
@@ -126,21 +158,22 @@ export function registerFileUpload(jax) {
         }
 
         onToolbarExternalCommand(ev) {
-            var cmdPrefix = 'fileupload-toolbar-';
+            const cmdPrefix = 'fileupload-toolbar-';
 
             if (ev.command.substring(0, cmdPrefix.length) != cmdPrefix) {
                 return;
             }
 
-            var buttonClassName = ev.command.substring(cmdPrefix.length),
-                $toolbar = this.$el.find('.uploader-control-toolbar'),
-                $button = $toolbar.find('[class="'+buttonClassName+'"]');
+            const buttonClassName = ev.command.substring(cmdPrefix.length),
+                button = this.element.querySelector('.uploader-control-toolbar [class="' + buttonClassName + '"]');
 
-            $button.get(0).click(ev.ev);
+            if (button) {
+                button.click(ev.ev);
+            }
         }
 
         extendExternalToolbar() {
-            if (!this.$el.is(":visible") || !this.toolbarExtensionPoint) {
+            if (!this.element || !this.element.getClientRects().length || !this.toolbarExtensionPoint) {
                 return;
             }
 
@@ -150,22 +183,17 @@ export function registerFileUpload(jax) {
                 type: 'separator'
             });
 
-            var that = this,
-                $buttons = this.$el.find('.uploader-control-toolbar .backend-toolbar-button');
+            this.element.querySelectorAll('.uploader-control-toolbar .backend-toolbar-button').forEach((button) => {
+                const icon = button.querySelector('i'),
+                    label = button.querySelector('.button-label');
 
-            $buttons.each(function() {
-                var $button = $(this),
-                    $icon = $button.find('i').first();
-
-                that.toolbarExtensionPoint.push(
-                    {
-                        type: 'button',
-                        icon: $icon.attr('class'),
-                        label: $button.find('.button-label').text(),
-                        command: 'fileupload-toolbar-' + $button.attr('class'),
-                        disabled: $button.attr('disabled') !== undefined
-                    }
-                );
+                this.toolbarExtensionPoint.push({
+                    type: 'button',
+                    icon: icon ? icon.getAttribute('class') : '',
+                    label: label ? label.textContent : '',
+                    command: 'fileupload-toolbar-' + button.getAttribute('class'),
+                    disabled: button.hasAttribute('disabled')
+                });
             });
         }
 
@@ -173,17 +201,19 @@ export function registerFileUpload(jax) {
         // Uploading
         //
 
-        bindUploader() {
+        bindUploader(Dropzone) {
+            const messages = Object.assign({}, DEFAULT_MESSAGES, this.config.messages || {});
+
             this.uploaderOptions = {
-                url: this.config.url || window.location,
+                url: this.config.url || window.location.href,
                 paramName: this.config.paramName || 'file_data',
-                clickable: this.$uploadButton.get(0),
-                previewsContainer: this.$filesContainer.get(0),
+                clickable: this.uploadButton,
+                previewsContainer: this.filesContainer,
                 hiddenInputContainer: this.element,
                 maxFilesize: this.config.maxFilesize || 256,
                 headers: {},
                 timeout: 0
-            }
+            };
 
             if (!this.config.isMulti) {
                 this.uploaderOptions.maxFiles = 1;
@@ -197,7 +227,10 @@ export function registerFileUpload(jax) {
             }
 
             if (this.config.template) {
-                this.uploaderOptions.previewTemplate = $(this.config.template).html();
+                const template = document.querySelector(this.config.template);
+                if (template) {
+                    this.uploaderOptions.previewTemplate = template.innerHTML;
+                }
             }
 
             this.uploaderOptions.thumbnailWidth = this.config.thumbnailWidth
@@ -209,16 +242,21 @@ export function registerFileUpload(jax) {
             this.uploaderOptions.resize = this.proxy(this.onResizeFileInfo);
 
             // Locale
-            this.uploaderOptions.dictMaxFilesExceeded = $.oc.lang.get('upload.max_files');
-            this.uploaderOptions.dictInvalidFileType = $.oc.lang.get('upload.invalid_file_type');
-            this.uploaderOptions.dictFileTooBig = $.oc.lang.get('upload.file_too_big');
-            this.uploaderOptions.dictResponseError = $.oc.lang.get('upload.response_error');
-            this.uploaderOptions.dictRemoveFile = $.oc.lang.get('upload.remove_file');
+            this.uploaderOptions.dictMaxFilesExceeded = messages.maxFiles;
+            this.uploaderOptions.dictInvalidFileType = messages.invalidFileType;
+            this.uploaderOptions.dictFileTooBig = messages.fileTooBig;
+            this.uploaderOptions.dictResponseError = messages.responseError;
+            this.uploaderOptions.dictRemoveFile = messages.removeFile;
 
-            // Add CSRF token to headers
-            var token = $('meta[name="csrf-token"]').attr('content');
-            if (token) {
-                this.uploaderOptions.headers['X-CSRF-TOKEN'] = token;
+            // Add CSRF tokens to headers, from the meta tag or the XSRF-TOKEN cookie as larajax sends them
+            const token = document.querySelector('meta[name="csrf-token"]');
+            if (token && token.getAttribute('content')) {
+                this.uploaderOptions.headers['X-CSRF-TOKEN'] = token.getAttribute('content');
+            }
+
+            const xsrfToken = readCookie('XSRF-TOKEN');
+            if (xsrfToken) {
+                this.uploaderOptions.headers['X-XSRF-TOKEN'] = xsrfToken;
             }
 
             this.dropzone = new Dropzone(this.element, this.uploaderOptions);
@@ -239,29 +277,53 @@ export function registerFileUpload(jax) {
         }
 
         loadExistingFiles() {
-            var self = this;
+            // Server files are already uploaded, so they never complete an upload
+            this.isLoadingExisting = true;
 
-            $('.server-file', this.$el).each(function() {
-                var file = $(this).data();
+            this.element.querySelectorAll('.server-file').forEach((element) => {
+                const file = this.readServerFile(element);
 
-                self.dropzone.files.push(file);
-                self.dropzone.emit('addedfile', file);
-                self.dropzone.emit('success', file, file);
+                this.dropzone.files.push(file);
+                this.dropzone.emit('addedfile', file);
+                this.dropzone.emit('success', file, file);
 
-                $('[data-description]', file.previewElement).text(file.description);
+                const description = file.previewElement.querySelector('[data-description]');
+                if (description) {
+                    description.textContent = file.description;
+                }
 
-                $(this).remove();
+                element.remove();
             });
 
+            this.isLoadingExisting = false;
             this.dropzone._updateMaxFilesReachedClass();
         }
 
+        // Reads a server file from its data attributes, as numbers and booleans where they hold them
+        readServerFile(element) {
+            const file = {};
+
+            Object.entries(element.dataset).forEach(([key, value]) => {
+                if (value === 'true' || value === 'false') {
+                    file[key] = value === 'true';
+                }
+                else if (value !== '' && !isNaN(Number(value))) {
+                    file[key] = Number(value);
+                }
+                else {
+                    file[key] = value;
+                }
+            });
+
+            return file;
+        }
+
         onResizeFileInfo(file) {
-            var info,
+            let info,
                 targetWidth,
                 targetHeight;
 
-            if (!this.config.thumbnailWidth && !this.config.thumbnailWidth) {
+            if (!this.config.thumbnailWidth && !this.config.thumbnailHeight) {
                 targetWidth = targetHeight = 100;
             }
             else if (this.config.thumbnailWidth) {
@@ -269,7 +331,7 @@ export function registerFileUpload(jax) {
                 targetHeight = this.config.thumbnailWidth * file.height / file.width;
             }
             else if (this.config.thumbnailHeight) {
-                targetWidth = this.config.thumbnailHeight * file.height / file.width;
+                targetWidth = this.config.thumbnailHeight * file.width / file.height;
                 targetHeight = this.config.thumbnailHeight;
             }
 
@@ -285,28 +347,38 @@ export function registerFileUpload(jax) {
                 trgY: 0,
                 trgWidth: targetWidth,
                 trgHeight: targetHeight
-            }
+            };
 
             return info;
         }
 
         onUploadAddedFile(file) {
-            this.pendingCount++;
-            this.$uploadButton.blur();
+            if (!this.isLoadingExisting) {
+                this.pendingCount++;
+            }
 
-            var $object = $(file.previewElement).data('dzFileObject', file),
+            if (this.uploadButton) {
+                this.uploadButton.blur();
+            }
+
+            const preview = file.previewElement,
                 filesize = this.getFilesize(file);
 
+            this.fileObjects.set(preview, file);
+
             // Change filesize format to match October\Rain\Filesystem\Filesystem::sizeToString() format
-            $(file.previewElement).find('[data-dz-size]').html(filesize.size + ' ' + filesize.units);
+            const size = preview.querySelector('[data-dz-size]');
+            if (size) {
+                size.textContent = filesize.size + ' ' + filesize.units;
+            }
 
             // Remove any exisiting objects for single variety
             if (!this.config.isMulti) {
-                this.removeFileFromElement($object.siblings());
+                this.removeFileFromElement(siblingsOf(preview));
             }
 
             if (this.config.isMulti && this.isLoaded) {
-                file.previewElement.scrollIntoView();
+                preview.scrollIntoView();
             }
 
             this.evalIsPopulated();
@@ -320,23 +392,34 @@ export function registerFileUpload(jax) {
         }
 
         onUploadSuccess(file, response) {
-            var $preview = $(file.previewElement),
-                $img = $('.image img', $preview);
+            const preview = file.previewElement,
+                img = preview.querySelector('.image img');
 
-            $preview.addClass('is-success');
+            preview.classList.add('is-success');
 
-            if (response.id) {
-                $preview.data('id', response.id);
-                $preview.data('path', response.path);
-                $img.attr('src', response.thumb);
+            if (response && response.id) {
+                preview.dataset.id = response.id;
+                preview.dataset.path = response.path;
+
+                if (img) {
+                    img.setAttribute('src', response.thumb);
+                }
             }
 
             this.triggerChange();
         }
 
-        onUploadError(file, error) {
+        onUploadError(file, error, xhr) {
             const preview = file.previewElement;
             preview.classList.add('is-error');
+
+            // A server error page arrives as HTML, so the message names its status code instead
+            if (xhr && typeof error === 'string' && /^\s*</.test(error)) {
+                const message = this.uploaderOptions.dictResponseError.replace('{{statusCode}}', xhr.status);
+                preview.querySelectorAll('[data-dz-errormessage]').forEach((element) => {
+                    element.textContent = message;
+                });
+            }
 
             // Add error icon to the icon container
             const iconContainer = preview.querySelector('.icon-container');
@@ -356,64 +439,69 @@ export function registerFileUpload(jax) {
         }
 
         onSelectionChanged(ev) {
-            var $object = $(ev.target).closest('.upload-object');
-
-            $object.toggleClass('selected', ev.target.checked);
+            const object = ev.target.closest('.upload-object');
+            if (object) {
+                object.classList.toggle('selected', ev.target.checked);
+            }
 
             this.updateDeleteSelectedState();
             this.extendExternalToolbar();
         }
 
         onClickCheckbox(ev) {
-            jax.checkboxRangeRegisterClick(ev, '.upload-object', 'input[data-record-selector]');
+            if (jax.checkboxRangeRegisterClick) {
+                jax.checkboxRangeRegisterClick(ev, '.upload-object', 'input[data-record-selector]');
+            }
         }
 
         /*
-         * Trigger change event (Compatibility with october.form.js)
+         * Trigger change event, the form widget listens for it on the field
          */
         triggerChange() {
-            this.$el.closest('[data-field-name]').trigger('change.oc.formwidget');
+            if (this.element) {
+                this.element.dispatchEvent(new Event('change', { bubbles: true }));
+            }
         }
 
         addExtraFormData(formData) {
             if (this.config.extraData) {
-                $.each(this.config.extraData, function(name, value) {
-                    formData.append(name, value)
+                Object.entries(this.config.extraData).forEach(([name, value]) => {
+                    formData.append(name, value);
                 });
             }
 
-            var $form = this.$el.closest('form');
-            if ($form.length > 0) {
-                $.each($form.serializeArray(), function(index, field) {
-                    formData.append(field.name, field.value)
-                });
+            // Form fields as text, leaving out file inputs such as the uploader's own
+            const form = this.element.closest('form');
+            if (form) {
+                for (const [name, value] of new FormData(form)) {
+                    if (typeof value === 'string') {
+                        formData.append(name, value);
+                    }
+                }
             }
         }
 
-        removeFileFromElement($element) {
-            var self = this;
+        removeFileFromElement(elements) {
+            elements.forEach((element) => {
+                const file = this.fileObjects.get(element);
 
-            $element.each(function() {
-                var $el = $(this),
-                    obj = $el.data('dzFileObject');
-
-                if (obj) {
-                    self.dropzone.removeFile(obj);
+                if (file) {
+                    this.dropzone.removeFile(file);
                 }
                 else {
-                    $el.remove();
+                    element.remove();
                 }
-            })
+            });
         }
 
         //
         // Sorting
         //
 
-        bindSortable() {
+        bindSortable(Sortable) {
             this.dragging = false;
 
-            this.sortable = Sortable.create(this.$filesContainer.get(0), {
+            this.sortable = Sortable.create(this.filesContainer, {
                 animation: 150,
                 draggable: 'div.upload-object.is-success',
                 handle: '.drag-handle',
@@ -443,13 +531,11 @@ export function registerFileUpload(jax) {
             }
 
             // Build an object of ID:ORDER
-            var orderData = {}
+            const orderData = {};
 
-            this.$el.find('.upload-object.is-success')
-                .each(function(index){
-                    var id = $(this).data('id')
-                    orderData[id] = index + 1
-                });
+            this.element.querySelectorAll('.upload-object.is-success').forEach((element, index) => {
+                orderData[element.dataset.id] = index + 1;
+            });
 
             // Already sorting, queue the request
             if (this.sorting) {
@@ -459,15 +545,16 @@ export function registerFileUpload(jax) {
 
             this.sorting = true;
 
-            this.$el.request(this.config.sortHandler, {
-                data: { sortOrder: orderData }
-            }).done(() => {
-                this.sorting = false;
+            jax.request(this.element, this.config.sortHandler, {
+                data: { sortOrder: orderData },
+                complete: () => {
+                    this.sorting = false;
 
-                // Capture the final state
-                if (this.sortAgain) {
-                    this.sortAgain = false;
-                    this.onSortAttachments();
+                    // Capture the final state
+                    if (this.sortAgain && this.element) {
+                        this.sortAgain = false;
+                        this.onSortAttachments();
+                    }
                 }
             });
         }
@@ -477,110 +564,125 @@ export function registerFileUpload(jax) {
         //
 
         onClearFileClick(ev) {
-            var self = this,
-                $form = $(ev.target).closest('form'),
-                $button = $(ev.target).closest('.toolbar-clear-file'),
-                $currentObject = $('.upload-object:first', this.$filesContainer);
-
-            jax.confirm($button.attr('data-request-confirm'), function(isConfirm) {
-                if (!isConfirm) {
-                    return;
-                }
-
-                self.removeObjectInternal($form, $button, $currentObject);
-            });
+            const button = ev.target.closest('.toolbar-clear-file'),
+                currentObject = this.filesContainer.querySelector('.upload-object');
 
             ev.stopPropagation();
             ev.preventDefault();
+
+            confirmMessage(button.getAttribute('data-request-confirm')).then((isConfirm) => {
+                if (isConfirm && currentObject) {
+                    this.removeObjectInternal(button, currentObject);
+                }
+            });
         }
 
         onDeleteSelectedClick(ev) {
-            var self = this,
-                $form = $(ev.target).closest('form'),
-                $button = $(ev.target).closest('.toolbar-delete-selected'),
-                $currentObjects = $('.upload-object:has(input[data-record-selector]:checked)', this.$filesContainer);
+            const button = ev.target.closest('.toolbar-delete-selected'),
+                currentObjects = [...this.filesContainer.querySelectorAll('.upload-object')]
+                    .filter((object) => object.querySelector('input[data-record-selector]:checked'));
 
-            jax.confirm($button.attr('data-request-confirm'), function(isConfirm) {
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            confirmMessage(button.getAttribute('data-request-confirm')).then((isConfirm) => {
                 if (!isConfirm) {
                     return;
                 }
 
-                $currentObjects.addClass('is-loading');
-
-                $currentObjects.each(function() {
-                    self.removeObjectInternal($form, $button, $(this));
-                });
+                currentObjects.forEach((object) => object.classList.add('is-loading'));
+                currentObjects.forEach((object) => this.removeObjectInternal(button, object));
             });
-
-            ev.stopPropagation();
-            ev.preventDefault();
         }
 
-        removeObjectInternal($form, $button, $currentObject) {
-            var self = this,
-                objectId = $currentObject.data('id');
+        removeObjectInternal(button, currentObject) {
+            const objectId = currentObject.dataset.id;
 
             if (!objectId) {
-                self.removeFileFromElement($currentObject);
-                self.evalIsPopulated();
-                self.updateDeleteSelectedState();
-                self.extendExternalToolbar();
-                self.triggerChange();
+                this.removeFileFromElement([currentObject]);
+                this.afterRemoveObject();
                 return;
             }
 
-            $currentObject.addClass('is-loading');
-            $form.request($button.attr('data-request'), {
+            currentObject.classList.add('is-loading');
+
+            jax.request(button.closest('form') || this.element, button.getAttribute('data-request'), {
                 data: {
                     file_id: objectId
+                },
+                complete: () => {
+                    currentObject.classList.remove('is-loading');
                 }
-            }).done(function() {
-                self.removeFileFromElement($currentObject);
-                self.evalIsPopulated();
-                self.updateDeleteSelectedState();
-                self.extendExternalToolbar();
-                self.triggerChange();
-            }).always(function() {
-                $currentObject.removeClass('is-loading');
+            }).then(() => {
+                if (!this.dropzone) {
+                    return;
+                }
+
+                this.removeFileFromElement([currentObject]);
+                this.afterRemoveObject();
             });
         }
 
+        afterRemoveObject() {
+            this.evalIsPopulated();
+            this.updateDeleteSelectedState();
+            this.extendExternalToolbar();
+            this.triggerChange();
+        }
+
         onClickSuccessObject(ev) {
-            if ($(ev.target).closest('.meta').length) return;
-            if ($(ev.target).closest('.form-check').length) return;
+            if (ev.target.closest('.meta')) return;
+            if (ev.target.closest('.form-check')) return;
 
-            var $target = $(ev.target).closest('.upload-object');
-
-            window.open($target.data('path'));
+            const target = ev.target.closest('.upload-object');
+            if (target && target.dataset.path) {
+                window.open(target.dataset.path);
+            }
         }
 
         onClickErrorObject(ev) {
-            var self = this,
-                $target = $(ev.target).closest('.upload-object'),
-                errorMsg = $('[data-dz-errormessage]', $target).text(),
-                $template = $(this.config.errorTemplate);
+            const target = ev.target.closest('.upload-object'),
+                errorElement = target.querySelector('[data-dz-errormessage]'),
+                errorMsg = errorElement ? errorElement.textContent : '',
+                template = document.querySelector(this.config.errorTemplate);
 
             // Remove any existing objects for single variety
             if (!this.config.isMulti) {
-                this.removeFileFromElement($target.siblings());
+                this.removeFileFromElement(siblingsOf(target));
             }
 
-            $target.ocPopover({
-                content: Mustache.render($template.html(), { errorMsg: errorMsg }),
+            if (!template) {
+                return;
+            }
+
+            const popover = this.errorPopover = new Popover(target, {
+                content: renderTemplate(template.innerHTML, { errorMsg }),
                 modal: true,
                 highlightModalTarget: true,
                 placement: 'top',
                 fallbackPlacement: 'left',
-                containerClass: 'popover-danger'
+                containerClass: 'popover-danger',
+                onClose: () => {
+                    if (this.errorPopover === popover) {
+                        this.errorPopover = null;
+                    }
+                }
             });
 
-            var $container = $target.data('oc.popover').$container;
-            $container.one('click', '[data-remove-file]', function() {
-                $target.data('oc.popover').hide()
-                self.removeFileFromElement($target)
-                self.evalIsPopulated()
-                self.updateDeleteSelectedState()
-                self.extendExternalToolbar();
+            popover.show();
+
+            if (!popover.element) {
+                return;
+            }
+
+            popover.element.addEventListener('click', (event) => {
+                if (event.target.closest('[data-remove-file]')) {
+                    popover.hide();
+                    this.removeFileFromElement([target]);
+                    this.evalIsPopulated();
+                    this.updateDeleteSelectedState();
+                    this.extendExternalToolbar();
+                }
             });
         }
 
@@ -589,43 +691,41 @@ export function registerFileUpload(jax) {
         //
 
         evalIsPopulated() {
-            var isPopulated = !!$('.upload-object', this.$filesContainer).length;
-            this.$el.toggleClass('is-populated', isPopulated);
+            const isPopulated = !!this.filesContainer.querySelector('.upload-object');
+            this.element.classList.toggle('is-populated', isPopulated);
 
             // Reset maxFiles counter
             if (!isPopulated) {
                 this.dropzone.removeAllFiles();
             }
 
-            var $uploadLabelSpan = this.$uploadButton.find('span.button-label');
-            if ($uploadLabelSpan.attr('data-upload-label')) {
-                if (isPopulated) {
-                    $uploadLabelSpan.text($uploadLabelSpan.attr('data-replace-label'))
-                }
-                else {
-                    $uploadLabelSpan.text($uploadLabelSpan.attr('data-upload-label'));
-                }
+            const uploadLabel = this.uploadButton ? this.uploadButton.querySelector('span.button-label') : null;
+            if (uploadLabel && uploadLabel.getAttribute('data-upload-label')) {
+                uploadLabel.textContent = isPopulated
+                    ? uploadLabel.getAttribute('data-replace-label')
+                    : uploadLabel.getAttribute('data-upload-label');
             }
         }
 
         updateDeleteSelectedState() {
-            var enabled = false,
-                selectedCount = this.$el.find('input[data-record-selector]:checked').length;
+            let enabled = false;
+            const selectedCount = this.element.querySelectorAll('input[data-record-selector]:checked').length;
 
-            if (this.$el.hasClass('is-populated')) {
+            if (this.element.classList.contains('is-populated')) {
                 enabled = selectedCount > 0;
             }
 
-            var $button = this.$el.find('.toolbar-delete-selected'),
-                $counter = $button.find('.button-label > span');
-
-            $button.prop('disabled', !enabled);
-
-            if (enabled) {
-                $counter.text('(' + selectedCount + ')');
+            const button = this.element.querySelector('.toolbar-delete-selected');
+            if (!button) {
+                return;
             }
-            else {
-                $counter.text('');
+
+            const counter = button.querySelector('.button-label > span');
+
+            button.disabled = !enabled;
+
+            if (counter) {
+                counter.textContent = enabled ? '(' + selectedCount + ')' : '';
             }
         }
 
@@ -634,7 +734,7 @@ export function registerFileUpload(jax) {
                 return;
             }
 
-            this.$el.addClass('file-drag-over');
+            this.element.classList.add('file-drag-over');
         }
 
         onDragEnd() {
@@ -642,7 +742,7 @@ export function registerFileUpload(jax) {
                 return;
             }
 
-            this.$el.removeClass('file-drag-over');
+            this.element.classList.remove('file-drag-over');
         }
 
         /*
@@ -650,12 +750,13 @@ export function registerFileUpload(jax) {
          * an object with the file size amount and the unit used as `size` and `units` respectively.
          */
         getFilesize(file) {
-            var formatter = new Intl.NumberFormat('en', {
-                    style: 'decimal',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                }),
-                size = 0,
+            const formatter = new Intl.NumberFormat('en', {
+                style: 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            let size = 0,
                 units = 'bytes';
 
             if (file.size >= 1073741824) {
@@ -685,4 +786,64 @@ export function registerFileUpload(jax) {
             };
         }
     });
+
+    function loadDependencies() {
+        if (!dependenciesPromise) {
+            dependenciesPromise = Promise.all([
+                import('../../vendor/dropzone/dropzone.esm.js'),
+                import('../../vendor/sortablejs/sortable.esm.js')
+            ]).then(([dropzone, sortable]) => ({
+                Dropzone: dropzone.Dropzone,
+                Sortable: sortable.Sortable
+            }));
+        }
+
+        return dependenciesPromise;
+    }
+
+    // Asks to confirm through larajax's confirm event, so a page's own dialog can answer,
+    // falling back to the browser prompt
+    function confirmMessage(message) {
+        return new Promise((resolve) => {
+            if (!message) {
+                resolve(true);
+                return;
+            }
+
+            const event = new CustomEvent('ajax:confirm-message', {
+                cancelable: true,
+                detail: {
+                    message,
+                    promise: { resolve: () => resolve(true), reject: () => resolve(false) }
+                }
+            });
+
+            window.dispatchEvent(event);
+
+            if (!event.defaultPrevented) {
+                resolve(window.confirm(message));
+            }
+        });
+    }
+}
+
+function readCookie(name) {
+    const prefix = name + '=';
+    const cookie = document.cookie.split(';').map((part) => part.trim()).find((part) => part.startsWith(prefix));
+    return cookie ? decodeURIComponent(cookie.substring(prefix.length)) : null;
+}
+
+function siblingsOf(element) {
+    return [...element.parentNode.children].filter((child) => child !== element);
+}
+
+// Fills {{name}} placeholders with escaped values
+function renderTemplate(template, values) {
+    return template.replace(/\{\{\s*(\w+)\s*\}\}/g, (match, name) => escapeHtml(values[name] ?? ''));
+}
+
+function escapeHtml(value) {
+    const element = document.createElement('div');
+    element.textContent = String(value);
+    return element.innerHTML;
 }

@@ -19,6 +19,7 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface, 
     use \Larajax\Ui\Traits\WidgetMaker;
     use \Larajax\Ui\Traits\ErrorMaker;
     use \Larajax\Ui\Traits\ViewMaker;
+    use \Larajax\Ui\Traits\AssetMaker;
     use \October\Rain\Support\Traits\Emitter;
     use \Larajax\Traits\ViewComponent;
 
@@ -43,6 +44,9 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface, 
         $this->alias = $this->getConfig('alias', $this->getDefaultAlias());
         $this->viewPath = $this->configPath = $this->guessViewPath('/partials');
 
+        // Prepare assets used by this widget.
+        $this->loadAssets();
+
         // Boot extensions
         $this->extendableConstruct();
 
@@ -65,6 +69,15 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface, 
      * @return string HTML markup supplied by this widget.
      */
     public function render()
+    {
+    }
+
+    /**
+     * loadAssets adds widget specific asset files. Use $this->addJs() and $this->addCss()
+     * to register new assets to include on the page.
+     * @return void
+     */
+    protected function loadAssets()
     {
     }
 

@@ -15,12 +15,13 @@
  * - data-ignore-timezone - set when the value is not converted to the user's timezone
  *
  * Config (data-* on the wrapper, camelCased by the framework):
- * - format - date display format (YYYY YY MMMM MMM MM M DD Do D dddd ddd, [literal])
+ * - format - date display format (YYYY YY MMMM MMM MM M DD Do D dddd ddd, [literal]),
+ *   defaults to the locale's numeric date, or YYYY-MM-DD
  * - minDate - earliest selectable date (ISO string)
  * - maxDate - latest selectable date (ISO string)
  * - yearRange - years either side in the year dropdown, or [lower, upper] (default 10)
  * - disableDays - weekday numbers (0 = Sunday) or YYYY-MM-DD dates that cannot be picked
- * - firstDay - first day of the week, 0 = Sunday (default 0)
+ * - firstDay - first day of the week, 0 = Sunday, defaults to the locale's first day, or 0
  * - showWeekNumber - show an ISO week-number column
  * - twelveHour - use a 12 hour AM/PM time picker
  * - hoursOnly - pick the hour only, minutes are stored as 00
@@ -31,6 +32,9 @@
  *
  * The server renders and reads values in the user's timezone, so the control
  * never converts them. Date-only and time-only fields store just their part.
+ *
+ * The page locale (<html lang>) sets the default format, the first day of the
+ * week and the calendar names, built with Intl. English keeps the defaults.
  */
 'use strict';
 
@@ -44,21 +48,33 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
 
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+const ENGLISH_NAMES = {
+    months: MONTHS,
+    monthsShort: MONTHS.map((name) => name.slice(0, 3)),
+    weekdays: WEEKDAYS,
+    weekdaysShort: WEEKDAYS.map((name) => name.slice(0, 3))
+};
+
 const DATE_TOKENS = /\[[^\]]*\]|YYYY|YY|MMMM|MMM|MM|M|dddd|ddd|DD|Do|D/g;
+
+const NAME_PATTERN = '[\\p{L}\\p{M}]+\\.?';
 
 const TOKEN_PATTERNS = {
     YYYY: '\\d{4}',
     YY: '\\d{2}',
-    MMMM: '[A-Za-z]+',
-    MMM: '[A-Za-z]+',
+    MMMM: NAME_PATTERN,
+    MMM: NAME_PATTERN,
     MM: '\\d{2}',
     M: '\\d{1,2}',
-    dddd: '[A-Za-z]+',
-    ddd: '[A-Za-z]+',
+    dddd: NAME_PATTERN,
+    ddd: NAME_PATTERN,
     DD: '\\d{2}',
     Do: '\\d{1,2}(?:st|nd|rd|th)',
     D: '\\d{1,2}'
 };
+
+// Locale data built with Intl, cached by locale
+const localeDataCache = new Map();
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -69,9 +85,148 @@ const ordinal = (n) => {
     return n + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 };
 
+// Returns the page locale from <html lang>, or null when it is missing, invalid or English.
+function getPageLocale() {
+    const lang = (document.documentElement.getAttribute('lang') || '').trim().replace(/_/g, '-');
+    if (!lang) {
+        return null;
+    }
+
+    let locale;
+    try {
+        locale = Intl.getCanonicalLocales(lang)[0];
+    }
+    catch (ex) {
+        return null;
+    }
+
+    if (!locale || locale.split('-')[0].toLowerCase() === 'en') {
+        return null;
+    }
+
+    return locale;
+}
+
+// Returns the calendar names, first day of the week, display format and Pikaday i18n for a locale.
+function getLocaleData(locale) {
+    if (!localeDataCache.has(locale)) {
+        let data = null;
+
+        try {
+            data = makeLocaleData(locale);
+        }
+        catch (ex) {
+            // Intl does not support the locale, use the defaults
+        }
+
+        localeDataCache.set(locale, data);
+    }
+
+    return localeDataCache.get(locale);
+}
+
+function makeLocaleData(locale) {
+    const options = { timeZone: 'UTC', calendar: 'gregory', numberingSystem: 'latn' },
+        longMonth = new Intl.DateTimeFormat(locale, { ...options, month: 'long' }),
+        shortMonth = new Intl.DateTimeFormat(locale, { ...options, month: 'short' }),
+        longWeekday = new Intl.DateTimeFormat(locale, { ...options, weekday: 'long' }),
+        shortWeekday = new Intl.DateTimeFormat(locale, { ...options, weekday: 'short' }),
+        months = [],
+        monthsShort = [],
+        weekdays = [],
+        weekdaysShort = [];
+
+    for (let month = 0; month < 12; month++) {
+        const date = new Date(Date.UTC(2017, month, 15));
+        months.push(longMonth.format(date));
+        monthsShort.push(shortMonth.format(date));
+    }
+
+    // The week starts on Sunday 1 January 2017, as Pikaday expects
+    for (let day = 0; day < 7; day++) {
+        const date = new Date(Date.UTC(2017, 0, 1 + day));
+        weekdays.push(longWeekday.format(date));
+        weekdaysShort.push(shortWeekday.format(date));
+    }
+
+    return {
+        months,
+        monthsShort,
+        weekdays,
+        weekdaysShort,
+        firstDay: getLocaleFirstDay(locale),
+        format: getLocaleDateFormat(locale, options),
+        i18n: {
+            previousMonth: 'Previous Month',
+            nextMonth: 'Next Month',
+            months,
+            weekdays,
+            weekdaysShort
+        }
+    };
+}
+
+// Returns the locale's first day of the week (0 = Sunday), or null when the browser cannot tell.
+function getLocaleFirstDay(locale) {
+    try {
+        const intlLocale = new Intl.Locale(locale),
+            weekInfo = typeof intlLocale.getWeekInfo === 'function' ? intlLocale.getWeekInfo() : intlLocale.weekInfo;
+
+        if (weekInfo && weekInfo.firstDay) {
+            return weekInfo.firstDay % 7;
+        }
+    }
+    catch (ex) {
+        // Intl.Locale is not supported
+    }
+
+    return null;
+}
+
+// Builds a display format such as DD.MM.YYYY from the locale's numeric date, or null when it cannot.
+function getLocaleDateFormat(locale, options) {
+    const formatter = new Intl.DateTimeFormat(locale, { ...options, year: 'numeric', month: 'numeric', day: 'numeric' }),
+        found = new Set();
+
+    let format = '';
+
+    // A single digit day and month show whether the locale pads them
+    for (const { type, value } of formatter.formatToParts(new Date(Date.UTC(2034, 2, 4)))) {
+        if (type === 'literal') {
+            const literal = value.replace(/\p{Cf}/gu, '');
+            format += /\p{L}/u.test(literal) ? '[' + literal + ']' : literal;
+            continue;
+        }
+
+        if (!/^\d+$/.test(value) || found.has(type)) {
+            return null;
+        }
+
+        if (type === 'day') {
+            format += value.length > 1 ? 'DD' : 'D';
+        }
+        else if (type === 'month') {
+            format += value.length > 1 ? 'MM' : 'M';
+        }
+        else if (type === 'year') {
+            format += value.length > 2 ? 'YYYY' : 'YY';
+        }
+        else {
+            return null;
+        }
+
+        found.add(type);
+    }
+
+    return found.size === 3 ? format : null;
+}
+
 export function registerDatepicker(jax) {
     jax.registerControl('datepicker', class extends jax.ControlBase {
         init() {
+            // A first day missing from the markup falls back to the locale's
+            this.hasFirstDay = this.config.firstDay !== undefined && this.config.firstDay !== null && this.config.firstDay !== '';
+
             this.config = Object.assign({
                 format: null,
                 minDate: null,
@@ -103,6 +258,7 @@ export function registerDatepicker(jax) {
                 return;
             }
 
+            this.initRegion();
             this.syncFacadesFromLocker();
             this.checkPickerStates();
 
@@ -170,7 +326,7 @@ export function registerDatepicker(jax) {
                 field: this.dateFacade,
                 format: this.getDateFormat(),
                 yearRange: this.config.yearRange,
-                firstDay: Number(this.config.firstDay) || 0,
+                firstDay: this.getFirstDay(),
                 showWeekNumber: !!this.config.showWeekNumber,
                 keyboardInput: false,
                 toString: (date) => this.formatDate(date, this.getDateFormat()),
@@ -179,6 +335,10 @@ export function registerDatepicker(jax) {
                 onSelect: () => this.onSetLockerValue(),
                 onOpen: () => this.alignDatePicker()
             };
+
+            if (this.localeData) {
+                options.i18n = this.localeData.i18n;
+            }
 
             const minDate = this.parseIsoDate(this.config.minDate);
             if (minDate) {
@@ -236,7 +396,25 @@ export function registerDatepicker(jax) {
         }
 
         getDateFormat() {
-            return this.config.format || DB_DATE_FORMAT;
+            let format = DB_DATE_FORMAT;
+
+            if (this.config.format) {
+                format = this.config.format;
+            }
+            else if (this.localeData && this.localeData.format) {
+                format = this.localeData.format;
+            }
+
+            return format;
+        }
+
+        // Returns the configured first day of the week, otherwise the locale's.
+        getFirstDay() {
+            if (!this.hasFirstDay && this.localeData && this.localeData.firstDay !== null) {
+                return this.localeData.firstDay;
+            }
+
+            return Number(this.config.firstDay) || 0;
         }
 
         //
@@ -417,16 +595,18 @@ export function registerDatepicker(jax) {
                 return '';
             }
 
+            const names = this.getCalendarNames();
+
             return format.replace(DATE_TOKENS, (token) => {
                 switch (token) {
                     case 'YYYY': return String(date.getFullYear());
                     case 'YY': return pad(date.getFullYear() % 100);
-                    case 'MMMM': return MONTHS[date.getMonth()];
-                    case 'MMM': return MONTHS[date.getMonth()].slice(0, 3);
+                    case 'MMMM': return names.months[date.getMonth()];
+                    case 'MMM': return names.monthsShort[date.getMonth()];
                     case 'MM': return pad(date.getMonth() + 1);
                     case 'M': return String(date.getMonth() + 1);
-                    case 'dddd': return WEEKDAYS[date.getDay()];
-                    case 'ddd': return WEEKDAYS[date.getDay()].slice(0, 3);
+                    case 'dddd': return names.weekdays[date.getDay()];
+                    case 'ddd': return names.weekdaysShort[date.getDay()];
                     case 'DD': return pad(date.getDate());
                     case 'Do': return ordinal(date.getDate());
                     case 'D': return String(date.getDate());
@@ -466,7 +646,7 @@ export function registerDatepicker(jax) {
 
             pattern += escapeRegExp(format.slice(lastIndex));
 
-            const result = new RegExp('^\\s*' + pattern + '\\s*$', 'i').exec(value);
+            const result = new RegExp('^\\s*' + pattern + '\\s*$', 'iu').exec(value);
             if (!result) {
                 return null;
             }
@@ -485,7 +665,7 @@ export function registerDatepicker(jax) {
                     year = Number(part) + (Number(part) > 68 ? 1900 : 2000);
                 }
                 else if (token === 'MMMM' || token === 'MMM') {
-                    month = MONTHS.findIndex((name) => name.slice(0, 3).toLowerCase() === part.slice(0, 3).toLowerCase());
+                    month = this.findMonthIndex(part);
                 }
                 else if (token === 'MM' || token === 'M') {
                     month = Number(part) - 1;
@@ -502,6 +682,36 @@ export function registerDatepicker(jax) {
             }
 
             return date;
+        }
+
+        // Finds a month by its full or short name, then by its first three letters.
+        findMonthIndex(name) {
+            const names = this.getCalendarNames(),
+                normalize = (value) => value.toLowerCase().replace(/\.$/, ''),
+                value = normalize(name);
+
+            let index = names.months.findIndex((month) => normalize(month) === value);
+
+            if (index === -1) {
+                index = names.monthsShort.findIndex((month) => normalize(month) === value);
+            }
+
+            if (index === -1) {
+                index = names.months.findIndex((month) => normalize(month).slice(0, 3) === value.slice(0, 3));
+            }
+
+            return index;
+        }
+
+        // Returns the month and weekday names of the page locale, or English.
+        getCalendarNames() {
+            return this.localeData || ENGLISH_NAMES;
+        }
+
+        // Reads the page locale for the default format, the first day of the week and the calendar names.
+        initRegion() {
+            this.locale = getPageLocale();
+            this.localeData = this.locale ? getLocaleData(this.locale) : null;
         }
 
         // Parses the date part of an ISO value as a local date.

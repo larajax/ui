@@ -1,0 +1,39 @@
+/*
+ * Rich Editor
+ */
+
+@import "../../vendor/richarea/richarea.css";
+
+.field-richeditor {
+    &.size-tiny .rich-editor {
+        --rich-editor-min-height: 50px;
+    }
+
+    &.size-small .rich-editor {
+        --rich-editor-min-height: 100px;
+    }
+
+    &.size-large .rich-editor {
+        --rich-editor-min-height: 200px;
+    }
+
+    &.size-huge .rich-editor {
+        --rich-editor-min-height: 250px;
+    }
+
+    &.size-giant .rich-editor {
+        --rich-editor-min-height: 350px;
+    }
+
+    &.is-stretch {
+        height: 100%;
+
+        .rich-editor:not(.is-fullscreen) {
+            height: 100%;
+
+            .rich-editor-body {
+                overflow: auto;
+            }
+        }
+    }
+}

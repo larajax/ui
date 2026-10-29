@@ -2,6 +2,9 @@
     "name": "larajax-ui",
     "private": true,
     "type": "module",
+    "workspaces": [
+        "packages/*"
+    ],
     "exports": {
         ".": "./resources/assets/index.js",
         "./ui.css": "./resources/assets/ui.css",
@@ -9,6 +12,7 @@
     },
     "scripts": {
         "build": "node build.js",
+        "watch:richarea": "node packages/richarea/build.js --watch --outdir=resources/assets/vendor/richarea",
         "test": "bun test"
     },
     "devDependencies": {
@@ -16,9 +20,16 @@
         "esbuild": "^0.28.2"
     },
     "dependencies": {
+        "@melloware/coloris": "0.25.1",
         "@popperjs/core": "^2.11.8",
+        "dompurify": "3.4.17",
+        "dropzone": "6.3.5",
+        "easymde": "2.21.0",
+        "emmet-monaco-es": "5.7.0",
         "jquery": "^3.7.1",
+        "monaco-editor": "0.57.0",
         "pikaday": "^1.8.2",
-        "select2": "^4.1.0-rc.0"
+        "select2": "^4.1.0-rc.0",
+        "sortablejs": "1.15.7"
     }
 }

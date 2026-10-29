@@ -207,3 +207,84 @@ describe('datepicker timezone', () => {
         expect(control.getNow().date).toBe(control.formatDate(new Date(), 'YYYY-MM-DD'));
     });
 });
+
+describe('datepicker locale', () => {
+    afterEach(() => {
+        document.documentElement.removeAttribute('lang');
+    });
+
+    test('the page locale sets the default format, first day and calendar names', () => {
+        document.documentElement.setAttribute('lang', 'de');
+
+        const { control, dateFacade, locker } = connectPicker({ value: '2026-03-04 14:30:00' });
+
+        expect(dateFacade.value).toBe('4.3.2026');
+        expect(control.picker._o.firstDay).toBe(1);
+        expect(control.picker._o.i18n.months[2]).toBe('März');
+        expect(control.picker._o.i18n.weekdays[0]).toBe('Sonntag');
+        expect(control.picker._o.i18n.weekdaysShort[1]).toBe('Mo');
+        expect(control.picker._o.i18n.previousMonth).toBe('Previous Month');
+
+        change(dateFacade, '5.11.2026');
+        expect(locker.value).toBe('2026-11-05 14:30:00');
+    });
+
+    test('an underscore locale with text in its date keeps the text as a literal', () => {
+        document.documentElement.setAttribute('lang', 'bg_BG');
+
+        const { control, dateFacade, locker } = connectPicker({ time: false, value: '2026-03-04' });
+
+        expect(control.getDateFormat()).toBe('D.MM.YYYY[ г.]');
+        expect(dateFacade.value).toBe('4.03.2026 г.');
+
+        change(dateFacade, '5.11.2026 г.');
+        expect(locker.value).toBe('2026-11-05');
+    });
+
+    test('month and weekday tokens use the locale names', () => {
+        document.documentElement.setAttribute('lang', 'fr');
+
+        const { control } = connectPicker({ attributes: 'data-format="ddd D MMM YYYY"' });
+        const date = new Date(2026, 1, 4);
+
+        expect(control.formatDate(date, 'ddd D MMM YYYY')).toBe('mer. 4 févr. 2026');
+        expect(control.formatDate(date, 'D MMMM YYYY')).toBe('4 février 2026');
+        expect(control.parseFormattedDate('mer. 4 févr. 2026', 'ddd D MMM YYYY')).toEqual(date);
+        expect(control.parseFormattedDate('4 FÉVRIER 2026', 'D MMMM YYYY')).toEqual(date);
+    });
+
+    test('an explicit format and first day win over the locale', () => {
+        document.documentElement.setAttribute('lang', 'de');
+
+        const { control, dateFacade, locker } = connectPicker({
+            time: false,
+            attributes: 'data-format="DD MMMM YYYY" data-first-day="0"',
+            value: '2026-03-04'
+        });
+
+        expect(dateFacade.value).toBe('04 März 2026');
+        expect(control.picker._o.firstDay).toBe(0);
+        expect(control.picker._o.i18n.months[2]).toBe('März');
+
+        change(dateFacade, '05 November 2026');
+        expect(locker.value).toBe('2026-11-05');
+    });
+
+    test('English, a missing lang or an invalid lang keep the defaults', () => {
+        for (const lang of ['en', 'en-GB', null, 'not a locale!']) {
+            if (lang) {
+                document.documentElement.setAttribute('lang', lang);
+            }
+            else {
+                document.documentElement.removeAttribute('lang');
+            }
+
+            const { control, dateFacade } = connectPicker({ time: false, value: '2026-03-04' });
+
+            expect(dateFacade.value).toBe('2026-03-04');
+            expect(control.picker._o.firstDay).toBe(0);
+            expect(control.picker._o.i18n.months[2]).toBe('March');
+            expect(control.formatDate(new Date(2026, 1, 4), 'ddd D MMM')).toBe('Wed 4 Feb');
+        }
+    });
+});

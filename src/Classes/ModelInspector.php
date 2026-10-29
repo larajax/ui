@@ -97,11 +97,16 @@ class ModelInspector
      */
     public function isRelationTypeSingular($model, $name): bool
     {
+        if ($this->hasNativeRelationApi($model) && method_exists($model, 'isRelationTypeSingular')) {
+            return $model->isRelationTypeSingular($name);
+        }
+
         return in_array($this->getRelationType($model, $name), [
             'hasOne',
             'belongsTo',
             'morphTo',
             'morphOne',
+            'attachOne',
             'hasOneThrough'
         ]);
     }

@@ -3,7 +3,7 @@
         data-control="datepicker"
         data-min-date="<?= e($scope->minDate) ?>"
         data-max-date="<?= e($scope->maxDate) ?>"
-        data-first-day="<?= e($scope->firstDay) ?>"
+        <?php if ($scope->firstDay !== null && $scope->firstDay !== ''): ?>data-first-day="<?= e($scope->firstDay) ?>"<?php endif ?>
         data-year-range="<?= e($scope->yearRange) ?>"
         data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
         <input

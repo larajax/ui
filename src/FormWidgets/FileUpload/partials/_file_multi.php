@@ -9,6 +9,7 @@
     data-sort-handler="<?= $this->getEventHandler('onSortAttachments') ?>"
     data-unique-id="<?= $this->getId() ?>"
     data-max-filesize="<?= $maxFilesize ?>"
+    data-messages="<?= e(json_encode($uploadMessages)) ?>"
     <?php if ($externalToolbarBus): ?>data-external-toolbar-bus="<?= e($externalToolbarBus)?>"<?php endif ?>
     <?php if ($maxFiles): ?>data-max-files="<?= $maxFiles ?>"<?php endif ?>
     <?php if ($acceptedFileTypes): ?>data-file-types="<?= $acceptedFileTypes ?>"<?php endif ?>
@@ -18,7 +19,7 @@
     <input type="hidden" name="<?= $name ?>" value="" />
 
     <div class="empty-state">
-        <img src="<?= Url::asset('/modules/backend/assets/images/no-files.svg') ?>"/>
+        <?= $this->makePartial('empty_state') ?>
     </div>
 
     <div class="uploader-control-container <?= $externalToolbarBus ? 'external-toolbar' : null ?>">

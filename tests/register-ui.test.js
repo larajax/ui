@@ -24,6 +24,11 @@ const CONTROL_IDS = [
     'fileupload',
     'relation-quick-create',
     'recordfinder',
+    'sensitive',
+    'colorpicker',
+    'richeditor',
+    'codeeditor',
+    'markdowneditor',
     'repeateraccordion',
     'repeaterbuilder',
 ];
@@ -39,6 +44,9 @@ function makeFakeJax() {
                 throw new Error(`duplicate control registration: ${id}`);
             }
             controls.set(id, control);
+        },
+        fetchControl() {
+            return null;
         },
         request() {},
     };

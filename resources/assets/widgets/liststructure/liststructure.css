@@ -55,6 +55,7 @@ table.table.data {
             background: var(--oc-toolbar-bg);
             text-align: center;
             cursor: move;
+            touch-action: none;
             left: -6px;
 
             width: 24px;

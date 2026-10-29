@@ -15,6 +15,48 @@
  */
 'use strict';
 
+/**
+ * Pointer travel in pixels before a press becomes a drag.
+ */
+const DRAG_THRESHOLD = 4;
+
+/**
+ * Distance in pixels from a scrollable edge that starts auto scrolling.
+ */
+const SCROLL_SENSITIVITY = 60;
+
+/**
+ * Pixels scrolled on each auto scroll tick.
+ */
+const SCROLL_SPEED = 20;
+
+/**
+ * Milliseconds between auto scroll ticks.
+ */
+const SCROLL_INTERVAL = 24;
+
+/**
+ * isTouchEnabled returns true only for pure touch devices, false for hybrid devices like touch laptops.
+ */
+export function isTouchEnabled() {
+    if (typeof window.matchMedia !== 'function') {
+        return false;
+    }
+
+    return window.matchMedia('(pointer: coarse)').matches &&
+        !window.matchMedia('(pointer: fine)').matches;
+}
+
+/**
+ * getAutoScrollDirection returns 1, -1 or 0 for one axis when the pointer is near an edge that can still scroll.
+ */
+export function getAutoScrollDirection(pointer, start, end, scrollPos, clientSize, scrollSize, sensitivity) {
+    const forward = Math.abs(end - pointer) <= sensitivity && scrollPos + clientSize < scrollSize;
+    const backward = Math.abs(start - pointer) <= sensitivity && scrollPos > 0;
+
+    return (forward ? 1 : 0) - (backward ? 1 : 0);
+}
+
 export function registerListStructureWidget(jax) {
     jax.registerControl('liststructurewidget', class extends jax.ControlBase {
         init() {
@@ -29,33 +71,70 @@ export function registerListStructureWidget(jax) {
                 maxDepth: null
             }, this.config);
 
-            this.drag = null;
+            if (isTouchEnabled()) {
+                this.config.dragRow = false;
+            }
+
+            this.pointer = null;
             this.onPointerMove = this.onPointerMove.bind(this);
             this.onPointerUp = this.onPointerUp.bind(this);
+            this.onAutoScroll = this.onAutoScroll.bind(this);
         }
 
         connect() {
-            this.body = this.element.querySelector('tbody');
+            this.tableBody = this.element.querySelector('table > tbody');
 
-            if (this.config.useReorder) {
-                this.listen('pointerdown', this.onPointerDown);
-                this.listen('click', this.onClickCapture);
+            if (this.toBool(this.config.useReorder)) {
+                this.initReorder();
             }
         }
 
         disconnect() {
-            removeEventListener('pointermove', this.onPointerMove);
-            removeEventListener('pointerup', this.onPointerUp);
-            this.body = null;
-            this.drag = null;
+            if (this.toBool(this.config.useReorder)) {
+                this.destroyReorder();
+            }
+
+            this.tableBody = null;
+        }
+
+        initReorder() {
+            this.dragging = false;
+
+            this.dragBoundary = {};
+            this.dragStartX = 0;
+            this.draggingX = 0;
+
+            this.activeItem = null;
+            this.activeChildren = null;
+            this.lastChildDiff = null;
+
+            this.listen('pointerdown', this.onPointerDown);
+
+            // Capture phase so row links never see the click that ends a drag
+            this.listen('click', this.onClickCapture, true);
+        }
+
+        destroyReorder() {
+            this.stopAutoScroll();
+            this.removePointerListeners();
+            this.pointer = null;
+            this.dragging = false;
+            this.activeItem = null;
+            this.activeChildren = null;
         }
 
         //
-        // Drag lifecycle
+        // Pointer tracking
         //
 
         onPointerDown(ev) {
-            if (ev.button !== 0) {
+            if (ev.button !== 0 || ev.isPrimary === false || this.pointer || !this.tableBody) {
+                return;
+            }
+
+            // Filtered elements never start a drag
+            const filtered = ev.target.closest('.no-sort');
+            if (filtered && this.tableBody.contains(filtered)) {
                 return;
             }
 
@@ -67,99 +146,210 @@ export function registerListStructureWidget(jax) {
             }
             else if (this.toBool(this.config.dragRow)) {
                 // Avoid starting a drag from interactive elements
-                if (ev.target.closest('a, input, select, button, label')) {
+                if (ev.target.closest('a, input, select, textarea, button, label')) {
                     return;
                 }
                 row = ev.target.closest('tr[data-tree-id]');
             }
 
-            if (!row || !this.body.contains(row)) {
+            if (!row || row.parentNode !== this.tableBody) {
                 return;
             }
 
-            this.drag = {
+            this.pointer = {
                 row: row,
-                started: false,
+                originalEvent: ev,
                 startX: ev.clientX,
                 startY: ev.clientY,
-                level: parseInt(row.dataset.treeLevel) || 0,
-                proposedLevel: parseInt(row.dataset.treeLevel) || 0,
-                children: [],
+                clientX: ev.clientX,
+                clientY: ev.clientY,
                 suppressClick: false
             };
 
-            addEventListener('pointermove', this.onPointerMove);
-            addEventListener('pointerup', this.onPointerUp);
+            window.addEventListener('pointermove', this.onPointerMove);
+            window.addEventListener('pointerup', this.onPointerUp);
+            window.addEventListener('pointercancel', this.onPointerUp);
 
             ev.preventDefault();
         }
 
         onPointerMove(ev) {
-            const drag = this.drag;
-            if (!drag) {
+            const pointer = this.pointer;
+            if (!pointer) {
                 return;
             }
 
             // Require a small threshold before entering drag mode, so clicks
             // and row links keep working
-            if (!drag.started) {
-                if (Math.abs(ev.clientX - drag.startX) < 4 && Math.abs(ev.clientY - drag.startY) < 4) {
+            if (!this.dragging) {
+                if (Math.abs(ev.clientX - pointer.startX) < DRAG_THRESHOLD &&
+                    Math.abs(ev.clientY - pointer.startY) < DRAG_THRESHOLD
+                ) {
                     return;
                 }
-                this.startDrag();
+
+                this.onDragStart(pointer.originalEvent);
             }
 
-            // Vertical: move the row through its siblings
-            const target = this.rowFromPoint(ev.clientY);
-            if (target && target !== drag.row) {
-                const rect = target.getBoundingClientRect();
-                if (ev.clientY < rect.top + rect.height / 2) {
-                    target.before(drag.row);
-                }
-                else {
-                    target.after(drag.row);
-                }
-            }
+            pointer.suppressClick = true;
+            pointer.clientX = ev.clientX;
+            pointer.clientY = ev.clientY;
 
-            // Horizontal: propose a new tree level
-            if (this.toBool(this.config.useTree)) {
-                const offsetLevels = Math.round((ev.clientX - drag.startX) / this.config.indentSize);
-                drag.proposedLevel = this.clampLevel(drag.level + offsetLevels);
-            }
-
-            drag.suppressClick = true;
+            this.onDragOver(ev.clientY);
+            this.onDragging(ev);
+            this.updateAutoScroll();
         }
 
         onPointerUp() {
-            removeEventListener('pointermove', this.onPointerMove);
-            removeEventListener('pointerup', this.onPointerUp);
+            this.removePointerListeners();
+            this.stopAutoScroll();
 
-            const drag = this.drag;
-            if (!drag || !drag.started) {
-                this.drag = null;
+            if (!this.pointer) {
                 return;
             }
 
-            const row = drag.row;
-            const proposedLevel = this.clampLevel(drag.proposedLevel);
+            if (!this.dragging) {
+                this.pointer = null;
+                return;
+            }
 
-            row.classList.remove('sortable-chosen');
-            this.body.classList.remove('tree-drag-mode');
+            this.onDragStop();
 
-            row.dataset.treeLevel = proposedLevel;
+            // Keep click suppression until after the click event fires
+            setTimeout(() => {
+                this.pointer = null;
+            }, 0);
+        }
 
-            // Bring hidden children along, adjusting their levels
-            const levelDistance = drag.level - proposedLevel;
-            let anchor = row;
-            drag.children.forEach((child) => {
-                child.style.display = '';
-                child.dataset.treeLevel = (parseInt(child.dataset.treeLevel) || 0) - levelDistance;
-                anchor.after(child);
-                anchor = child;
+        onClickCapture(ev) {
+            if (this.pointer && this.pointer.suppressClick) {
+                ev.stopPropagation();
+                ev.preventDefault();
+            }
+        }
+
+        removePointerListeners() {
+            window.removeEventListener('pointermove', this.onPointerMove);
+            window.removeEventListener('pointerup', this.onPointerUp);
+            window.removeEventListener('pointercancel', this.onPointerUp);
+        }
+
+        //
+        // Drag lifecycle
+        //
+
+        onDragMove(evt) {
+            const item = evt.related;
+
+            if (evt.willInsertAfter && !this.canInsertAfter(item)) {
+                return false;
+            }
+
+            if (!evt.willInsertAfter && !this.canInsertBefore(item)) {
+                return false;
+            }
+        }
+
+        onDragStart(evt) {
+            const item = this.pointer.row;
+
+            this.dragging = true;
+            this.activeItem = item;
+            this.activeChildren = this.getChildren(item);
+            this.dragStartX = this.getEventPageX(evt);
+            this.tableBody.classList.add('tree-drag-mode');
+            item.classList.add('sortable-chosen');
+
+            const currentDepth = this.getTreeLevel(item);
+            let lastChildDiff = 0;
+
+            this.activeChildren.forEach((child) => {
+                child.style.display = 'none';
+
+                const childDiff = this.getTreeLevel(child) - currentDepth;
+                if (childDiff > lastChildDiff) {
+                    lastChildDiff = childDiff;
+                }
             });
 
-            // Post back data to server; the response re-renders the list
-            const postData = this.getMovePostData(row, proposedLevel);
+            this.lastChildDiff = lastChildDiff;
+            this.scrollContainers = this.getScrollContainers();
+            this.setTargetBoundary();
+        }
+
+        onDragOver(clientY) {
+            const item = this.activeItem,
+                target = this.rowFromPoint(clientY);
+
+            if (!target) {
+                return;
+            }
+
+            const rect = target.getBoundingClientRect(),
+                willInsertAfter = clientY >= rect.top + rect.height / 2,
+                neighbour = willInsertAfter ? target.nextElementSibling : target.previousElementSibling;
+
+            // Already in place
+            if (neighbour === item) {
+                return;
+            }
+
+            if (this.onDragMove({ related: target, willInsertAfter: willInsertAfter }) === false) {
+                return;
+            }
+
+            if (willInsertAfter) {
+                target.after(item);
+            }
+            else {
+                target.before(item);
+            }
+
+            this.onChange();
+        }
+
+        onChange() {
+            this.setTargetBoundary();
+        }
+
+        onDragStop() {
+            const item = this.activeItem,
+                tableBody = this.tableBody,
+                activeChildren = this.activeChildren || [];
+
+            this.activeItem = null;
+            this.activeChildren = null;
+            this.scrollContainers = null;
+            this.dragging = false;
+
+            if (!tableBody || !item) {
+                return;
+            }
+
+            tableBody.classList.add('tree-drag-updated');
+            tableBody.classList.remove('tree-drag-mode');
+            item.classList.remove('sortable-chosen');
+
+            const currentLevel = this.getTreeLevel(item),
+                proposedLevel = item.dataset.treeLevelProposed !== undefined
+                    ? parseInt(item.dataset.treeLevelProposed)
+                    : currentLevel,
+                levelDistance = currentLevel - proposedLevel;
+
+            item.dataset.treeLevel = proposedLevel;
+            delete item.dataset.treeLevelProposed;
+
+            // Bring children along for the ride
+            activeChildren.forEach((child) => {
+                const childLevel = this.getTreeLevel(child);
+
+                child.style.display = '';
+                item.after(child);
+                this.setIndentOnItem(child, childLevel - levelDistance);
+            });
+
+            // Post back data to server
+            const postData = this.getMovePostData(item, proposedLevel);
 
             if (this.toBool(this.config.includeSortOrders)) {
                 postData.sort_orders = this.getRecordSortData();
@@ -167,96 +357,34 @@ export function registerListStructureWidget(jax) {
 
             jax.request(this.element, this.config.reorderHandler, {
                 data: postData
-            });
-
-            // Keep click suppression until after the click event fires
-            const self = this;
-            setTimeout(function() { self.drag = null; }, 0);
+            })
+                .finally(() => tableBody.classList.remove('tree-drag-updated'))
+                .catch(() => {});
         }
 
-        onClickCapture(ev) {
-            if (this.drag && this.drag.suppressClick) {
-                ev.stopPropagation();
-                ev.preventDefault();
+        onDragging(ev) {
+            if (!this.dragging) {
+                return;
             }
-        }
 
-        startDrag() {
-            const drag = this.drag;
-            drag.started = true;
+            this.draggingX = this.getEventPageX(ev);
 
-            // Collect and hide the visible children of the dragged row
-            let next = drag.row.nextElementSibling;
-            while (next && (parseInt(next.dataset.treeLevel) || 0) > drag.level) {
-                drag.children.push(next);
-                next = next.nextElementSibling;
-            }
-            drag.children.forEach((child) => {
-                child.style.display = 'none';
-            });
-
-            drag.row.classList.add('sortable-chosen');
-            this.body.classList.add('tree-drag-mode');
+            this.setIndent();
         }
 
         //
-        // Helpers
+        // Move data
         //
-
-        rowFromPoint(clientY) {
-            const rows = this.body.querySelectorAll('tr[data-tree-id]');
-            for (const row of rows) {
-                if (row === this.drag.row || row.style.display === 'none') {
-                    continue;
-                }
-                const rect = row.getBoundingClientRect();
-                if (clientY >= rect.top && clientY <= rect.bottom) {
-                    return row;
-                }
-            }
-            return null;
-        }
-
-        clampLevel(level) {
-            const drag = this.drag,
-                row = drag.row;
-
-            if (!this.toBool(this.config.useTree)) {
-                return 0;
-            }
-
-            // The previous visible row constrains the deepest allowed level;
-            // the next row constrains the shallowest
-            const prev = this.visibleSibling(row, 'previous'),
-                next = this.visibleSibling(row, 'next');
-
-            let max = prev ? (parseInt(prev.dataset.treeLevel) || 0) + 1 : 0;
-            let min = next ? (parseInt(next.dataset.treeLevel) || 0) : 0;
-
-            if (this.config.maxDepth !== null) {
-                max = Math.min(max, this.config.maxDepth - 1);
-            }
-
-            return Math.max(min, Math.min(max, level));
-        }
-
-        visibleSibling(row, direction) {
-            let el = direction === 'previous' ? row.previousElementSibling : row.nextElementSibling;
-            while (el && (el.style.display === 'none' || !el.dataset.treeId)) {
-                el = direction === 'previous' ? el.previousElementSibling : el.nextElementSibling;
-            }
-            return el;
-        }
 
         getMovePostData(row, proposedLevel) {
             const data = {
                 record_id: row.dataset.treeId
             };
 
-            // Find next sibling at the proposed level
+            // Find next row
             let next = row.nextElementSibling;
             while (next) {
-                const level = parseInt(next.dataset.treeLevel) || 0;
+                const level = this.getTreeLevel(next);
                 if (level === proposedLevel) {
                     data.next_id = next.dataset.treeId;
                     break;
@@ -267,10 +395,10 @@ export function registerListStructureWidget(jax) {
                 next = next.nextElementSibling;
             }
 
-            // Find previous sibling at the proposed level
+            // Find previous row
             let prev = row.previousElementSibling;
             while (prev) {
-                const level = parseInt(prev.dataset.treeLevel) || 0;
+                const level = this.getTreeLevel(prev);
                 if (level === proposedLevel) {
                     data.previous_id = prev.dataset.treeId;
                     break;
@@ -284,7 +412,7 @@ export function registerListStructureWidget(jax) {
             // Find parent row
             prev = row.previousElementSibling;
             while (prev) {
-                const level = parseInt(prev.dataset.treeLevel) || 0;
+                const level = this.getTreeLevel(prev);
                 if (level < proposedLevel) {
                     data.parent_id = prev.dataset.treeId;
                     break;
@@ -296,8 +424,279 @@ export function registerListStructureWidget(jax) {
         }
 
         getRecordSortData() {
-            return [...this.body.querySelectorAll('tr[data-tree-id]')]
+            return [...this.tableBody.querySelectorAll('tr[data-tree-id]')]
                 .map((row) => row.dataset.treeId);
+        }
+
+        //
+        // Tree structure
+        //
+
+        getChildren(row) {
+            const children = [],
+                targetLevel = this.getTreeLevel(row);
+
+            let next = row.nextElementSibling;
+            while (next) {
+                const currentLevel = this.getTreeLevel(next);
+                if (currentLevel > targetLevel) {
+                    children.unshift(next);
+                }
+
+                if (currentLevel <= targetLevel) {
+                    break;
+                }
+
+                next = next.nextElementSibling;
+            }
+
+            return children;
+        }
+
+        setTargetBoundary() {
+            const item = this.activeItem;
+            this.dragBoundary = this.getIndentBoundaries(this.getPrevRow(item), this.getNextRow(item));
+        }
+
+        canInsertBefore(item) {
+            return this.getIndentBoundaries(this.getPrevRow(item), item, true) !== false;
+        }
+
+        canInsertAfter(item) {
+            return this.getIndentBoundaries(item, this.getNextRow(item), true) !== false;
+        }
+
+        getIndentBoundaries(prevRow, nextRow, isMaxCheck) {
+            let minLevel = 0,
+                maxLevel = 0;
+
+            if (nextRow && this.isRowVisible(nextRow)) {
+                minLevel = this.getTreeLevel(nextRow);
+            }
+
+            if (prevRow && this.isRowVisible(prevRow)) {
+                maxLevel = this.getTreeLevel(prevRow) + 1;
+
+                // A collapsed parent cannot take new children
+                if (prevRow.dataset.treeExpanded !== 'true' && parseInt(prevRow.dataset.treeChildren)) {
+                    maxLevel--;
+                }
+            }
+
+            const maxDepth = this.getMaxDepth();
+            if (maxDepth !== null) {
+                if (minLevel !== 0 && minLevel + this.lastChildDiff > maxDepth) {
+                    if (isMaxCheck) {
+                        return false;
+                    }
+
+                    maxLevel = maxDepth - this.lastChildDiff;
+                    if (minLevel > maxLevel) {
+                        minLevel = maxLevel;
+                    }
+                }
+
+                if (maxLevel + this.lastChildDiff > maxDepth) {
+                    maxLevel = maxDepth - this.lastChildDiff;
+                    if (maxLevel < minLevel) {
+                        maxLevel = minLevel;
+                    }
+                }
+            }
+
+            return {
+                min: minLevel,
+                max: maxLevel
+            };
+        }
+
+        getMaxDepth() {
+            if (!this.config.maxDepth) {
+                return null;
+            }
+
+            // Reflected as maximum allowed levels
+            return parseInt(this.config.maxDepth) - 1;
+        }
+
+        //
+        // Indentation
+        //
+
+        setIndent() {
+            const currentLevel = this.getTreeLevel(this.activeItem),
+                distanceFromStart = this.draggingX - this.dragStartX,
+                indentDistance = Math.round(distanceFromStart / this.config.indentSize);
+
+            let proposedLevel = currentLevel + indentDistance;
+
+            if (proposedLevel < this.dragBoundary.min) {
+                proposedLevel = this.dragBoundary.min;
+            }
+            else if (proposedLevel > this.dragBoundary.max) {
+                proposedLevel = this.dragBoundary.max;
+            }
+
+            this.setIndentOnItem(this.activeItem, proposedLevel, true);
+        }
+
+        setIndentOnItem(item, indentLevel, isProposal) {
+            if (isProposal) {
+                item.dataset.treeLevelProposed = indentLevel;
+            }
+            else {
+                item.dataset.treeLevel = indentLevel;
+            }
+
+            const treeCell = [...item.children].find((cell) => cell.classList.contains('list-cell-tree'));
+            if (treeCell) {
+                treeCell.style.paddingLeft = this.getIndentStartSize(indentLevel) + 'px';
+            }
+        }
+
+        getIndentStartSize(treeLevel) {
+            return (treeLevel * this.config.indentSize) +
+                (this.toBool(this.config.useTree) ? 15 : 0) +
+                (this.toBool(this.config.useReorder) ? 0 : 15);
+        }
+
+        //
+        // Auto scroll
+        //
+
+        getScrollContainers() {
+            const windowScroller = document.scrollingElement || document.documentElement,
+                containers = [];
+
+            let el = this.element;
+            while (el && el !== document.body && el !== windowScroller) {
+                const style = getComputedStyle(el);
+                if (/auto|scroll/.test(style.overflowX + ' ' + style.overflowY)) {
+                    containers.push(el);
+                }
+                el = el.parentElement;
+            }
+
+            containers.push(windowScroller);
+
+            return containers;
+        }
+
+        getAutoScrollVelocity(container) {
+            const pointer = this.pointer,
+                isWindow = container === (document.scrollingElement || document.documentElement),
+                style = getComputedStyle(container),
+                rect = isWindow
+                    ? { top: 0, left: 0, right: window.innerWidth, bottom: window.innerHeight }
+                    : container.getBoundingClientRect();
+
+            const canScroll = (overflow) => isWindow
+                ? overflow !== 'hidden' && overflow !== 'clip'
+                : overflow === 'auto' || overflow === 'scroll';
+
+            return {
+                x: canScroll(style.overflowX)
+                    ? getAutoScrollDirection(pointer.clientX, rect.left, rect.right, container.scrollLeft, container.clientWidth, container.scrollWidth, SCROLL_SENSITIVITY)
+                    : 0,
+                y: canScroll(style.overflowY)
+                    ? getAutoScrollDirection(pointer.clientY, rect.top, rect.bottom, container.scrollTop, container.clientHeight, container.scrollHeight, SCROLL_SENSITIVITY)
+                    : 0
+            };
+        }
+
+        updateAutoScroll() {
+            const isScrolling = (this.scrollContainers || []).some((container) => {
+                const velocity = this.getAutoScrollVelocity(container);
+                return velocity.x !== 0 || velocity.y !== 0;
+            });
+
+            if (!isScrolling) {
+                this.stopAutoScroll();
+                return;
+            }
+
+            if (!this.autoScrollTimer) {
+                this.autoScrollTimer = setInterval(this.onAutoScroll, SCROLL_INTERVAL);
+            }
+        }
+
+        onAutoScroll() {
+            if (!this.dragging || !this.pointer) {
+                this.stopAutoScroll();
+                return;
+            }
+
+            let isScrolled = false;
+
+            (this.scrollContainers || []).forEach((container) => {
+                const velocity = this.getAutoScrollVelocity(container);
+                if (velocity.x !== 0 || velocity.y !== 0) {
+                    container.scrollLeft += velocity.x * SCROLL_SPEED;
+                    container.scrollTop += velocity.y * SCROLL_SPEED;
+                    isScrolled = true;
+                }
+            });
+
+            if (!isScrolled) {
+                this.stopAutoScroll();
+                return;
+            }
+
+            // Rows moved under a still pointer, so place the dragged row again
+            this.onDragOver(this.pointer.clientY);
+            this.setIndent();
+        }
+
+        stopAutoScroll() {
+            if (this.autoScrollTimer) {
+                clearInterval(this.autoScrollTimer);
+                this.autoScrollTimer = null;
+            }
+        }
+
+        //
+        // Helpers
+        //
+
+        rowFromPoint(clientY) {
+            for (const row of this.tableBody.children) {
+                if (row === this.activeItem || !row.dataset.treeId || !this.isRowVisible(row)) {
+                    continue;
+                }
+                const rect = row.getBoundingClientRect();
+                if (clientY >= rect.top && clientY <= rect.bottom) {
+                    return row;
+                }
+            }
+            return null;
+        }
+
+        getPrevRow(row) {
+            return this.getSiblingRow(row, 'previousElementSibling');
+        }
+
+        getNextRow(row) {
+            return this.getSiblingRow(row, 'nextElementSibling');
+        }
+
+        getSiblingRow(row, property) {
+            let el = row[property];
+            while (el && (el === this.activeItem || !this.isRowVisible(el) || !el.dataset.treeId)) {
+                el = el[property];
+            }
+            return el;
+        }
+
+        isRowVisible(row) {
+            return row.style.display !== 'none';
+        }
+
+        getTreeLevel(row) {
+            return parseInt(row.dataset.treeLevel) || 0;
+        }
+
+        getEventPageX(evt) {
+            return evt.pageX || (evt.touches && evt.touches[0].pageX) || 0;
         }
 
         toBool(value) {

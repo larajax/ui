@@ -285,9 +285,6 @@ export function createRepeaterFormWidgetBase(jax) {
                 if (addLink) {
                     this.clickPaletteAddItem(ev, addLink);
                 }
-                else if (ev.target.closest('[data-dismiss=popover]')) {
-                    popover.hide();
-                }
             });
 
             this.palettePopover = popover;

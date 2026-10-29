@@ -52,6 +52,11 @@ import { registerListStructureWidget } from './widgets/liststructure/liststructu
 import { registerFileUpload } from './formwidgets/fileupload/fileupload.js';
 import { registerRelationQuickCreate } from './formwidgets/relation/relation-quick-create.js';
 import { registerRecordFinder } from './formwidgets/recordfinder/recordfinder.js';
+import { registerSensitive } from './formwidgets/sensitive/sensitive.js';
+import { registerColorPicker } from './formwidgets/colorpicker/colorpicker.js';
+import { registerRichEditor } from './formwidgets/richeditor/richeditor.js';
+import { registerCodeEditor } from './formwidgets/codeeditor/codeeditor.js';
+import { registerMarkdownEditor } from './formwidgets/markdowneditor/markdowneditor.js';
 import { registerRepeaterAccordion } from './formwidgets/repeater/repeater-accordion.js';
 import { registerRepeaterBuilder } from './formwidgets/repeater/repeater-builder.js';
 
@@ -61,6 +66,7 @@ export { Popup } from './controls/popup/popup.js';
 export { PopupStacker } from './controls/popup/popup-stacker.js';
 export { LoadIndicator } from './controls/load-indicator/load-indicator.js';
 export { default as DragScroll } from './controls/drag-scroll/drag-scroll.js';
+export { richEditor } from './formwidgets/richeditor/richeditor-api.js';
 
 // Framework instances that have completed registration
 const registered = new WeakSet();
@@ -121,6 +127,11 @@ export function registerUi(jax) {
     registerFileUpload(jax);
     registerRelationQuickCreate(jax);
     registerRecordFinder(jax);
+    registerSensitive(jax);
+    registerColorPicker(jax);
+    registerRichEditor(jax);
+    registerCodeEditor(jax);
+    registerMarkdownEditor(jax);
     registerRepeaterAccordion(jax);
     registerRepeaterBuilder(jax);
 

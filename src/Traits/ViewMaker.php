@@ -203,13 +203,14 @@ trait ViewMaker
     /**
      * guessViewPath guesses the package path for the called class
      * @param string $suffix An extra path to attach to the end
+     * @param bool $isPublic Returns public path instead of an absolute one
      * @return string
      */
-    public function guessViewPath($suffix = '')
+    public function guessViewPath($suffix = '', $isPublic = false)
     {
         $class = get_called_class();
 
-        return $this->guessViewPathFrom($class, $suffix);
+        return $this->guessViewPathFrom($class, $suffix, $isPublic);
     }
 
     /**
@@ -218,9 +219,10 @@ trait ViewMaker
      * path instead of a local one.
      * @param string $class
      * @param string $suffix
+     * @param bool $isPublic
      * @return string
      */
-    public function guessViewPathFrom($class, $suffix = '')
+    public function guessViewPathFrom($class, $suffix = '', $isPublic = false)
     {
         if (is_object($class)) {
             $class = get_class($class);
@@ -231,6 +233,6 @@ trait ViewMaker
             $guessedPath .= $suffix;
         }
 
-        return $guessedPath;
+        return $isPublic && $guessedPath !== null ? File::localToPublic($guessedPath) : $guessedPath;
     }
 }

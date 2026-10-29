@@ -8,6 +8,7 @@ use DbDongle;
 use October\Rain\Html\Helper as HtmlHelper;
 use October\Rain\Router\Helper as RouterHelper;
 use Larajax\Ui\Classes\ListColumn;
+use Larajax\Ui\Helpers\Url as UrlHelper;
 use Larajax\Ui\Classes\WidgetBase;
 use Illuminate\Database\Eloquent\Model;
 use October\Contracts\Element\ListElement;
@@ -696,7 +697,7 @@ class Lists extends WidgetBase implements ListElement
                         $url = 'javascript:;';
                     }
                     else {
-                        $url = url($event['url']);
+                        $url = UrlHelper::to($event['url']);
                     }
                 }
 
@@ -706,7 +707,7 @@ class Lists extends WidgetBase implements ListElement
                 }
             }
             elseif (is_string($event)) {
-                $url = url($event);
+                $url = UrlHelper::to($event);
             }
         }
 
@@ -738,7 +739,7 @@ class Lists extends WidgetBase implements ListElement
             $url = RouterHelper::replaceParameters($record, $this->recordUrl);
         }
 
-        return url($url);
+        return UrlHelper::to($url);
     }
 
     /**

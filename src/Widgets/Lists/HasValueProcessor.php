@@ -6,6 +6,7 @@ use Lang;
 use Carbon\Carbon;
 use October\Rain\Router\Helper as RouterHelper;
 use Larajax\Ui\Helpers\DateTime as DateTimeHelper;
+use Larajax\Ui\Helpers\Url as UrlHelper;
 use Larajax\Ui\Classes\FormField;
 use ApplicationException;
 
@@ -363,7 +364,7 @@ trait HasValueProcessor
                     !str_starts_with($linkUrl, 'http://') &&
                     !str_starts_with($linkUrl, 'https://')
                 ) {
-                    $linkUrl = url($linkUrl);
+                    $linkUrl = UrlHelper::to($linkUrl);
                 }
             }
             else {
@@ -379,6 +380,18 @@ trait HasValueProcessor
                 if (!$column->linkText) {
                     $linkText = $linkUrl;
                 }
+            }
+        }
+
+        // Links with an application scheme, such as a page reference, resolve to their address
+        if (UrlHelper::isResolvableLink((string) $linkUrl)) {
+            $isDefault = $linkUrl === $linkText;
+            $linkUrl = UrlHelper::resolveLink($linkUrl);
+            if (!$linkUrl) {
+                $value = null;
+            }
+            elseif ($isDefault) {
+                $linkText = UrlHelper::makeRelative($linkUrl);
             }
         }
 

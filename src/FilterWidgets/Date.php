@@ -46,10 +46,6 @@ class Date extends FilterWidgetBase
             $scope->maxDate = '2199-12-31';
         }
 
-        if (!$scope->firstDay) {
-            $scope->firstDay = 0;
-        }
-
         if (!$scope->yearRange) {
             $scope->yearRange = 10;
         }

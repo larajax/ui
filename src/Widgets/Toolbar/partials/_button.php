@@ -32,7 +32,7 @@ if ($button->handler) {
     $args['requestData'] = (array) $button->requestData;
 }
 elseif ($button->url) {
-    $args['href'] = url($button->url);
+    $args['href'] = \Larajax\Ui\Facades\Ui::url($button->url);
 }
 
 $args += $attributes;

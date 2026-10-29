@@ -1,0 +1,194 @@
+@import "../../vendor/easymde/easymde.css";
+
+.field-markdowneditor {
+    width: 100%;
+    position: relative;
+
+    textarea {
+        opacity: 0;
+    }
+
+    &.is-stretch {
+        height: 100%;
+
+        .EasyMDEContainer {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+            .CodeMirror {
+                flex: 1;
+            }
+        }
+    }
+
+    /* Toolbar, styled like the code and rich editor toolbars */
+
+    .editor-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 2px;
+        padding: 5px 6px;
+        border: 1px solid var(--bs-border-color);
+        border-bottom-color: var(--oc-toolbar-border);
+        border-radius: 4px 4px 0 0;
+        background: var(--oc-toolbar-bg);
+        transition: border-color ease-in-out .15s;
+
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            min-width: 30px;
+            height: 30px;
+            padding: 0;
+            border: none;
+            border-radius: 4px;
+            background: transparent;
+            color: var(--oc-toolbar-color);
+            font-size: 16px;
+            font-weight: normal;
+            line-height: 1;
+
+            &:hover {
+                background: var(--oc-toolbar-hover-bg);
+                color: var(--oc-toolbar-hover-color);
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--oc-border-focus);
+                outline-offset: -2px;
+            }
+
+            &.active,
+            &.active:hover {
+                color: var(--bs-primary);
+                background: rgba(var(--bs-primary-rgb), .12);
+            }
+
+            /* The heading icons already show their level */
+            &.heading-1::after,
+            &.heading-2::after,
+            &.heading-3::after {
+                content: none;
+            }
+        }
+
+        i.separator {
+            width: 1px;
+            height: 18px;
+            margin: 0 4px;
+            border: none;
+            background: var(--oc-toolbar-border);
+        }
+
+        &.disabled-for-preview button:not(.no-disable) {
+            opacity: .4;
+        }
+
+        &.fullscreen {
+            height: auto;
+            padding: 5px 6px;
+            border: none;
+            border-bottom: 1px solid var(--oc-toolbar-border);
+            border-radius: 0;
+            background: var(--oc-toolbar-bg);
+            z-index: calc(var(--oc-zindex-fullscreen) + 2);
+
+            &::before,
+            &::after {
+                display: none;
+            }
+        }
+    }
+
+    /* Editor */
+
+    .EasyMDEContainer {
+        .CodeMirror {
+            border-color: var(--bs-border-color);
+            background: var(--oc-form-control-bg);
+            color: var(--bs-body-color);
+            transition: border-color ease-in-out .15s;
+        }
+
+        .CodeMirror-fullscreen {
+            top: 41px;
+            z-index: calc(var(--oc-zindex-fullscreen) + 1);
+        }
+
+        .CodeMirror-cursor {
+            border-left-color: var(--bs-body-color);
+        }
+
+        .CodeMirror-selected,
+        .CodeMirror-focused .CodeMirror-selected,
+        .CodeMirror-line::selection,
+        .CodeMirror-line > span::selection,
+        .CodeMirror-line > span > span::selection {
+            background: rgba(var(--bs-primary-rgb), .2);
+        }
+    }
+
+    &.editor-focus {
+        .editor-toolbar,
+        .EasyMDEContainer .CodeMirror {
+            border-color: var(--oc-border-focus);
+        }
+
+        .editor-toolbar {
+            border-bottom-color: var(--oc-toolbar-border);
+        }
+    }
+
+    .cm-s-easymde {
+        .cm-comment {
+            background: var(--bs-tertiary-bg);
+        }
+
+        .cm-link,
+        .cm-quote {
+            color: var(--bs-secondary-color);
+        }
+
+        .cm-url {
+            color: var(--bs-tertiary-color);
+        }
+    }
+
+    /* Preview */
+
+    .editor-preview,
+    .editor-preview-side {
+        background: var(--oc-form-control-bg);
+        color: var(--bs-body-color);
+        border-color: var(--bs-border-color);
+
+        pre {
+            padding: 10px;
+            border-radius: 3px;
+            background: var(--bs-tertiary-bg);
+        }
+
+        table td,
+        table th {
+            border-color: var(--bs-border-color);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    }
+
+    .editor-preview-side {
+        top: 41px;
+        z-index: calc(var(--oc-zindex-fullscreen) + 2);
+    }
+
+    .editor-statusbar {
+        color: var(--bs-secondary-color);
+    }
+}
