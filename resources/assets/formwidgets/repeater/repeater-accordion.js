@@ -13,6 +13,7 @@ export function registerRepeaterAccordion(jax) {
         init() {
             // Overrides
             this.selectorToolbar = ':scope > .field-repeater-toolbar';
+            this.selectorSortable = ':scope > .field-repeater-items';
             this.selectorChecked = ':scope > .field-repeater-items > .field-repeater-item > .repeater-header input[type=checkbox]:checked';
             super.init();
         }

@@ -15,6 +15,7 @@ export function registerRepeaterBuilder(jax) {
         init() {
             // Overrides
             this.selectorToolbar = ':scope > .field-repeater-builder > .field-repeater-toolbar';
+            this.selectorSortable = ':scope > .field-repeater-builder > .field-repeater-groups';
             this.selectorChecked = ':scope > .field-repeater-builder > .field-repeater-groups > .field-repeater-group > .repeater-header input[type=checkbox]:checked';
 
             super.init();
@@ -208,7 +209,15 @@ export function registerRepeaterBuilder(jax) {
         }
 
         eventSortableOnEnd() {
+            if (this.sortable) {
+                this.sortable.option('disabled', true);
+            }
+
             this.sortItemsToSidebar();
+
+            if (this.sortable) {
+                this.sortable.option('disabled', false);
+            }
         }
 
         eventOnAddItem() {

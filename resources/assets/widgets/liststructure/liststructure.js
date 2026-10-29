@@ -10,30 +10,16 @@
  * - data-indent-size - pixels per tree level
  * - data-max-depth - maximum nesting depth
  *
+ * Dependencies:
+ * - SortableJS (vendor/sortablejs/sortable.esm.js)
+ *
  * Tree node toggling posts through plain data-request attributes; this
- * control implements the drag reorder interaction with pointer events.
+ * control implements the drag reorder interaction on SortableJS.
  */
 'use strict';
 
-/**
- * Pointer travel in pixels before a press becomes a drag.
- */
-const DRAG_THRESHOLD = 4;
-
-/**
- * Distance in pixels from a scrollable edge that starts auto scrolling.
- */
-const SCROLL_SENSITIVITY = 60;
-
-/**
- * Pixels scrolled on each auto scroll tick.
- */
-const SCROLL_SPEED = 20;
-
-/**
- * Milliseconds between auto scroll ticks.
- */
-const SCROLL_INTERVAL = 24;
+// SortableJS is shared by every list, loaded on first use
+let sortablePromise = null;
 
 /**
  * isTouchEnabled returns true only for pure touch devices, false for hybrid devices like touch laptops.
@@ -45,16 +31,6 @@ export function isTouchEnabled() {
 
     return window.matchMedia('(pointer: coarse)').matches &&
         !window.matchMedia('(pointer: fine)').matches;
-}
-
-/**
- * getAutoScrollDirection returns 1, -1 or 0 for one axis when the pointer is near an edge that can still scroll.
- */
-export function getAutoScrollDirection(pointer, start, end, scrollPos, clientSize, scrollSize, sensitivity) {
-    const forward = Math.abs(end - pointer) <= sensitivity && scrollPos + clientSize < scrollSize;
-    const backward = Math.abs(start - pointer) <= sensitivity && scrollPos > 0;
-
-    return (forward ? 1 : 0) - (backward ? 1 : 0);
 }
 
 export function registerListStructureWidget(jax) {
@@ -74,11 +50,6 @@ export function registerListStructureWidget(jax) {
             if (isTouchEnabled()) {
                 this.config.dragRow = false;
             }
-
-            this.pointer = null;
-            this.onPointerMove = this.onPointerMove.bind(this);
-            this.onPointerUp = this.onPointerUp.bind(this);
-            this.onAutoScroll = this.onAutoScroll.bind(this);
         }
 
         connect() {
@@ -104,134 +75,66 @@ export function registerListStructureWidget(jax) {
             this.dragStartX = 0;
             this.draggingX = 0;
 
-            this.activeItem = null;
             this.activeChildren = null;
             this.lastChildDiff = null;
 
-            this.listen('pointerdown', this.onPointerDown);
+            loadSortable().then((Sortable) => {
+                // The list may have left the page while SortableJS loaded
+                if (!this.tableBody) {
+                    return;
+                }
 
-            // Capture phase so row links never see the click that ends a drag
-            this.listen('click', this.onClickCapture, true);
+                this.bindSortable(Sortable);
+            });
+
+            this.listen('drag', this.onDragging);
+            this.listen('mousemove', this.onDragging);
+            this.listen('touchmove', this.onDragging);
+            this.listen('pointermove', this.onDragging);
+
+            // Captured because Sortable stops dragover at the table body, and Firefox drag events carry no position
+            this.listen('dragover', this.onDragging, true);
+        }
+
+        bindSortable(Sortable) {
+            const sortableOptions = {
+                filter: '.no-sort',
+                animation: 150,
+                setData: (dataTransfer, dragEl) => {
+                    this.dragGhost = dragEl.cloneNode(true);
+                    this.dragGhost.classList.add('list-hidden-drag-ghost');
+                    document.body.appendChild(this.dragGhost);
+                    dataTransfer.setDragImage(this.dragGhost, 0, 0);
+                },
+                onStart: this.proxy(this.onDragStart),
+                onChange: this.proxy(this.onChange),
+                onEnd: this.proxy(this.onDragStop),
+                onMove: this.proxy(this.onDragMove),
+
+                // Auto scroll plugin
+                forceAutoScrollFallback: true,
+                scrollSensitivity: 60,
+                scrollSpeed: 20
+            };
+
+            if (!this.toBool(this.config.dragRow)) {
+                sortableOptions.handle = '.list-reorder-handle';
+            }
+
+            this.sortable = Sortable.create(this.tableBody, sortableOptions);
         }
 
         destroyReorder() {
-            this.stopAutoScroll();
-            this.removePointerListeners();
-            this.pointer = null;
+            if (this.sortable) {
+                this.sortable.destroy();
+                this.sortable = null;
+            }
+
+            this.removeDragGhost();
             this.dragging = false;
             this.activeItem = null;
+            this.activeClone = null;
             this.activeChildren = null;
-        }
-
-        //
-        // Pointer tracking
-        //
-
-        onPointerDown(ev) {
-            if (ev.button !== 0 || ev.isPrimary === false || this.pointer || !this.tableBody) {
-                return;
-            }
-
-            // Filtered elements never start a drag
-            const filtered = ev.target.closest('.no-sort');
-            if (filtered && this.tableBody.contains(filtered)) {
-                return;
-            }
-
-            const handle = ev.target.closest('.list-reorder-handle');
-            let row = null;
-
-            if (handle) {
-                row = handle.closest('tr[data-tree-id]');
-            }
-            else if (this.toBool(this.config.dragRow)) {
-                // Avoid starting a drag from interactive elements
-                if (ev.target.closest('a, input, select, textarea, button, label')) {
-                    return;
-                }
-                row = ev.target.closest('tr[data-tree-id]');
-            }
-
-            if (!row || row.parentNode !== this.tableBody) {
-                return;
-            }
-
-            this.pointer = {
-                row: row,
-                originalEvent: ev,
-                startX: ev.clientX,
-                startY: ev.clientY,
-                clientX: ev.clientX,
-                clientY: ev.clientY,
-                suppressClick: false
-            };
-
-            window.addEventListener('pointermove', this.onPointerMove);
-            window.addEventListener('pointerup', this.onPointerUp);
-            window.addEventListener('pointercancel', this.onPointerUp);
-
-            ev.preventDefault();
-        }
-
-        onPointerMove(ev) {
-            const pointer = this.pointer;
-            if (!pointer) {
-                return;
-            }
-
-            // Require a small threshold before entering drag mode, so clicks
-            // and row links keep working
-            if (!this.dragging) {
-                if (Math.abs(ev.clientX - pointer.startX) < DRAG_THRESHOLD &&
-                    Math.abs(ev.clientY - pointer.startY) < DRAG_THRESHOLD
-                ) {
-                    return;
-                }
-
-                this.onDragStart(pointer.originalEvent);
-            }
-
-            pointer.suppressClick = true;
-            pointer.clientX = ev.clientX;
-            pointer.clientY = ev.clientY;
-
-            this.onDragOver(ev.clientY);
-            this.onDragging(ev);
-            this.updateAutoScroll();
-        }
-
-        onPointerUp() {
-            this.removePointerListeners();
-            this.stopAutoScroll();
-
-            if (!this.pointer) {
-                return;
-            }
-
-            if (!this.dragging) {
-                this.pointer = null;
-                return;
-            }
-
-            this.onDragStop();
-
-            // Keep click suppression until after the click event fires
-            setTimeout(() => {
-                this.pointer = null;
-            }, 0);
-        }
-
-        onClickCapture(ev) {
-            if (this.pointer && this.pointer.suppressClick) {
-                ev.stopPropagation();
-                ev.preventDefault();
-            }
-        }
-
-        removePointerListeners() {
-            window.removeEventListener('pointermove', this.onPointerMove);
-            window.removeEventListener('pointerup', this.onPointerUp);
-            window.removeEventListener('pointercancel', this.onPointerUp);
         }
 
         //
@@ -251,14 +154,14 @@ export function registerListStructureWidget(jax) {
         }
 
         onDragStart(evt) {
-            const item = this.pointer.row;
+            const item = evt.item;
 
             this.dragging = true;
             this.activeItem = item;
+            this.activeClone = evt.clone;
             this.activeChildren = this.getChildren(item);
-            this.dragStartX = this.getEventPageX(evt);
+            this.dragStartX = this.getEventPageX(evt.originalEvent);
             this.tableBody.classList.add('tree-drag-mode');
-            item.classList.add('sortable-chosen');
 
             const currentDepth = this.getTreeLevel(item);
             let lastChildDiff = 0;
@@ -273,62 +176,32 @@ export function registerListStructureWidget(jax) {
             });
 
             this.lastChildDiff = lastChildDiff;
-            this.scrollContainers = this.getScrollContainers();
             this.setTargetBoundary();
         }
 
-        onDragOver(clientY) {
-            const item = this.activeItem,
-                target = this.rowFromPoint(clientY);
-
-            if (!target) {
-                return;
-            }
-
-            const rect = target.getBoundingClientRect(),
-                willInsertAfter = clientY >= rect.top + rect.height / 2,
-                neighbour = willInsertAfter ? target.nextElementSibling : target.previousElementSibling;
-
-            // Already in place
-            if (neighbour === item) {
-                return;
-            }
-
-            if (this.onDragMove({ related: target, willInsertAfter: willInsertAfter }) === false) {
-                return;
-            }
-
-            if (willInsertAfter) {
-                target.after(item);
-            }
-            else {
-                target.before(item);
-            }
-
-            this.onChange();
-        }
-
-        onChange() {
+        onChange(evt) {
+            this.activeItem = evt.item;
             this.setTargetBoundary();
         }
 
-        onDragStop() {
-            const item = this.activeItem,
+        onDragStop(evt) {
+            const item = evt.item,
                 tableBody = this.tableBody,
                 activeChildren = this.activeChildren || [];
 
             this.activeItem = null;
+            this.activeClone = null;
             this.activeChildren = null;
-            this.scrollContainers = null;
             this.dragging = false;
 
-            if (!tableBody || !item) {
+            if (!tableBody) {
                 return;
             }
 
             tableBody.classList.add('tree-drag-updated');
             tableBody.classList.remove('tree-drag-mode');
-            item.classList.remove('sortable-chosen');
+
+            this.removeDragGhost();
 
             const currentLevel = this.getTreeLevel(item),
                 proposedLevel = item.dataset.treeLevelProposed !== undefined
@@ -362,14 +235,31 @@ export function registerListStructureWidget(jax) {
                 .catch(() => {});
         }
 
-        onDragging(ev) {
+        onDragging(evt) {
             if (!this.dragging) {
                 return;
             }
 
-            this.draggingX = this.getEventPageX(ev);
+            // Native drag events without a pointer position report zero coordinates
+            if ((evt.type === 'drag' || evt.type === 'dragover') && !evt.clientX && !evt.clientY) {
+                return;
+            }
+
+            this.draggingX = this.getEventPageX(evt);
 
             this.setIndent();
+
+            const cloneCell = this.activeClone && this.activeClone.querySelector('.list-cell-tree');
+            if (cloneCell) {
+                cloneCell.style.paddingLeft = '1px';
+            }
+        }
+
+        removeDragGhost() {
+            if (this.dragGhost) {
+                this.dragGhost.remove();
+                this.dragGhost = null;
+            }
         }
 
         //
@@ -561,115 +451,8 @@ export function registerListStructureWidget(jax) {
         }
 
         //
-        // Auto scroll
-        //
-
-        getScrollContainers() {
-            const windowScroller = document.scrollingElement || document.documentElement,
-                containers = [];
-
-            let el = this.element;
-            while (el && el !== document.body && el !== windowScroller) {
-                const style = getComputedStyle(el);
-                if (/auto|scroll/.test(style.overflowX + ' ' + style.overflowY)) {
-                    containers.push(el);
-                }
-                el = el.parentElement;
-            }
-
-            containers.push(windowScroller);
-
-            return containers;
-        }
-
-        getAutoScrollVelocity(container) {
-            const pointer = this.pointer,
-                isWindow = container === (document.scrollingElement || document.documentElement),
-                style = getComputedStyle(container),
-                rect = isWindow
-                    ? { top: 0, left: 0, right: window.innerWidth, bottom: window.innerHeight }
-                    : container.getBoundingClientRect();
-
-            const canScroll = (overflow) => isWindow
-                ? overflow !== 'hidden' && overflow !== 'clip'
-                : overflow === 'auto' || overflow === 'scroll';
-
-            return {
-                x: canScroll(style.overflowX)
-                    ? getAutoScrollDirection(pointer.clientX, rect.left, rect.right, container.scrollLeft, container.clientWidth, container.scrollWidth, SCROLL_SENSITIVITY)
-                    : 0,
-                y: canScroll(style.overflowY)
-                    ? getAutoScrollDirection(pointer.clientY, rect.top, rect.bottom, container.scrollTop, container.clientHeight, container.scrollHeight, SCROLL_SENSITIVITY)
-                    : 0
-            };
-        }
-
-        updateAutoScroll() {
-            const isScrolling = (this.scrollContainers || []).some((container) => {
-                const velocity = this.getAutoScrollVelocity(container);
-                return velocity.x !== 0 || velocity.y !== 0;
-            });
-
-            if (!isScrolling) {
-                this.stopAutoScroll();
-                return;
-            }
-
-            if (!this.autoScrollTimer) {
-                this.autoScrollTimer = setInterval(this.onAutoScroll, SCROLL_INTERVAL);
-            }
-        }
-
-        onAutoScroll() {
-            if (!this.dragging || !this.pointer) {
-                this.stopAutoScroll();
-                return;
-            }
-
-            let isScrolled = false;
-
-            (this.scrollContainers || []).forEach((container) => {
-                const velocity = this.getAutoScrollVelocity(container);
-                if (velocity.x !== 0 || velocity.y !== 0) {
-                    container.scrollLeft += velocity.x * SCROLL_SPEED;
-                    container.scrollTop += velocity.y * SCROLL_SPEED;
-                    isScrolled = true;
-                }
-            });
-
-            if (!isScrolled) {
-                this.stopAutoScroll();
-                return;
-            }
-
-            // Rows moved under a still pointer, so place the dragged row again
-            this.onDragOver(this.pointer.clientY);
-            this.setIndent();
-        }
-
-        stopAutoScroll() {
-            if (this.autoScrollTimer) {
-                clearInterval(this.autoScrollTimer);
-                this.autoScrollTimer = null;
-            }
-        }
-
-        //
         // Helpers
         //
-
-        rowFromPoint(clientY) {
-            for (const row of this.tableBody.children) {
-                if (row === this.activeItem || !row.dataset.treeId || !this.isRowVisible(row)) {
-                    continue;
-                }
-                const rect = row.getBoundingClientRect();
-                if (clientY >= rect.top && clientY <= rect.bottom) {
-                    return row;
-                }
-            }
-            return null;
-        }
 
         getPrevRow(row) {
             return this.getSiblingRow(row, 'previousElementSibling');
@@ -703,4 +486,14 @@ export function registerListStructureWidget(jax) {
             return value === true || value === 'true' || value === '1' || value === 1;
         }
     });
+}
+
+// loadSortable imports SortableJS once for every list on the page
+function loadSortable() {
+    if (!sortablePromise) {
+        sortablePromise = import('../../vendor/sortablejs/sortable.esm.js')
+            .then((sortable) => sortable.Sortable);
+    }
+
+    return sortablePromise;
 }

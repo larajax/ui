@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, describe, expect, mock, test } from 'bun:test';
+import { fakeSortableModule, sortables, resetFakeSortable } from './support/fake-sortable.js';
 
 const dropzones = [];
-const sortables = [];
 const requests = [];
 
 // Stands in for Dropzone: emitting addedfile builds the preview from the template first, as Dropzone does
@@ -42,16 +42,8 @@ class FakeDropzone {
     destroy() { this.calls.push('destroy'); }
 }
 
-const FakeSortable = {
-    create(element, options) {
-        const sortable = { element, options, destroyed: false, destroy() { this.destroyed = true; } };
-        sortables.push(sortable);
-        return sortable;
-    }
-};
-
 mock.module('../resources/assets/vendor/dropzone/dropzone.esm.js', () => ({ Dropzone: FakeDropzone }));
-mock.module('../resources/assets/vendor/sortablejs/sortable.esm.js', () => ({ Sortable: FakeSortable }));
+mock.module('../resources/assets/vendor/sortablejs/sortable.esm.js', () => fakeSortableModule);
 
 const { registerFileUpload } = await import('../resources/assets/formwidgets/fileupload/fileupload.js');
 
@@ -119,7 +111,7 @@ afterEach(() => {
     document.body.innerHTML = '';
     document.head.querySelectorAll('meta[name="csrf-token"]').forEach((meta) => meta.remove());
     dropzones.length = 0;
-    sortables.length = 0;
+    resetFakeSortable();
     requests.length = 0;
 });
 

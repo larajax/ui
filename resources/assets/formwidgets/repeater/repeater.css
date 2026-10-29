@@ -165,13 +165,3 @@
         }
     }
 }
-
-/* Pointer drag reorder */
-.field-repeater li.repeater-item-dragging {
-    opacity: .8;
-}
-
-body.repeater-dragging {
-    cursor: move;
-    user-select: none;
-}

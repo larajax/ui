@@ -1,5 +1,8 @@
 /*
  * Repeater form widget base class
+ *
+ * Dependencies:
+ * - SortableJS (vendor/sortablejs/sortable.esm.js)
  */
 'use strict';
 
@@ -7,6 +10,10 @@ import { Popover } from '../../controls/popover/popover.js';
 
 // One base class per framework instance, so subclasses extend the injected ControlBase
 const baseClasses = new WeakMap();
+
+// SortableJS is shared by every repeater, loaded on first use
+let Sortable = null,
+    sortablePromise = null;
 
 export function createRepeaterFormWidgetBase(jax) {
     if (baseClasses.has(jax)) {
@@ -19,7 +26,6 @@ export function createRepeaterFormWidgetBase(jax) {
             this.canAdd = true;
             this.canRemove = true;
             this.toolbarBusy = false;
-            this.dragState = null;
             this.initDefaults();
         }
 
@@ -47,6 +53,10 @@ export function createRepeaterFormWidgetBase(jax) {
         }
 
         connect() {
+            if (this.config.useReorder) {
+                this.bindSorting();
+            }
+
             this.itemContainer = this.element.querySelector(':scope > .field-repeater-items');
             this.toolbar = this.element.querySelector(this.selectorToolbar);
 
@@ -58,20 +68,81 @@ export function createRepeaterFormWidgetBase(jax) {
             // Toolbar add button posts through its own data-request attribute
             this.listen('ajax:done', this.onAjaxDone);
 
-            if (this.config.useReorder) {
-                this.onPointerMove = this.onPointerMove.bind(this);
-                this.onPointerUp = this.onPointerUp.bind(this);
-                this.listen('pointerdown', this.onPointerDown);
-            }
-
             this.countItems();
             this.togglePrompt();
         }
 
         disconnect() {
-            this.cancelDrag();
+            if (this.sortable) {
+                this.sortable.destroy();
+            }
+
             this.itemContainer = null;
             this.toolbar = null;
+            this.sortableBody = null;
+            this.sortable = null;
+        }
+
+        bindSorting() {
+            this.sortableBody = this.element.querySelector(this.selectorSortable);
+
+            if (!this.sortableBody) {
+                return;
+            }
+
+            // Captured so the selection is ready before Sortable sees the press
+            this.listen('pointerdown', this.onSortablePointerDown, true);
+
+            loadSortable().then((Sortable) => {
+                // The repeater may have left the page while SortableJS loaded
+                if (!this.sortableBody) {
+                    return;
+                }
+
+                this.sortable = Sortable.create(this.sortableBody, {
+                    animation: 150,
+                    multiDrag: true,
+                    avoidImplicitDeselect: true,
+                    handle: this.config.sortableHandle,
+                    onEnd: this.proxy(this.onSortableEnd),
+
+                    // Auto scroll plugin
+                    forceAutoScrollFallback: true,
+                    scrollSensitivity: 60,
+                    scrollSpeed: 20
+                });
+            });
+        }
+
+        onSortableEnd(ev) {
+            this.eventSortableOnEnd();
+            this.triggerChange();
+        }
+
+        onSortablePointerDown(ev) {
+            const handle = ev.target.closest(this.config.sortableHandle);
+
+            if (handle && this.ownsElement(handle)) {
+                this.syncSortableSelection();
+            }
+        }
+
+        // syncSortableSelection makes the multi-drag selection match the checked items, since
+        // a handle click toggles it and another repeater's selection replaces it
+        syncSortableSelection() {
+            if (!this.sortable) {
+                return;
+            }
+
+            const checkedItems = this.getCheckedItems();
+
+            this.sortableBody.querySelectorAll(':scope > .sortable-selected').forEach((item) => {
+                if (!checkedItems.includes(item)) {
+                    Sortable.utils.deselect(item);
+                }
+            });
+
+            checkedItems.forEach((item) => Sortable.utils.select(item));
         }
 
         //
@@ -120,9 +191,21 @@ export function createRepeaterFormWidgetBase(jax) {
         //
 
         clickItemCheckbox(ev) {
-            const item = ev.target.closest('li');
+            const item = ev.target.closest('li'),
+                checked = ev.target.checked;
 
-            item.classList.toggle('is-checked', ev.target.checked);
+            item.classList.toggle('is-checked', checked);
+
+            if (!Sortable) {
+                return;
+            }
+
+            if (checked) {
+                Sortable.utils.select(item);
+            }
+            else {
+                Sortable.utils.deselect(item);
+            }
         }
 
         onShowItemMenu(ev) {
@@ -174,6 +257,11 @@ export function createRepeaterFormWidgetBase(jax) {
 
         onRemoveItemSuccess(items) {
             items.forEach((item) => {
+                // A removed item must leave the selection, or a multi-drag would put it back
+                if (Sortable) {
+                    Sortable.utils.deselect(item);
+                }
+
                 item.remove();
 
                 this.eventOnRemoveItem(item);
@@ -235,7 +323,7 @@ export function createRepeaterFormWidgetBase(jax) {
                 prevItem.before(item);
             }
 
-            this.eventSortableOnEnd();
+            this.onSortableEnd();
         }
 
         clickMoveItemDown(ev, target) {
@@ -246,7 +334,7 @@ export function createRepeaterFormWidgetBase(jax) {
                 nextItem.after(item);
             }
 
-            this.eventSortableOnEnd();
+            this.onSortableEnd();
         }
 
         //
@@ -455,95 +543,6 @@ export function createRepeaterFormWidgetBase(jax) {
         }
 
         //
-        // Drag reorder (pointer events)
-        //
-
-        onPointerDown(ev) {
-            if (ev.button !== 0) {
-                return;
-            }
-
-            const handle = ev.target.closest(this.config.sortableHandle);
-            if (!handle || !this.ownsElement(handle)) {
-                return;
-            }
-
-            const item = handle.closest('li'),
-                container = item.parentElement;
-
-            ev.preventDefault();
-
-            this.dragState = {
-                item: item,
-                container: container,
-                started: false,
-                startY: ev.clientY,
-                pointerId: ev.pointerId
-            };
-
-            addEventListener('pointermove', this.onPointerMove);
-            addEventListener('pointerup', this.onPointerUp);
-        }
-
-        onPointerMove(ev) {
-            const drag = this.dragState;
-            if (!drag) {
-                return;
-            }
-
-            // Drag threshold keeps clicks intact
-            if (!drag.started) {
-                if (Math.abs(ev.clientY - drag.startY) < 4) {
-                    return;
-                }
-                drag.started = true;
-                drag.item.classList.add('repeater-item-dragging');
-                document.body.classList.add('repeater-dragging');
-            }
-
-            // Find the sibling whose vertical midpoint the pointer has crossed
-            const siblings = Array.from(drag.container.children)
-                .filter((el) => el !== drag.item);
-
-            let placed = false;
-            for (const sibling of siblings) {
-                const rect = sibling.getBoundingClientRect();
-                if (ev.clientY < rect.top + rect.height / 2) {
-                    sibling.before(drag.item);
-                    placed = true;
-                    break;
-                }
-            }
-
-            if (!placed) {
-                drag.container.appendChild(drag.item);
-            }
-        }
-
-        onPointerUp(ev) {
-            const drag = this.dragState;
-            const wasSorted = drag && drag.started;
-
-            this.cancelDrag();
-
-            if (wasSorted) {
-                this.eventSortableOnEnd();
-                this.triggerChange();
-            }
-        }
-
-        cancelDrag() {
-            if (this.dragState) {
-                this.dragState.item.classList.remove('repeater-item-dragging');
-                document.body.classList.remove('repeater-dragging');
-                this.dragState = null;
-            }
-
-            removeEventListener('pointermove', this.onPointerMove);
-            removeEventListener('pointerup', this.onPointerUp);
-        }
-
-        //
         // Event Overrides
         //
 
@@ -575,4 +574,22 @@ export function createRepeaterFormWidgetBase(jax) {
     baseClasses.set(jax, RepeaterFormWidgetBase);
 
     return RepeaterFormWidgetBase;
+}
+
+// loadSortable imports SortableJS once and mounts its MultiDrag plugin for checked items
+function loadSortable() {
+    if (!sortablePromise) {
+        sortablePromise = import('../../vendor/sortablejs/sortable.esm.js').then((sortable) => {
+            // Mounting twice throws, and another control may share this module
+            if (!sortable.Sortable.utils.select) {
+                sortable.Sortable.mount(new sortable.MultiDrag());
+            }
+
+            Sortable = sortable.Sortable;
+
+            return Sortable;
+        });
+    }
+
+    return sortablePromise;
 }
