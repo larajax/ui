@@ -1,5 +1,6 @@
-import { describe, test, expect, afterEach } from 'bun:test';
+import { describe, test, expect, afterEach, beforeAll, afterAll } from 'bun:test';
 import { Sheet } from '../src/index.js';
+import { installPopoverStandIn } from './popover.js';
 
 /*
  * The Sheet API in a simulated DOM: editing, the clipboard, undo, filling, sorting and windowing, without a
@@ -31,6 +32,16 @@ function threeRows() {
         { sku: 'C-3', qty: 0, taxable: 1, note: 'third' }
     ];
 }
+
+let removePopoverStandIn;
+
+beforeAll(() => {
+    removePopoverStandIn = installPopoverStandIn();
+});
+
+afterAll(() => {
+    removePopoverStandIn();
+});
 
 afterEach(() => {
     sheets.splice(0).forEach((sheet) => sheet.destroy());
@@ -243,6 +254,83 @@ describe('fill handle', () => {
         sheet.undo();
 
         expect(sheet.getValues().map((row) => row[0])).toEqual(['A-1', 'B-2', 'C-3']);
+    });
+});
+
+describe('read only', () => {
+    test('opens no editor and writes nothing from typing, pasting or clearing', () => {
+        const sheet = makeSheet(threeRows(), { readOnly: true });
+
+        sheet.select(0, 0, 1, 1);
+        expect(sheet.openEditor('full')).toBe(false);
+        expect(sheet.beginTyping()).toBe(false);
+
+        sheet.paste('X\t1\nY\t2\nZ\t3\nW\t4');
+        sheet.clearSelection();
+
+        expect(sheet.getRowCount()).toBe(3);
+        expect(sheet.getValues().map((row) => row.slice(0, 2))).toEqual([['A-1', 5], ['B-2', '12'], ['C-3', 0]]);
+        expect(sheet.canUndo()).toBe(false);
+    });
+
+    test('shows checkboxes disabled and leaves them as they are', () => {
+        const sheet = makeSheet(threeRows(), { readOnly: true });
+
+        sheet.toggleCell(0, 2);
+        sheet.select(1, 2);
+        sheet.changeCheckboxes();
+
+        expect(sheet.getValues().map((row) => row[2])).toEqual([1, 0, 1]);
+        expect(sheet.getCellElement(0, 2).querySelector('input').disabled).toBe(true);
+        expect(sheet.elements.table.getAttribute('aria-readonly')).toBe('true');
+        expect(sheet.element.classList.contains('is-read-only')).toBe(true);
+    });
+
+    test('has no fill handle and no movable rows', () => {
+        const sheet = makeSheet(threeRows(), { readOnly: true, rowHeaders: true, rowMove: true });
+
+        sheet.select(0, 0);
+
+        expect(sheet.canFill()).toBe(false);
+        expect(sheet.elements.fillHandle.hidden).toBe(true);
+        expect(sheet.canMoveRows()).toBe(false);
+        expect(sheet.getRowHeaderElement(0).classList.contains('is-movable')).toBe(false);
+    });
+
+    test('still sorts and searches the view', () => {
+        const sheet = makeSheet(threeRows(), { readOnly: true });
+
+        sheet.sortBy('sku', 'desc');
+
+        expect(sheet.getValues().map((row) => row[0])).toEqual(['C-3', 'B-2', 'A-1']);
+        expect(sheet.search('b-2')).toEqual([{ row: 1, col: 0 }]);
+    });
+});
+
+describe('options from a function', () => {
+    const cityColumn = (knownOptions) => [{
+        key: 'city',
+        title: 'City',
+        type: 'dropdown',
+        options: () => [{ key: 'akl', label: 'Auckland' }],
+        knownOptions
+    }];
+
+    test('shows saved keys by their known labels before any options load', () => {
+        const sheet = makeSheet([{ city: 'akl' }, { city: 'wlg' }], { columns: cityColumn([{ key: 'akl', label: 'Auckland' }]) });
+
+        expect(sheet.getCellElement(0, 0).textContent).toBe('Auckland');
+        expect(sheet.getCellElement(1, 0).textContent).toBe('wlg');
+
+        sheet.select(0, 0);
+        sheet.openEditor('full');
+        expect(sheet.editor.getValue()).toBe('Auckland');
+    });
+
+    test('shows saved keys as they are without known labels', () => {
+        const sheet = makeSheet([{ city: 'akl' }], { columns: cityColumn() });
+
+        expect(sheet.getCellElement(0, 0).textContent).toBe('akl');
     });
 });
 

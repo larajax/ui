@@ -19,7 +19,8 @@ import { bindInput } from './view/input.js';
 /**
  * normalizeColumn fills in column defaults. Option columns (`dropdown`, `autocomplete`) take `options` as
  * [{ key, label }] or a function ({ query, row, rowData }) returning them (or a promise of them); `filter`
- * narrows the list to labels containing the typed text, `strict` flags values that aren't an option.
+ * narrows the list to labels containing the typed text, `strict` flags values that aren't an option, and
+ * `knownOptions` ([{ key, label }]) labels saved keys of a function's column before its options load.
  */
 function normalizeColumn(column) {
     const normalized = {
@@ -47,6 +48,10 @@ function normalizeColumn(column) {
     normalized.keys = new Map();
     if (Array.isArray(normalized.options)) {
         learnOptions(normalized, normalized.options);
+    }
+
+    if (Array.isArray(normalized.knownOptions)) {
+        learnOptions(normalized, normalized.knownOptions);
     }
 
     return normalized;
@@ -253,6 +258,13 @@ export class Sheet extends Emitter {
         return !!column && !column.readOnly && !this.options.readOnly;
     }
 
+    /**
+     * canMoveRows tells whether dragging row headers moves rows, which a read only sheet never allows.
+     */
+    canMoveRows() {
+        return !!this.options.rowMove && !this.options.readOnly;
+    }
+
     //
     // Editing data
     //
@@ -423,7 +435,7 @@ export class Sheet extends Emitter {
     //
 
     /**
-     * resizeColumn gives a column a fixed width; other columns keep sharing the space left over.
+     * resizeColumn gives a column a width in pixels, or puts back a percentage or a shared width (null), while other columns keep sharing the space left over.
      */
     resizeColumn(col, width) {
         const column = this.viewColumns[col];
@@ -431,7 +443,7 @@ export class Sheet extends Emitter {
             return;
         }
 
-        column.width = Math.max(MIN_COLUMN_WIDTH, Math.round(width));
+        column.width = typeof width === 'number' ? Math.max(MIN_COLUMN_WIDTH, Math.round(width)) : (width || null);
         applyLayout(this);
         this.updateFrozenOffsets();
         this.emit('columnResize', { col, key: column.key, width: column.width });
@@ -1110,7 +1122,7 @@ export class Sheet extends Emitter {
     //
 
     canFill() {
-        return this.options.fillHandle && this.options.multiSelect && !!this.selection;
+        return this.options.fillHandle && this.options.multiSelect && !this.options.readOnly && !!this.selection;
     }
 
     /**
@@ -1461,6 +1473,6 @@ export class Sheet extends Emitter {
         this.editor.destroy();
         this.clearListeners();
         this.element.replaceChildren();
-        this.element.classList.remove('hotsheet', 'is-active', 'is-striped', 'is-resizing');
+        this.element.classList.remove('hotsheet', 'is-active', 'is-striped', 'is-resizing', 'is-read-only');
     }
 }

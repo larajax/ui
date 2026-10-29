@@ -6,7 +6,7 @@ import { correctDate, correctTime, isInFormat } from '../values/dates.js';
  * validated. Types without an entry here are shown and edited as text.
  *
  * Type properties:
- *   render(cell, value, column)        fills the cell element
+ *   render(cell, value, column, sheet) fills the cell element
  *   parse(value, column, options)      turns entered text into the stored value
  *   validate(value, column)            checks a non-empty value
  *   editorValue(text, column)          the value an open editor holds, when it differs from its text
@@ -110,7 +110,7 @@ function renderText(cell, value) {
     cell.textContent = textOf(value);
 }
 
-function renderCheckbox(cell, value, column) {
+function renderCheckbox(cell, value, column, sheet) {
     const state = checkboxState(value, column);
     const input = document.createElement('input');
 
@@ -118,7 +118,7 @@ function renderCheckbox(cell, value, column) {
     input.tabIndex = -1;
     input.className = column.checkboxClass ? `hotsheet-checkbox ${column.checkboxClass}` : 'hotsheet-checkbox';
     input.checked = state === 'checked';
-    input.disabled = column.readOnly;
+    input.disabled = !!column.readOnly || !!sheet?.options.readOnly;
     input.setAttribute('aria-label', column.title);
 
     if (state === 'bad') {

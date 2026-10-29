@@ -1,13 +1,14 @@
-import { afterEach, beforeAll, describe, expect, mock, test } from 'bun:test';
+import { afterAll, afterEach, beforeAll, describe, expect, mock, test } from 'bun:test';
 import { readFileSync } from 'fs';
 
 // The grid source itself rather than a stand-in, so the control is tested against its real behavior
 import * as Hotsheet from '../packages/hotsheet/src/index.js';
+import { installPopoverStandIn } from '../packages/hotsheet/tests/popover.js';
 
 mock.module('../resources/assets/vendor/hotsheet/hotsheet.js', () => Hotsheet);
 
 const { registerDataTable } = await import('../resources/assets/formwidgets/datatable/datatable.js');
-const { validateValue, hasRequiredRule } = await import('../resources/assets/formwidgets/datatable/datatable.validation.js');
+const { validateValue, hasRequiredRule, DEFAULT_MESSAGES } = await import('../resources/assets/formwidgets/datatable/datatable.validation.js');
 
 function parseValue(value) {
     if (value === 'true') return true;
@@ -64,10 +65,16 @@ function makeFakeJax() {
 }
 
 let jax;
+let removePopoverStandIn;
 
 beforeAll(() => {
     jax = makeFakeJax();
     registerDataTable(jax);
+    removePopoverStandIn = installPopoverStandIn();
+});
+
+afterAll(() => {
+    removePopoverStandIn();
 });
 
 afterEach(() => {
@@ -82,13 +89,13 @@ const COLUMNS = [
     { data: 'qty', title: 'Qty', type: 'numeric' }
 ];
 
-function field({ rows = [{ country: 'AU', state: 'NSW', qty: 1 }, { country: 'US', state: 'CA', qty: 2 }], value, dependencies = { state: 'country' }, attributes = '' } = {}) {
+function field({ rows = [{ country: 'AU', state: 'NSW', qty: 1 }, { country: 'US', state: 'CA', qty: 2 }], value, columns = COLUMNS, ajaxColumns = [], dependencies = { state: 'country' }, attributes = '' } = {}) {
     const saved = value !== undefined ? value : JSON.stringify(rows);
 
     return `
         <form data-request="onSave">
             <div class="field-datatable" data-control="datatable" data-alias="formLines"
-                data-columns='${JSON.stringify(COLUMNS)}' data-hot-options='{"minRows":1}' data-ajax-columns='[]'
+                data-columns='${JSON.stringify(columns)}' data-hot-options='{"minRows":1}' data-ajax-columns='${JSON.stringify(ajaxColumns)}'
                 data-column-dependencies='${JSON.stringify(dependencies)}' data-data-locker="#locker" data-adding="true" data-deleting="true"
                 ${attributes}>
                 <div data-hot-container></div>
@@ -244,6 +251,81 @@ describe('datatable control', () => {
         expect(sheet.getRowCount()).toBe(4);
     });
 
+    test('labels saved keys from the options loaded with the field, and opens the editor without a request', async () => {
+        const columns = [{ data: 'country', title: 'Country', type: 'text' }, { data: 'city', title: 'City', type: 'dropdown', strict: true }];
+        const preloaded = { city: [{ values: { country: 'US' }, options: { 'new-york': 'New York', chicago: 'Chicago' } }] };
+        const { sheet } = connect(field({
+            rows: [{ country: 'US', city: 'new-york' }, { country: 'US', city: 'chicago' }, { country: 'NZ', city: 'auckland' }],
+            columns,
+            ajaxColumns: ['city'],
+            dependencies: { city: 'country' },
+            attributes: `data-preloaded-options='${JSON.stringify(preloaded)}'`
+        }));
+
+        expect([0, 1, 2].map((row) => sheet.getCellElement(row, 1).textContent)).toEqual(['New York', 'Chicago', 'auckland']);
+
+        sheet.select(1, 1);
+        sheet.openEditor('full');
+        expect(sheet.editor.getValue()).toBe('Chicago');
+        await sheet.updateOptions();
+
+        expect(jax.requests).toHaveLength(0);
+        expect(sheet.optionList.items.map((item) => item.label)).toEqual(['New York', 'Chicago']);
+    });
+
+    test('still asks the model for rows whose dependency values were not loaded with the field', () => {
+        const columns = [{ data: 'country', title: 'Country', type: 'text' }, { data: 'city', title: 'City', type: 'dropdown' }];
+        const preloaded = { city: [{ values: { country: 'US' }, options: { 'new-york': 'New York' } }] };
+        const { sheet } = connect(field({
+            rows: [{ country: 'US', city: 'new-york' }, { country: 'NZ', city: null }],
+            columns,
+            ajaxColumns: ['city'],
+            dependencies: { city: 'country' },
+            attributes: `data-preloaded-options='${JSON.stringify(preloaded)}'`
+        }));
+
+        sheet.select(1, 1);
+        sheet.openEditor('full');
+
+        expect(jax.requests).toHaveLength(1);
+        expect(jax.requests[0].handler).toBe('formLines::onGetDropdownOptions');
+        expect(jax.requests[0].options.data).toEqual({ column: 'city', rowData: { country: 'NZ', city: null } });
+    });
+
+    test('in read-only mode edits nothing, offers no row actions and sends no requests', () => {
+        const { control, sheet, locker } = connect(field({ attributes: 'data-read-only="true" data-require-valid="true"' }));
+
+        expect(sheet.options.readOnly).toBe(true);
+
+        sheet.select(0, 0);
+        expect(sheet.openEditor('full')).toBe(false);
+        expect(control.onShortcut({ altKey: true, code: 'KeyA', key: 'a' }, sheet)).toBe(true);
+        expect(control.onShortcut({ altKey: true, code: 'KeyD', key: 'd' }, sheet)).toBe(true);
+        expect(sheet.getRowCount()).toBe(2);
+        expect(control.buildContextMenu(sheet, { row: 0, col: 0 })).toEqual([]);
+
+        control.importCsv('country\nFR');
+        expect(jax.requests).toHaveLength(0);
+
+        sheet.setCells([{ row: 1, col: 2, value: 'many' }]);
+        expect(sendRequest('onSave').defaultPrevented).toBe(false);
+        expect(locker()[0]).toEqual({ country: 'AU', state: 'NSW', qty: 1 });
+    });
+
+    test('says why a save is blocked in the translated rule message', () => {
+        const columns = COLUMNS.map((col) => (col.data === 'qty' ? { ...col, _validation: { integer: { max: { value: 10 } } } } : col));
+        const { sheet } = connect(field({
+            columns,
+            attributes: `data-require-valid="true" data-lang='{"ruleMax":"Höchstens :max"}'`
+        }));
+
+        sheet.setCells([{ row: 0, col: 2, value: 50 }]);
+
+        expect(sendRequest('onSave').defaultPrevented).toBe(true);
+        expect(jax.flashes[0].message).toBe('Höchstens 10');
+        expect(sheet.getInvalidMessage(0, 2)).toBe('Höchstens 10');
+    });
+
     test('ignores an import answer that arrives after the field is gone', () => {
         const { control } = connect(field());
 
@@ -299,6 +381,15 @@ describe('datatable validation rules', () => {
         expect(validateValue({ length: { min: { value: 3, message: 'Short' } }, integer: { message: 'Number' } }, 'ab')).toBe('Short');
     });
 
+    test('takes translated default messages, filling in their placeholders', () => {
+        const messages = { ruleRequired: 'Darf nicht leer sein.', ruleMaxLength: 'Höchstens :max Zeichen' };
+
+        expect(validateValue({ required: {} }, '', {}, messages)).toBe('Darf nicht leer sein.');
+        expect(validateValue({ length: { max: { value: 3 } } }, 'abcd', {}, messages)).toBe('Höchstens 3 Zeichen');
+        expect(validateValue({ length: { min: { value: 3 } } }, 'ab', {}, messages)).toBe('The string should not be shorter than 3');
+        expect(validateValue({ required: { message: 'Enter a SKU' } }, '', {}, messages)).toBe('Enter a SKU');
+    });
+
     test('tells whether a column has a required rule', () => {
         expect(hasRequiredRule({ required: { requiredWith: 'x' } })).toBe(true);
         expect(hasRequiredRule({ integer: {} })).toBe(false);
@@ -309,7 +400,7 @@ describe('datatable validation rules', () => {
 describe('datatable form widget', () => {
     const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
 
-    test('lists the same strings as the control and grid defaults', () => {
+    test('lists the same strings as the control, validation and grid defaults', () => {
         const php = read('../src/FormWidgets/DataTable.php');
         const phpBlock = php.slice(php.indexOf('$strings = ['), php.indexOf('];', php.indexOf('$strings = [')));
         const strings = {};
@@ -324,7 +415,7 @@ describe('datatable form widget', () => {
             defaults[match[1]] = match[2].replace(/\\(.)/g, '$1');
         }
 
-        expect(strings).toEqual({ ...defaults, ...Hotsheet.defaultLang });
+        expect(strings).toEqual({ ...defaults, ...DEFAULT_MESSAGES, ...Hotsheet.defaultLang });
     });
 
     test('renders toolbar icons that every icon pack defines', () => {

@@ -11,11 +11,14 @@
  * - data-hot-options - the grid options, as JSON
  * - data-ajax-columns - columns whose options come from the onGetDropdownOptions handler, as JSON
  * - data-column-dependencies - columns whose values reset when another column (or any of a list) changes, as JSON
+ * - data-preloaded-options - options of those columns loaded with the field, as JSON keyed by column, each a list
+ *   of { values, options } where values are the dependency values the options belong to
  * - data-data-locker - selector of the hidden input holding the rows
  * - data-alias - the widget alias, prefixing its AJAX handlers
+ * - data-read-only - shows the rows without editing, for preview, read-only and disabled fields
  * - data-adding, data-deleting - whether rows may be added and removed
  * - data-require-valid - blocks saving while a filled row has an invalid cell
- * - data-lang - translated labels, as JSON, see DEFAULT_LANG
+ * - data-lang - translated labels and rule messages, as JSON, see DEFAULT_LANG and the validation DEFAULT_MESSAGES
  *
  * Child elements:
  * - [data-hot-container] - holds the grid
@@ -38,7 +41,7 @@
 'use strict';
 
 import { Sheet } from '../../vendor/hotsheet/hotsheet.js';
-import { validateValue, hasRequiredRule } from './datatable.validation.js';
+import { validateValue, hasRequiredRule, DEFAULT_MESSAGES } from './datatable.validation.js';
 
 const COLUMN_TYPES = ['text', 'numeric', 'checkbox', 'dropdown', 'autocomplete', 'date', 'time'];
 
@@ -55,6 +58,16 @@ const DEFAULT_LANG = {
     invalidValue: 'The value is not valid.'
 };
 
+// Options arrive as a list of labels or as labels by key
+function toOptionItems(options) {
+    if (Array.isArray(options)) {
+        return options.map(function(label) { return { key: label, label: label }; });
+    }
+
+    options = options || {};
+    return Object.keys(options).map(function(key) { return { key: key, label: options[key] }; });
+}
+
 export function registerDataTable(jax) {
     jax.registerControl('datatable', class extends jax.ControlBase {
         init() {
@@ -63,14 +76,17 @@ export function registerDataTable(jax) {
                 hotOptions: {},
                 ajaxColumns: [],
                 columnDependencies: {},
+                preloadedOptions: {},
+                readOnly: false,
                 alias: '',
                 dataLocker: null,
                 lang: {}
             }, this.config);
 
-            this.lang = Object.assign({}, DEFAULT_LANG, this.config.lang);
+            this.lang = Object.assign({}, DEFAULT_LANG, DEFAULT_MESSAGES, this.config.lang);
             this.hot = null;
             this.optionCache = {};
+            this.preloadedOptions = this.indexPreloadedOptions(this.config.preloadedOptions);
         }
 
         connect() {
@@ -111,6 +127,7 @@ export function registerDataTable(jax) {
                 wrapNavigation: options.autoWrapRow !== false,
                 decimalSeparator: this.getDecimalSeparator(),
                 minRows: options.minRows || 0,
+                readOnly: this.config.readOnly === true,
                 undo: options.undo !== false,
                 multiSelect: options.selectionMode !== 'single',
                 rowMove: !!options.manualRowMove,
@@ -173,9 +190,14 @@ export function registerDataTable(jax) {
                 if (col.type === 'dropdown' || col.type === 'autocomplete') {
                     column.filter = !!col.filter;
                     column.strict = !!col.strict;
-                    column.options = self.config.ajaxColumns.indexOf(col.data) !== -1
-                        ? function(request) { return self.loadOptions(col.data, request.rowData); }
-                        : (col.source || []).map(function(item) { return { key: item.key, label: item.value }; });
+
+                    if (self.config.ajaxColumns.indexOf(col.data) !== -1) {
+                        column.options = function(request) { return self.loadOptions(col.data, request.rowData); };
+                        column.knownOptions = self.getKnownOptions(col.data);
+                    }
+                    else {
+                        column.options = (col.source || []).map(function(item) { return { key: item.key, label: item.value }; });
+                    }
                 }
 
                 if (col.type === 'date' && col.dateFormat) {
@@ -192,7 +214,7 @@ export function registerDataTable(jax) {
 
                 if (col._validation) {
                     column.validator = function(value, column, rowData) {
-                        var message = validateValue(col._validation, value, rowData);
+                        var message = validateValue(col._validation, value, rowData, self.lang);
                         return message === null ? true : message;
                     };
 
@@ -207,11 +229,58 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * loadOptions asks the model for a remote column's options, given the row's values, cached per row values.
+         * indexPreloadedOptions keys the options loaded with the field by column and then by dependency values.
+         */
+        indexPreloadedOptions(preloaded) {
+            var self = this;
+            var index = {};
+
+            Object.keys(preloaded || {}).forEach(function(column) {
+                index[column] = {};
+
+                [].concat(preloaded[column] || []).forEach(function(entry) {
+                    index[column][self.getDependencyKey(column, entry.values)] = toOptionItems(entry.options);
+                });
+            });
+
+            return index;
+        }
+
+        /**
+         * getDependencyKey identifies a column's options by a row's values of the columns it depends on.
+         */
+        getDependencyKey(column, rowObject) {
+            var dependsOn = [].concat(this.config.columnDependencies[column] || []);
+
+            return JSON.stringify(dependsOn.map(function(key) {
+                var value = rowObject ? rowObject[key] : null;
+                return value === undefined ? null : value;
+            }));
+        }
+
+        /**
+         * getKnownOptions returns every option loaded with the field for a column, so saved keys show their labels.
+         */
+        getKnownOptions(column) {
+            var preloaded = this.preloadedOptions[column] || {};
+
+            return Object.keys(preloaded).reduce(function(items, key) {
+                return items.concat(preloaded[key]);
+            }, []);
+        }
+
+        /**
+         * loadOptions returns a remote column's options for a row, from those loaded with the field when they
+         * match its dependency values, or else from the model, cached per row values.
          */
         loadOptions(column, rowObject) {
             var self = this;
             var rowData = {};
+            var preloaded = (this.preloadedOptions[column] || {})[this.getDependencyKey(column, rowObject)];
+
+            if (preloaded) {
+                return Promise.resolve(preloaded);
+            }
 
             this.config.columns.forEach(function(col) {
                 var value = rowObject ? rowObject[col.data] : null;
@@ -225,10 +294,7 @@ export function registerDataTable(jax) {
                     jax.request(self.element, self.config.alias + '::onGetDropdownOptions', {
                         data: { column: column, rowData: rowData },
                         success: function(response) {
-                            var options = response.options || {};
-                            resolve(Array.isArray(options)
-                                ? options.map(function(label) { return { key: label, label: label }; })
-                                : Object.keys(options).map(function(key) { return { key: key, label: options[key] }; }));
+                            resolve(toOptionItems(response.options));
                         },
                         error: function(data, code, xhr) {
                             // A failed request is asked again next time, and still shows its error
@@ -289,8 +355,19 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * buildContextMenu returns the right click menu: inserting and removing rows when allowed, undo and redo,
-         * and freezing columns when columns can be reordered.
+         * canAddRows and canDeleteRows tell whether rows may be added or removed, which a read-only table never allows.
+         */
+        canAddRows() {
+            return this.config.readOnly !== true && this.config.adding !== false;
+        }
+
+        canDeleteRows() {
+            return this.config.readOnly !== true && this.config.deleting !== false;
+        }
+
+        /**
+         * buildContextMenu returns the right click menu: inserting and removing rows when allowed, undo and redo
+         * unless read-only, and freezing columns when columns can be reordered.
          */
         buildContextMenu(sheet, cell) {
             var options = this.config.hotOptions || {};
@@ -299,17 +376,19 @@ export function registerDataTable(jax) {
             var bottom = Math.max(selection.anchor.row, selection.focus.row);
             var items = [];
 
-            if (this.config.adding !== false) {
+            if (this.canAddRows()) {
                 items.push({ label: this.lang.insertRowAbove, action: function() { sheet.insertRows(top, 1); } });
                 items.push({ label: this.lang.insertRowBelow, action: function() { sheet.insertRows(bottom + 1, 1); } });
             }
 
-            if (this.config.deleting !== false) {
+            if (this.canDeleteRows()) {
                 items.push({ label: this.lang.removeRow, action: function() { sheet.removeRows(top, bottom - top + 1); } });
             }
 
-            items.push({ label: this.lang.undo, disabled: !sheet.canUndo(), action: function() { sheet.undo(); } });
-            items.push({ label: this.lang.redo, disabled: !sheet.canRedo(), action: function() { sheet.redo(); } });
+            if (this.config.readOnly !== true) {
+                items.push({ label: this.lang.undo, disabled: !sheet.canUndo(), action: function() { sheet.undo(); } });
+                items.push({ label: this.lang.redo, disabled: !sheet.canRedo(), action: function() { sheet.redo(); } });
+            }
 
             if (options.manualColumnFreeze) {
                 if (sheet.isColumnFrozen(cell.col)) {
@@ -344,13 +423,13 @@ export function registerDataTable(jax) {
 
             var row = selection.anchor.row;
 
-            if (isAdd && this.config.adding !== false) {
+            if (isAdd && this.canAddRows()) {
                 var index = event.shiftKey ? row : row + 1;
                 sheet.insertRows(index, 1);
                 sheet.select(index, 0);
             }
 
-            if (isDelete && this.config.deleting !== false) {
+            if (isDelete && this.canDeleteRows()) {
                 var col = selection.anchor.col;
                 sheet.removeRows(row, 1);
                 if (sheet.getRowCount()) {
@@ -379,7 +458,7 @@ export function registerDataTable(jax) {
 
                 for (var col = 0; col < columns.length; col++) {
                     var config = this.getColumnConfig(columns[col].key);
-                    var message = config && config._validation ? validateValue(config._validation, rowData[config.data], rowData) : null;
+                    var message = config && config._validation ? validateValue(config._validation, rowData[config.data], rowData, this.lang) : null;
 
                     if (message === null && sheet.isInvalid(row, col)) {
                         message = sheet.getInvalidMessage(row, col) || this.lang.invalidValue;
@@ -508,10 +587,16 @@ export function registerDataTable(jax) {
             var self = this;
 
             this.listen('click', '[data-table-add]', function() {
-                self.hot.insertRows(self.hot.getRowCount(), 1);
+                if (self.canAddRows()) {
+                    self.hot.insertRows(self.hot.getRowCount(), 1);
+                }
             });
 
             this.listen('click', '[data-table-delete]', function() {
+                if (!self.canDeleteRows()) {
+                    return;
+                }
+
                 var selection = self.hot.getSelection();
                 var row = selection ? selection.anchor.row : self.lastSelectedRow;
                 if (row === null || row === undefined) {
@@ -555,6 +640,10 @@ export function registerDataTable(jax) {
          */
         importCsv(text) {
             var self = this;
+
+            if (this.config.readOnly === true) {
+                return;
+            }
 
             jax.request(this.element, this.config.alias + '::onImportCsv', {
                 data: { csvData: text },
@@ -615,7 +704,8 @@ export function registerDataTable(jax) {
 
             this.syncToHiddenInput();
 
-            if (!this.config.requireValid || !this.isSaveRequest(handler)) {
+            // A read-only table can't be corrected, so it never blocks a save
+            if (!this.config.requireValid || this.config.readOnly === true || !this.isSaveRequest(handler)) {
                 return;
             }
 

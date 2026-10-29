@@ -8,6 +8,8 @@
     data-hot-options='<?= e(json_encode($hotOptions)) ?>'
     data-ajax-columns='<?= e(json_encode($ajaxColumns)) ?>'
     data-column-dependencies='<?= e(json_encode($columnDependencies)) ?>'
+    data-preloaded-options='<?= e(json_encode((object) $preloadedOptions)) ?>'
+    data-read-only="<?= $readOnly ? 'true' : 'false' ?>"
     data-adding="<?= $adding ? 'true' : 'false' ?>"
     data-deleting="<?= $deleting ? 'true' : 'false' ?>"
     data-require-valid="<?= $requireValid ? 'true' : 'false' ?>"
@@ -50,5 +52,5 @@
 
     <div data-hot-container></div>
 
-    <input type="hidden" id="<?= $this->getId('input') ?>" name="<?= $name ?>" value="<?= e(json_encode($value)) ?>" />
+    <input type="hidden" id="<?= $this->getId('input') ?>" name="<?= $name ?>" value="<?= e(json_encode($value)) ?>" <?= $disabled ? 'disabled' : '' ?> />
 </div>

@@ -15,7 +15,7 @@ export const defaultOptions = {
     decimalSeparator: '.',
     minRows: 0,
     undo: true,
-    // Nothing can be edited, only selected and copied
+    // Nothing can be edited, filled or moved, only selected, sorted, searched and copied
     readOnly: false,
     // false keeps selection, copy, paste and delete to one cell at a time
     multiSelect: true,

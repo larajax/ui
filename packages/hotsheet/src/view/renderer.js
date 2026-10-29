@@ -209,7 +209,7 @@ function renderRow(sheet, row, rowIndex) {
     if (sheet.options.rowHeaders) {
         const header = element('div', 'hotsheet-row-header', { role: 'rowheader', 'data-row': rowIndex });
         header.textContent = rowIndex + 1;
-        header.classList.toggle('is-movable', !!sheet.options.rowMove);
+        header.classList.toggle('is-movable', sheet.canMoveRows());
         rowEl.append(header);
     }
 
@@ -255,7 +255,7 @@ export function renderCell(sheet, row, rowIndex, column, colIndex) {
 
     markFrozen(sheet, cell, colIndex);
 
-    type.render(cell, sheet.store.get(row, column.key), column);
+    type.render(cell, sheet.store.get(row, column.key), column, sheet);
 
     return cell;
 }
@@ -268,7 +268,9 @@ export function applyLayout(sheet) {
     const { template, minWidth } = columnTemplate(sheet.viewColumns, sheet.options.rowHeaders);
 
     sheet.element.classList.toggle('is-striped', !!sheet.options.striped);
+    sheet.element.classList.toggle('is-read-only', !!sheet.options.readOnly);
     table.setAttribute('aria-multiselectable', String(sheet.options.multiSelect));
+    table.setAttribute('aria-readonly', String(!!sheet.options.readOnly));
     table.style.setProperty('--hotsheet-columns', template);
     table.style.setProperty('--hotsheet-min-width', `${minWidth}px`);
     table.style.setProperty('--hotsheet-row-height', `${sheet.options.rowHeight}px`);

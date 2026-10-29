@@ -143,6 +143,10 @@
     margin: 0;
     vertical-align: middle;
     cursor: pointer;
+
+    &:disabled {
+        cursor: default;
+    }
 }
 
 /* Option and picker cells show an indicator at their right edge */
@@ -200,6 +204,15 @@
 
     &.is-time {
         --hotsheet-indicator: var(--hotsheet-icon-clock);
+    }
+}
+
+/* Cells that can't be edited show no indicator, since nothing opens */
+.hotsheet.is-read-only .hotsheet-cell,
+.hotsheet-cell.is-read-only {
+    &.has-options::after,
+    &.has-picker::after {
+        display: none;
     }
 }
 

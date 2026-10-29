@@ -62,20 +62,38 @@ class DataTable extends FormWidgetBase
      */
     public function prepareVars()
     {
+        $value = $this->getLoadValue() ?: [];
+        $readOnly = $this->isReadOnly();
+
         $this->vars['name'] = $this->getFieldName();
-        $this->vars['value'] = $this->getLoadValue() ?: [];
+        $this->vars['value'] = $value;
         $this->vars['columns'] = $this->processedColumns;
         $this->vars['ajaxColumns'] = $this->ajaxColumns;
         $this->vars['columnDependencies'] = $this->columnDependencies;
+        $this->vars['preloadedOptions'] = $this->getPreloadedOptions($value);
         $this->vars['hotOptions'] = $this->buildOptions();
-        $this->vars['adding'] = $this->getFieldConfig('adding', true);
-        $this->vars['deleting'] = $this->getFieldConfig('deleting', true);
-        $this->vars['toolbar'] = $this->getFieldConfig('toolbar', true);
+        $this->vars['readOnly'] = $readOnly;
+        $this->vars['disabled'] = $this->previewMode || $this->formField->disabled;
+        $this->vars['adding'] = !$readOnly && $this->getFieldConfig('adding', true);
+        $this->vars['deleting'] = !$readOnly && $this->getFieldConfig('deleting', true);
         $this->vars['searching'] = $this->getFieldConfig('searching', false);
         $this->vars['csvExport'] = $this->getFieldConfig('csvExport', false);
-        $this->vars['csvImport'] = $this->getFieldConfig('csvImport', false);
-        $this->vars['requireValid'] = $this->getFieldConfig('requireValid', false);
+        $this->vars['csvImport'] = !$readOnly && $this->getFieldConfig('csvImport', false);
+        $this->vars['requireValid'] = !$readOnly && $this->getFieldConfig('requireValid', false);
         $this->vars['lang'] = $this->getTableLang();
+
+        // The toolbar shows only when it holds a button or the search box
+        $this->vars['toolbar'] = $this->getFieldConfig('toolbar', true) && (
+            $this->vars['adding'] || $this->vars['deleting'] || $this->vars['csvExport'] || $this->vars['csvImport'] || $this->vars['searching']
+        );
+    }
+
+    /**
+     * isReadOnly tells whether the table only shows its rows, in preview mode or when the field is read-only or disabled.
+     */
+    protected function isReadOnly(): bool
+    {
+        return $this->previewMode || $this->formField->readOnly || $this->formField->disabled;
     }
 
     /**
@@ -108,6 +126,16 @@ class DataTable extends FormWidgetBase
             'freezeColumn' => 'Freeze column',
             'unfreezeColumn' => 'Unfreeze column',
             'invalidValue' => 'The value is not valid.',
+            'ruleRequired' => 'The value should not be empty.',
+            'ruleInteger' => 'The value should be an integer.',
+            'rulePositiveInteger' => 'The value should be a positive integer',
+            'ruleFloat' => 'The value should be a floating point number.',
+            'rulePositiveFloat' => 'The value should be a positive floating point number',
+            'ruleMin' => 'The value should not be less than :min',
+            'ruleMax' => 'The value should not be more than :max',
+            'ruleMinLength' => 'The string should not be shorter than :min',
+            'ruleMaxLength' => 'The string should not be longer than :max',
+            'ruleRegex' => 'Invalid value format.',
             'chooseDate' => 'Choose a date',
             'chooseTime' => 'Choose a time',
         ];
@@ -322,17 +350,82 @@ class DataTable extends FormWidgetBase
         $column = post('column');
         $rowData = post('rowData', []);
 
+        return ['options' => $this->getColumnOptions(is_string($column) ? $column : null, is_array($rowData) ? $rowData : [])];
+    }
+
+    /**
+     * getColumnOptions asks the model for a column's options given the row's values, through the field's own method or the generic one.
+     */
+    protected function getColumnOptions(?string $column, array $rowData): mixed
+    {
         $methodName = 'get' . studly_case($this->fieldName) . 'DataTableOptions';
 
         if ($this->objectMethodExists($this->model, $methodName)) {
-            return ['options' => $this->model->$methodName($column, $rowData)];
+            return $this->model->$methodName($column, $rowData);
         }
 
         if ($this->objectMethodExists($this->model, 'getDataTableOptions')) {
-            return ['options' => $this->model->getDataTableOptions($this->fieldName, $column, $rowData)];
+            return $this->model->getDataTableOptions($this->fieldName, $column, $rowData);
         }
 
-        return ['options' => []];
+        return [];
+    }
+
+    /**
+     * getPreloadedOptions resolves each AJAX column's options once for every set of dependency values in the
+     * loaded rows, so saved keys show their labels without a request per row.
+     *
+     * @return array<string, array<int, array{values: object, options: mixed}>>
+     */
+    protected function getPreloadedOptions(array $rows): array
+    {
+        $preloaded = [];
+
+        foreach ($this->ajaxColumns as $columnName) {
+            $dependsOn = array_values((array) ($this->columnDependencies[$columnName] ?? []));
+            $groups = [];
+
+            foreach ($rows as $row) {
+                $rowData = $this->getRowData($row);
+
+                // Rows with no value in the column or what it depends on have nothing to label
+                $hasValue = array_filter(array_merge([$columnName], $dependsOn), fn ($key) => !in_array($rowData[$key] ?? null, [null, ''], true));
+                if (!$hasValue) {
+                    continue;
+                }
+
+                $values = [];
+                foreach ($dependsOn as $key) {
+                    $values[$key] = $rowData[$key] ?? null;
+                }
+
+                $groupKey = json_encode(array_values($values));
+                if (!isset($groups[$groupKey])) {
+                    $groups[$groupKey] = ['values' => (object) $values, 'options' => $this->getColumnOptions($columnName, $rowData)];
+                }
+            }
+
+            if ($groups) {
+                $preloaded[$columnName] = array_values($groups);
+            }
+        }
+
+        return $preloaded;
+    }
+
+    /**
+     * getRowData returns a saved row's values for every column, as the control sends them with an options request.
+     */
+    protected function getRowData(mixed $row): array
+    {
+        $row = (array) $row;
+        $rowData = [];
+
+        foreach ($this->processedColumns as $column) {
+            $rowData[$column['data']] = $row[$column['data']] ?? null;
+        }
+
+        return $rowData;
     }
 
     /**

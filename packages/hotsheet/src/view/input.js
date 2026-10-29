@@ -187,8 +187,9 @@ function onGridKeyDown(sheet, event, command) {
             sheet.moveActive(sheet.countVisibleRows(), 0);
             return true;
 
+        // With nothing to cancel, Escape carries on to the page, so a dialog holding the grid can close
         case 'Escape':
-            return true;
+            return false;
 
         default:
             break;
@@ -280,6 +281,12 @@ export function bindInput(sheet) {
     dropLine.hidden = true;
     sheet.elements.table.append(dropLine);
 
+    // A resize remembers the column's own width, so cancelling it puts back a width shared with other columns
+    const startResize = (headerEl, startX) => {
+        const col = Number(headerEl.dataset.col);
+        return { col, startX, startWidth: headerEl.offsetWidth, originalWidth: sheet.getColumns()[col]?.width ?? null };
+    };
+
     const onMouseDown = (event) => {
         if (event.target === textarea || (event.button !== 0 && event.button !== 2)) {
             return;
@@ -311,7 +318,7 @@ export function bindInput(sheet) {
 
         // The handle on a header's right edge resizes its column without selecting anything
         if (event.target.classList.contains('hotsheet-resizer') && event.button === 0) {
-            resizing = { col: Number(headerEl.dataset.col), startX: event.clientX, startWidth: headerEl.offsetWidth };
+            resizing = startResize(headerEl, event.clientX);
             root.classList.add('is-resizing');
             dragging = 'resize';
             return;
@@ -341,7 +348,7 @@ export function bindInput(sheet) {
             const row = Number(rowHeaderEl.dataset.row);
 
             // Pressing a row header inside a selection of whole rows starts moving them
-            if (event.button === 0 && sheet.options.rowMove && selection && isPickedRow(selection, row)) {
+            if (event.button === 0 && sheet.canMoveRows() && selection && isPickedRow(selection, row)) {
                 const top = Math.min(selection.anchor.row, selection.focus.row);
                 const bottom = Math.max(selection.anchor.row, selection.focus.row);
                 movingRows = Array.from({ length: bottom - top + 1 }, (_, i) => top + i);
@@ -557,7 +564,7 @@ export function bindInput(sheet) {
         else if (cellEl?.classList.contains('is-active') && sheet.options.multiSelect) {
             kind = 'cells';
         }
-        else if (rowHeaderEl && sheet.options.rowMove && selection && isPickedRow(selection, Number(rowHeaderEl.dataset.row))) {
+        else if (rowHeaderEl && sheet.canMoveRows() && selection && isPickedRow(selection, Number(rowHeaderEl.dataset.row))) {
             kind = 'move';
         }
 
@@ -607,8 +614,7 @@ export function bindInput(sheet) {
             dragging = 'fill';
         }
         else if (touch.kind === 'resize') {
-            const headerEl = touch.target.closest('.hotsheet-header');
-            resizing = { col: Number(headerEl.dataset.col), startX: touch.x, startWidth: headerEl.offsetWidth };
+            resizing = startResize(touch.target.closest('.hotsheet-header'), touch.x);
             root.classList.add('is-resizing');
             dragging = 'resize';
             return;
@@ -675,6 +681,29 @@ export function bindInput(sheet) {
         dropLine.hidden = true;
         sheet.showFillArea(null);
         root.classList.remove('is-resizing');
+    };
+
+    /**
+     * onDocumentKeyDown lets Escape cancel a drag wherever focus is: a fill, move or resize is dropped and the
+     * column width put back, while a selection drag keeps the cells reached so far.
+     */
+    const onDocumentKeyDown = (event) => {
+        if (event.key !== 'Escape' || !dragging) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const isSelecting = dragging === 'cells' || dragging === 'rows' || dragging === 'columns';
+        if (dragging === 'resize') {
+            sheet.resizeColumn(resizing.col, resizing.originalWidth);
+        }
+
+        abortDrag();
+
+        if (isSelecting) {
+            sheet.emit('select', { selection: sheet.getSelection() });
+        }
     };
 
     // After a long press the browser would still turn the touch into a click, which is cancelled here
@@ -793,6 +822,7 @@ export function bindInput(sheet) {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
     document.addEventListener('mousedown', onDocumentMouseDown, true);
+    document.addEventListener('keydown', onDocumentKeyDown, true);
     textarea.addEventListener('keydown', onTextareaKeyDown);
     textarea.addEventListener('input', onEditorInput);
     textarea.addEventListener('compositionstart', onCompositionStart);
@@ -819,6 +849,7 @@ export function bindInput(sheet) {
         document.removeEventListener('mouseup', onMouseUp);
         dropLine.remove();
         document.removeEventListener('mousedown', onDocumentMouseDown, true);
+        document.removeEventListener('keydown', onDocumentKeyDown, true);
         textarea.removeEventListener('keydown', onTextareaKeyDown);
         textarea.removeEventListener('input', onEditorInput);
         textarea.removeEventListener('compositionstart', onCompositionStart);
