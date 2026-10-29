@@ -6,14 +6,14 @@ Binds keyboard shortcuts to an element's click event. Supports single keys and k
 
 ```html
 <button
-    class="btn btn-default"
+    class="btn-solid theme-secondary"
     data-hotkey="b"
     onclick="alert('B is for Banana!')">
     Press "B" on your keyboard
 </button>
 
 <button
-    class="btn btn-default"
+    class="btn-solid theme-secondary"
     data-hotkey="shift+r"
     onclick="confirm('Shift gears...?')">
     Press "Shift + R" on your keyboard

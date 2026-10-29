@@ -50,7 +50,7 @@ The partial for your rendered popup should follow this structure, using Bootstra
     </button>
     <button
         type="button"
-        class="btn btn-default"
+        class="btn-solid theme-secondary"
         data-dismiss="popup">
         Close
     </button>
