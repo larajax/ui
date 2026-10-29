@@ -20,7 +20,7 @@ afterEach(() => {
 });
 
 function row(value, checked = false) {
-    return `<tr><td class="list-checkbox"><input type="checkbox" name="checked[]" value="${value}" ${checked ? 'checked' : ''} /></td><td>${value}</td></tr>`;
+    return `<tr><td class="list-checkbox"><input class="check check-sm" type="checkbox" name="checked[]" value="${value}" ${checked ? 'checked' : ''} /></td><td>${value}</td></tr>`;
 }
 
 function renderList({ rows = ['1', '2', '3'], checked = [], locker = '[]', attributes = '', toolbar = '' } = {}) {
@@ -30,7 +30,7 @@ function renderList({ rows = ['1', '2', '3'], checked = [], locker = '[]', attri
             <div class="control-list" data-control="listwidget" ${attributes}>
                 <div class="list-content">
                     <table class="table data">
-                        <thead><tr><th class="list-checkbox"><input type="checkbox" /></th><th>Name</th></tr></thead>
+                        <thead><tr><th class="list-checkbox"><input class="check check-sm" type="checkbox" /></th><th>Name</th></tr></thead>
                         <tbody>${rows.map((value) => row(value, checked.includes(value))).join('')}</tbody>
                     </table>
                 </div>

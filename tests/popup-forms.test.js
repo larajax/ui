@@ -3,26 +3,6 @@ import { registerPopup } from '../resources/assets/controls/popup/popup.js';
 import { registerRelationQuickCreate } from '../resources/assets/formwidgets/relation/relation-quick-create.js';
 import { registerListWidget } from '../resources/assets/widgets/list/list.js';
 
-class FakeModal {
-    constructor(element, config) {
-        this.element = element;
-        this.config = config;
-    }
-
-    show() {
-        if (!document.body.contains(this.element)) {
-            document.body.append(this.element);
-        }
-        this.element.classList.add('show');
-    }
-
-    hide() {
-        this.element.classList.remove('show');
-    }
-
-    dispose() {}
-}
-
 function makeFakeJax() {
     class ControlBase {
         constructor(element) {
@@ -79,7 +59,6 @@ function makeFakeJax() {
 let jax;
 
 beforeAll(() => {
-    window.bootstrap = { Modal: FakeModal };
     jax = makeFakeJax();
     registerPopup(jax);
     registerRelationQuickCreate(jax);

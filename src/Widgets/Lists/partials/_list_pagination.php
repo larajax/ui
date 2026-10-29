@@ -2,7 +2,7 @@
     $transportMethod = $pageName === '_page' ? 'data' : 'query';
 ?>
 <div class="list-pagination">
-    <div class="list-pagination-summary text-muted me-auto">
+    <div class="list-pagination-summary fg-3 me-auto">
         <?= e(__('records :from to :to of :total', ['from' => $pageFrom, 'to' => $pageTo, 'total' => $recordTotal])) ?>
     </div>
     <?php if ($pageLast > 1): ?>
@@ -154,7 +154,7 @@
                     data-popover-autofocus />
                 <button
                     type="submit"
-                    class="btn btn-primary">
+                    class="btn-solid theme-primary">
                     <?= __("Go") ?>
                 </button>
             </div>

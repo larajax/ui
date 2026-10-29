@@ -52,6 +52,7 @@
     }
 
     &.input-lg,
+    &.form-control-lg,
     .input-group-lg &,
     .form-group-lg & {
         .select2-selection--single {
@@ -98,6 +99,7 @@
     }
 
     &.input-lg.select2-container--open,
+    &.form-control-lg.select2-container--open,
     .input-group-lg &.select2-container--open {
         .select2-selection--single {
             /* Make the dropdown arrow point up while the dropdown is visible. */
@@ -149,6 +151,24 @@
                 margin-left: 2px;
                 margin-right: auto;
             }
+        }
+    }
+}
+
+/* Dropdown sizing, where small and large selects give their options the font size of the selected value */
+
+.select2-container--default .select2-dropdown {
+    &.select-dropdown-sm {
+        .select2-results > .select2-results__options,
+        .select2-search__field {
+            font-size: var(--custom-select-font-size-small);
+        }
+    }
+
+    &.select-dropdown-lg {
+        .select2-results > .select2-results__options,
+        .select2-search__field {
+            font-size: var(--custom-select-font-size-large);
         }
     }
 }
@@ -215,15 +235,39 @@
     }
 }
 
+/* Server-side validation classes on the original select carry over to the Select2 box that follows it */
+select.is-invalid + .select2-container--default {
+    .select2-selection {
+        border-color: var(--bs-danger-border);
+    }
+
+    &.select2-container--focus .select2-selection,
+    &.select2-container--open .select2-selection {
+        border-color: var(--bs-danger-border);
+        outline-color: var(--bs-danger-focus-ring);
+    }
+}
+
+select.is-valid + .select2-container--default {
+    .select2-selection {
+        border-color: var(--bs-success-border);
+    }
+
+    &.select2-container--focus .select2-selection,
+    &.select2-container--open .select2-selection {
+        border-color: var(--bs-success-border);
+        outline-color: var(--bs-success-focus-ring);
+    }
+}
+
 /* Input groups */
 
 .input-group .select2-container--default {
-    display: table;
-    table-layout: fixed;
     position: relative;
     z-index: var(--custom-select-zindex-form);
-    float: left;
-    width: 100%;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
     margin-bottom: 0;
 }
 
@@ -245,7 +289,7 @@
 .select2-default-prepend {
     .select2-container--default,
     .input-group-btn,
-    .input-group-btn .btn {
+    .input-group-btn :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
         vertical-align: top;
     }
 }
@@ -263,6 +307,9 @@
 .form-control.select2-hidden-accessible {
     position: absolute !important;
     width: 1px !important;
+
+    /* The Bootstrap form control minimum height would otherwise outgrow the hidden 1px box */
+    min-height: 0;
 }
 
 /* Inline */

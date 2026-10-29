@@ -5,16 +5,23 @@ $secondary ??= false;
 $caret ??= true;
 $icon ??= null;
 
-$classes = ['btn'];
-if ($caret) $classes[] = 'dropdown-toggle';
-if ($primary) $classes[] = 'btn-primary';
-elseif ($secondary) $classes[] = 'btn-secondary';
+if ($primary) {
+    $classes = ['btn-solid', 'theme-primary'];
+}
+elseif ($secondary) {
+    $classes = ['btn-solid', 'theme-secondary'];
+}
+else {
+    $classes = ['btn'];
+}
 ?>
-<div class="dropdown dropdown-fixed">
+<div class="btn-group">
     <button <?= $attributes->merge(array_filter([
         'class' => implode(' ', $classes),
         'type' => 'button',
-        'data-bs-toggle' => 'dropdown',
+        'data-bs-toggle' => 'menu',
+        'data-bs-strategy' => 'fixed',
+        'aria-expanded' => 'false',
     ])) ?>>
         <?php if ($icon): ?>
             <?= \Larajax\Ui\Facades\Ui::icon($icon) ?>
@@ -22,8 +29,11 @@ elseif ($secondary) $classes[] = 'btn-secondary';
         <?php else: ?>
             <?= e($label) ?>
         <?php endif ?>
+        <?php if ($caret): ?>
+            <?= \Larajax\Ui\Facades\Ui::icon('dropdown.caret') ?>
+        <?php endif ?>
     </button>
-    <ul class="dropdown-menu control-dropdown">
+    <div class="menu control-dropdown" role="menu">
         <?= $slot ?>
-    </ul>
+    </div>
 </div>

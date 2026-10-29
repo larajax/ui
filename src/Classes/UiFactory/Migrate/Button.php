@@ -139,7 +139,7 @@ class Button extends UiElement
     }
 
     /**
-     * buildCssClass
+     * buildCssClass maps the type to a variant plus theme, except default which is a library variant on the base class.
      */
     protected function buildCssClass(): string
     {
@@ -149,13 +149,16 @@ class Button extends UiElement
 
         $css = [];
 
-        $css[] = 'btn';
-
-        if ($this->outline) {
-            $css[] = 'btn-outline-'.$this->type;
+        if ($this->type === 'default') {
+            $css[] = 'btn';
+            $css[] = $this->outline ? 'btn-outline-default' : 'btn-default';
+        }
+        elseif ($this->type === 'link') {
+            $css[] = 'btn-link';
         }
         else {
-            $css[] = 'btn-'.$this->type;
+            $css[] = $this->outline ? 'btn-outline' : 'btn-solid';
+            $css[] = 'theme-'.$this->type;
         }
 
         if ($this->circleIcon) {

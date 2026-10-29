@@ -10,6 +10,8 @@ class PhosphorIconPack implements IconPack
             'search.icon' => 'ph ph-magnifying-glass',
             'search.clear' => 'ph ph-x',
 
+            'dropdown.caret' => 'ph ph-caret-down',
+
             'filter.menu' => 'ph ph-funnel-simple',
             'filter.clear' => 'ph ph-eraser',
             'filter.caret' => 'ph ph-caret-down',

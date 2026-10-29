@@ -7,7 +7,7 @@
  * the imports on first paint.
  */
 
-/* Variables: base bridges to Bootstrap 5 custom properties; light and dark
+/* Variables: base bridges to Bootstrap 6 custom properties; light and dark
    themes follow the data-bs-theme attribute */
 @import "./variables.css";
 @import "./variables-light.css";

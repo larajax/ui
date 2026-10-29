@@ -1,9 +1,9 @@
 /* Single select */
 
 .select2-container--default .select2-selection--single {
-    height: calc(var(--custom-select-input-height-base) - 1px);
-    line-height: 1.6;
-    padding: var(--custom-select-padding-base-vertical) calc(var(--custom-select-padding-base-horizontal) + var(--custom-select-caret-width-base) * 3) var(--custom-select-padding-base-vertical) var(--custom-select-padding-base-horizontal);
+    height: var(--custom-select-input-height-base);
+    line-height: var(--custom-select-input-line-height);
+    padding: var(--custom-select-input-padding-vertical) calc(var(--custom-select-input-padding-horizontal) + var(--custom-select-caret-width-base) * 3) var(--custom-select-input-padding-vertical) var(--custom-select-input-padding-horizontal);
 
     /* Adjust the single Select2's dropdown arrow button appearance. */
     .select2-selection__arrow {

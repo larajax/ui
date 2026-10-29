@@ -8,11 +8,11 @@
 
 :root {
     --oc-repeater-icon-size: 24px;
-    --oc-repeater-body-bg: var(--bs-body-bg);
+    --oc-repeater-body-bg: var(--bs-bg-body);
     --oc-repeater-body-border: var(--bs-border-color);
-    --oc-repeater-body-inner-bg: var(--bs-body-bg);
+    --oc-repeater-body-inner-bg: var(--bs-bg-body);
     --oc-repeater-item-bg: var(--oc-form-control-bg);
-    --oc-repeater-menu-bg: var(--bs-tertiary-bg);
+    --oc-repeater-menu-bg: var(--bs-bg-2);
 }
 
 .field-repeater {
@@ -40,10 +40,11 @@
         margin: -2px 2px;
     }
 
-    .repeater-item-checkbox .form-check-input {
+    .repeater-item-checkbox .check {
         position: relative;
-        top: 3px;
+        top: 5px;
         left: 5px;
+        vertical-align: top;
     }
 
     a.repeater-item-menu,
@@ -71,7 +72,7 @@
         }
     }
 
-    .repeater-item-dropdown.open a.repeater-item-menu,
+    .repeater-item-dropdown.show a.repeater-item-menu,
     a.repeater-item-menu:hover {
         color: var(--oc-toolbar-hover-color);
         background: var(--oc-toolbar-hover-bg);

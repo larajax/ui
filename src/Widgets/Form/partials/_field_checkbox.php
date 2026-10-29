@@ -1,5 +1,5 @@
 <!-- Checkbox -->
-<div class="form-check" <?php if ($this->previewMode): ?>tabindex="0"<?php endif ?>>
+<div class="form-field" <?php if ($this->previewMode): ?>tabindex="0"<?php endif ?>>
     <input
         type="hidden"
         name="<?= $field->getName() ?>"
@@ -7,7 +7,7 @@
         <?= $this->previewMode ? 'disabled' : '' ?>
     />
     <input
-        class="form-check-input"
+        class="check"
         type="checkbox"
         id="<?= $field->getId() ?>"
         name="<?= $field->getName() ?>"
@@ -17,13 +17,15 @@
         <?= $field->getAttributes() ?>
     />
 
-    <label class="form-check-label" for="<?= $field->getId() ?>">
-        <?= e(__($field->label)) ?>
-        <?php if ($field->tooltip): ?>
-            <?= $this->makePartial('tooltip', ['field' => $field]) ?>
+    <div class="form-field-content">
+        <label for="<?= $field->getId() ?>">
+            <?= e(__($field->label)) ?>
+            <?php if ($field->tooltip): ?>
+                <?= $this->makePartial('tooltip', ['field' => $field]) ?>
+            <?php endif ?>
+        </label>
+        <?php if ($field->comment): ?>
+            <p class="form-text"><?= $field->commentHtml ? trans($field->comment) : e(__($field->comment)) ?></p>
         <?php endif ?>
-    </label>
-    <?php if ($field->comment): ?>
-        <p class="form-text"><?= $field->commentHtml ? trans($field->comment) : e(__($field->comment)) ?></p>
-    <?php endif ?>
+    </div>
 </div>

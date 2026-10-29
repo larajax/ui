@@ -12,6 +12,31 @@
 'use strict';
 
 import $ from '../../vendor/select2/select2.esm.js';
+import { mountOrigin } from '../popup/dialog-mount.js';
+
+/**
+ * alignDropdownInParent keeps Select2's dropdown on its field inside a scrolled or bordered parent such as a dialog.
+ */
+export function alignDropdownInParent(dropdown) {
+    const positionDropdown = dropdown._positionDropdown;
+
+    dropdown._positionDropdown = function() {
+        positionDropdown.apply(this, arguments);
+
+        const parent = this.$dropdownParent && this.$dropdownParent[0];
+        if (!parent || parent === document.body || getComputedStyle(parent).position === 'static') {
+            return;
+        }
+
+        // Select2 measured from the parent's border box, while the dropdown sits in its scrolled padding box
+        const offset = this.$dropdownParent.offset();
+        const origin = mountOrigin(parent);
+        const style = this.$dropdownContainer[0].style;
+
+        style.top = (parseFloat(style.top) + offset.top - origin.top) + 'px';
+        style.left = (parseFloat(style.left) + offset.left - origin.left) + 'px';
+    };
+}
 
 export function registerCustomSelect(jax) {
     jax.registerControl('custom-select', class extends jax.ControlBase {
@@ -148,6 +173,10 @@ export function registerCustomSelect(jax) {
             }
 
             this.$el.select2(options);
+
+            if (options.dropdownParent) {
+                alignDropdownInParent(this.$el.data('select2').dropdown);
+            }
         }
 
         buildTokenSeparatorOptions(selectOptions, separators) {
@@ -228,6 +257,12 @@ export function registerCustomSelect(jax) {
                 selectionCssClass: ''
             }
 
+            // Inside a dialog the dropdown joins it, since the page outside an open modal dialog is inert
+            var dialog = this.element.closest('dialog');
+            if (dialog) {
+                selectOptions.dropdownParent = $(dialog);
+            }
+
             if (this.element.classList.contains('select-no-search')) {
                 selectOptions.minimumResultsForSearch = Infinity;
             }
@@ -246,13 +281,15 @@ export function registerCustomSelect(jax) {
                 selectOptions.dropdownCssClass += ' select-dropdown-auto-width';
             }
 
-            // Sizing
+            // Sizing, where the dropdown takes a size class of its own so its options match the selected value
             if (this.element.classList.contains('form-control-sm')) {
                 selectOptions.containerCssClass += ' form-control-sm';
+                selectOptions.dropdownCssClass += ' select-dropdown-sm';
             }
 
             if (this.element.classList.contains('form-control-lg')) {
                 selectOptions.containerCssClass += ' form-control-lg';
+                selectOptions.dropdownCssClass += ' select-dropdown-lg';
             }
 
             // Language

@@ -4,33 +4,31 @@
 
 [data-bs-theme="dark"] {
     --bs-heading-color: #e0e0e0;
-    --bs-emphasis-color: white;
     --bs-border-color: #383a3e;
-    --bs-backdrop-opacity: 0.5;
+    --oc-backdrop-opacity: 0.5;
+
+    /*
+    // Surfaces
+    // --------------------------------------------------*/
+
+    /* Bootstrap 5's dark surfaces, so inputs, filters and pagination sit level with lists rather than on Bootstrap 6's near-black body */
+    --bs-bg-body: #212529;
+    --bs-bg-1: #262a2f;
+    --bs-bg-2: #2b3035;
+    --bs-bg-3: #343a40;
 
     /*
     // Primary Colors
     // --------------------------------------------------*/
 
-    --bs-blue:    #0d6efd;
-    --bs-indigo:  #6610f2;
-    --bs-purple:  #6f42c1;
-    --bs-pink:    #d63384;
-    --bs-red:     #dc3545;
-    --bs-orange:  #fd7e14;
-    --bs-yellow:  #ffc107;
-    --bs-green:   #41b862;
-    --bs-teal:    #24b58a;
-    --bs-cyan:    #0dcaf0;
-
     --oc-accent: #3498db;
-    --oc-selection: var(--bs-teal);
+    --oc-selection: var(--bs-teal-500);
 
     --oc-primary-color: rgba(173, 181, 189, 0.85);
     --oc-primary-bg: #141515;
     --oc-primary-border: #494c50;
 
-    --bs-secondary-color: rgba(173, 181, 189, 0.75);
+    --bs-fg-3: rgba(173, 181, 189, 0.75);
     --oc-secondary-bg: #6f6f6f; /* darken(#888, 10%); */
     --oc-secondary-hover-bg: #7b7b7b; /* darken(#888, 5%); */
     --oc-secondary-active-bg: #888;
@@ -57,7 +55,7 @@
     --oc-toolbar-hover-color: white;
     --oc-toolbar-hover-bg: #43484e; /* rgba(215,225,234,0.2); */
 
-    --oc-tab-color: var(--bs-body-color);
+    --oc-tab-color: var(--bs-fg-body);
     --oc-tab-active-color: #e0e0e0;
     --oc-tab-border: #383a3e;
     --oc-tab-hover-bg: rgba(215,225,234,0.2);
@@ -77,7 +75,7 @@
         --oc-table-active-bg: #2c364b; /* darken(#35425b, 5%); */
     }
 
-    &,.modal {
-        --bs-modal-bg: #1a1d21;
+    &,.dialog {
+        --bs-dialog-bg: #1a1d21;
     }
 }

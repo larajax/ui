@@ -53,7 +53,7 @@ export function createRepeaterFormWidgetBase(jax) {
             // Items
             this.listen('change', this.onElementChange);
             this.listen('click', this.onElementClick);
-            this.listen('show.bs.dropdown', this.onShowItemMenu);
+            this.listen('show.bs.menu', this.onShowItemMenu);
 
             // Toolbar add button posts through its own data-request attribute
             this.listen('ajax:done', this.onAjaxDone);
@@ -133,20 +133,20 @@ export function createRepeaterFormWidgetBase(jax) {
 
             const template = this.element.querySelector(':scope > [data-item-menu-template]'),
                 item = target.closest('li'),
-                dropdownList = target.querySelector('.dropdown-menu');
+                dropdownList = target.querySelector('.menu');
 
             dropdownList.innerHTML = template.innerHTML;
 
             this.eventMenuFilter(item, dropdownList);
 
             if (this.toolbarBusy) {
-                dropdownList.querySelectorAll('li').forEach((li) => li.classList.add('disabled'));
+                dropdownList.querySelectorAll('.menu-item').forEach((link) => link.classList.add('disabled'));
             }
         }
 
         clickRemoveItem(ev, target) {
             // Button is disabled
-            if (target.closest('li.disabled')) {
+            if (target.classList.contains('disabled')) {
                 return;
             }
 
@@ -185,7 +185,7 @@ export function createRepeaterFormWidgetBase(jax) {
 
         clickDuplicateItem(ev, target) {
             // Button is disabled
-            if (target.closest('li.disabled')) {
+            if (target.classList.contains('disabled')) {
                 return;
             }
 

@@ -55,7 +55,7 @@ Each widget is a [Larajax](https://larajax.org) view component, so its AJAX hand
 - Controller-based AJAX handlers, HTML over the wire
 - Plain CSS and ES modules with no build step and no JavaScript framework
 - Works with plain Eloquent models
-- Styled on top of Bootstrap 5, with light and dark themes
+- Styled on top of Bootstrap 6, with light and dark themes
 
 ## Included widgets
 
@@ -72,7 +72,7 @@ Each widget is a [Larajax](https://larajax.org) view component, so its AJAX hand
 - Laravel 12 or later
 - [larajax/larajax](https://larajax.org) (provides the view component interface and the `window.jax` browser API)
 - [october/rain](https://github.com/octobercms/library) (database, validation and HTML helpers)
-- [Bootstrap 5](https://getbootstrap.com) (styling foundation; the popup control wraps the Bootstrap Modal)
+- [Bootstrap 6](https://getbootstrap.com) `6.0.0-alpha.1` (styling foundation; menus use its `data-bs-toggle="menu"` data API, while popups are the library's own native `<dialog>`). Bootstrap 6 is an alpha release, ships its JavaScript as ES modules only, and supports Chrome and Edge 130, Firefox 132 and Safari 18 or newer.
 
 ## Installation
 
@@ -92,13 +92,17 @@ php artisan vendor:publish --tag=larajax-ui-assets
 
 Files are copied verbatim into `public/vendor/larajax/ui/`. There is no build step; the JS is plain ES modules and the CSS is plain CSS with `@import`.
 
-Include them in your layout, after the larajax framework bundle:
+Include them in your layout, after Bootstrap and the larajax framework bundle:
 
 ```blade
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="{{ asset('vendor/larajax/ui/ui.css') }}">
+<script type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ asset('vendor/larajax/framework-bundle.js') }}"></script>
 <script type="module" src="{{ asset('vendor/larajax/ui/ui.js') }}"></script>
 ```
+
+The library's light and dark palettes follow the `data-bs-theme` attribute, while Bootstrap 6 follows the operating system when the attribute is missing, so set `data-bs-theme="light"` or `"dark"` on `<html>` before the page paints.
 
 `ui.js` is the **auto-registering browser entry**: on load it registers every control against `window.jax` and throws if the framework is missing, so the framework bundle must load first. Use the bundle build: the plain `framework.js` build does not include the control API (`jax.registerControl`) that Larajax UI requires. Startup stays with the framework bundle; `ui.js` only registers.
 
@@ -135,7 +139,7 @@ resolve: {
 },
 ```
 
-Vite consumers import the package source (`resources/assets`) directly, so publishing is not required for this path. The stylesheet is imported separately so the application controls ordering: load Bootstrap 5 CSS before `ui.css`. The popup control and dropdown behaviors also require the Bootstrap 5 JS bundle as a global (`window.bootstrap`); a module-only Bootstrap import is not sufficient.
+Vite consumers import the package source (`resources/assets`) directly, so publishing is not required for this path. The stylesheet is imported separately so the application controls ordering: load Bootstrap 6 CSS before `ui.css`. Menus also need Bootstrap 6's JavaScript for its `data-bs-toggle="menu"` data API, so import it in your entry (`import "bootstrap"`) or load its bundle with `<script type="module">`. The library needs no `window.bootstrap` global, and popups use no Bootstrap JavaScript.
 
 ### Icon packs
 

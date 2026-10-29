@@ -1,9 +1,5 @@
 .control-filter {
-    .form-check {
-        .form-check-input {
-            position: relative;
-            top: 1px;
-        }
+    .form-field {
         label {
             font-size: 14px;
             color: var(--oc-filter-text);
@@ -13,20 +9,19 @@
     .filter-group > .filter-scope.scope-checkbox,
     /* @deprecated */
     .filter-group > .filter-scope {
-        &.form-check {
-            padding-left: 29px;
+        /* Checkbox and switch scopes sit the check beside its label on one line */
+        &.form-field {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
 
             &, label {
                 margin-bottom: 0;
             }
-
-            &:after {
-                content: '';
-            }
         }
 
         &:hover, &.active {
-            &.form-check label {
+            &.form-field label {
                 color: var(--oc-filter-text-active);
             }
         }

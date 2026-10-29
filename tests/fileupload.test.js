@@ -148,7 +148,7 @@ const field = ({ classes = 'is-multi is-sortable', attributes = '', files = '' }
     </form>
     <script type="text/template" id="files-template">
         <div class="upload-object dz-preview">
-            <div class="form-check"><input type="checkbox" data-record-selector></div>
+            <div class="upload-checkbox"><input class="check check-sm" type="checkbox" data-record-selector></div>
             <div class="file-data-container"><div class="file-data-container-inner">
                 <div class="icon-container"></div>
                 <span data-dz-name></span><p class="size" data-dz-size></p>

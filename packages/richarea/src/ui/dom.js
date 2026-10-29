@@ -53,6 +53,13 @@ export function icon(definition, className = 'rich-editor-icon') {
 }
 
 /**
+ * mountRoot returns the dialog enclosing an element, or the page body, since the page outside an open modal dialog is inert.
+ */
+export function mountRoot(element) {
+    return (element && element.closest('dialog')) || document.body;
+}
+
+/**
  * applyTheme gives a panel placed on the page body the colour theme of the nearest themed ancestor of the editor.
  */
 export function applyTheme(panel, element) {
@@ -68,9 +75,9 @@ export function applyTheme(panel, element) {
 }
 
 /**
- * selectFiles opens the browser file picker and resolves with the chosen files.
+ * selectFiles opens the browser file picker and resolves with the chosen files, placing its input beside the given element.
  */
-export function selectFiles({ accept, multiple = false } = {}) {
+export function selectFiles({ accept, multiple = false, root = null } = {}) {
     return new Promise((resolve) => {
         const input = document.createElement('input');
         input.type = 'file';
@@ -89,7 +96,7 @@ export function selectFiles({ accept, multiple = false } = {}) {
         input.addEventListener('change', () => finish(Array.from(input.files || [])), { once: true });
         input.addEventListener('cancel', () => finish([]), { once: true });
 
-        document.body.appendChild(input);
+        mountRoot(root).appendChild(input);
         input.click();
     });
 }

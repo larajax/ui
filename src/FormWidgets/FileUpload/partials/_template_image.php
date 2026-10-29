@@ -2,9 +2,9 @@
 <script type="text/template" id="<?= $this->getId('template') ?>">
     <div class="upload-object upload-object-image dz-preview dz-file-preview <?= isset($modeMulti) ? 'mode-multi' : '' ?>">
         <?php if (isset($modeMulti)): ?>
-            <div class="form-check">
+            <div class="upload-checkbox">
                 <input
-                    class="form-check-input"
+                    class="check check-sm"
                     data-record-selector
                     type="checkbox"
                     value=""

@@ -22,6 +22,9 @@
                 box-shadow: none;
                 background-color: transparent;
 
+                /* The borderless scope keeps only the keyboard outline below, not the select focus ring */
+                outline: 0;
+
                 &.select2-default {
                     font-weight: normal;
                 }

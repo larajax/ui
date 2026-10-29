@@ -150,9 +150,9 @@
             transition: var(--custom-select-input-transition);
             border-color: var(--custom-select-input-border-focus);
 
-            &:focus-visible {
-                box-shadow: var(--custom-select-input-focus-box-shadow);
-            }
+            /* The same inset focus ring Bootstrap draws on a focused form control */
+            outline: var(--custom-select-input-focus-ring);
+            outline-offset: -1px;
         }
     }
 
@@ -216,7 +216,8 @@
         border-radius: var(--custom-select-border-radius-base);
         box-shadow: var(--custom-select-box-shadow-z1);
 
-        &--above {
+        /* Native nesting cannot join a suffix onto & the way Sass does, so the modifier class is spelled out */
+        &.select2-dropdown--above {
             margin-top: -5px;
             box-shadow: var(--custom-select-box-shadow-z1);
         }

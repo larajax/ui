@@ -632,7 +632,7 @@ export function registerFileUpload(jax) {
 
         onClickSuccessObject(ev) {
             if (ev.target.closest('.meta')) return;
-            if (ev.target.closest('.form-check')) return;
+            if (ev.target.closest('.upload-checkbox')) return;
 
             const target = ev.target.closest('.upload-object');
             if (target && target.dataset.path) {

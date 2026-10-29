@@ -17,7 +17,8 @@ export function createForm({ title, fields, submitLabel, onSubmit, actions = [] 
         let control;
 
         if (field.type === 'checkbox') {
-            control = h('input', { type: 'checkbox', id, name: field.name });
+            // The Bootstrap check classes style it on a Bootstrap page, while it stays a native checkbox anywhere else
+            control = h('input', { type: 'checkbox', className: 'check check-sm', id, name: field.name });
             control.checked = !!field.value;
 
             form.appendChild(h('div', { className: 'rich-editor-form-check' }, [

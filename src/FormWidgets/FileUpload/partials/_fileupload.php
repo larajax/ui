@@ -32,7 +32,9 @@
             <button type="button" class="btn-close" data-dismiss="popover" aria-label="<?= __("Close") ?>"></button>
         </div>
         <div class="popover-body">
-            <button class="btn btn-secondary" data-remove-file><?= __("Remove File") ?></button>
+            <button class="btn-solid theme-secondary" data-remove-file>
+                <?= __("Remove File") ?>
+            </button>
         </div>
     </script>
 

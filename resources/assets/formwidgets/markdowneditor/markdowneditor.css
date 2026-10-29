@@ -64,8 +64,8 @@
 
             &.active,
             &.active:hover {
-                color: var(--bs-primary);
-                background: rgba(var(--bs-primary-rgb), .12);
+                color: var(--bs-primary-base);
+                background: color-mix(in oklch, var(--bs-primary-base) 12%, transparent);
             }
 
             /* The heading icons already show their level */
@@ -110,7 +110,7 @@
         .CodeMirror {
             border-color: var(--bs-border-color);
             background: var(--oc-form-control-bg);
-            color: var(--bs-body-color);
+            color: var(--bs-fg-body);
             transition: border-color ease-in-out .15s;
         }
 
@@ -120,7 +120,7 @@
         }
 
         .CodeMirror-cursor {
-            border-left-color: var(--bs-body-color);
+            border-left-color: var(--bs-fg-body);
         }
 
         .CodeMirror-selected,
@@ -128,7 +128,7 @@
         .CodeMirror-line::selection,
         .CodeMirror-line > span::selection,
         .CodeMirror-line > span > span::selection {
-            background: rgba(var(--bs-primary-rgb), .2);
+            background: color-mix(in oklch, var(--bs-primary-base) 20%, transparent);
         }
     }
 
@@ -145,16 +145,16 @@
 
     .cm-s-easymde {
         .cm-comment {
-            background: var(--bs-tertiary-bg);
+            background: var(--bs-bg-2);
         }
 
         .cm-link,
         .cm-quote {
-            color: var(--bs-secondary-color);
+            color: var(--bs-fg-3);
         }
 
         .cm-url {
-            color: var(--bs-tertiary-color);
+            color: var(--bs-fg-4);
         }
     }
 
@@ -163,13 +163,13 @@
     .editor-preview,
     .editor-preview-side {
         background: var(--oc-form-control-bg);
-        color: var(--bs-body-color);
+        color: var(--bs-fg-body);
         border-color: var(--bs-border-color);
 
         pre {
             padding: 10px;
             border-radius: 3px;
-            background: var(--bs-tertiary-bg);
+            background: var(--bs-bg-2);
         }
 
         table td,
@@ -189,6 +189,6 @@
     }
 
     .editor-statusbar {
-        color: var(--bs-secondary-color);
+        color: var(--bs-fg-3);
     }
 }

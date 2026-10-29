@@ -76,7 +76,7 @@ class AjaxButton extends Button
     {
         $this->label('');
 
-        $this->replaceCssClass(Ui::iconClass('action.delete').' btn-icon danger pull-right');
+        $this->replaceCssClass(Ui::iconClass('action.delete').' btn-icon-link danger pull-right');
 
         return $this;
     }

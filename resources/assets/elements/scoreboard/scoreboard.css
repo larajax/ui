@@ -3,8 +3,8 @@
  */
 div.scoreboard {
     --scoreboard-title-color: var(--bs-heading-color);
-    --scoreboard-description-color: var(--bs-secondary-color);
-    --scoreboard-body-color: var(--bs-body-color);
+    --scoreboard-description-color: var(--bs-fg-3);
+    --scoreboard-body-color: var(--bs-fg-body);
     --scoreboard-icon-color: var(--oc-color-neutral);
     --scoreboard-positive-color: var(--oc-color-positive);
     --scoreboard-negative-color: var(--oc-color-negative);
@@ -90,7 +90,7 @@ div.scoreboard {
                 width: 20px;
                 height: 20px;
                 position: absolute;
-                box-shadow: inset 0 0 0 1px rgba(var(--bs-body-bg-rgb), 0.2);
+                box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--bs-bg-body) 20%, transparent);
                 border-radius: 20px;
             }
         }

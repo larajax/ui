@@ -246,6 +246,24 @@ describe('scope updates', () => {
         expect(seen).toEqual([document.querySelector('[data-scope-name="domain"]')]);
     });
 
+    test('a checkbox scope submits its checked state and marks the scope active', () => {
+        renderFilter(`
+            <div class="filter-group" id="Filter-scope-verified-group">
+                <div class="filter-scope scope-checkbox form-field" data-scope-name="verified">
+                    <input class="check check-sm" type="checkbox" id="scopeVerified" />
+                    <label for="scopeVerified">Verified</label>
+                </div>
+            </div>
+        `);
+        jax.requests = [];
+
+        const scope = document.querySelector('[data-scope-name="verified"]');
+        scope.querySelector('input').click();
+
+        expect(jax.requests[0].options.data).toEqual({ value: true, scopeName: 'verified' });
+        expect(scope.classList.contains('active')).toBe(true);
+    });
+
     test('changing a dropdown scope closes an open scope popover', () => {
         renderFilter();
         preloadRequest().resolve({ popoverContent: { id: numberForm } });

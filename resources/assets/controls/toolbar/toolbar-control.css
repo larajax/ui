@@ -102,13 +102,11 @@
         }
     }
 
-    .btn,
+    :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon),
     .btn-group,
-    .dropdown,
     .btn-container {
         white-space: nowrap;
         float: none;
-        display: inline-block;
         margin-right: 10px;
 
         &:last-child {
@@ -120,30 +118,15 @@
         }
     }
 
-    .dropdown > .btn {
-        margin-right: 0;
+    /* Groups and containers sit inline, while buttons keep their own inline-flex layout */
+    .btn-group,
+    .btn-container {
+        display: inline-block;
     }
 
-    .btn-group {
-        > .btn,
-        > .dropdown {
-            margin-right: 0;
-            display: inline-block;
-            float: none;
-        }
-
-        .dropdown {
-            > .btn {
-                margin-right: 0;
-                border-bottom-right-radius: 0;
-                border-top-right-radius: 0;
-            }
-
-            &.last > .btn {
-                border-bottom-right-radius: 4px !important;
-                border-top-right-radius: 4px !important;
-            }
-        }
+    .btn-group > :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
+        margin-right: 0;
+        float: none;
     }
 
     input.form-control[type=text] {
@@ -173,12 +156,13 @@
 /* Relation toolbar and toolbar-form button style */
 .relation-toolbar .control-toolbar,
 .control-toolbar.toolbar-form {
-    .btn {
+    :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
         line-height: inherit;
         display: inline-block;
         color: inherit;
         padding: 0 6px;
         min-width: 40px;
+        min-height: 0;
         text-align: center;
         text-decoration: none !important;
         border-radius: 4px;
@@ -271,11 +255,16 @@
     background-color: var(--oc-content-tab-content-bg);
     border-radius: 6px;
 
-    .btn-outline-secondary {
-        --bs-btn-color: var(--bs-body-color);
+    /* White hover text needs the darker slate fill */
+    .btn-outline.theme-secondary {
+        --bs-btn-color: var(--bs-fg-body);
+        --bs-btn-hover-bg: var(--oc-brand-secondary);
+        --bs-btn-hover-border-color: var(--oc-brand-secondary);
+        --bs-btn-active-bg: var(--oc-brand-secondary);
+        --bs-btn-active-border-color: var(--oc-brand-secondary);
     }
 
-    .btn {
+    :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
         --bs-btn-padding-x: .5rem;
         --bs-btn-padding-y: .4rem;
         border: none;
@@ -289,7 +278,7 @@
 
         &,
         &::before {
-            color: var(--bs-body-color);
+            color: var(--bs-fg-body);
         }
 
         &:hover,
@@ -315,14 +304,13 @@
     border-bottom: 1px solid var(--oc-toolbar-border);
 
     .toolbar-item {
-        .btn,
-        .btn-group,
-        .dropdown {
+        :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon),
+        .btn-group {
             margin: 0;
             padding: 0;
         }
 
-        .btn {
+        :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
             text-align: center;
             height: 38px;
             width: 38px;
@@ -346,6 +334,7 @@
             }
 
             &.active,
+            &.show,
             &:active {
                 outline: none;
                 background-color: #ccc;
@@ -361,24 +350,21 @@
             }
         }
 
-        .dropdown.open .btn {
-            background-color: #ccc;
-            color: #000;
-        }
-
-        .btn[class^="oc-icon-"],
-        .btn[class*=" oc-icon-"] {
-            &::before {
-                opacity: 1;
-                margin: 0;
+        :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
+            &[class^="oc-icon-"],
+            &[class*=" oc-icon-"] {
+                &::before {
+                    opacity: 1;
+                    margin: 0;
+                }
             }
-        }
 
-        .btn.oc-autumn-button {
-            color: #c03f31;
+            &.oc-autumn-button {
+                color: #c03f31;
 
-            &:hover {
-                color: #000 !important;
+                &:hover {
+                    color: #000 !important;
+                }
             }
         }
     }
@@ -401,7 +387,7 @@
             padding-right: 0;
         }
 
-        .btn {
+        :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
             border-radius: 0 !important;
             padding-top: 12px;
             padding-bottom: 13px;

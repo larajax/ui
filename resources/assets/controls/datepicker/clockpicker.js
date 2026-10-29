@@ -19,6 +19,8 @@
  */
 'use strict';
 
+import { mountParentFor, mountOrigin } from '../popup/dialog-mount.js';
+
 const svgNS = 'http://www.w3.org/2000/svg';
 
 const svgSupported = 'SVGAngle' in window && (() => {
@@ -68,7 +70,7 @@ const TEMPLATE = [
     '<div class="popover clockpicker-popover">',
         '<div class="arrow"></div>',
         '<div class="popover-title">',
-            '<span class="clockpicker-span-hours text-primary"></span>',
+            '<span class="clockpicker-span-hours fg-primary"></span>',
             ':',
             '<span class="clockpicker-span-minutes"></span> ',
             '<span class="clockpicker-span-am-pm"></span>',
@@ -125,7 +127,7 @@ export class Clockpicker {
         this.onAddonToggle = this.toggle.bind(this);
         this.onWinResize = () => { if (this.isShown) { this.locate(); } };
         this.onDocInteract = null;
-        this.onDocKeyup = null;
+        this.onDocKeydown = null;
         this.onDocMove = null;
         this.onDocUp = null;
 
@@ -178,14 +180,14 @@ export class Clockpicker {
             return;
         }
 
-        const amButton = parseHtml('<button type="button" class="btn btn-sm btn-secondary clockpicker-button am-button">AM</button>');
+        const amButton = parseHtml('<button type="button" class="btn-solid theme-secondary btn-sm clockpicker-button am-button">AM</button>');
         amButton.addEventListener('click', () => {
             this.amOrPm = 'AM';
             this.spanAmPm.textContent = 'AM';
         });
         this.amPmBlock.appendChild(amButton);
 
-        const pmButton = parseHtml('<button type="button" class="btn btn-sm btn-secondary clockpicker-button pm-button">PM</button>');
+        const pmButton = parseHtml('<button type="button" class="btn-solid theme-secondary btn-sm clockpicker-button pm-button">PM</button>');
         pmButton.addEventListener('click', () => {
             this.amOrPm = 'PM';
             this.spanAmPm.textContent = 'PM';
@@ -198,7 +200,7 @@ export class Clockpicker {
             return;
         }
 
-        const doneButton = parseHtml('<button type="button" class="btn btn-sm btn-secondary w-100 clockpicker-button">' + this.options.donetext + '</button>');
+        const doneButton = parseHtml('<button type="button" class="btn-solid theme-secondary btn-sm w-100 clockpicker-button">' + this.options.donetext + '</button>');
         doneButton.addEventListener('click', () => this.done());
         this.popover.appendChild(doneButton);
     }
@@ -455,11 +457,14 @@ export class Clockpicker {
                 break;
         }
 
+        // Page coordinates become coordinates inside the dialog the popover is mounted in
+        const origin = mountOrigin(popover.parentNode);
+
         if (styles.top !== undefined) {
-            popover.style.top = styles.top + 'px';
+            popover.style.top = (styles.top - origin.top) + 'px';
         }
         if (styles.left !== undefined) {
-            popover.style.left = styles.left + 'px';
+            popover.style.left = (styles.left - origin.left) + 'px';
         }
     }
 
@@ -470,8 +475,13 @@ export class Clockpicker {
 
         this.raiseCallback(this.options.beforeShow);
 
+        // Inside a dialog the popover joins it, since the page outside an open modal dialog is inert
+        const parent = mountParentFor(this.element);
+        if (this.popover.parentNode !== parent) {
+            parent.appendChild(this.popover);
+        }
+
         if (!this.isAppended) {
-            document.body.appendChild(this.popover);
             window.addEventListener('resize', this.onWinResize);
             this.isAppended = true;
         }
@@ -504,6 +514,9 @@ export class Clockpicker {
         this.locate();
         this.isShown = true;
 
+        // Bootstrap keeps a popover transparent until it carries the show class
+        this.popover.classList.add('show');
+
         this.onDocInteract = (e) => {
             const target = e.target;
             if (!this.popover.contains(target) &&
@@ -512,14 +525,18 @@ export class Clockpicker {
                 this.hide();
             }
         };
-        this.onDocKeyup = (e) => {
-            if (e.keyCode === 27) {
+
+        // Escape closes the clock, and cancelling the key keeps an enclosing dialog open
+        this.onDocKeydown = (e) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                e.stopPropagation();
                 this.hide();
             }
         };
         document.addEventListener('click', this.onDocInteract);
         document.addEventListener('focusin', this.onDocInteract);
-        document.addEventListener('keyup', this.onDocKeyup);
+        document.addEventListener('keydown', this.onDocKeydown);
 
         this.raiseCallback(this.options.afterShow);
     }
@@ -533,10 +550,11 @@ export class Clockpicker {
             document.removeEventListener('click', this.onDocInteract);
             document.removeEventListener('focusin', this.onDocInteract);
         }
-        if (this.onDocKeyup) {
-            document.removeEventListener('keyup', this.onDocKeyup);
+        if (this.onDocKeydown) {
+            document.removeEventListener('keydown', this.onDocKeydown);
         }
 
+        this.popover.classList.remove('show');
         this.popover.style.display = 'none';
 
         this.raiseCallback(this.options.afterHide);
@@ -555,8 +573,8 @@ export class Clockpicker {
 
         this.currentView = view;
 
-        this.spanHours.classList.toggle('text-primary', isHours);
-        this.spanMinutes.classList.toggle('text-primary', !isHours);
+        this.spanHours.classList.toggle('fg-primary', isHours);
+        this.spanMinutes.classList.toggle('fg-primary', !isHours);
 
         hideView.classList.add('clockpicker-dial-out');
         nextView.style.visibility = 'visible';

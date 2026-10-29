@@ -5,22 +5,24 @@
     ]) ?>
         <input type="hidden" name="_relation_quick_create" value="1" />
 
-        <div class="modal-header">
-            <h4 class="modal-title"><?= e(__($quickCreateTitle)) ?></h4>
-            <button type="button" class="btn-close" data-dismiss="popup"></button>
+        <div class="dialog-header">
+            <h4 class="dialog-title">
+                <?= e(__($quickCreateTitle)) ?>
+            </h4>
+            <button type="button" class="btn-close" data-dismiss="popup" aria-label="<?= __("Close") ?>"></button>
         </div>
 
-        <div class="modal-body">
+        <div class="dialog-body">
             <?= $quickCreateFormWidget->render() ?>
         </div>
 
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">
+        <div class="dialog-footer">
+            <button type="submit" class="btn-solid theme-primary">
                 <?= __("Create") ?>
             </button>
-            <span class="btn-text">
+            <span class="button-text">
                 <span class="button-separator"><?= __("or") ?></span>
-                <a href="javascript:;" class="btn btn-link p-0" data-dismiss="popup">
+                <a href="javascript:;" class="btn-link p-0" data-dismiss="popup">
                     <?= __("Cancel") ?>
                 </a>
             </span>

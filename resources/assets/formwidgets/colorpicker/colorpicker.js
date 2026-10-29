@@ -75,8 +75,8 @@ export function registerColorPicker(jax) {
                 swatches = Array.isArray(this.config.swatches) ? this.config.swatches : [];
 
             return {
-                // Inside a popup the picker joins the modal so the modal's focus trap allows typing in it
-                parent: this.element.closest('.modal') || 'body',
+                // Inside a dialog the picker joins it, since the page outside an open modal dialog is inert
+                parent: this.element.closest('dialog') || 'body',
                 themeMode: themeElement && themeElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light',
                 alpha: !!this.config.showAlpha,
                 forceAlpha: !!this.config.showAlpha,
@@ -118,8 +118,9 @@ export function registerColorPicker(jax) {
             ev.preventDefault();
         }
 
-        // Escape reverts the color without also closing an enclosing popup
+        // Escape reverts the color, and cancelling it keeps an enclosing dialog open
         if (ev.key === 'Escape') {
+            ev.preventDefault();
             ev.stopPropagation();
             coloris.close(true);
         }

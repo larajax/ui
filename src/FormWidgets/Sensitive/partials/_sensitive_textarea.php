@@ -27,24 +27,24 @@
             data-sensitive-input
         ><?= $hasValue ? $hiddenPlaceholder : '' ?></textarea>
 
-        <div class="mt-2">
+        <div class="mt-3">
             <?php if ($allowCopy): ?>
                 <a
                     href="javascript:;"
-                    class="input-group-addon btn btn-secondary"
+                    class="input-group-addon btn-solid theme-secondary"
                     data-sensitive-copy>
                     <?= \Larajax\Ui\Facades\Ui::icon('sensitive.copy') ?> <?= __("Copy to Clipboard") ?>
                 </a>
             <?php endif ?>
             <a
                 href="javascript:;"
-                class="input-group-addon btn btn-secondary"
+                class="input-group-addon btn-solid theme-secondary"
                 data-sensitive-toggle>
                 <?= \Larajax\Ui\Facades\Ui::icon('sensitive.show', ['data-sensitive-icon' => '']) ?> <?= __("Reveal Contents") ?>
             </a>
         </div>
         <div class="loading-indicator oc-hide" data-sensitive-loader>
-            <span class="p-4"></span>
+            <span class="p-7"></span>
         </div>
     </div>
 </div>

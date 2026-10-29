@@ -22,7 +22,7 @@
             <?php if ($allowCopy): ?>
                 <a
                     href="javascript:;"
-                    class="input-group-addon btn btn-secondary"
+                    class="input-group-addon btn-solid theme-secondary"
                     data-sensitive-copy
                 >
                     <?= \Larajax\Ui\Facades\Ui::icon('sensitive.copy') ?>
@@ -30,14 +30,14 @@
             <?php endif ?>
             <a
                 href="javascript:;"
-                class="input-group-addon btn btn-secondary"
+                class="input-group-addon btn-solid theme-secondary"
                 data-sensitive-toggle
             >
                 <?= \Larajax\Ui\Facades\Ui::icon('sensitive.show', ['data-sensitive-icon' => '']) ?>
             </a>
         </div>
         <div class="loading-indicator oc-hide" data-sensitive-loader>
-            <span class="p-4"></span>
+            <span class="p-7"></span>
         </div>
     </div>
 </div>

@@ -14,7 +14,9 @@
             $isAdaptive = $tabs->isAdaptive($name);
         ?>
         <div class="col-12 <?= e($tabs->getPaneCssClass($index, $name)) ?> <?= $paneCss ?>">
-            <h4 class="my-3 fw-normal"><?= e(trans($name)) ?></h4>
+            <h4 class="my-5 fw-normal">
+                <?= e(trans($name)) ?>
+            </h4>
             <?= $this->makePartial('form_fields', ['fields' => $fields]) ?>
         </div>
     <?php endforeach ?>

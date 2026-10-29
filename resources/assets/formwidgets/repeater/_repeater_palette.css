@@ -19,7 +19,7 @@
             display: block;
             padding: 8px 15px 8px 44px;
             text-decoration: none;
-            color: var(--bs-body-color);
+            color: var(--bs-fg-body);
 
             &:hover {
                 background: var(--oc-dropdown-hover-bg);

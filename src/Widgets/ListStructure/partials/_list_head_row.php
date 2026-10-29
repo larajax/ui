@@ -1,7 +1,7 @@
 <tr>
     <?php if ($showCheckboxes): ?>
         <th class="list-checkbox">
-            <input type="checkbox" class="form-check-input" />
+            <input type="checkbox" class="check check-sm" />
         </th>
     <?php endif ?>
     <?php if ($showReorder): ?>

@@ -1,50 +1,61 @@
 # Dropdown
 
-Customizes Bootstrap dropdown menus with consistent styling, body-container repositioning, and fixed positioning for overflow containers. Also provides a mobile-responsive sheet layout on small screens.
+Styles Bootstrap 6 menus with the library look. The behavior comes from Bootstrap's own menu data API (`data-bs-toggle="menu"`), loaded from the Bootstrap bundle on the page, so this control is CSS only.
 
 ## Basic Usage
 
-Standard Bootstrap dropdown markup - the control hooks in automatically.
+Put the toggle and its `.menu` side by side, and add `control-dropdown` to the menu. Bootstrap finds the menu next to the toggle, so no `data-bs-target` or wrapper is needed.
 
 ```html
-<div class="dropdown">
-    <a href="#" data-bs-toggle="dropdown" class="btn btn-primary">Menu</a>
-    <ul class="dropdown-menu" role="menu">
-        <li><a role="menuitem" href="#">Option 1</a></li>
-        <li><a role="menuitem" href="#">Option 2</a></li>
-    </ul>
+<button type="button" class="btn-solid theme-primary" data-bs-toggle="menu" aria-expanded="false">
+    Menu
+</button>
+<div class="menu control-dropdown" role="menu">
+    <a class="menu-item" role="menuitem" href="#">
+        Option 1
+    </a>
+    <hr class="menu-divider">
+    <a class="menu-item" role="menuitem" href="#">
+        Option 2
+    </a>
 </div>
 ```
 
-### Fixed Positioning
+Items must be direct children of the `.menu`, because Bootstrap's keyboard navigation only looks there. Disable an item with the `disabled` class.
 
-For dropdowns inside overflow-hidden containers, add `dropdown-fixed` to reposition with `position: fixed`.
+### Placement
+
+Set `data-bs-placement` on the toggle, for example `bottom-end` to align the menu with the toggle's right edge.
 
 ```html
-<div class="dropdown dropdown-fixed">
-    <a href="#" data-bs-toggle="dropdown" class="btn btn-primary">Menu</a>
-    <ul class="dropdown-menu" role="menu">
-        <li><a role="menuitem" href="#">Option 1</a></li>
-    </ul>
-</div>
+<a href="#" data-bs-toggle="menu" data-bs-placement="bottom-end" aria-expanded="false">
+    Menu
+</a>
+```
+
+### Overflow Containers
+
+For a menu inside an `overflow: hidden` or scrolling container, add `data-bs-strategy="fixed"` to the toggle so the menu is positioned against the viewport. `Ui::dropdownButton()` does this.
+
+```html
+<button type="button" class="btn-solid theme-secondary" data-bs-toggle="menu" data-bs-strategy="fixed" aria-expanded="false">
+    Menu
+</button>
 ```
 
 ### Body Container
 
-Move the dropdown menu to `<body>` for absolute positioning outside of parent constraints.
+`data-bs-container="body"` on the toggle moves the menu to `<body>` while it is open. Avoid it inside a modal `<dialog>`, because the moved menu renders beneath the dialog's top layer. A menu left in place inside the dialog works.
 
-```html
-<div class="dropdown" data-dropdown-container="body">
-    ...
-</div>
-```
+## Events
 
-## Behaviors
+Bootstrap dispatches `show.bs.menu`, `shown.bs.menu`, `hide.bs.menu` and `hidden.bs.menu` on the toggle. `shown` and `hidden` fire after the menu's CSS transition, so use `show` to change a menu's items before it opens.
 
-| Feature | Description |
+## Styling
+
+| Selector | Description |
 |---|---|
-| Auto-styling | Adds `control-dropdown`, `dropdown-item`, `first-item`, `last-item` classes |
-| Body container | Moves menu to `<body>` when `data-dropdown-container="body"` is set |
-| Fixed positioning | Uses `position: fixed` with scroll/resize tracking when `.dropdown-fixed` |
-| Overlay | Inserts a `.dropdown-overlay` div and adds `.dropdown-open` to body |
-| Mobile sheet | On small screens, dropdown becomes a full-width fixed sheet with backdrop |
+| `.menu.control-dropdown` | Menu with a light border, 4px corners, no padding and 14px text, set through Bootstrap's `--bs-menu-*` variables |
+| `> .menu-item` | Item colors from `--oc-dropdown-hover-bg`, `--oc-dropdown-hover-color` and `--oc-dropdown-active-bg` |
+| `> .menu-item > i` | Muted icon that takes the item color on hover |
+| `--oc-zindex-dropdown` | Menu z-index (`--bs-menu-zindex`) |

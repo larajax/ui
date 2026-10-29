@@ -1,5 +1,5 @@
 import { ButtonGroup } from './buttons.js';
-import { applyTheme, h } from './dom.js';
+import { applyTheme, h, mountRoot } from './dom.js';
 import { placePanel } from './floating.js';
 import { parentNode, selectedNode, selectedNodeElement } from '../commands/helpers.js';
 import { isSnippetEditing } from '../extensions/snippet.js';
@@ -149,7 +149,7 @@ export class BubbleManager {
                 hidden: true
             });
 
-            document.body.appendChild(element);
+            mountRoot(this.richArea.root).appendChild(element);
 
             this.instances[definition.name] = {
                 definition,

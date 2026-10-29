@@ -120,9 +120,9 @@ describe('color picker', () => {
 
     test('alpha, clearing, swatches only, the popup and the dark theme carry into the options', async () => {
         await connect(`
-            <div class="modal" data-bs-theme="dark">
+            <dialog open data-bs-theme="dark">
                 ${field('data-show-alpha="true" data-allow-empty="true" data-swatches-only="true"')}
-            </div>
+            </dialog>
         `);
 
         const options = instanceCalls()[0][2];
@@ -130,7 +130,7 @@ describe('color picker', () => {
         expect(options.forceAlpha).toBe(true);
         expect(options.clearButton).toBe(true);
         expect(options.swatchesOnly).toBe(true);
-        expect(options.parent).toBe(document.querySelector('.modal'));
+        expect(options.parent).toBe(document.querySelector('dialog'));
         expect(options.themeMode).toBe('dark');
     });
 

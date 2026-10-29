@@ -11,8 +11,8 @@
 
         button {
             width: 36px;
-            border-top-right-radius: var(--bs-border-radius);
-            border-bottom-right-radius: var(--bs-border-radius);
+            border-top-right-radius: var(--bs-radius-4);
+            border-bottom-right-radius: var(--bs-radius-4);
         }
 
         input {

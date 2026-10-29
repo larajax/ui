@@ -12,9 +12,9 @@
         $checkboxId = 'checkbox_'.$field->getId().'_'.$value;
     ?>
     <?php if (!$this->previewMode || in_array($value, $checkedValues)): ?>
-        <div class="form-check <?= $inlineOptions ? 'form-check-inline' : '' ?>">
+        <div class="form-field <?= $inlineOptions ? 'is-inline' : '' ?>">
             <input
-                class="form-check-input"
+                class="check"
                 type="checkbox"
                 id="<?= $checkboxId ?>"
                 name="<?= $field->getName() ?>[]"
@@ -28,12 +28,14 @@
                     <?= $field->readOnly || $option->readOnly ? 'onclick="return false"' : '' ?>
                 <?php endif ?>
             />
-            <label class="form-check-label" for="<?= $checkboxId ?>">
-                <?= $field->getDisplayValue($option->label) ?>
-            </label>
-            <?php if ($option->comment && strlen($option->comment)): ?>
-                <p class="form-text"><?= $field->getDisplayValue($option->comment) ?></p>
-            <?php endif ?>
+            <div class="form-field-content">
+                <label for="<?= $checkboxId ?>">
+                    <?= $field->getDisplayValue($option->label) ?>
+                </label>
+                <?php if ($option->comment && strlen($option->comment)): ?>
+                    <p class="form-text"><?= $field->getDisplayValue($option->comment) ?></p>
+                <?php endif ?>
+            </div>
         </div>
     <?php endif ?>
 
@@ -108,7 +110,9 @@
                     <?php $renderCheckboxListCheckboxFunc($option, $value) ?>
                 <?php endforeach ?>
             <?php else: ?>
-                <p class="text-muted"><?= e(__($field->emptyOption)) ?></p>
+                <p class="fg-3">
+                    <?= e(__($field->emptyOption)) ?>
+                </p>
             <?php endif ?>
 
             <?php if ($isScrollable): ?>

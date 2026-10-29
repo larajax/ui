@@ -89,11 +89,11 @@
         border-top: 1px solid var(--oc-filter-border);
         a {
             font-weight: 600;
-            color: var(--bs-body-color);
+            color: var(--bs-fg-body);
 
             > i {
-                background-color: var(--bs-secondary-bg);
-                color: var(--bs-body-color);
+                background-color: var(--bs-bg-3);
+                color: var(--bs-fg-body);
                 left: -1px;
             }
 

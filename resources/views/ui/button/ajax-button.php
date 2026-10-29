@@ -8,10 +8,18 @@ $handler ?? null;
 $hotkey ??= '';
 $requestData ??= [];
 
-$classes = ['btn'];
-if ($primary) $classes[] = 'btn-primary';
-elseif ($secondary) $classes[] = 'btn-secondary';
-elseif ($danger) $classes[] = 'btn-danger';
+if ($primary) {
+    $classes = ['btn-solid', 'theme-primary'];
+}
+elseif ($secondary) {
+    $classes = ['btn-solid', 'theme-secondary'];
+}
+elseif ($danger) {
+    $classes = ['btn-solid', 'theme-danger'];
+}
+else {
+    $classes = ['btn'];
+}
 
 $requestDataStr = $requestData
     ? json_encode($requestData)

@@ -133,14 +133,14 @@ export function registerRepeaterAccordion(jax) {
             const toggleRow = (selector, visible) => {
                 const link = list.querySelector(selector);
                 if (link) {
-                    link.closest('li').style.display = visible ? '' : 'none';
+                    link.style.display = visible ? '' : 'none';
                 }
             };
 
             const toggleDisabled = (selector, disabled) => {
                 const link = list.querySelector(selector);
                 if (link) {
-                    link.closest('li').classList.toggle('disabled', disabled);
+                    link.classList.toggle('disabled', disabled);
                 }
             };
 

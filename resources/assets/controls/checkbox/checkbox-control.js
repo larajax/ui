@@ -4,7 +4,7 @@
  * Adds indeterminate (tri-state) checkbox support.
  *
  * Indeterminate checkboxes cycle: unchecked → indeterminate → checked → unchecked
- * Usage: <div class="form-check is-indeterminate" data-control="checkbox">
+ * Usage: <div class="form-field is-indeterminate" data-control="checkbox">
  *
  * The state is kept in data-checked on the input: 0 = unchecked, 1 = indeterminate,
  * 2 = checked. It advances on click, before the native change event fires, so change
@@ -71,7 +71,7 @@ export function registerCheckbox(jax) {
     // ============================
 
     addEventListener('render', function() {
-        document.querySelectorAll('.form-check.is-indeterminate:not([data-control~="checkbox"])').forEach(function(element) {
+        document.querySelectorAll('.form-field.is-indeterminate:not([data-control~="checkbox"])').forEach(function(element) {
             element.dataset.control = ((element.dataset.control || '') + ' checkbox').trim();
         });
     });

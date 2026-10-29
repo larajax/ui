@@ -22,7 +22,7 @@
         height: 16px;
         font-size: 16px;
         line-height: 1;
-        color: var(--bs-secondary-color);
+        color: var(--bs-fg-3);
         pointer-events: none;
         z-index: 1;
         right: 8px;
@@ -40,8 +40,8 @@
     font-size: 21px;
     font-weight: bold;
     line-height: 1;
-    color: var(--bs-emphasis-color);
-    text-shadow: 0 1px 0 var(--bs-body-bg);
+    color: var(--bs-fg-body);
+    text-shadow: 0 1px 0 var(--bs-bg-body);
     font-family: sans-serif;
     display: inline-block;
     position: absolute;

@@ -1,4 +1,4 @@
-import { applyTheme } from './dom.js';
+import { applyTheme, mountRoot } from './dom.js';
 
 const GAP = 4;
 const MARGIN = 8;
@@ -68,7 +68,7 @@ export class Floating {
 
         panel.classList.add('rich-editor-floating');
         applyTheme(panel, this.richArea.root);
-        document.body.appendChild(panel);
+        mountRoot(this.richArea.root).appendChild(panel);
         this.position();
 
         document.addEventListener('mousedown', this.onDocumentMouseDown, true);

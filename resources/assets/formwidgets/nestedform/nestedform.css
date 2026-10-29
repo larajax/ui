@@ -1,5 +1,5 @@
 :root {
-    --oc-nestedform-bg: var(--bs-body-bg);
+    --oc-nestedform-bg: var(--bs-bg-body);
     --oc-nestedform-border: var(--oc-primary-border);
 }
 

@@ -40,6 +40,7 @@
 
 import Pikaday from '../../vendor/pikaday/pikaday.esm.js';
 import { Clockpicker } from './clockpicker.js';
+import { mountParentFor, mountOrigin } from '../popup/dialog-mount.js';
 
 const DB_DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -242,6 +243,7 @@ export function registerDatepicker(jax) {
 
             this.picker = null;
             this.timePicker = null;
+            this.onDateKeydown = this.onDateKeydown.bind(this);
         }
 
         connect() {
@@ -333,7 +335,8 @@ export function registerDatepicker(jax) {
                 parse: (value) => this.parseDate(value),
                 disableDayFn: (date) => this.isDateDisabled(date),
                 onSelect: () => this.onSetLockerValue(),
-                onOpen: () => this.alignDatePicker()
+                onOpen: () => this.onDatePickerOpen(),
+                onClose: () => this.onDatePickerClose()
             };
 
             if (this.localeData) {
@@ -358,6 +361,29 @@ export function registerDatepicker(jax) {
                 this.picker.destroy();
                 this.picker = null;
             }
+
+            document.removeEventListener('keydown', this.onDateKeydown);
+        }
+
+        // Positions the open calendar and lets Escape close it.
+        onDatePickerOpen() {
+            this.alignDatePicker();
+            document.addEventListener('keydown', this.onDateKeydown);
+        }
+
+        onDatePickerClose() {
+            document.removeEventListener('keydown', this.onDateKeydown);
+        }
+
+        // Escape closes the calendar, and cancelling the key keeps an enclosing dialog open.
+        onDateKeydown(ev) {
+            if (ev.key !== 'Escape' || !this.picker || !this.picker.isVisible()) {
+                return;
+            }
+
+            ev.preventDefault();
+            ev.stopPropagation();
+            this.picker.hide();
         }
 
         isDateDisabled(date) {
@@ -368,12 +394,24 @@ export function registerDatepicker(jax) {
             });
         }
 
-        // Aligns the calendar to the right edge of the facade when it fits on screen.
+        // Aligns the calendar to the right edge of the facade when it fits on screen, inside any enclosing dialog.
         alignDatePicker() {
             const el = this.picker ? this.picker.el : null;
             if (!el || !this.dateFacade) {
                 return;
             }
+
+            // Pikaday mounts on the body, but the page outside an open modal dialog is inert
+            const parent = mountParentFor(this.dateFacade);
+            if (el.parentNode !== parent) {
+                parent.appendChild(el);
+            }
+
+            // Pikaday's page position becomes a position inside the parent
+            const origin = mountOrigin(parent);
+            el.style.left = (parseFloat(el.style.left) - origin.left) + 'px';
+            el.style.top = (parseFloat(el.style.top) - origin.top) + 'px';
+            el.style.right = '';
 
             const rect = this.dateFacade.getBoundingClientRect();
             if (rect.right - el.offsetWidth < 0) {
@@ -381,7 +419,7 @@ export function registerDatepicker(jax) {
             }
 
             el.style.left = 'auto';
-            el.style.right = (document.documentElement.clientWidth - rect.right - window.scrollX) + 'px';
+            el.style.right = (origin.left + origin.width - rect.right - window.scrollX) + 'px';
         }
 
         // Returns the picked date as YYYY-MM-DD, or today when none is picked.

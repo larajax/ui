@@ -1,1 +1,1 @@
-<li role="separator" class="divider"></li>
+<hr class="menu-divider">

@@ -3,15 +3,20 @@
  *
  * Pushes open popups back, scaled and offset, when another popup opens on
  * top of them, and pulls the next one forward when the top popup closes.
- * Registered as jax.popupStacker.
+ * Popups are modal dialogs, so the browser's top layer already orders them
+ * by opening and the stacker only moves them. Registered as jax.popupStacker.
  */
 'use strict';
 
 export class PopupStacker
 {
     constructor() {
-        document.addEventListener('hidden.bs.modal', (ev) => this.onPopupHidden(ev));
-        document.addEventListener('shown.bs.modal', (ev) => this.onPopupShown(ev));
+        // Dialogs fire a close event that does not bubble, so it is caught on the way down
+        document.addEventListener('close', (ev) => {
+            if (ev.target instanceof Element && ev.target.matches('.control-popup')) {
+                this.onPopupHidden(ev);
+            }
+        }, true);
 
         // Only the document-level announcement, not the bubbling popup:show element event
         document.addEventListener('popup:show', (ev) => {
@@ -31,45 +36,23 @@ export class PopupStacker
         this.redrawStack(true);
     }
 
-    onPopupShown(ev) {
-        var el = ev.target;
-
-        if (!el.dataset.popupStackId) {
-            el.dataset.popupStackId = this.generateUniqueId();
-        }
-
-        this.redrawStack();
-    }
-
     pullForward() {
         const el = this.getFirstPopup();
         if (!el) {
             return;
         }
 
-        const content = el.querySelector('.modal-content');
-        if (content) {
-            content.style.transform = '';
-            content.style.transformOrigin = '';
-            el.style.zIndex = '';
+        el.style.transform = '';
+        el.style.transformOrigin = '';
 
-            // Wait for transition end (.3s)
-            setTimeout(() => {
-                if (content) {
-                    content.style.transition = '';
-                }
-            }, 350);
-        }
-
-        const backdrop = el.previousElementSibling;
-        if (backdrop && backdrop.classList.contains('popup-backdrop')) {
-            backdrop.style.zIndex = '';
-        }
+        // Wait for transition end (.3s)
+        setTimeout(() => {
+            el.style.transition = '';
+        }, 350);
     }
 
     redrawStack(isEarly) {
         let count = 0;
-        const baseZIndex = this.getBaseZIndex();
 
         this.getAllPopups().forEach((el) => {
             count++;
@@ -84,18 +67,9 @@ export class PopupStacker
                 }
             }
 
-            const content = el.querySelector('.modal-content');
-            if (content && !content.classList.contains('popup-loading-indicator')) {
-                content.style.transform = `scale(.9) translate(-${2*offset}rem, -${50*offset}px)`;
-                content.style.transformOrigin = 'top left';
-                content.style.transition = 'all .3s';
-                el.style.zIndex = (baseZIndex - offset);
-            }
-
-            const backdrop = el.previousElementSibling;
-            if (backdrop && backdrop.classList.contains('popup-backdrop')) {
-                backdrop.style.zIndex = (baseZIndex - offset);
-            }
+            el.style.transform = `scale(.9) translate(-${2*offset}rem, -${50*offset}px)`;
+            el.style.transformOrigin = 'top left';
+            el.style.transition = 'all .3s';
         });
     }
 
@@ -103,18 +77,8 @@ export class PopupStacker
         return this.getAllPopups()[0];
     }
 
+    // Open popups, topmost first, since popups join the page in the order they open
     getAllPopups() {
-        return Array.from(document.querySelectorAll('.modal.show[data-popup-stack-id]')).reverse();
-    }
-
-    // Matches the popup backdrop z-index, the modal background layer
-    getBaseZIndex() {
-        const layer = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--oc-zindex-modal-background'), 10);
-
-        return isNaN(layer) ? 1050 : layer;
-    }
-
-    generateUniqueId() {
-        return "popupid-" + Math.floor(Math.random() * new Date().getTime());
+        return Array.from(document.querySelectorAll('dialog.control-popup.show[open]')).reverse();
     }
 }

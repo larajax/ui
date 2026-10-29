@@ -1,68 +1,62 @@
 <script type="text/template" data-item-menu-template>
     <?php if ($showDuplicate): ?>
-        <li role="presentation">
-            <a
-                data-repeater-duplicate
-                role="menuitem"
-                href="javascript:;"
-                tabindex="-1">
-                <?= \Larajax\Ui\Facades\Ui::icon('repeater.duplicate') ?>
-                <?= __("Duplicate") ?>
-            </a>
-        </li>
-        <li role="separator" class="divider"></li>
+        <a
+            data-repeater-duplicate
+            class="menu-item"
+            role="menuitem"
+            href="javascript:;"
+            tabindex="-1">
+            <?= \Larajax\Ui\Facades\Ui::icon('repeater.duplicate') ?>
+            <?= __("Duplicate") ?>
+        </a>
+        <hr class="menu-divider">
     <?php endif ?>
-    <li role="presentation">
-        <a
-            data-repeater-expand
-            role="menuitem"
-            href="javascript:;"
-            tabindex="-1">
-            <?= \Larajax\Ui\Facades\Ui::icon('repeater.expand') ?>
-            <?= __("Expand") ?>
-        </a>
-    </li>
-    <li role="presentation">
-        <a
-            data-repeater-collapse
-            role="menuitem"
-            href="javascript:;"
-            tabindex="-1">
-            <?= \Larajax\Ui\Facades\Ui::icon('repeater.collapse') ?>
-            <?= __("Collapse") ?>
-        </a>
-    </li>
+    <a
+        data-repeater-expand
+        class="menu-item"
+        role="menuitem"
+        href="javascript:;"
+        tabindex="-1">
+        <?= \Larajax\Ui\Facades\Ui::icon('repeater.expand') ?>
+        <?= __("Expand") ?>
+    </a>
+    <a
+        data-repeater-collapse
+        class="menu-item"
+        role="menuitem"
+        href="javascript:;"
+        tabindex="-1">
+        <?= \Larajax\Ui\Facades\Ui::icon('repeater.collapse') ?>
+        <?= __("Collapse") ?>
+    </a>
     <?php if ($showReorder): ?>
-        <li role="presentation">
-            <a
-                data-repeater-move-up
-                role="menuitem"
-                href="javascript:;"
-                tabindex="-1">
-                <?= \Larajax\Ui\Facades\Ui::icon('repeater.move_up') ?>
-                <?= __("Move Up") ?>
-            </a>
-        </li>
-        <li role="presentation">
-            <a
-                data-repeater-move-down
-                role="menuitem"
-                href="javascript:;"
-                tabindex="-1">
-                <?= \Larajax\Ui\Facades\Ui::icon('repeater.move_down') ?>
-                <?= __("Move Down") ?>
-            </a>
-        </li>
-    <?php endif ?>
-    <li role="separator" class="divider"></li>
-    <li role="presentation">
         <a
-            data-repeater-remove
+            data-repeater-move-up
+            class="menu-item"
             role="menuitem"
             href="javascript:;"
             tabindex="-1">
-            <?= \Larajax\Ui\Facades\Ui::icon('repeater.remove') ?>
-            <?= __("Remove") ?>
+            <?= \Larajax\Ui\Facades\Ui::icon('repeater.move_up') ?>
+            <?= __("Move Up") ?>
         </a>
-    </li>
+        <a
+            data-repeater-move-down
+            class="menu-item"
+            role="menuitem"
+            href="javascript:;"
+            tabindex="-1">
+            <?= \Larajax\Ui\Facades\Ui::icon('repeater.move_down') ?>
+            <?= __("Move Down") ?>
+        </a>
+    <?php endif ?>
+    <hr class="menu-divider">
+    <a
+        data-repeater-remove
+        class="menu-item"
+        role="menuitem"
+        href="javascript:;"
+        tabindex="-1">
+        <?= \Larajax\Ui\Facades\Ui::icon('repeater.remove') ?>
+        <?= __("Remove") ?>
+    </a>
 </script>

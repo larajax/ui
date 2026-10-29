@@ -3,6 +3,7 @@ import { RichArea } from '../src/richarea.js';
 import { isSnippetEditing } from '../src/extensions/snippet.js';
 import { defaultIcons } from '../src/icons.js';
 import { defaultLang } from '../src/lang.js';
+import { createForm } from '../src/ui/form.js';
 
 const editors = [];
 
@@ -32,6 +33,31 @@ describe('mounting', () => {
         expect(richArea.root.querySelector('.rich-editor-toolbar [data-cmd="bold"]')).not.toBeNull();
         expect(richArea.root.querySelector('.rich-editor-document .rich-editor-content')).not.toBeNull();
         expect(richArea.getContent()).toBe('<p>Hello</p>');
+    });
+
+    test('opens floating panels inside an enclosing dialog, outside the inert page', () => {
+        const dialog = document.createElement('dialog');
+        document.body.appendChild(dialog);
+        dialog.showModal();
+
+        const element = document.createElement('div');
+        dialog.appendChild(element);
+        const richArea = new RichArea(element, { content: '<p>Hello</p>' });
+        editors.push(richArea);
+
+        const panel = document.createElement('div');
+        richArea.floating.open(panel, richArea.root);
+
+        expect(panel.parentElement).toBe(dialog);
+    });
+
+    test('opens floating panels on the body outside a dialog', () => {
+        const richArea = mount({ content: '<p>Hello</p>' });
+
+        const panel = document.createElement('div');
+        richArea.floating.open(panel, richArea.root);
+
+        expect(panel.parentElement).toBe(document.body);
     });
 
     test('fires change with the new content', () => {
@@ -339,5 +365,29 @@ describe('snippet placeholders', () => {
         const element = richArea.root.querySelector('figure[data-snippet]');
         expect(element.classList.contains('rich-editor-snippet')).toBe(false);
         expect(element.querySelector('.rich-editor-snippet-name')).toBeNull();
+    });
+});
+
+describe('popover forms', () => {
+    test('give checkboxes the Bootstrap check classes, so a Bootstrap page styles them like its other checks', () => {
+        const form = createForm({
+            title: 'Insert Link',
+            submitLabel: 'Insert',
+            onSubmit: () => {},
+            fields: [
+                { name: 'href', label: 'URL' },
+                { name: 'newTab', label: 'Open in new tab', type: 'checkbox', value: true }
+            ]
+        });
+
+        const checkbox = form.controls.newTab;
+        expect(checkbox.type).toBe('checkbox');
+        expect(checkbox.checked).toBe(true);
+        expect(checkbox.classList.contains('check')).toBe(true);
+        expect(checkbox.classList.contains('check-sm')).toBe(true);
+        expect(checkbox.nextElementSibling.getAttribute('for')).toBe(checkbox.id);
+
+        // Text fields keep the editor's own styling, which works with or without Bootstrap
+        expect(form.controls.href.className).toBe('');
     });
 });

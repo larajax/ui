@@ -85,7 +85,7 @@ export function insertImages(re, urls, { replace = false } = {}) {
  * uploadImages uploads images from the computer with the upload hook and inserts them.
  */
 async function uploadImages(re, { replace = false } = {}) {
-    const files = await selectFiles({ accept: 'image/*', multiple: !replace });
+    const files = await selectFiles({ accept: 'image/*', multiple: !replace, root: re.root });
     await uploadAndInsertImages(re, files, { replace });
 }
 
@@ -369,7 +369,7 @@ export const mediaButtons = {
         label: 'insertFile',
         menu: (re) => mediaMenu(re, {
             upload: async () => {
-                const files = await selectFiles();
+                const files = await selectFiles({ root: re.root });
                 for (const file of files) {
                     try {
                         insertFileLink(re, await re.options.hooks.uploadFile(file, { type: 'file' }), file.name);

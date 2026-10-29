@@ -100,7 +100,7 @@
         }
 
         .recordname, .description {
-            color: var(--bs-body-color);
+            color: var(--bs-fg-body);
             font-size: 14px;
             word-break: break-all;
             margin-bottom: 0;
@@ -108,7 +108,7 @@
 
         .description {
             font-size: .9rem;
-            color: var(--bs-secondary-color);
+            color: var(--bs-fg-3);
         }
     }
 

@@ -55,7 +55,7 @@ table.table.data {
     }
 
     thead {
-        background: var(--bs-tertiary-bg);
+        background: var(--bs-bg-2);
 
         td, th {
             border-width: 1px;
@@ -71,9 +71,9 @@ table.table.data {
             > a, > span {
                 display: block;
                 padding: 10px 15px;
-                color: var(--bs-body-color);
+                color: var(--bs-fg-body);
                 text-decoration: none;
-                &:hover { color: var(--bs-emphasis-color) }
+                &:hover { color: var(--bs-fg-body) }
             }
 
             &.explicit-left-padding {
@@ -112,7 +112,7 @@ table.table.data {
 
             &.active {
                 text-decoration: underline;
-                color: var(--bs-emphasis-color);
+                color: var(--bs-fg-body);
 
                 &:hover {
                     text-decoration: none;
@@ -396,23 +396,23 @@ table.table.data {
         }
 
         &.badge-primary {
-            background: var(--bs-primary);
+            background: var(--bs-primary-base);
         }
 
         &.badge-success {
-            background: var(--bs-success);
+            background: var(--bs-success-base);
         }
 
         &.badge-info {
-            background: var(--bs-info);
+            background: var(--bs-info-base);
         }
 
         &.badge-warning {
-            background: var(--bs-warning);
+            background: var(--bs-warning-base);
         }
 
         &.badge-danger {
-            background: var(--bs-danger);
+            background: var(--bs-danger-base);
         }
     }
 
@@ -423,12 +423,12 @@ table.table.data {
         height: 20px;
         text-align: center;
         &.is-true {
-            background-color: var(--bs-success);
+            background-color: var(--bs-success-base);
             color: #fff;
         }
         &.is-false {
-            background-color: var(--bs-secondary-bg);
-            color: var(--bs-body-color);
+            background-color: var(--bs-bg-3);
+            color: var(--bs-fg-body);
         }
     }
 
@@ -524,7 +524,7 @@ table.table.data {
         background: var(--oc-toolbar-bg);
         border: 1px solid var(--oc-toolbar-border);
         border-radius: 4px;
-        color: var(--bs-secondary-color);
+        color: var(--bs-fg-3);
         text-decoration: none;
 
         > i {
@@ -603,6 +603,11 @@ table.table.data {
         width: 42px;
         vertical-align: top;
         border-right: 1px solid var(--bs-table-border-color);
+
+        /* Block flow keeps the check aligned with the first text line of the row */
+        .check {
+            display: block;
+        }
     }
 
     tbody tr td.list-checkbox {
@@ -690,7 +695,7 @@ table.table.data {
     p.no-data {
         padding: 18px 20px;
         margin: 0 20px;
-        color: var(--bs-secondary-color);
+        color: var(--bs-fg-3);
         font-size: 14px;
         text-align: center;
         border-radius: 4px;
@@ -733,7 +738,7 @@ table.table.data {
 
     &.list-rowlink tbody {
         td, th {
-            a:not(.btn,.dropdown-item) {
+            a:not(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon, .menu-item) {
                 color: var(--bs-table-color);
                 &:hover {
                     text-decoration: none;
@@ -823,6 +828,11 @@ table.table.data {
                     border-radius: 4px;
                     border-color: transparent;
                     box-shadow: none;
+
+                    /* The footer link color sits outside the component layer, so the hover color is restated here */
+                    &:hover {
+                        color: var(--bs-pagination-hover-color);
+                    }
                 }
 
                 li.disabled .page-link {

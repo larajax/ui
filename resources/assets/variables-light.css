@@ -5,22 +5,27 @@
 :root, [data-bs-theme="light"] {
     /* --bs-border-color: #d7e1ea; */
     /* --oc-border-focus: #72809d; */
-    --bs-emphasis-color: #333333;
     --bs-border-color: #c4ced7;
-    --bs-backdrop-opacity: 0.2;
+    --oc-backdrop-opacity: 0.2;
     --oc-border-focus: var(--oc-primary-active-bg);
 
     /*
     // Primary Colors
     // --------------------------------------------------*/
 
-    --bs-success: var(--bs-green);
-    --bs-info: var(--bs-blue);
-    --bs-warning: var(--bs-yellow);
-    --bs-danger: var(--bs-red);
+    /* Info is blue rather than Bootstrap's cyan, so the whole info theme set follows the blue scale */
+    --bs-info-base: var(--bs-blue-500);
+    --bs-info-fg: light-dark(var(--bs-blue-600), var(--bs-blue-400));
+    --bs-info-fg-emphasis: light-dark(var(--bs-blue-800), var(--bs-blue-200));
+    --bs-info-bg: var(--bs-blue-500);
+    --bs-info-bg-subtle: light-dark(var(--bs-blue-100), var(--bs-blue-900));
+    --bs-info-bg-muted: light-dark(var(--bs-blue-200), var(--bs-blue-800));
+    --bs-info-border: light-dark(var(--bs-blue-300), var(--bs-blue-600));
+    --bs-info-focus-ring: light-dark(color-mix(in oklch, var(--bs-blue-500) 50%, var(--bs-bg-body)), color-mix(in oklch, var(--bs-blue-500) 75%, var(--bs-bg-body)));
+    --bs-info-contrast: var(--bs-white);
 
     --oc-accent: #3498db;
-    --oc-selection: var(--bs-teal);
+    --oc-selection: var(--bs-teal-500);
 
     --oc-primary-bg: white;
     --oc-primary-color: #5e6d8c;
@@ -28,8 +33,8 @@
     --oc-primary-hover-bg: #8082f8; /* tint(#6a6cf7, 15%); */
     --oc-primary-active-bg: #8889f9; /* tint(#6a6cf7, 20%); */
 
-    --bs-secondary: #72809d;
-    --bs-secondary-color: #72809d;
+    --oc-brand-secondary: #72809d;
+    --bs-fg-3: #72809d;
     --oc-secondary-bg: #d7e1ea;
     --oc-secondary-hover-bg: #e0e2e4; /* darken(#eeeff0, 5%); */
     --oc-secondary-active-bg: #d3d6d8; /* darken(#eeeff0, 10%); */
@@ -70,9 +75,9 @@
     --oc-dropdown-trigger-border: #bcc3c7;
     --oc-dropdown-trigger-color: #536061;
     --oc-dropdown-trigger-bg: white;
-    --oc-dropdown-hover-bg: var(--bs-primary);
+    --oc-dropdown-hover-bg: var(--bs-primary-base);
     --oc-dropdown-hover-color: white;
-    --oc-dropdown-active-bg: rgba(var(--bs-primary-rgb), .95);
+    --oc-dropdown-active-bg: color-mix(in oklch, var(--bs-primary-base) 95%, transparent);
 
     &,.table {
         --bs-table-color: #536061;
@@ -84,16 +89,7 @@
         --oc-table-active-bg: #fff0b2; /* darken(#fff5cb, 5%); */
     }
 
-    &,.pagination {
-        --bs-pagination-active-bg: var(--bs-primary);
-        --bs-pagination-active-border-color: var(--bs-primary);
-    }
-
-    &,.breadcrumb {
-        --bs-breadcrumb-item-padding-x: 0.4rem;
-    }
-
-    &,.modal {
-        --bs-modal-bg: white;
+    &,.dialog {
+        --bs-dialog-bg: white;
     }
 }

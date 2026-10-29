@@ -48,9 +48,9 @@ function renderSwitch(dataChecked) {
 
     document.body.innerHTML = `
         <div class="control-filter" data-update-handler="onFilterUpdate">
-            <div class="filter-scope form-check is-indeterminate" data-scope-name="is_approved">
-                <input class="form-check-input" type="checkbox" id="scopeApproved"${attr} />
-                <label class="form-check-label" for="scopeApproved">Approved</label>
+            <div class="filter-scope form-field is-indeterminate" data-scope-name="is_approved">
+                <input class="check check-sm" type="checkbox" id="scopeApproved"${attr} />
+                <label for="scopeApproved">Approved</label>
             </div>
         </div>
     `;
@@ -128,6 +128,25 @@ describe('checkbox control', () => {
         input.click();
 
         expect(seen).toEqual(['1', '2', '0']);
+    });
+
+    test('render attaches the control to indeterminate form fields only', () => {
+        document.body.innerHTML = `
+            <div class="form-field is-indeterminate" id="tristate">
+                <input class="check" type="checkbox" id="featured" data-checked="1" />
+                <label for="featured">Featured</label>
+            </div>
+            <div class="form-field" id="plain">
+                <input class="check" type="checkbox" id="published" />
+                <label for="published">Published</label>
+            </div>
+        `;
+
+        window.dispatchEvent(new Event('render'));
+        window.dispatchEvent(new Event('render'));
+
+        expect(document.getElementById('tristate').dataset.control).toBe('checkbox');
+        expect(document.getElementById('plain').dataset.control).toBeUndefined();
     });
 });
 

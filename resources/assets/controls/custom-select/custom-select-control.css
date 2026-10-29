@@ -22,53 +22,58 @@
 
 .select2-container {
     /* Select-specific variables */
-    --custom-select-icon-color: var(--bs-secondary-color);
-    --custom-select-hover-bg: #f5f5f5;
-    --custom-select-hover-color: #2b2b2b;
+    --custom-select-icon-color: var(--bs-fg-3);
+
+    /* Highlighted and selected options, a raised surface in the dark theme */
+    --custom-select-hover-bg: light-dark(#f5f5f5, var(--bs-bg-3));
+    --custom-select-hover-color: light-dark(#2b2b2b, var(--bs-fg-body));
     --custom-select-active-color: #fff;
     --custom-select-active-bg: var(--oc-selection);
     --custom-select-header-color: #98A0A0;
     --custom-select-link-disabled-color: #98A0A0;
     --custom-select-cursor-disabled: not-allowed;
 
-    /* Input variables */
-    --custom-select-input-bg: var(--oc-form-control-bg);
-    --custom-select-input-color: var(--bs-body-color);
+    /* Input variables, matching the Bootstrap form control so selects line up with text inputs */
+    --custom-select-input-bg: var(--bs-btn-input-bg);
+    --custom-select-input-color: var(--bs-fg-body);
     --custom-select-input-border: var(--bs-border-color);
-    --custom-select-input-border-radius: 4px;
-    --custom-select-input-box-shadow: none;
-    --custom-select-input-font-size: 1rem;
+    --custom-select-input-border-radius: var(--bs-btn-input-border-radius);
+    --custom-select-input-box-shadow: var(--bs-box-shadow-inset);
+    --custom-select-input-font-size: var(--bs-btn-input-font-size);
+    --custom-select-input-line-height: var(--bs-btn-input-line-height);
+    --custom-select-input-padding-vertical: var(--bs-btn-input-padding-y);
+    --custom-select-input-padding-horizontal: var(--bs-btn-input-padding-x);
     --custom-select-input-border-focus: var(--oc-border-focus);
-    --custom-select-input-focus-box-shadow: 0 0 0 0.25rem rgba(53, 66, 91, 0.1);
+    --custom-select-input-focus-ring: var(--bs-focus-ring);
     --custom-select-input-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    --custom-select-input-color-placeholder: #cccccc;
+    --custom-select-input-color-placeholder: var(--bs-fg-3);
     --custom-select-input-disabled-bg: var(--oc-form-control-disabled-bg);
     --custom-select-input-disabled-color: var(--oc-form-control-disabled-color);
 
     /* Sizing variables */
-    --custom-select-padding-small-vertical: 5px;
-    --custom-select-padding-small-horizontal: 10px;
-    --custom-select-padding-large-vertical: 10px;
-    --custom-select-padding-large-horizontal: 16px;
+    --custom-select-padding-small-vertical: var(--bs-btn-input-sm-padding-y);
+    --custom-select-padding-small-horizontal: var(--bs-btn-input-sm-padding-x);
+    --custom-select-padding-large-vertical: var(--bs-btn-input-lg-padding-y);
+    --custom-select-padding-large-horizontal: var(--bs-btn-input-lg-padding-x);
 
     --custom-select-line-height-base: 1.428571429;
-    --custom-select-line-height-small: 1.5;
-    --custom-select-line-height-large: 1.3333333;
+    --custom-select-line-height-small: var(--bs-btn-input-sm-line-height);
+    --custom-select-line-height-large: var(--bs-btn-input-lg-line-height);
 
-    --custom-select-font-size-small: 12px;
-    --custom-select-font-size-large: 18px;
+    --custom-select-font-size-small: var(--bs-btn-input-sm-font-size);
+    --custom-select-font-size-large: var(--bs-btn-input-lg-font-size);
 
     --custom-select-border-radius-base: 4px;
-    --custom-select-border-radius-small: 3px;
-    --custom-select-border-radius-large: 6px;
+    --custom-select-border-radius-small: var(--bs-btn-input-sm-border-radius);
+    --custom-select-border-radius-large: var(--bs-btn-input-lg-border-radius);
 
     --custom-select-caret-width-base: 4px;
     --custom-select-caret-width-large: 5px;
 
     /* Height calculations */
-    --custom-select-input-height-base: 38px;
-    --custom-select-input-height-small: 30px;
-    --custom-select-input-height-large: 46px;
+    --custom-select-input-height-base: var(--bs-btn-input-min-height);
+    --custom-select-input-height-small: var(--bs-btn-input-sm-min-height);
+    --custom-select-input-height-large: var(--bs-btn-input-lg-min-height);
 
     /* Box shadows */
     --custom-select-box-shadow-z1: -2px 2px 5px rgba(67, 86, 100, 0.12);
@@ -85,7 +90,7 @@
     --custom-select-state-success-text-dark: #2b542c;
 
     /* Brand colors */
-    --custom-select-brand-danger: var(--bs-danger);
+    --custom-select-brand-danger: var(--bs-danger-base);
 
     /* Icon font, targeting the Phosphor web font of the default icon pack.
        Override these when the host page ships a different icon font. */

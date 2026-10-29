@@ -110,7 +110,7 @@ table.table.data {
                     width: 24px;
                     height: 24px;
                     font-size: 15px;
-                    color: var(--bs-body-color);
+                    color: var(--bs-fg-body);
                     text-indent: 0;
                 }
             }

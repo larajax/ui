@@ -2,6 +2,7 @@ import { afterEach, beforeAll, describe, expect, test } from 'bun:test';
 import { registerFormWidget } from '../resources/assets/widgets/form/form.js';
 import { registerTab } from '../resources/assets/controls/tab/tab.js';
 import { LoadIndicator } from '../resources/assets/controls/load-indicator/load-indicator.js';
+import { registerCheckboxRange } from '../resources/assets/controls/checkbox/checkbox-range.js';
 
 function makeFakeJax() {
     const instances = new Map();
@@ -176,10 +177,17 @@ describe('checkbox lists', () => {
                     <a href="javascript:;" class="control-button" data-field-checkboxlist-all>All</a>
                     <a href="javascript:;" class="control-button" data-field-checkboxlist-none>None</a>
                 </div>
-                <div class="form-check"><input type="checkbox" name="tags[]" value="1"></div>
-                <div class="form-check"><input type="checkbox" name="tags[]" value="2" disabled></div>
-                <div class="form-check"><input type="checkbox" name="tags[]" value="3" checked></div>
+                <div class="form-field"><input class="check" type="checkbox" name="tags[]" value="1"></div>
+                <div class="form-field"><input class="check" type="checkbox" name="tags[]" value="2" disabled></div>
+                <div class="form-field"><input class="check" type="checkbox" name="tags[]" value="3" checked></div>
             </div>
+        </div>
+    `;
+
+    const option = (value) => `
+        <div class="form-field">
+            <input class="check" type="checkbox" id="tag${value}" name="tags[]" value="${value}">
+            <div class="form-field-content"><label for="tag${value}">Tag ${value}</label></div>
         </div>
     `;
 
@@ -219,6 +227,48 @@ describe('checkbox lists', () => {
         jax.Events.dispatch('trigger:empty', { target: field });
 
         expect(field.querySelector('input[value="3"]').checked).toBe(false);
+    });
+
+    test('a cumulative list checks the child group that follows an option field', () => {
+        connectForm(`
+            <div class="form-group" data-field-name="tags">
+                <div class="field-checkboxlist is-cumulative">
+                    ${option(1)}
+                    <ul class="checkboxlist-group">
+                        <li class="checkboxlist-group-item">${option(2)}</li>
+                        <li class="checkboxlist-group-item">${option(3)}</li>
+                    </ul>
+                    ${option(4)}
+                </div>
+            </div>
+        `);
+        const boxes = [...document.querySelectorAll('input[type=checkbox]')];
+
+        boxes[0].click();
+
+        expect(boxes.map((box) => box.checked)).toEqual([true, true, true, false]);
+    });
+
+    test('shift-click selects the range of option fields between two clicks', () => {
+        const registerClick = jax.checkboxRangeRegisterClick;
+        registerCheckboxRange(jax);
+
+        try {
+            connectForm(`
+                <div class="form-group" data-field-name="tags">
+                    <div class="field-checkboxlist">${[1, 2, 3, 4].map(option).join('')}</div>
+                </div>
+            `);
+            const boxes = [...document.querySelectorAll('input[type=checkbox]')];
+
+            boxes[0].click();
+            boxes[2].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, shiftKey: true }));
+
+            expect(boxes.map((box) => box.checked)).toEqual([true, true, true, false]);
+        }
+        finally {
+            jax.checkboxRangeRegisterClick = registerClick;
+        }
     });
 });
 

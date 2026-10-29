@@ -56,13 +56,13 @@ export function registerFormWidget(jax) {
 
         // Logic for checkboxlist
         onClickCheckboxListCheckbox(ev) {
-            jax.checkboxRangeRegisterClick(ev, '.form-check', 'input[type=checkbox]');
+            jax.checkboxRangeRegisterClick(ev, '.form-field', 'input[type=checkbox]');
         }
 
         onClickCheckboxListCheckboxCumulative(ev) {
             const el = ev.delegateTarget;
             if (el.checked) {
-                const childGroup = el.closest('.form-check').nextElementSibling;
+                const childGroup = el.closest('.form-field').nextElementSibling;
                 if (childGroup && childGroup.classList && childGroup.classList.contains('checkboxlist-group')) {
                     childGroup.querySelectorAll('input[type=checkbox]').forEach((chk) => {
                         chk.checked = true;

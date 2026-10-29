@@ -5,26 +5,26 @@
 :root {
     --bs-body-font-family:      -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
-    --oc-brand-primary:          var(--bs-primary);
-    --oc-brand-secondary:        var(--bs-secondary);
-    --oc-brand-success:          var(--bs-success);
-    --oc-brand-info:             var(--bs-info);
-    --oc-brand-warning:          var(--bs-warning);
-    --oc-brand-danger:           var(--bs-danger);
-    --oc-brand-light:            var(--bs-light);
-    --oc-brand-dark:             var(--bs-dark);
+    --oc-brand-primary:          var(--bs-primary-base);
+    --oc-brand-secondary:        var(--bs-gray-600);
+    --oc-brand-success:          var(--bs-success-base);
+    --oc-brand-info:             var(--bs-info-base);
+    --oc-brand-warning:          var(--bs-warning-base);
+    --oc-brand-danger:           var(--bs-danger-base);
+    --oc-brand-light:            var(--bs-gray-100);
+    --oc-brand-dark:             var(--bs-gray-900);
 
-    --oc-body-bg:                var(--bs-body-bg);
-    --oc-text-color:             var(--bs-body-color);
-    --oc-text-muted:             var(--bs-secondary-color);
+    --oc-body-bg:                var(--bs-bg-body);
+    --oc-text-color:             var(--bs-fg-body);
+    --oc-text-muted:             var(--bs-fg-3);
     --oc-link-color:             var(--bs-link-color);
     --oc-link-hover-color:       var(--bs-link-hover-color);
     --oc-heading-color:          var(--bs-heading-color);
-    --oc-emphasis-color:         var(--bs-emphasis-color);
+    --oc-emphasis-color:         var(--bs-fg-body);
     --oc-border-color:           var(--bs-border-color);
-    --oc-popup-bg:               var(--bs-modal-bg);
+    --oc-popup-bg:               var(--bs-dialog-bg);
     --oc-popup-border:           1px solid rgba(149, 165, 166, 0.2);
-    --oc-backdrop-opacity:       var(--bs-backdrop-opacity);
+    --oc-backdrop-opacity:       0.5;
 
     /*
     // "Windex" Z-Index Window Manager

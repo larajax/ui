@@ -10,11 +10,11 @@
 @import "_filter_box.css";
 
 :root {
-    --oc-filter-text: var(--bs-secondary-color);
-    --oc-filter-text-active: var(--bs-emphasis-color);
+    --oc-filter-text: var(--bs-fg-3);
+    --oc-filter-text-active: var(--bs-fg-body);
     --oc-filter-border: var(--bs-border-color);
-    --oc-filter-bg: var(--bs-body-bg);
-    --oc-filter-bg-active: var(--bs-success);
+    --oc-filter-bg: var(--bs-bg-body);
+    --oc-filter-bg-active: var(--bs-success-base);
     --oc-filter-items-bg-hover: var(--oc-selection);
 }
 
@@ -274,7 +274,7 @@
             flex-grow: 1;
         }
 
-        > .btn {
+        > :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
             text-align: center;
         }
     }

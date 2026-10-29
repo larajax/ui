@@ -184,6 +184,77 @@ describe('datepicker options', () => {
     });
 });
 
+describe('datepicker mounting', () => {
+    test('the calendar and the clock stay on the body outside a dialog', () => {
+        const { control } = connectPicker();
+
+        control.picker.show();
+        control.timePicker.show();
+
+        expect(control.picker.el.parentElement).toBe(document.body);
+        expect(control.timePicker.popover.parentElement).toBe(document.body);
+    });
+
+    test('the calendar and the clock mount inside an enclosing dialog, outside the inert page', () => {
+        const { control, element } = connectPicker();
+        const dialog = document.createElement('dialog');
+        document.body.appendChild(dialog);
+        dialog.appendChild(element);
+        dialog.showModal();
+
+        control.picker.show();
+        control.timePicker.show();
+
+        expect(control.picker.el.parentElement).toBe(dialog);
+        expect(control.timePicker.popover.parentElement).toBe(dialog);
+    });
+});
+
+describe('datepicker keyboard and visibility', () => {
+    function pressEscape(target) {
+        const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+        target.dispatchEvent(event);
+        return event;
+    }
+
+    test('the clock carries the show class only while open', () => {
+        const { control } = connectPicker({ date: false });
+
+        control.timePicker.show();
+        expect(control.timePicker.popover.classList.contains('show')).toBe(true);
+
+        control.timePicker.hide();
+        expect(control.timePicker.popover.classList.contains('show')).toBe(false);
+    });
+
+    test('Escape closes an open calendar and cancels the key, so an enclosing dialog stays open', () => {
+        const { control, dateFacade } = connectPicker({ time: false });
+
+        control.picker.show();
+        const event = pressEscape(dateFacade);
+
+        expect(event.defaultPrevented).toBe(true);
+        expect(control.picker.isVisible()).toBe(false);
+
+        // With the calendar closed, Escape is left for the dialog
+        expect(pressEscape(dateFacade).defaultPrevented).toBe(false);
+    });
+
+    test('Escape closes an open clock and cancels the key, so an enclosing dialog stays open', () => {
+        const { control, timeFacade } = connectPicker({ date: false });
+
+        control.timePicker.show();
+        const event = pressEscape(timeFacade);
+
+        expect(event.defaultPrevented).toBe(true);
+        expect(control.timePicker.isShown).toBe(false);
+        expect(control.timePicker.popover.style.display).toBe('none');
+
+        // With the clock closed, Escape is left for the dialog
+        expect(pressEscape(timeFacade).defaultPrevented).toBe(false);
+    });
+});
+
 describe('datepicker timezone', () => {
     afterEach(() => {
         setSystemTime();

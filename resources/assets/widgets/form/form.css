@@ -16,7 +16,7 @@
     > .form-group:last-child {
         padding-bottom: 0;
 
-        .form-check {
+        .form-field {
             margin-bottom: 0;
         }
     }
@@ -66,9 +66,13 @@
     position: relative;
     -webkit-appearance: none;
 
+    /* Preview values keep block text flow, since Bootstrap 6 lays out every form control as flex */
+    &:not(input, select, textarea, button) {
+        display: block;
+    }
+
     &:focus {
         border: 1px solid var(--oc-border-focus);
-        box-shadow: none;
     }
 
     &[readonly],
@@ -115,6 +119,14 @@
     position: relative;
     box-sizing: border-box;
 
+    /* Field containers keep block flow, since Bootstrap 6 lays out form groups as a grid */
+    display: block;
+
+    /* Bootstrap 6 zeroes the label margin inside form groups, so the label spacing is restored */
+    > .form-label {
+        margin-bottom: var(--bs-label-margin-bottom, calc(var(--bs-spacer) / 2));
+    }
+
     &:empty {
         display: none;
     }
@@ -126,7 +138,7 @@
 
     &.is-required {
         > label:after {
-            background-color: var(--bs-danger);
+            background-color: var(--bs-danger-base);
             width: 5px;
             height: 5px;
             margin-left: 3px;
@@ -167,8 +179,8 @@
             left: auto;
             z-index: 2;
 
-            /* Lift the open menu above the dropdown overlay */
-            &:has(> .dropdown-menu.show) {
+            /* Lift the open menu above the neighbouring field content */
+            &:has(> .menu.show) {
                 z-index: 1000;
             }
         }
@@ -235,13 +247,13 @@
     &.checkbox-field {
         padding-bottom: 5px;
 
-        > .form-check {
+        > .form-field {
             margin-bottom: 10px;
         }
     }
 
     &.radio-field {
-        > .form-check {
+        > .form-field {
             margin-bottom: 10px;
         }
     }
@@ -253,12 +265,12 @@
     }
 
     &.radio-align {
-        padding-left: 23px;
+        padding-left: 28px;
         margin-top: -20px;
     }
 
     &.checkbox-align {
-        padding-left: 23px;
+        padding-left: 28px;
         margin-top: -5px;
     }
 
@@ -274,7 +286,7 @@
     }
 
     &.field-indent {
-        padding-left: 23px;
+        padding-left: 28px;
     }
 
     /* @deprecated (used by sitemap and pages) */
@@ -332,7 +344,15 @@
 }
 
 .form-text {
+    /* Bootstrap 6 darkened help text and dropped its top margin, so both are pinned */
+    --bs-form-text-color: var(--bs-fg-3);
+    margin-top: .25rem;
     margin-bottom: 0;
+
+    /* The form field grid gap already spaces help text */
+    .form-field > & {
+        margin-top: 0;
+    }
 
     &.before-field {
         margin-top: -.135rem;
@@ -451,7 +471,7 @@
     }
 
     p {
-        color: var(--bs-secondary-color);
+        color: var(--bs-fg-3);
         margin-bottom: 0;
         font-size: .9rem;
     }
@@ -529,7 +549,7 @@
         }
     }
 
-    .form-check {
+    .form-field {
         margin-bottom: 10px;
     }
 
@@ -551,14 +571,14 @@
     height: 300px;
 
     /* First checkbox */
-    .form-check {
+    .form-field {
         margin-left: 15px;
         margin-top: 15px;
         margin-bottom: 10px;
     }
 
     /* All others */
-    .form-check ~ .form-check {
+    .form-field ~ .form-field {
         margin-top: 0;
     }
 }
@@ -570,10 +590,16 @@
         }
     }
 
-    .form-check {
-        display: inline-block;
+    .form-field {
+        display: inline-grid;
         margin-right: 15px;
     }
+}
+
+/* Inline checkbox and radio options sit side by side */
+.form-field.is-inline {
+    display: inline-grid;
+    margin-right: 1rem;
 }
 
 .form-buttons {
@@ -593,7 +619,7 @@
         padding-left: 155px;
     }
 
-    .btn {
+    :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
         margin-right: 7px;
 
         &.no-margin-right {
@@ -604,7 +630,7 @@
     .btn-group {
         margin-right: 7px;
 
-        .btn {
+        :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
             margin-right: 0;
         }
     }
@@ -651,7 +677,7 @@ body.slim-container {
     }
 }
 
-body .modal-footer {
+body .dialog-footer {
     .form-buttons {
         padding: 0;
     }
@@ -713,8 +739,9 @@ body.compact-container .form-fatal-error {
         height: 36px;
         margin-right: 15px;
 
+        /* Fills the 36px box between the borders and the select padding so the text stays centred */
         .select2-selection__rendered {
-            line-height: 17px;
+            line-height: calc(36px - 2px - 2 * var(--custom-select-input-padding-vertical));
         }
 
         .select2-selection--single {

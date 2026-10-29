@@ -25,7 +25,7 @@
         <?php if (!$this->previewMode): ?>
             <div class="repeater-item-checkbox">
                 <input
-                    class="form-check-input"
+                    class="check check-sm"
                     type="checkbox"
                     name="checked[]"
                     id="<?= $this->getId('item'.$indexValue) ?>"
@@ -33,11 +33,11 @@
                     title="<?= e(__("Check")) ?>"
                 />
             </div>
-            <div class="repeater-item-dropdown dropdown">
-                <a href="javascript:;" class="repeater-item-menu" data-bs-toggle="dropdown">
+            <div class="repeater-item-dropdown">
+                <a href="javascript:;" class="repeater-item-menu" data-bs-toggle="menu" data-bs-placement="bottom-end" aria-expanded="false">
                     <?= \Larajax\Ui\Facades\Ui::icon('repeater.menu') ?>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end control-dropdown" role="menu"></ul>
+                <div class="menu control-dropdown" role="menu"></div>
             </div>
             <?php if ($showReorder): ?>
                 <div class="repeater-item-reorder">

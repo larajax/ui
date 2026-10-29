@@ -20,7 +20,7 @@
  * - highlightModalTarget - raise the trigger element above the overlay
  * - closeOnPageClick - close when clicking outside, default true
  * - closeOnEsc - close on the Escape key, default true
- * - container - element or selector to mount in, default the enclosing modal or the body
+ * - container - element or selector to mount in, default the enclosing dialog or the body
  * - containerClass - CSS class(es) for the popover container, extraClass is the same option
  * - offset - offset in pixels along the trigger, default 15
  * - offsetX - offset for top and bottom placements, overrides offset
@@ -143,7 +143,7 @@ export class Popover {
             this.element.style.width = this.options.width + 'px';
         }
 
-        // Mounting inside an enclosing modal keeps the popover and overlay above its backdrop
+        // Mounting inside an enclosing dialog keeps the popover and overlay in its top layer and out of the inert page
         const container = this.getMountContainer();
 
         this.overlay = document.createElement('div');
@@ -315,7 +315,7 @@ export class Popover {
             return (typeof container === 'string' ? document.querySelector(container) : container) || document.body;
         }
 
-        return this.trigger.closest('.modal') || document.body;
+        return this.trigger.closest('dialog') || document.body;
     }
 
     getPopperOptions() {
@@ -489,7 +489,9 @@ export class Popover {
             return;
         }
 
+        // Cancelling the key keeps an enclosing dialog from treating it as its own close request
         if (ev.key === 'Escape') {
+            ev.preventDefault();
             this.hide();
         }
     }

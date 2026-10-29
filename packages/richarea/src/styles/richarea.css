@@ -9,15 +9,15 @@
     --rich-editor-button-size: 30px;
     --rich-editor-border: var(--bs-border-color, #d7e1ea);
     --rich-editor-bg: var(--oc-form-control-bg, #fff);
-    --rich-editor-color: var(--bs-body-color, #212529);
-    --rich-editor-muted: var(--bs-secondary-color, #6c757d);
+    --rich-editor-color: var(--bs-fg-body, #212529);
+    --rich-editor-muted: var(--bs-fg-3, #6c757d);
     --rich-editor-toolbar-bg: var(--oc-toolbar-bg, #fff);
     --rich-editor-toolbar-color: var(--oc-toolbar-color, #536061);
     --rich-editor-toolbar-border: var(--oc-toolbar-border, #d7e1ea);
     --rich-editor-hover-bg: var(--oc-toolbar-hover-bg, rgba(215, 225, 234, .7));
-    --rich-editor-active-color: var(--bs-primary, #3498db);
-    --rich-editor-active-bg: rgba(var(--bs-primary-rgb, 52, 152, 219), .12);
-    --rich-editor-focus: var(--oc-border-focus, var(--bs-primary, #3498db));
+    --rich-editor-active-color: var(--bs-primary-base, #3498db);
+    --rich-editor-active-bg: color-mix(in oklch, var(--bs-primary-base, #3498db) 12%, transparent);
+    --rich-editor-focus: var(--oc-border-focus, var(--bs-primary-base, #3498db));
     --rich-editor-placeholder-border: var(--oc-primary-border, #cfd7e1);
     --rich-editor-placeholder-bg: var(--oc-form-control-readonly-bg, #f5f7f9);
 
@@ -97,13 +97,13 @@ html.rich-editor-has-fullscreen body {
     }
 
     &:focus-visible {
-        outline: 2px solid var(--oc-border-focus, var(--bs-primary, #3498db));
+        outline: 2px solid var(--oc-border-focus, var(--bs-primary-base, #3498db));
         outline-offset: -2px;
     }
 
     &.is-active {
-        background: rgba(var(--bs-primary-rgb, 52, 152, 219), .12);
-        color: var(--bs-primary, #3498db);
+        background: color-mix(in oklch, var(--bs-primary-base, #3498db) 12%, transparent);
+        color: var(--bs-primary-base, #3498db);
     }
 
     &:disabled {
@@ -207,7 +207,7 @@ html.rich-editor-has-fullscreen body {
 
     /* Selected atoms */
     .ProseMirror-selectednode {
-        outline: 2px solid var(--bs-primary, #3498db);
+        outline: 2px solid var(--bs-primary-base, #3498db);
         outline-offset: 1px;
     }
 
@@ -223,7 +223,7 @@ html.rich-editor-has-fullscreen body {
             content: '';
             position: absolute;
             inset: 0;
-            background: rgba(var(--bs-primary-rgb, 52, 152, 219), .15);
+            background: color-mix(in oklch, var(--bs-primary-base, #3498db) 15%, transparent);
             pointer-events: none;
         }
     }
@@ -254,7 +254,7 @@ html.rich-editor-has-fullscreen body {
         }
 
         &.ProseMirror-selectednode {
-            border-color: var(--bs-primary, #3498db);
+            border-color: var(--bs-primary-base, #3498db);
             border-style: solid;
             outline: none;
         }
@@ -322,7 +322,7 @@ html.rich-editor-has-fullscreen body {
     /* Snippets, the snippet control or the placeholder supplies the label styles */
     [data-snippet].ProseMirror-selectednode {
         outline: none;
-        border-color: var(--bs-primary, #3498db);
+        border-color: var(--bs-primary-base, #3498db);
         border-style: solid;
     }
 
@@ -341,7 +341,7 @@ html.rich-editor-has-fullscreen body {
         }
 
         &.ProseMirror-selectednode {
-            outline: 2px solid var(--bs-primary, #3498db);
+            outline: 2px solid var(--bs-primary-base, #3498db);
         }
     }
 
@@ -352,7 +352,7 @@ html.rich-editor-has-fullscreen body {
     }
 
     .rich-editor-dropcursor {
-        background: var(--bs-primary, #3498db);
+        background: var(--bs-primary-base, #3498db);
     }
 
     /* Caret between blocks, the default black line disappears in dark mode */
@@ -412,7 +412,7 @@ html.rich-editor-has-fullscreen body {
     width: 10px;
     height: 10px;
     border: 1px solid var(--rich-editor-bg);
-    background: var(--bs-primary, #3498db);
+    background: var(--bs-primary-base, #3498db);
     pointer-events: auto;
     touch-action: none;
 
@@ -472,8 +472,8 @@ html.rich-editor-resizing {
     z-index: 9995;
     border: 1px solid var(--bs-border-color, #d7e1ea);
     border-radius: 6px;
-    background: var(--bs-modal-bg, var(--bs-body-bg, #fff));
-    color: var(--bs-body-color, #212529);
+    background: var(--bs-dialog-bg, var(--bs-bg-body, #fff));
+    color: var(--bs-fg-body, #212529);
     box-shadow: 0 6px 20px rgba(0, 0, 0, .15);
     font-size: 13px;
 }
@@ -513,7 +513,7 @@ html.rich-editor-resizing {
 
     &:hover:not(:disabled),
     &:focus-visible {
-        background: var(--oc-dropdown-hover-bg, var(--bs-primary, #3498db));
+        background: var(--oc-dropdown-hover-bg, var(--bs-primary-base, #3498db));
         color: var(--oc-dropdown-hover-color, #fff);
         outline: none;
     }
@@ -550,7 +550,7 @@ html.rich-editor-resizing {
 
 .rich-editor-menu-header {
     padding: 6px 10px 2px;
-    color: var(--bs-secondary-color, #6c757d);
+    color: var(--bs-fg-3, #6c757d);
     font-size: 11px;
     text-transform: uppercase;
 }
@@ -572,7 +572,7 @@ html.rich-editor-resizing {
     label {
         display: block;
         margin-bottom: 4px;
-        color: var(--bs-secondary-color, #6c757d);
+        color: var(--bs-fg-3, #6c757d);
         font-size: 12px;
     }
 
@@ -587,9 +587,11 @@ html.rich-editor-resizing {
         color: inherit;
         font-size: 13px;
 
+        /* The same ring a focused Bootstrap form control draws, with a matching one when Bootstrap is absent */
         &:focus {
-            border-color: var(--oc-border-focus, var(--bs-primary, #3498db));
-            outline: none;
+            border-color: var(--oc-border-focus, var(--bs-primary-base, #3498db));
+            outline: var(--bs-focus-ring, 3px solid color-mix(in oklch, var(--bs-primary-base, #3498db) 50%, transparent));
+            outline-offset: -1px;
         }
     }
 
@@ -604,11 +606,16 @@ html.rich-editor-resizing {
     align-items: center;
     gap: 6px;
     margin-bottom: 10px;
+
+    /* Bootstrap enlarges a small check's label, which keeps the form's own size here */
+    label {
+        font-size: inherit;
+    }
 }
 
 .rich-editor-form-error {
     margin-bottom: 10px;
-    color: var(--bs-danger, #dc3545);
+    color: var(--bs-danger-base, #dc3545);
     font-size: 12px;
 
     &[hidden] {
@@ -640,8 +647,8 @@ html.rich-editor-resizing {
     }
 
     &.is-primary {
-        border-color: var(--bs-primary, #3498db);
-        background: var(--bs-primary, #3498db);
+        border-color: var(--bs-primary-base, #3498db);
+        background: var(--bs-primary-base, #3498db);
         color: #fff;
 
         &:hover {
@@ -650,7 +657,7 @@ html.rich-editor-resizing {
     }
 
     &.is-danger {
-        color: var(--bs-danger, #dc3545);
+        color: var(--bs-danger-base, #dc3545);
     }
 }
 
@@ -677,7 +684,7 @@ html.rich-editor-resizing {
         cursor: pointer;
 
         &.is-active {
-            border-bottom-color: var(--bs-primary, #3498db);
+            border-bottom-color: var(--bs-primary-base, #3498db);
         }
     }
 }
@@ -698,7 +705,7 @@ html.rich-editor-resizing {
 
     &.is-active,
     &:hover {
-        outline: 2px solid var(--bs-primary, #3498db);
+        outline: 2px solid var(--bs-primary-base, #3498db);
         outline-offset: 1px;
     }
 
@@ -752,8 +759,8 @@ html.rich-editor-resizing {
         cursor: pointer;
 
         &.is-active {
-            border-color: var(--bs-primary, #3498db);
-            background: rgba(var(--bs-primary-rgb, 52, 152, 219), .25);
+            border-color: var(--bs-primary-base, #3498db);
+            background: color-mix(in oklch, var(--bs-primary-base, #3498db) 25%, transparent);
         }
     }
 }
@@ -761,6 +768,6 @@ html.rich-editor-resizing {
 .rich-editor-table-label {
     margin-top: 6px;
     text-align: center;
-    color: var(--bs-secondary-color, #6c757d);
+    color: var(--bs-fg-3, #6c757d);
     font-size: 12px;
 }

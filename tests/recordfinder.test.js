@@ -3,34 +3,6 @@ import { Popup, registerPopup } from '../resources/assets/controls/popup/popup.j
 import { registerRecordFinder } from '../resources/assets/formwidgets/recordfinder/recordfinder.js';
 import { registerAjax } from '../resources/assets/ajax.js';
 
-// Mirrors the Bootstrap 5 Modal surface the popup uses, firing its native events synchronously
-class FakeModal {
-    constructor(element) {
-        this.element = element;
-    }
-
-    trigger(name) {
-        this.element.dispatchEvent(new Event(name, { bubbles: true, cancelable: true }));
-    }
-
-    show() {
-        this.trigger('show.bs.modal');
-        if (!document.body.contains(this.element)) {
-            document.body.append(this.element);
-        }
-        this.element.classList.add('show');
-        this.trigger('shown.bs.modal');
-    }
-
-    hide() {
-        this.trigger('hide.bs.modal');
-        this.element.classList.remove('show');
-        this.trigger('hidden.bs.modal');
-    }
-
-    dispose() {}
-}
-
 function makeFakeJax() {
     class ControlBase {
         constructor(element) {
@@ -77,7 +49,6 @@ function makeFakeJax() {
 let jax;
 
 beforeAll(() => {
-    window.bootstrap = { Modal: FakeModal };
     jax = makeFakeJax();
     registerPopup(jax);
     registerRecordFinder(jax);

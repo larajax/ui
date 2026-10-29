@@ -44,7 +44,7 @@
 
 /* Checked */
 .field-repeater > ul > li.field-repeater-item.is-checked {
-    border-color: var(--bs-primary);
+    border-color: var(--bs-primary-base);
 }
 
 /* Collapsed */
@@ -53,8 +53,8 @@
         border-bottom-color: transparent;
         border-radius: 4px;
 
-        .repeater-item-checkbox .form-check-input {
-            top: 0;
+        .repeater-item-checkbox .check {
+            top: 2px;
             left: -5px;
         }
     }
@@ -69,8 +69,8 @@
     > ul > li.field-repeater-item > .repeater-header {
         cursor: pointer;
 
-        .repeater-item-checkbox .form-check-input {
-            top: 0;
+        .repeater-item-checkbox .check {
+            top: 2px;
             left: -5px;
         }
     }

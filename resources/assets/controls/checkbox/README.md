@@ -6,7 +6,7 @@ Provides indeterminate (tri-state) checkbox support and shift-click range select
 
 An indeterminate checkbox cycles through three states: **unchecked → indeterminate → checked → unchecked**.
 
-The control auto-discovers `.form-check.is-indeterminate` elements. Set the initial state using `data-checked` on the input.
+The control auto-discovers `.form-field.is-indeterminate` elements. Set the initial state using `data-checked` on the input.
 
 - `data-checked="0"` - Unchecked (default)
 - `data-checked="1"` - Indeterminate
@@ -15,9 +15,11 @@ The control auto-discovers `.form-check.is-indeterminate` elements. Set the init
 Without `data-checked`, the initial state follows the input's `checked` attribute.
 
 ```html
-<div class="form-check is-indeterminate">
-    <input type="checkbox" class="form-check-input" id="featured" data-checked="1" />
-    <label class="form-check-label" for="featured">Indeterminate checkbox</label>
+<div class="form-field is-indeterminate">
+    <input type="checkbox" class="check" id="featured" data-checked="1" />
+    <label for="featured">
+        Indeterminate checkbox
+    </label>
 </div>
 ```
 

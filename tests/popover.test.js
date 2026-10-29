@@ -287,6 +287,18 @@ describe('popover closing toggles', () => {
         expect(popover.element).toBeNull();
     });
 
+    test('Escape is cancelled so an enclosing dialog stays open', async () => {
+        const trigger = setUp('<dialog open><button id="trigger">Open</button></dialog>');
+        const popover = open(trigger);
+        await nextTick();
+
+        const ev = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+        trigger.dispatchEvent(ev);
+
+        expect(popover.element).toBeNull();
+        expect(ev.defaultPrevented).toBe(true);
+    });
+
     test('closeOnEsc false ignores Escape', async () => {
         const trigger = setUp();
         const popover = open(trigger, { closeOnEsc: false });
@@ -436,7 +448,7 @@ describe('popover page state', () => {
 
 describe('popover overlay', () => {
     test('a modal popover shows an overlay next to it and removes it on close', () => {
-        const trigger = setUp('<div class="modal show"><button id="trigger">Open</button></div>');
+        const trigger = setUp('<dialog open><button id="trigger">Open</button></dialog>');
         const popover = open(trigger, { modal: true });
         const overlay = document.querySelector('.popover-overlay');
 

@@ -10,6 +10,8 @@ class OctoberIconPack implements IconPack
             'search.icon' => 'icon-search',
             'search.clear' => 'storm-icon',
 
+            'dropdown.caret' => 'icon-angle-down',
+
             'filter.menu' => 'ph ph-funnel-simple',
             'filter.clear' => 'icon-eraser',
             'filter.caret' => 'icon-angle-down',

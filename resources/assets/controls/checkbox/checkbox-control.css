@@ -3,8 +3,8 @@
  * --------------------------------------------------
  */
 
-.form-check-input:checked,
-.form-check-input[type=checkbox]:indeterminate {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
+/* A disabled check also dims a label held in the form field content, which Bootstrap 6 only styles for sibling labels */
+.form-field:has(> .check:disabled, > .radio:disabled, > .switch input:disabled) > .form-field-content > label {
+    color: var(--bs-fg-3);
+    cursor: default;
 }

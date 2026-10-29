@@ -10,6 +10,8 @@ class BootstrapIconPack implements IconPack
             'search.icon' => 'bi bi-search',
             'search.clear' => 'bi bi-x',
 
+            'dropdown.caret' => 'bi bi-chevron-down',
+
             'filter.menu' => 'bi bi-funnel',
             'filter.clear' => 'bi bi-eraser',
             'filter.caret' => 'bi bi-chevron-down',

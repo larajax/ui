@@ -1,110 +1,78 @@
 /*
  * Dropdown
  *
- * Styles dropdown menus rendered with the .control-dropdown class. Behavior
- * comes from Bootstrap 5 (data-bs-toggle="dropdown"); this file supplies the
- * menu appearance only.
+ * Gives Bootstrap menus (data-bs-toggle="menu") that carry the .control-dropdown class the library look.
  */
-.control-dropdown.dropdown-menu {
-    padding: 0;
-    list-style: none;
-    background-color: var(--bs-modal-bg);
-    position: relative;
+.menu.control-dropdown {
+    --bs-menu-zindex: var(--oc-zindex-dropdown);
+    --bs-menu-gap: 0;
+    --bs-menu-padding-x: 0;
+    --bs-menu-padding-y: 0;
+    --bs-menu-font-size: 14px;
+    --bs-menu-color: var(--bs-fg-body);
+    --bs-menu-bg: var(--bs-dialog-bg);
+    --bs-menu-border-radius: 4px;
+    --bs-menu-box-shadow: -2px 2px 5px rgba(67, 86, 100, 0.12);
+    --bs-menu-divider-margin-x: 0;
+    --bs-menu-divider-margin-y: 0;
+    --bs-menu-item-color: var(--bs-fg-body);
+    --bs-menu-item-hover-color: var(--oc-dropdown-hover-color);
+    --bs-menu-item-hover-bg: var(--oc-dropdown-hover-bg);
+    --bs-menu-item-active-color: var(--oc-dropdown-hover-color);
+    --bs-menu-item-active-bg: var(--oc-dropdown-active-bg);
+    --bs-menu-item-disabled-color: #98A0A0;
+    --bs-menu-item-gap: 8px;
+    --bs-menu-item-padding-x: 15px;
+    --bs-menu-item-padding-y: 10px;
+    --bs-menu-item-border-radius: 0;
     border: var(--oc-popup-border);
-    box-shadow: -2px 2px 5px rgba(67, 86, 100, 0.12);
-    border-radius: 4px;
 
-    &.is-fixed {
-        position: fixed !important;
-    }
+    /* Unlayered item states so link rules from the surrounding widget never win */
+    > .menu-item {
+        padding: var(--bs-menu-item-padding-y) var(--bs-menu-item-padding-x);
+        font-size: var(--bs-menu-font-size);
+        color: var(--bs-theme-fg, var(--bs-menu-item-color));
+        text-decoration: none;
 
-    &.offset-left {
-        left: 10px;
-    }
-
-    > li {
-        a, button {
-            outline: none;
-            padding: 10px 15px;
+        > i {
+            color: color-mix(in oklch, var(--bs-fg-body) 60%, transparent);
             font-size: 14px;
-            display: block;
-            width: 100%;
-            text-align: left;
-            border: none;
-            background: transparent;
-            color: var(--bs-body-color);
-            position: relative;
-            white-space: nowrap;
-            text-decoration: none;
+            margin-left: -2px;
+        }
 
-            &:hover, &:active, &:focus:active {
-                color: var(--oc-dropdown-hover-color);
-                background-color: var(--oc-dropdown-hover-bg) !important;
+        &:first-child {
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
 
-                i {
-                    color: var(--oc-dropdown-hover-color);
-                }
+        &:last-child {
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        &:hover, &:focus {
+            color: var(--bs-theme-fg-emphasis, var(--bs-menu-item-hover-color));
+            background-color: var(--bs-theme-bg-subtle, var(--bs-menu-item-hover-bg));
+        }
+
+        &.active, &:active {
+            color: var(--bs-theme-contrast, var(--bs-menu-item-active-color));
+            background-color: var(--bs-theme-bg, var(--bs-menu-item-active-bg));
+        }
+
+        &:hover, &:focus, &.active, &:active {
+            > i {
+                color: inherit;
             }
+        }
 
-            &:active, &:focus:active {
-                background-color: var(--oc-dropdown-active-bg) !important;
-            }
+        &.disabled, &:disabled, &[disabled] {
+            color: var(--bs-menu-item-disabled-color);
+            background-color: transparent;
+            pointer-events: none;
 
             > i {
-                color: rgba(var(--bs-body-color-rgb), 0.6);
-                font-size: 14px;
-                margin-right: 4px;
-                margin-left: -2px;
-            }
-        }
-
-        &:first-child:not(.disabled) {
-            a, button {
-                &:hover, &:focus, &:active {
-                    border-top-left-radius: 4px;
-                    border-top-right-radius: 4px;
-                }
-            }
-        }
-
-        &:last-child:not(.disabled) {
-            a, button {
-                &:hover, &:focus, &:active {
-                    border-bottom-left-radius: 4px;
-                    border-bottom-right-radius: 4px;
-                }
-            }
-        }
-
-        &.dropdown-title { display: none; }
-        &.dropdown-divider { margin: 0; }
-
-        &.active > a {
-            font-weight: bold;
-        }
-
-        &.disabled a,
-        &.disabled button,
-        a[disabled],
-        button[disabled] {
-            &, &:hover, &:active, &:focus:active {
-                cursor: not-allowed;
-                background-color: var(--bs-modal-bg) !important;
-                color: #98A0A0;
-
-                > i {
-                    color: rgba(var(--bs-body-color-rgb), 0.6);
-                }
-            }
-        }
-    }
-}
-
-@media (hover: hover) {
-    .control-dropdown.dropdown-menu > li {
-        a, button {
-            &:focus {
-                background: var(--oc-toolbar-hover-bg);
+                color: color-mix(in oklch, var(--bs-fg-body) 60%, transparent);
             }
         }
     }

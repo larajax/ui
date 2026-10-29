@@ -4,9 +4,11 @@
     ]) ?>
         <input type="hidden" name="recordfinder_flag" value="1" />
 
-        <div class="modal-header">
-            <h4 class="modal-title"><?= e(__($title)) ?></h4>
-            <button type="button" class="btn-close" data-dismiss="popup"></button>
+        <div class="dialog-header">
+            <h4 class="dialog-title">
+                <?= e(__($title)) ?>
+            </h4>
+            <button type="button" class="btn-close" data-dismiss="popup" aria-label="<?= __("Close") ?>"></button>
         </div>
 
         <div class="recordfinder-list list-flush">
@@ -19,16 +21,16 @@
             <?= $listWidget->render() ?>
         </div>
 
-        <div class="modal-footer">
+        <div class="dialog-footer">
             <button
                 type="button"
-                class="btn btn-secondary me-auto"
+                class="btn-solid theme-secondary me-auto"
                 data-dismiss="popup">
                 <?= __("Close") ?>
             </button>
             <?php if ($listWidget->showSetup): ?>
                 <button
-                    class="btn btn-circle btn-secondary ms-auto"
+                    class="btn-solid theme-secondary btn-circle ms-auto"
                     title="<?= __("List Setup") ?>"
                     data-handler="<?= $listWidget->getEventHandler('onLoadSetup') ?>"
                     data-control="popup"

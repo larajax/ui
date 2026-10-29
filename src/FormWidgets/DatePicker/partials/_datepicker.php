@@ -28,10 +28,10 @@
             <?= $this->makePartial('picker_date') ?>
         <?php elseif ($mode == 'datetime'): ?>
             <div class="row">
-                <div class="col-md-7">
+                <div class="md:col-7">
                     <?= $this->makePartial('picker_date') ?>
                 </div>
-                <div class="col-md-5">
+                <div class="md:col-5">
                     <?= $this->makePartial('picker_time') ?>
                 </div>
             </div>
