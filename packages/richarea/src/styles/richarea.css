@@ -8,7 +8,8 @@
     --rich-editor-min-height: 200px;
     --rich-editor-button-size: 30px;
     --rich-editor-border: var(--bs-border-color, #d7e1ea);
-    --rich-editor-bg: var(--oc-form-control-bg, #fff);
+    --rich-editor-radius: var(--bs-radius-5, 4px);
+    --rich-editor-bg: var(--bs-btn-input-bg, var(--oc-form-control-bg, #fff));
     --rich-editor-color: var(--bs-fg-body, #212529);
     --rich-editor-muted: var(--bs-fg-3, #6c757d);
     --rich-editor-toolbar-bg: var(--oc-toolbar-bg, #fff);
@@ -25,13 +26,19 @@
     display: flex;
     flex-direction: column;
     border: 1px solid var(--rich-editor-border);
-    border-radius: 4px;
+    border-radius: var(--rich-editor-radius);
     background: var(--rich-editor-bg);
     color: var(--rich-editor-color);
     transition: border-color ease-in-out .15s;
 
     &.is-focused {
         border-color: var(--rich-editor-focus);
+    }
+
+    /* Focus matches a Bootstrap form control with its focus ring */
+    &.is-focused:not(.is-fullscreen) {
+        outline: var(--bs-focus-ring, 3px solid color-mix(in oklch, var(--rich-editor-focus) 50%, transparent));
+        outline-offset: -1px;
     }
 
     /* Kept under popovers and popups, so properties panels and pickers open over it */
@@ -65,7 +72,7 @@ html.rich-editor-has-fullscreen body {
     gap: 2px;
     padding: 5px 6px;
     border-bottom: 1px solid var(--rich-editor-toolbar-border);
-    border-radius: 4px 4px 0 0;
+    border-radius: calc(var(--rich-editor-radius) - 1px) calc(var(--rich-editor-radius) - 1px) 0 0;
     background: var(--rich-editor-toolbar-bg);
 
     &[hidden] {

@@ -346,6 +346,25 @@ describe('datepicker calendar', () => {
         expect(calendar.querySelector('[data-vc-time-input="hour"] input').value).toBe('08');
     });
 
+    test('a value typed while the calendar is open shows in it and is announced once', async () => {
+        const { control, dateFacade, locker } = connectPicker({ value: '2026-10-20 14:30:00' });
+        let changes = 0;
+        dateFacade.addEventListener('change', () => changes++);
+
+        await openCalendar(control);
+        change(dateFacade, '2027-03-04 08:15');
+
+        expect(locker.value).toBe('2027-03-04 08:15:00');
+        expect(control.picker.context.isShowInInputMode).toBe(true);
+        expect(control.picker.context.selectedDates).toEqual(['2027-03-04']);
+        expect(control.picker.context.selectedMonth).toBe(2);
+        expect(control.picker.context.selectedYear).toBe(2027);
+        expect(control.picker.context.mainElement.querySelector('[data-vc-time-input="hour"] input').value).toBe('08');
+
+        control.picker.hide();
+        expect(changes).toBe(1);
+    });
+
     test('the calendar copies the page theme, as Bootstrap does', async () => {
         document.documentElement.setAttribute('data-bs-theme', 'dark');
         const { control } = connectPicker({ mode: 'date' });

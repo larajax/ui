@@ -1,0 +1,29 @@
+{
+    "name": "@larajax/hotsheet",
+    "version": "0.1.0",
+    "description": "A data grid with typed cells, keyboard editing, the clipboard, undo, sorting and row windowing for large tables.",
+    "author": "Responsiv Pty. Ltd.",
+    "private": true,
+    "type": "module",
+    "main": "./src/index.js",
+    "module": "./src/index.js",
+    "exports": {
+        ".": "./src/index.js",
+        "./hotsheet.css": "./src/styles/hotsheet.css",
+        "./package.json": "./package.json"
+    },
+    "scripts": {
+        "build": "node build.js",
+        "watch": "node build.js --watch",
+        "test": "bun test"
+    },
+    "devDependencies": {
+        "@happy-dom/global-registrator": "^20.14.5",
+        "esbuild": "^0.28.2"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/larajax/ui.git",
+        "directory": "packages/hotsheet"
+    }
+}

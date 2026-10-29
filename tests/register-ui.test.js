@@ -29,6 +29,7 @@ const CONTROL_IDS = [
     'richeditor',
     'codeeditor',
     'markdowneditor',
+    'datatable',
     'repeateraccordion',
     'repeaterbuilder',
 ];

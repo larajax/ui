@@ -6,12 +6,18 @@
     flex-direction: column;
     width: 100%;
     border: 1px solid var(--bs-border-color);
-    border-radius: 4px;
-    background: var(--oc-form-control-bg);
+    border-radius: var(--bs-radius-5);
+    background: var(--bs-btn-input-bg);
     transition: border-color ease-in-out .15s;
     textarea { opacity: 0; }
 
-    &.editor-focus { border-color: var(--oc-border-focus); }
+    /* Focus matches a Bootstrap form control: the focus border plus the focus ring */
+    &.editor-focus:not(.editor-fullscreen) {
+        --bs-focus-ring-offset: -1px;
+        border-color: var(--oc-border-focus);
+        outline: var(--bs-focus-ring);
+        outline-offset: var(--bs-focus-ring-offset);
+    }
 
     &.is-stretch {
         height: 100%;
@@ -28,7 +34,7 @@
         flex: 1;
         min-height: var(--codeeditor-min-height);
         overflow: hidden;
-        border-radius: 0 0 4px 4px;
+        border-radius: 0 0 calc(var(--bs-radius-5) - 1px) calc(var(--bs-radius-5) - 1px);
     }
 
     .editor-toolbar {
@@ -38,7 +44,7 @@
         gap: 2px;
         padding: 5px 6px;
         border-bottom: 1px solid var(--oc-toolbar-border);
-        border-radius: 4px 4px 0 0;
+        border-radius: calc(var(--bs-radius-5) - 1px) calc(var(--bs-radius-5) - 1px) 0 0;
         background: var(--oc-toolbar-bg);
     }
 

@@ -1,0 +1,88 @@
+/*
+ * Data Table: the field frame, its toolbar and how the grid sits inside it
+ */
+
+@import "../../vendor/hotsheet/hotsheet.css";
+
+.field-datatable:has(> [data-hot-container]) {
+    --datatable-text-color: var(--oc-text-color, var(--bs-fg-body, #212529));
+    --datatable-border: var(--oc-border-color, var(--bs-border-color, #dee2e6));
+    --datatable-scrollbar: color-mix(in srgb, var(--datatable-text-color) 30%, transparent);
+    --datatable-scrollbar-hover: color-mix(in srgb, var(--datatable-text-color) 50%, transparent);
+    border: 1px solid var(--datatable-border);
+    border-radius: 4px;
+    background: var(--oc-form-control-bg, var(--bs-bg-body, #fff));
+    overflow: hidden;
+
+    > .toolbar {
+        /* Contains the floated search box, which would otherwise narrow the grid's scroller below it */
+        display: flow-root;
+        padding: 3px;
+        font-size: 0;
+        white-space: nowrap;
+        border-bottom: 1px solid var(--datatable-border);
+
+        .toolbar-search {
+            float: right;
+            margin: 0 3px 0 0;
+
+            .form-control {
+                height: auto;
+                min-height: 0;
+                padding: 5px 13px;
+                font-size: 13px;
+            }
+        }
+    }
+
+    /* Slim scrollbars that always show, so a table that scrolls says so even where the system hides
+       scrollbars until scrolling. Chromium ignores the webkit pseudos once scrollbar-width is set, so the
+       standard properties apply only elsewhere */
+    .hotsheet-scroller {
+        &::-webkit-scrollbar {
+            width: 9px;
+            height: 9px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: var(--datatable-scrollbar);
+            border-radius: 4px;
+
+            &:hover {
+                background-color: var(--datatable-scrollbar-hover);
+            }
+        }
+    }
+
+    @supports not selector(::-webkit-scrollbar) {
+        .hotsheet-scroller {
+            scrollbar-width: thin;
+            scrollbar-color: var(--datatable-scrollbar) transparent;
+        }
+    }
+}
+
+/* While people work in the grid, the field's frame takes a soft tint of the focus colour */
+.field-datatable:has(> .hotsheet.is-active) {
+    --datatable-border: color-mix(in srgb, var(--oc-border-focus, var(--oc-brand-primary, var(--bs-primary-base, #0d6efd))) 45%, var(--oc-border-color, var(--bs-border-color, #dee2e6)));
+
+    .hotsheet-head > * {
+        border-bottom-color: var(--datatable-border);
+    }
+}
+
+/* Frameless fields lose the outer frame and the toolbar background */
+.widget-field.frameless .field-datatable {
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+
+    > .toolbar {
+        background: transparent;
+    }
+}

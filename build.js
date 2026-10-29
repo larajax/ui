@@ -11,6 +11,7 @@ import path from 'path';
 import * as esbuild from 'esbuild';
 import { bundle, bundleVirtual, copy, nodeModules, vendorDir } from './build-util.js';
 import { buildRichArea } from './packages/richarea/build.js';
+import { buildHotsheet } from './packages/hotsheet/build.js';
 
 console.log('\n  Building vendor files...\n');
 
@@ -64,6 +65,11 @@ await bundleVirtual(
 // richeditor form widget, with its stylesheet and the website base styles.
 await buildRichArea({ outdir: path.join(vendorDir, 'richarea') });
 console.log('  ✓ richarea/richarea.js, richarea.css and base-styles.css (bundled)');
+
+// Hotsheet (data grid) - built from packages/hotsheet for the datatable form widget,
+// with its stylesheet.
+await buildHotsheet({ outdir: path.join(vendorDir, 'hotsheet') });
+console.log('  ✓ hotsheet/hotsheet.js and hotsheet.css (bundled)');
 
 // Monaco (code editor) - Monaco's own editor.main.js limited to the languages
 // the codeeditor form widget offers, with Emmet, bundled as ESM alongside its

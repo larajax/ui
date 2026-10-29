@@ -32,7 +32,7 @@
         padding: 5px 6px;
         border: 1px solid var(--bs-border-color);
         border-bottom-color: var(--oc-toolbar-border);
-        border-radius: 4px 4px 0 0;
+        border-radius: var(--bs-radius-5) var(--bs-radius-5) 0 0;
         background: var(--oc-toolbar-bg);
         transition: border-color ease-in-out .15s;
 
@@ -109,7 +109,8 @@
     .EasyMDEContainer {
         .CodeMirror {
             border-color: var(--bs-border-color);
-            background: var(--oc-form-control-bg);
+            border-radius: 0 0 var(--bs-radius-5) var(--bs-radius-5);
+            background: var(--bs-btn-input-bg);
             color: var(--bs-fg-body);
             transition: border-color ease-in-out .15s;
         }
@@ -140,6 +141,22 @@
 
         .editor-toolbar {
             border-bottom-color: var(--oc-toolbar-border);
+        }
+
+        /* The toolbar and editor each draw the Bootstrap focus ring, clipped at their shared edge so it reads as one */
+        .editor-toolbar:not(.fullscreen),
+        .EasyMDEContainer .CodeMirror:not(.CodeMirror-fullscreen) {
+            --bs-focus-ring-offset: -1px;
+            outline: var(--bs-focus-ring);
+            outline-offset: var(--bs-focus-ring-offset);
+        }
+
+        .editor-toolbar:not(.fullscreen) {
+            clip-path: inset(-4px -4px 0 -4px);
+        }
+
+        .EasyMDEContainer .CodeMirror:not(.CodeMirror-fullscreen) {
+            clip-path: inset(0 -4px -4px -4px);
         }
     }
 

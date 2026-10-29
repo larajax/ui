@@ -815,6 +815,13 @@ export function registerDatepicker(jax) {
                 this.onSetLockerValue();
             }
 
+            // An open calendar shows the typed value, whose change the facade has already announced
+            if (this.picker && this.picker.context.isShowInInputMode) {
+                this.valueOnShow = this.locker ? this.locker.value : '';
+                this.picker.set(this.getCalendarState());
+                this.positionCalendar();
+            }
+
             // An open time panel shows the typed value, whose change the facade has already announced
             if (this.timePicker && this.timePicker.isShown) {
                 this.timeValueOnShow = this.locker ? this.locker.value : '';

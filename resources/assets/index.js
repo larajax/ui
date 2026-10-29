@@ -56,6 +56,7 @@ import { registerColorPicker } from './formwidgets/colorpicker/colorpicker.js';
 import { registerRichEditor } from './formwidgets/richeditor/richeditor.js';
 import { registerCodeEditor } from './formwidgets/codeeditor/codeeditor.js';
 import { registerMarkdownEditor } from './formwidgets/markdowneditor/markdowneditor.js';
+import { registerDataTable } from './formwidgets/datatable/datatable.js';
 import { registerRepeaterAccordion } from './formwidgets/repeater/repeater-accordion.js';
 import { registerRepeaterBuilder } from './formwidgets/repeater/repeater-builder.js';
 
@@ -130,6 +131,7 @@ export function registerUi(jax) {
     registerRichEditor(jax);
     registerCodeEditor(jax);
     registerMarkdownEditor(jax);
+    registerDataTable(jax);
     registerRepeaterAccordion(jax);
     registerRepeaterBuilder(jax);
 

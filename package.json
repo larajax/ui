@@ -13,6 +13,7 @@
     "scripts": {
         "build": "node build.js",
         "watch:richarea": "node packages/richarea/build.js --watch --outdir=resources/assets/vendor/richarea",
+        "watch:hotsheet": "node packages/hotsheet/build.js --watch --outdir=resources/assets/vendor/hotsheet",
         "test": "bun test"
     },
     "devDependencies": {
