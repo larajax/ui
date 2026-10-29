@@ -314,18 +314,9 @@ export function registerFilterWidget(jax) {
             });
         }
 
-        // If the click happens on a pikaday element, do not close the popover
+        // A press inside a date picker calendar, which mounts outside the popover, keeps the popover open.
         onCheckDocumentClickTargetDatePicker(target) {
-            if (!target.classList) {
-                return false;
-            }
-
-            return target.classList.contains('pika-next') ||
-                target.classList.contains('pika-prev') ||
-                target.classList.contains('pika-select') ||
-                target.classList.contains('pika-button') ||
-                !!target.closest('.pika-table') ||
-                !!target.closest('.pika-title');
+            return !!(target && target.closest && target.closest('[data-vc="calendar"]'));
         }
 
         // bindPopoverContent wires the group filter option loading inside the popover form.

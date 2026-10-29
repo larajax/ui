@@ -7,7 +7,6 @@
  * build only prepares vendored files ahead of publishing.
  */
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
 import * as esbuild from 'esbuild';
 import { bundle, bundleVirtual, copy, nodeModules, vendorDir } from './build-util.js';
@@ -15,25 +14,12 @@ import { buildRichArea } from './packages/richarea/build.js';
 
 console.log('\n  Building vendor files...\n');
 
-// Pikaday ships an optional moment integration guarded by a try/catch require;
-// we do not ship moment, so resolve it to an empty module (hasMoment === false,
-// pikaday falls back to its own date formatting). The shim lives outside the
-// published asset tree.
-const emptyShim = path.join(os.tmpdir(), 'larajax-ui-empty-moment.js');
-fs.writeFileSync(emptyShim, 'export default undefined;\n');
-
-const stubMomentPlugin = {
-    name: 'stub-moment',
-    setup(build) {
-        build.onResolve({ filter: /^moment$/ }, () => ({ path: emptyShim }));
-    }
-};
-
-// Pikaday (dependency-free date picker) - bundled as ESM for the vanilla
-// controls/datepicker control to import via a relative path.
-await bundle('pikaday', 'pikaday/pikaday.esm.js', {
-    plugins: [stubMomentPlugin]
-});
+// Vanilla Calendar Pro (the calendar inside Bootstrap 6's Datepicker, same version) with
+// its time and week number extensions, bundled as ESM for the datepicker control.
+await bundleVirtual(
+    "export { Calendar, time, weeks } from 'vanilla-calendar-pro';",
+    'vanilla-calendar-pro/vanilla-calendar-pro.esm.js'
+);
 
 // Popper (popover/tooltip positioning engine) - bundled as ESM for the
 // controls/popover control, matching October's vendored @popperjs/core.

@@ -1,177 +1,177 @@
 /*
- * Time Picker
+ * Date Picker - time controls
  * --------------------------------------------------
+ *
+ * Bootstrap 6 has no styles for the hour and minute inputs, AM/PM button and sliders below a
+ * datetime calendar's dates, which the time panel of a time-only field shows on their own.
  */
 
-.clockpicker-popover {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: none;
-    max-width: 276px;
-    padding: 1px;
-    text-align: left;
-    white-space: normal;
-    background-color: #fff;
-    background-clip: padding-box;
+[data-vc="calendar"] {
+    --oc-datepicker-range-track-height: 0.5rem;
+    --oc-datepicker-range-thumb-size: 1rem;
 
-    &.top {
-        margin-top: -10px;
-    }
-    &.right {
-        margin-left: 10px;
-    }
-    &.bottom {
-        margin-top: 10px;
-    }
-    &.left {
-        margin-left: -10px;
+    /* Time controls: hour and minute inputs beside a slider for each */
+    [data-vc="time"] {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.75rem;
+        align-items: center;
+        padding-top: 0.75rem;
+        margin-top: 0.75rem;
+        border-top: var(--bs-datepicker-border-width) solid var(--bs-datepicker-border-color);
+
+        /* The time panel has no dates above to separate the controls from */
+        &:only-child {
+            padding-top: 0;
+            margin-top: 0;
+            border-top: 0;
+        }
     }
 
-    .popover-title {
-        padding: 8px 14px;
+    [data-vc-time="content"] {
+        display: flex;
+        align-items: center;
+    }
+
+    [data-vc-time-input] {
+        display: flex;
+        align-items: center;
+
+        input {
+            box-sizing: border-box;
+            display: block;
+            width: 2.25rem;
+            padding: 0.25rem;
+            margin: 0;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: var(--bs-datepicker-header-font-weight);
+            line-height: 1.25rem;
+            color: var(--bs-datepicker-color);
+            text-align: center;
+            user-select: text;
+            background-color: transparent;
+            border: 0;
+            border-radius: var(--bs-radius-5);
+
+            &:hover:not(:disabled),
+            &[data-vc-input-focus] {
+                background-color: var(--bs-datepicker-day-hover-bg);
+            }
+
+            &:focus-visible {
+                position: relative;
+                z-index: 1;
+                outline: var(--bs-focus-ring);
+            }
+
+            &:disabled {
+                cursor: default;
+            }
+        }
+    }
+
+    [data-vc-time-input="hour"]::after {
+        padding-inline: 0.0625rem;
+        font-size: 1rem;
+        font-weight: var(--bs-datepicker-header-font-weight);
+        content: ":";
+    }
+
+    [data-vc-time="keeping"] {
+        padding: 0.25rem 0.375rem;
+        margin-inline-start: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1rem;
+        color: var(--bs-datepicker-weekday-color);
+        cursor: pointer;
+        background-color: transparent;
+        border: 0;
+        border-radius: var(--bs-radius-5);
+
+        &:hover:not(:disabled) {
+            background-color: var(--bs-datepicker-day-hover-bg);
+        }
+
+        &:disabled {
+            cursor: default;
+        }
+    }
+
+    /* The sliders take the width left over, so the time controls never widen the calendar */
+    [data-vc-time="ranges"] {
+        display: grid;
+        gap: 0.25rem;
+        contain: inline-size;
+    }
+
+    /* The sliders take Bootstrap's range look: a rounded track and a primary thumb */
+    [data-vc-time-range] input {
+        display: block;
+        width: 100%;
+        height: calc(var(--oc-datepicker-range-thumb-size) + var(--bs-focus-ring-width) * 2);
+        padding: 0;
         margin: 0;
-        font-size: 14px;
-        font-weight: normal;
-        line-height: 18px;
-        background-color: #f7f7f7;
-        border-bottom: 1px solid #ebebeb;
-        border-radius: 5px 5px 0 0;
-    }
-    .popover-content {
-        padding: 9px 14px;
-    }
-}
+        cursor: pointer;
+        appearance: none;
+        background-color: transparent;
 
-.clockpicker .input-group-addon {
-    cursor: pointer;
-}
-.clockpicker-moving {
-    cursor: move;
-}
-.clockpicker-align-left.popover > .arrow {
-    left: 25px;
-}
-.clockpicker-align-top.popover > .arrow {
-    top: 17px;
-}
-.clockpicker-align-right.popover > .arrow {
-    left: auto;
-    right: 25px;
-}
-.clockpicker-align-bottom.popover > .arrow {
-    top: auto;
-    bottom: 6px;
-}
+        &:focus-visible {
+            outline: 0;
+        }
 
-.clockpicker-popover {
-    .popover-title {
-        background-color: #fff;
-        color: #999;
-        font-size: 24px;
-        font-weight: bold;
-        line-height: 30px;
-        text-align: center;
+        &::-webkit-slider-runnable-track {
+            height: var(--oc-datepicker-range-track-height);
+            background-color: var(--bs-bg-3);
+            border-radius: 1rem;
+        }
 
-        span {
-            cursor: pointer;
+        &::-moz-range-track {
+            height: var(--oc-datepicker-range-track-height);
+            background-color: var(--bs-bg-3);
+            border-radius: 1rem;
+        }
+
+        &::-webkit-slider-thumb {
+            width: var(--oc-datepicker-range-thumb-size);
+            height: var(--oc-datepicker-range-thumb-size);
+            margin-top: calc((var(--oc-datepicker-range-track-height) - var(--oc-datepicker-range-thumb-size)) * 0.5);
+            appearance: none;
+            background-color: var(--bs-datepicker-day-selected-bg);
+            border: 0;
+            border-radius: 1rem;
+            box-shadow: var(--bs-box-shadow-sm);
+        }
+
+        &::-moz-range-thumb {
+            width: var(--oc-datepicker-range-thumb-size);
+            height: var(--oc-datepicker-range-thumb-size);
+            appearance: none;
+            background-color: var(--bs-datepicker-day-selected-bg);
+            border: 0;
+            border-radius: 1rem;
+            box-shadow: var(--bs-box-shadow-sm);
+        }
+
+        &:hover::-webkit-slider-thumb {
+            outline: var(--bs-focus-ring-width) solid color-mix(in oklch, var(--bs-primary-focus-ring), transparent);
+        }
+
+        &:hover::-moz-range-thumb {
+            outline: var(--bs-focus-ring-width) solid color-mix(in oklch, var(--bs-primary-focus-ring), transparent);
+        }
+
+        &:focus-visible::-webkit-slider-thumb {
+            outline: var(--bs-focus-ring);
+        }
+
+        &:focus-visible::-moz-range-thumb {
+            outline: var(--bs-focus-ring);
+        }
+
+        &:disabled {
+            cursor: default;
         }
     }
-    .popover-content {
-        background-color: #f8f8f8;
-        padding: 12px;
-
-        &:last-child {
-            border-bottom-left-radius: 5px;
-            border-bottom-right-radius: 5px;
-        }
-    }
-}
-
-.clockpicker-plate {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 50%;
-    width: 200px;
-    height: 200px;
-    overflow: visible;
-    position: relative;
-    -webkit-touch-callout: none;
-    user-select: none;
-}
-
-.clockpicker-canvas,
-.clockpicker-dial {
-    width: 200px;
-    height: 200px;
-    position: absolute;
-    left: -1px;
-    top: -1px;
-}
-.clockpicker-minutes {
-    visibility: hidden;
-}
-
-.clockpicker-tick {
-    border-radius: 50%;
-    color: #666;
-    line-height: 26px;
-    text-align: center;
-    width: 26px;
-    height: 26px;
-    position: absolute;
-    cursor: pointer;
-
-    &.active,
-    &:hover {
-        background-color: rgba(0, 149, 221, .25);
-    }
-}
-
-.clockpicker-dial {
-    transition: transform 350ms, opacity 350ms;
-}
-.clockpicker-dial-out {
-    opacity: 0;
-}
-.clockpicker-hours.clockpicker-dial-out {
-    transform: scale(1.2, 1.2);
-}
-.clockpicker-minutes.clockpicker-dial-out {
-    transform: scale(.8, .8);
-}
-.clockpicker-canvas {
-    transition: opacity 175ms;
-}
-.clockpicker-canvas-out {
-    opacity: 0.25;
-}
-.clockpicker-canvas-bearing,
-.clockpicker-canvas-fg {
-    stroke: none;
-    fill: rgb(0, 149, 221);
-}
-.clockpicker-canvas-bg {
-    stroke: none;
-    fill: rgb(192, 229, 247);
-}
-.clockpicker-canvas-bg-trans {
-    fill: rgba(0, 149, 221, .25);
-}
-.clockpicker-canvas line {
-    stroke: rgb(0, 149, 221);
-    stroke-width: 1;
-    stroke-linecap: round;
-}
-.clockpicker-button.am-button {
-    margin: 1px;
-    padding: 5px;
-    border: 1px solid rgba(0, 0, 0, .2);
-    border-radius: 4px;
-}
-.clockpicker-button.pm-button {
-    margin: 1px 1px 1px 136px;
-    padding: 5px;
-    border: 1px solid rgba(0, 0, 0, .2);
-    border-radius: 4px;
 }

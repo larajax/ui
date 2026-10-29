@@ -264,6 +264,22 @@ describe('scope updates', () => {
         expect(scope.classList.contains('active')).toBe(true);
     });
 
+    test('a press inside a date picker calendar keeps the scope popover open, a press elsewhere closes it', async () => {
+        renderFilter();
+        preloadRequest().resolve({ popoverContent: { id: numberForm } });
+
+        openScope('id');
+        await sleep(0);
+
+        document.body.insertAdjacentHTML('beforeend', '<div data-vc="calendar" data-vc-input><div data-vc="dates"><button id="calendar-day" type="button" data-vc-date-btn></button></div></div><p id="outside"></p>');
+
+        document.getElementById('calendar-day').dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        expect(Popover.activeInstance).not.toBe(null);
+
+        document.getElementById('outside').dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        expect(Popover.activeInstance).toBe(null);
+    });
+
     test('changing a dropdown scope closes an open scope popover', () => {
         renderFilter();
         preloadRequest().resolve({ popoverContent: { id: numberForm } });

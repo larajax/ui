@@ -1,10 +1,12 @@
 /*
  * DatePicker control
  *
- * A jQuery-free date and time picker driving Pikaday (date) and the vanilla
- * Clockpicker fork (time) via their plain APIs. Each visible text input acts as
- * a facade; the final normalized value is written to a hidden data locker
- * (YYYY-MM-DD, HH:mm:ss, or "YYYY-MM-DD HH:mm:ss" when both are present).
+ * A date and time picker driving Vanilla Calendar Pro (the calendar inside Bootstrap 6's
+ * Datepicker, so Bootstrap's [data-vc] styles theme it), and a time panel (timepicker.js)
+ * showing the calendar's time controls on their own for time facades. The visible text input
+ * acts as a facade; the final normalized value is written to a hidden data locker (YYYY-MM-DD,
+ * HH:mm:ss, or "YYYY-MM-DD HH:mm:ss" when both are present). In datetime mode the date facade
+ * holds the date and the time, and the calendar carries the time controls.
  *
  * Data attributes:
  * - data-control="datepicker" - enables the plugin on the wrapper element
@@ -15,14 +17,15 @@
  * - data-ignore-timezone - set when the value is not converted to the user's timezone
  *
  * Config (data-* on the wrapper, camelCased by the framework):
+ * - mode - date, datetime or time, defaults to the facades found
  * - format - date display format (YYYY YY MMMM MMM MM M DD Do D dddd ddd, [literal]),
  *   defaults to the locale's numeric date, or YYYY-MM-DD
  * - minDate - earliest selectable date (ISO string)
  * - maxDate - latest selectable date (ISO string)
- * - yearRange - years either side in the year dropdown, or [lower, upper] (default 10)
+ * - yearRange - years either side in the year view, or [lower, upper] (default 10)
  * - disableDays - weekday numbers (0 = Sunday) or YYYY-MM-DD dates that cannot be picked
  * - firstDay - first day of the week, 0 = Sunday, defaults to the locale's first day, or 0
- * - showWeekNumber - show an ISO week-number column
+ * - showWeekNumber - show a week-number column
  * - twelveHour - use a 12 hour AM/PM time picker
  * - hoursOnly - pick the hour only, minutes are stored as 00
  * - timezone - timezone of the displayed values, used for the current date and time fills
@@ -38,11 +41,16 @@
  */
 'use strict';
 
-import Pikaday from '../../vendor/pikaday/pikaday.esm.js';
-import { Clockpicker } from './clockpicker.js';
+import { TimePicker } from './timepicker.js';
 import { mountParentFor, mountOrigin } from '../popup/dialog-mount.js';
 
 const DB_DATE_FORMAT = 'YYYY-MM-DD';
+
+// Bootstrap's Datepicker closes this long after a date is picked
+const HIDE_DELAY = 100;
+
+// Gap between the facade and a calendar or time panel opened above it
+const PICKER_GAP = 4;
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'];
@@ -74,8 +82,15 @@ const TOKEN_PATTERNS = {
     D: '\\d{1,2}'
 };
 
+// A time at the end of a datetime facade, such as 14:30, 14:30:15 or 02:30 PM
+const TIME_SUFFIX = /(?:^|\s)(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?|\d{1,2}\s*[AP]M)\s*$/i;
+
 // Locale data built with Intl, cached by locale
 const localeDataCache = new Map();
+
+// The calendar module, once loaded
+let calendarModule = null;
+let calendarPromise = null;
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -85,6 +100,20 @@ const ordinal = (n) => {
     const suffixes = ['th', 'st', 'nd', 'rd'], v = n % 100;
     return n + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 };
+
+/**
+ * loadCalendar imports Vanilla Calendar Pro on first use and resolves with its exports.
+ */
+export function loadCalendar() {
+    if (!calendarPromise) {
+        calendarPromise = import('../../vendor/vanilla-calendar-pro/vanilla-calendar-pro.esm.js').then((module) => {
+            calendarModule = module;
+            return module;
+        });
+    }
+
+    return calendarPromise;
+}
 
 // Returns the page locale from <html lang>, or null when it is missing, invalid or English.
 function getPageLocale() {
@@ -108,7 +137,7 @@ function getPageLocale() {
     return locale;
 }
 
-// Returns the calendar names, first day of the week, display format and Pikaday i18n for a locale.
+// Returns the calendar names, first day of the week and display format for a locale.
 function getLocaleData(locale) {
     if (!localeDataCache.has(locale)) {
         let data = null;
@@ -143,7 +172,7 @@ function makeLocaleData(locale) {
         monthsShort.push(shortMonth.format(date));
     }
 
-    // The week starts on Sunday 1 January 2017, as Pikaday expects
+    // The week starts on Sunday 1 January 2017, matching Date.getDay()
     for (let day = 0; day < 7; day++) {
         const date = new Date(Date.UTC(2017, 0, 1 + day));
         weekdays.push(longWeekday.format(date));
@@ -156,14 +185,7 @@ function makeLocaleData(locale) {
         weekdays,
         weekdaysShort,
         firstDay: getLocaleFirstDay(locale),
-        format: getLocaleDateFormat(locale, options),
-        i18n: {
-            previousMonth: 'Previous Month',
-            nextMonth: 'Next Month',
-            months,
-            weekdays,
-            weekdaysShort
-        }
+        format: getLocaleDateFormat(locale, options)
     };
 }
 
@@ -229,6 +251,7 @@ export function registerDatepicker(jax) {
             this.hasFirstDay = this.config.firstDay !== undefined && this.config.firstDay !== null && this.config.firstDay !== '';
 
             this.config = Object.assign({
+                mode: null,
                 format: null,
                 minDate: null,
                 maxDate: null,
@@ -243,7 +266,9 @@ export function registerDatepicker(jax) {
 
             this.picker = null;
             this.timePicker = null;
-            this.onDateKeydown = this.onDateKeydown.bind(this);
+            this.isDatePickerBound = false;
+            this.onDocumentKeydown = this.onDocumentKeydown.bind(this);
+            this.onWindowResize = this.onWindowResize.bind(this);
         }
 
         connect() {
@@ -251,10 +276,11 @@ export function registerDatepicker(jax) {
             this.timeFacade = this.element.querySelector('[data-timepicker]');
             this.locker = this.element.querySelector('[data-datetime-value]');
 
+            // A datetime field with one facade picks the time in the calendar
+            this.hasCalendarTime = !!this.dateFacade && !this.timeFacade && this.config.mode === 'datetime';
             this.hasDate = !!this.dateFacade;
-            this.hasTime = !!this.timeFacade;
+            this.hasTime = !!this.timeFacade || this.hasCalendarTime;
             this.defaultTimeMidnight = this.element.hasAttribute('data-default-time-midnight');
-            this.disabledDays = Array.isArray(this.config.disableDays) ? this.config.disableDays : [];
 
             if (!this.hasDate && !this.hasTime) {
                 return;
@@ -288,15 +314,15 @@ export function registerDatepicker(jax) {
             try {
                 if (this.hasDate) {
                     const dateEnabled = this.isFacadeEnabled(this.dateFacade);
-                    if (!dateEnabled && this.picker) {
+                    if (!dateEnabled && this.isDatePickerBound) {
                         this.destroyDatePicker();
                     }
-                    else if (dateEnabled && !this.picker) {
+                    else if (dateEnabled && !this.isDatePickerBound) {
                         this.initDatePicker();
                     }
                 }
 
-                if (this.hasTime) {
+                if (this.timeFacade) {
                     const timeEnabled = this.isFacadeEnabled(this.timeFacade);
                     if (!timeEnabled && this.timePicker) {
                         this.destroyTimePicker();
@@ -323,61 +349,193 @@ export function registerDatepicker(jax) {
         // Date picker
         //
 
+        // Binds the calendar, loading it first when no other picker has.
         initDatePicker() {
-            const options = {
-                field: this.dateFacade,
-                format: this.getDateFormat(),
-                yearRange: this.config.yearRange,
-                firstDay: this.getFirstDay(),
-                showWeekNumber: !!this.config.showWeekNumber,
-                keyboardInput: false,
-                toString: (date) => this.formatDate(date, this.getDateFormat()),
-                parse: (value) => this.parseDate(value),
-                disableDayFn: (date) => this.isDateDisabled(date),
-                onSelect: () => this.onSetLockerValue(),
-                onOpen: () => this.onDatePickerOpen(),
-                onClose: () => this.onDatePickerClose()
-            };
+            this.isDatePickerBound = true;
 
-            if (this.localeData) {
-                options.i18n = this.localeData.i18n;
+            if (calendarModule) {
+                this.createCalendar(calendarModule);
+                return;
             }
+
+            loadCalendar().then((module) => {
+                if (this.isDatePickerBound && !this.picker && this.dateFacade) {
+                    this.createCalendar(module);
+                }
+            });
+        }
+
+        // Creates the calendar in input mode with the options Bootstrap's Datepicker uses, so its styles apply.
+        createCalendar({ Calendar, time, weeks }) {
+            const theme = this.getTheme(),
+                disabled = this.getDisabledDays();
+
+            const options = {
+                extensions: [time, weeks],
+                inputMode: true,
+                positionToInput: 'left',
+                type: 'default',
+                selectionDatesMode: 'single',
+                enableDateToggle: false,
+                firstWeekday: this.getFirstDay(),
+                locale: this.locale || 'en',
+                selectedTheme: !theme || theme === 'auto' ? 'system' : theme,
+                themeAttrDetect: '[data-bs-theme]',
+                enableWeekNumbers: !!this.config.showWeekNumber,
+                disableWeekdays: disabled.weekdays,
+                disableDates: disabled.dates,
+                onInit: (calendar) => this.onCalendarInit(calendar),
+                onShow: (calendar) => this.onCalendarShow(calendar),
+                onHide: () => this.onCalendarHide(),
+                onClickDate: (calendar) => this.onCalendarDate(calendar),
+                onChangeTime: (calendar, event, isError) => this.onCalendarTime(calendar, isError),
+                onCreateYearEls: (calendar, cell) => this.limitYear(calendar, cell),
+                ...this.getCalendarState()
+            };
 
             const minDate = this.parseIsoDate(this.config.minDate);
             if (minDate) {
-                options.minDate = minDate;
+                options.dateMin = this.formatDate(minDate, DB_DATE_FORMAT);
             }
 
             const maxDate = this.parseIsoDate(this.config.maxDate);
             if (maxDate) {
-                options.maxDate = maxDate;
+                options.dateMax = this.formatDate(maxDate, DB_DATE_FORMAT);
             }
 
-            this.picker = new Pikaday(options);
+            if (this.hasCalendarTime) {
+                options.selectionTimeMode = this.config.twelveHour ? 12 : 24;
+
+                if (this.config.hoursOnly) {
+                    options.timeMinMinute = 0;
+                    options.timeMaxMinute = 0;
+                }
+            }
+
+            this.picker = new Calendar(this.dateFacade, options);
+            this.picker.init();
         }
 
         destroyDatePicker() {
-            if (this.picker) {
-                this.picker.destroy();
-                this.picker = null;
+            this.isDatePickerBound = false;
+            this.unbindCalendarEvents();
+            clearTimeout(this.hideTimer);
+
+            if (!this.picker) {
+                return;
             }
 
-            document.removeEventListener('keydown', this.onDateKeydown);
+            // The calendar would swap the facade for a copy taken when it was created, so it stays in place
+            const facade = this.picker.context.inputElement;
+            if (facade) {
+                facade.replaceWith = () => {};
+            }
+
+            try {
+                this.picker.destroy();
+            }
+            finally {
+                if (facade) {
+                    delete facade.replaceWith;
+                    facade.removeAttribute('aria-haspopup');
+                }
+
+                this.picker = null;
+            }
         }
 
-        // Positions the open calendar and lets Escape close it.
-        onDatePickerOpen() {
-            this.alignDatePicker();
-            document.addEventListener('keydown', this.onDateKeydown);
+        // Returns the calendar's selected date, shown month and time from the stored value.
+        getCalendarState() {
+            const { date, time } = this.splitLockerValue(this.locker ? this.locker.value : ''),
+                now = this.getNow(),
+                shown = this.parseIsoDate(date || now.date);
+
+            const state = {
+                dateToday: now.date,
+                selectedDates: date ? [date] : [],
+                selectedMonth: shown.getMonth(),
+                selectedYear: shown.getFullYear()
+            };
+
+            if (this.hasCalendarTime) {
+                state.selectedTime = this.formatCalendarTime(time || this.getDefaultTime());
+            }
+
+            return state;
         }
 
-        onDatePickerClose() {
-            document.removeEventListener('keydown', this.onDateKeydown);
+        // Moves a new calendar into an enclosing dialog and gives it the page theme.
+        onCalendarInit(calendar) {
+            this.mountPicker(calendar.context.mainElement, this.dateFacade);
+            this.syncPickerTheme(calendar.context.mainElement);
         }
 
-        // Escape closes the calendar, and cancelling the key keeps an enclosing dialog open.
-        onDateKeydown(ev) {
-            if (ev.key !== 'Escape' || !this.picker || !this.picker.isVisible()) {
+        // Loads the stored value into the calendar and positions it beside the facade.
+        onCalendarShow(calendar) {
+            this.valueOnShow = this.locker ? this.locker.value : '';
+
+            calendar.set(this.getCalendarState());
+            this.mountPicker(calendar.context.mainElement, this.dateFacade);
+            this.syncPickerTheme(calendar.context.mainElement);
+            this.positionCalendar();
+
+            document.addEventListener('keydown', this.onDocumentKeydown, true);
+            window.addEventListener('resize', this.onWindowResize);
+        }
+
+        // Announces a value picked while the calendar was open, as a typed value would.
+        onCalendarHide() {
+            this.unbindCalendarEvents();
+            this.announceChange(this.dateFacade, this.valueOnShow);
+        }
+
+        unbindCalendarEvents() {
+            document.removeEventListener('keydown', this.onDocumentKeydown, true);
+            window.removeEventListener('resize', this.onWindowResize);
+        }
+
+        // Stores a clicked date, keeping the stored time, and closes a date-only calendar.
+        onCalendarDate(calendar) {
+            const date = calendar.context.selectedDates[0];
+            if (!date) {
+                return;
+            }
+
+            const stored = this.splitLockerValue(this.locker ? this.locker.value : '');
+            let time = null;
+
+            if (this.hasCalendarTime) {
+                time = stored.time || this.readCalendarTime(calendar);
+            }
+            else if (this.hasTime) {
+                time = stored.time || this.getDefaultTime();
+            }
+
+            this.setValue(date, time);
+
+            if (!this.hasCalendarTime) {
+                clearTimeout(this.hideTimer);
+                this.hideTimer = setTimeout(() => this.picker && this.picker.hide(), HIDE_DELAY);
+            }
+        }
+
+        // Stores a changed time, with the stored date or today when none is picked.
+        onCalendarTime(calendar, isError) {
+            if (isError) {
+                return;
+            }
+
+            const stored = this.splitLockerValue(this.locker ? this.locker.value : '');
+
+            this.setValue(
+                stored.date || calendar.context.selectedDates[0] || this.getNow().date,
+                this.readCalendarTime(calendar)
+            );
+        }
+
+        // Escape closes the calendar, and cancelling the key keeps an enclosing dialog or popover open.
+        onDocumentKeydown(ev) {
+            if (ev.key !== 'Escape' || !this.picker || !this.picker.context.isShowInInputMode) {
                 return;
             }
 
@@ -386,51 +544,124 @@ export function registerDatepicker(jax) {
             this.picker.hide();
         }
 
-        isDateDisabled(date) {
-            const compareDate = this.formatDate(date, DB_DATE_FORMAT);
-
-            return this.disabledDays.some((disabledDay) => {
-                return disabledDay === date.getDay() || disabledDay === compareDate;
-            });
+        onWindowResize() {
+            this.positionCalendar();
         }
 
-        // Aligns the calendar to the right edge of the facade when it fits on screen, inside any enclosing dialog.
-        alignDatePicker() {
-            const el = this.picker ? this.picker.el : null;
-            if (!el || !this.dateFacade) {
+        // A picker mounts on the body, but the page outside an open modal dialog is inert.
+        mountPicker(element, facade) {
+            const parent = mountParentFor(facade);
+
+            if (element && element.parentNode !== parent) {
+                parent.appendChild(element);
+            }
+        }
+
+        // Copies the theme around the facade onto a picker, as Bootstrap's Datepicker does.
+        syncPickerTheme(element) {
+            if (!element) {
                 return;
             }
 
-            // Pikaday mounts on the body, but the page outside an open modal dialog is inert
-            const parent = mountParentFor(this.dateFacade);
-            if (el.parentNode !== parent) {
-                parent.appendChild(el);
+            const theme = this.getTheme();
+
+            if (theme) {
+                element.setAttribute('data-bs-theme', theme);
             }
+            else {
+                element.removeAttribute('data-bs-theme');
+            }
+        }
 
-            // Pikaday's page position becomes a position inside the parent
-            const origin = mountOrigin(parent);
-            el.style.left = (parseFloat(el.style.left) - origin.left) + 'px';
-            el.style.top = (parseFloat(el.style.top) - origin.top) + 'px';
-            el.style.right = '';
+        getTheme() {
+            const facade = this.dateFacade || this.timeFacade,
+                themed = facade ? facade.closest('[data-bs-theme]') : null;
 
-            const rect = this.dateFacade.getBoundingClientRect();
-            if (rect.right - el.offsetWidth < 0) {
+            return themed ? themed.getAttribute('data-bs-theme') : null;
+        }
+
+        positionCalendar() {
+            const element = this.picker ? this.picker.context.mainElement : null;
+
+            // Until the calendar first opens its main element is the facade itself
+            if (element !== this.dateFacade) {
+                this.positionPicker(element, this.dateFacade);
+            }
+        }
+
+        // Places a picker below its facade, or above when only that fits, right-aligned when it fits on screen.
+        positionPicker(element, facade) {
+            if (!element || !facade) {
                 return;
             }
 
-            el.style.left = 'auto';
-            el.style.right = (origin.left + origin.width - rect.right - window.scrollX) + 'px';
+            const rect = facade.getBoundingClientRect(),
+                width = element.offsetWidth,
+                height = element.offsetHeight,
+                viewportWidth = document.documentElement.clientWidth,
+                viewportHeight = document.documentElement.clientHeight,
+                above = rect.top - height - PICKER_GAP >= 0 && rect.bottom + height + PICKER_GAP > viewportHeight;
+
+            let left = rect.right - width >= 0 ? rect.right - width : rect.left;
+            left = Math.max(0, Math.min(left, viewportWidth - width));
+
+            // Bootstrap's margin spaces a picker below the facade
+            const top = above ? rect.top - height - PICKER_GAP : rect.bottom;
+
+            // Viewport positions become positions inside the parent the picker is mounted in
+            const origin = mountOrigin(element.parentNode);
+
+            element.dataset.vcPosition = above ? 'top' : 'bottom';
+            element.style.left = (left + window.scrollX - origin.left) + 'px';
+            element.style.top = (top + window.scrollY - origin.top) + 'px';
         }
 
-        // Returns the picked date as YYYY-MM-DD, or today when none is picked.
-        getDatePickerValue() {
-            let date = null;
-
-            if (this.hasDate) {
-                date = this.parseDate(this.dateFacade.value) || (this.picker ? this.picker.getDate() : null);
+        // Disables the years outside the year range in the year view.
+        limitYear(calendar, cell) {
+            const button = cell.querySelector('[data-vc-years-year]');
+            if (!button) {
+                return;
             }
 
-            return date ? this.formatDate(date, DB_DATE_FORMAT) : this.getNow().date;
+            const [lower, upper] = this.getYearRange(calendar.context.selectedYear),
+                year = Number(button.dataset.vcYearsYear);
+
+            if (year < lower || year > upper) {
+                button.disabled = true;
+                button.tabIndex = -1;
+                button.setAttribute('aria-disabled', 'true');
+            }
+        }
+
+        // Returns the [lower, upper] years selectable around a year.
+        getYearRange(year) {
+            const range = this.config.yearRange;
+
+            if (Array.isArray(range) && range.length === 2) {
+                return [Number(range[0]), Number(range[1])];
+            }
+
+            const span = Math.abs(parseInt(range, 10)) || 10;
+
+            return [year - span, year + span];
+        }
+
+        // Splits disableDays into weekday numbers and YYYY-MM-DD dates.
+        getDisabledDays() {
+            const days = Array.isArray(this.config.disableDays) ? this.config.disableDays : [],
+                weekdays = [],
+                dates = [];
+
+            for (const day of days) {
+                if (/^\d{4}-\d{2}-\d{2}$/.test(String(day))) {
+                    dates.push(String(day));
+                }
+                else if (/^[0-6]$/.test(String(day))) {
+                    weekdays.push(Number(day));
+                }
+            }
+
+            return { weekdays, dates };
         }
 
         getDateFormat() {
@@ -455,56 +686,79 @@ export function registerDatepicker(jax) {
             return Number(this.config.firstDay) || 0;
         }
 
+        // Returns the calendar's time as HH:mm:ss.
+        readCalendarTime(calendar) {
+            const { selectedHours, selectedMinutes, selectedKeeping } = calendar.context;
+
+            return this.formatTime(selectedHours + ':' + selectedMinutes + (selectedKeeping ? ' ' + selectedKeeping : ''));
+        }
+
+        // Formats an HH:mm:ss time as the calendar and the datetime facade show it (14:30 or 02:30 PM).
+        formatCalendarTime(time) {
+            const [hours, minutes] = time.split(':').map(Number),
+                displayMinutes = this.config.hoursOnly ? '00' : pad(minutes || 0);
+
+            if (this.config.twelveHour) {
+                return pad((hours % 12) || 12) + ':' + displayMinutes + ' ' + (hours >= 12 ? 'PM' : 'AM');
+            }
+
+            return pad(hours) + ':' + displayMinutes;
+        }
+
         //
         // Time picker
         //
 
+        // Binds the time panel, which shows the calendar's time controls on their own.
         initTimePicker() {
-            this.timePicker = new Clockpicker(this.timeFacade, {
-                autoclose: true,
-                placement: 'auto',
-                align: 'right',
-                twelvehour: !!this.config.twelveHour,
-                afterDone: () => this.onSetLockerValue(),
-                afterHourSelect: () => this.onAfterHourSelect()
+            this.timePicker = new TimePicker(this.timeFacade, {
+                twelveHour: !!this.config.twelveHour,
+                hoursOnly: !!this.config.hoursOnly,
+                onShow: (picker) => this.onTimePickerShow(picker),
+                onHide: () => this.onTimePickerHide(),
+                onChangeTime: (picker) => this.onTimePickerTime(picker),
+                position: (picker) => this.positionPicker(picker.element, this.timeFacade)
             });
         }
 
         destroyTimePicker() {
             if (this.timePicker) {
-                this.timePicker.remove();
+                this.timePicker.destroy();
                 this.timePicker = null;
             }
         }
 
-        // Completes the pick after the hour when only hours are selectable.
-        onAfterHourSelect() {
-            if (!this.config.hoursOnly || !this.timePicker) {
-                return;
-            }
+        // Loads the stored time into the panel, moves it into an enclosing dialog and gives it the page theme.
+        onTimePickerShow(picker) {
+            this.timeValueOnShow = this.locker ? this.locker.value : '';
 
-            const hours = pad(this.timePicker.hours);
-
-            this.timeFacade.value = this.config.twelveHour
-                ? hours + ' ' + this.timePicker.amOrPm
-                : hours;
-
-            this.timePicker.hide();
-            this.timeFacade.dispatchEvent(new Event('change', { bubbles: true }));
+            this.loadTimePicker(picker);
+            this.mountPicker(picker.element, this.timeFacade);
+            this.syncPickerTheme(picker.element);
         }
 
-        // Returns the picked time as HH:mm:ss, or midnight or the current time when none is picked.
-        getTimePickerValue() {
-            const value = this.hasTime ? this.formatTime(this.timeFacade.value) : '';
-            if (value) {
-                return value;
-            }
+        // Announces a time picked while the panel was open, as the calendar does.
+        onTimePickerHide() {
+            this.announceChange(this.timeFacade, this.timeValueOnShow);
+        }
 
-            if (this.defaultTimeMidnight) {
-                return '00:00:00';
-            }
+        // Stores a changed time, with the stored date or today when the field also has a date.
+        onTimePickerTime(picker) {
+            const stored = this.splitLockerValue(this.locker ? this.locker.value : '');
 
-            return this.getNow().time;
+            this.setValue(this.hasDate ? stored.date || this.getNow().date : null, picker.getTime());
+        }
+
+        // Shows the stored time in the panel, or midnight or the current time when there is none.
+        loadTimePicker(picker) {
+            const { time } = this.splitLockerValue(this.locker ? this.locker.value : '');
+
+            picker.setTime(time || this.getDefaultTime());
+        }
+
+        // Returns midnight or the current time as HH:mm:ss, for a value picked without a time.
+        getDefaultTime() {
+            return this.defaultTimeMidnight ? '00:00:00' : this.getNow().time;
         }
 
         // Returns the current date (YYYY-MM-DD) and time (HH:mm:ss) in the configured timezone, or the browser's own.
@@ -550,7 +804,7 @@ export function registerDatepicker(jax) {
         //
 
         onFacadeChange(ev) {
-            if (this.isBinding || this.isEmptying) {
+            if (this.isBinding || this.isEmptying || this.isNotifying) {
                 return;
             }
 
@@ -560,35 +814,105 @@ export function registerDatepicker(jax) {
             else {
                 this.onSetLockerValue();
             }
+
+            // An open time panel shows the typed value, whose change the facade has already announced
+            if (this.timePicker && this.timePicker.isShown) {
+                this.timeValueOnShow = this.locker ? this.locker.value : '';
+                this.loadTimePicker(this.timePicker);
+            }
         }
 
+        // Fires change on a facade when the stored value moved while its picker was open, as a typed value would.
+        announceChange(facade, valueOnShow) {
+            if (!this.locker || !facade || this.locker.value === valueOnShow) {
+                return;
+            }
+
+            this.isNotifying = true;
+
+            try {
+                facade.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            finally {
+                this.isNotifying = false;
+            }
+        }
+
+        // Stores the typed value, keeping the stored part a facade does not hold or parse.
         onSetLockerValue() {
             if (!this.locker) {
                 return;
             }
 
-            if (this.hasDate && this.hasTime) {
-                this.locker.value = this.getDatePickerValue() + ' ' + this.getTimePickerValue();
+            const typed = this.readFacades(),
+                stored = this.splitLockerValue(this.locker.value);
+
+            this.setValue(
+                this.hasDate ? typed.date || stored.date || this.getNow().date : null,
+                this.hasTime ? typed.time || stored.time || this.getDefaultTime() : null
+            );
+        }
+
+        // Writes the date and time parts to the locker and shows them in the facades.
+        setValue(date, time) {
+            if (this.locker) {
+                this.locker.value = [date, time].filter(Boolean).join(' ');
             }
-            else if (this.hasDate) {
-                this.locker.value = this.getDatePickerValue();
+
+            if (this.dateFacade && date) {
+                this.dateFacade.value = this.formatFacadeDate(date, time);
             }
-            else {
-                this.locker.value = this.getTimePickerValue();
+
+            if (this.timeFacade && time) {
+                this.timeFacade.value = this.formatTime(time, true);
             }
+        }
+
+        // Reads the date (YYYY-MM-DD) and time (HH:mm:ss) typed into the facades, null when missing or invalid.
+        readFacades() {
+            let date = null,
+                time = null;
+
+            if (this.dateFacade) {
+                let value = this.dateFacade.value;
+
+                if (this.hasCalendarTime) {
+                    const match = TIME_SUFFIX.exec(value);
+                    if (match) {
+                        time = this.formatTime(match[1]) || null;
+                        value = value.slice(0, match.index);
+                    }
+                }
+
+                const parsed = this.parseDate(value.trim());
+                date = parsed ? this.formatDate(parsed, DB_DATE_FORMAT) : null;
+            }
+
+            if (this.timeFacade) {
+                time = this.formatTime(this.timeFacade.value) || null;
+            }
+
+            return { date, time };
         }
 
         // Loads the stored locker value into the facades on connect.
         syncFacadesFromLocker() {
             const { date, time } = this.splitLockerValue(this.locker ? this.locker.value : '');
 
-            if (this.hasDate && date) {
-                this.dateFacade.value = this.formatDate(this.parseIsoDate(date), this.getDateFormat());
+            if (this.dateFacade && date) {
+                this.dateFacade.value = this.formatFacadeDate(date, time);
             }
 
-            if (this.hasTime && time) {
+            if (this.timeFacade && time) {
                 this.timeFacade.value = this.formatTime(time, true);
             }
+        }
+
+        // Formats a stored date for the date facade, followed by the time in datetime mode.
+        formatFacadeDate(date, time) {
+            const value = this.formatDate(this.parseIsoDate(date), this.getDateFormat());
+
+            return this.hasCalendarTime && time ? value + ' ' + this.formatCalendarTime(time) : value;
         }
 
         // Splits a stored value into its date and time parts, either may be missing.
@@ -597,7 +921,7 @@ export function registerDatepicker(jax) {
 
             return {
                 date: match && match[1] ? match[1] : null,
-                time: match && match[2] ? match[2] : null
+                time: match && match[2] ? this.formatTime(match[2]) || null : null
             };
         }
 
@@ -608,13 +932,10 @@ export function registerDatepicker(jax) {
                 if (this.locker) {
                     this.locker.value = '';
                 }
-                if (this.hasDate) {
+                if (this.dateFacade) {
                     this.dateFacade.value = '';
-                    if (this.picker) {
-                        this.picker.setDate(null, true);
-                    }
                 }
-                if (this.hasTime) {
+                if (this.timeFacade) {
                     this.timeFacade.value = '';
                 }
             }
@@ -793,7 +1114,7 @@ export function registerDatepicker(jax) {
             if (forDisplay) {
                 const displayMinutes = this.config.hoursOnly ? '' : ':' + minutes;
 
-                // Clockpicker expects "hh:mm AM/PM" in twelve hour mode
+                // The time facade shows "hh:mm AM" in twelve hour mode
                 if (this.config.twelveHour) {
                     const displayMeridiem = hours >= 12 ? 'PM' : 'AM',
                         displayHours = (hours % 12) || 12;

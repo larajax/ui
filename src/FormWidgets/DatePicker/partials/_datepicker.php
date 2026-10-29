@@ -10,6 +10,7 @@
         id="<?= $this->getId() ?>"
         class="field-datepicker"
         data-control="datepicker"
+        data-mode="<?= e($mode) ?>"
         <?php if ($formatMoment): ?>data-format="<?= e($formatMoment) ?>"<?php endif ?>
         <?php if ($minDate): ?>data-min-date="<?= e($minDate) ?>"<?php endif ?>
         <?php if ($maxDate): ?>data-max-date="<?= e($maxDate) ?>"<?php endif ?>
@@ -24,17 +25,8 @@
         <?php if (!$useTimezone): ?>data-ignore-timezone<?php endif ?>
     >
 
-        <?php if ($mode == 'date'): ?>
+        <?php if ($mode == 'date' || $mode == 'datetime'): ?>
             <?= $this->makePartial('picker_date') ?>
-        <?php elseif ($mode == 'datetime'): ?>
-            <div class="row">
-                <div class="md:col-7">
-                    <?= $this->makePartial('picker_date') ?>
-                </div>
-                <div class="md:col-5">
-                    <?= $this->makePartial('picker_time') ?>
-                </div>
-            </div>
         <?php elseif ($mode == 'time'): ?>
             <?= $this->makePartial('picker_time') ?>
         <?php endif ?>
