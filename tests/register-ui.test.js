@@ -17,6 +17,8 @@ const CONTROL_IDS = [
     'toolbar',
     'rowlink',
     'checkbox',
+    'balloon-selector',
+    'simplelist',
     'formwidget',
     'listwidget',
     'filterwidget',
@@ -83,6 +85,7 @@ describe('registerUi', () => {
         expect(typeof jax.changeMonitor).toBe('function');
         expect(typeof jax.InputPreset).toBe('function');
         expect(typeof jax.InputPresetEngine.formatValue).toBe('function');
+        expect(typeof jax.tooltips.clear).toBe('function');
     });
 
     test('repeated calls for the same instance are ignored', () => {

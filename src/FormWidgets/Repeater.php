@@ -329,6 +329,12 @@ class Repeater extends FormWidgetBase
         $config->sessionKeySuffix = $this->sessionKeySuffix . "-{$index}";
         $config->parentFieldName = $this->formField->fieldName . "[{$indexName}]";
 
+        // Convert to tabbed config
+        $useTabs = isset($config->useTabs) ? $config->useTabs : $this->useTabs;
+        if ($useTabs) {
+            $this->moveFieldsToTabs($config);
+        }
+
         $widget = $this->makeWidget(\Larajax\Ui\Widgets\Form::class, $config);
         $widget->previewMode = $this->previewMode;
 
@@ -336,31 +342,25 @@ class Repeater extends FormWidgetBase
             'groupCode' => $groupCode
         ];
 
-        // Convert to tabbed config
-        $useTabs = isset($config->useTabs) ? $config->useTabs : $this->useTabs;
-        if ($useTabs) {
-            $widget->bindEvent('form.extendFields', function() use ($widget) {
-                $this->moveTabbedFormFields($widget, 'outside', 'secondary');
-            });
-        }
-
         $widget->bindToController();
 
         return $this->formWidgets[$index] = $widget;
     }
 
     /**
-     * moveTabbedFormFields from one tab to another
+     * moveFieldsToTabs moves the item's outside fields into its secondary tabs, where each field's tab property groups them.
      */
-    protected function moveTabbedFormFields($widget, $fromTab, $toTab)
+    protected function moveFieldsToTabs($config)
     {
-        $from = $widget->getTab($fromTab);
-        $to = $widget->getTab($toTab);
-
-        foreach ($from->getAllFields() as $name => $field) {
-            $to->addField($name, $field);
-            $from->removeField($name);
+        if (empty($config->fields) || !is_array($config->fields)) {
+            return;
         }
+
+        $secondaryTabs = (array) ($config->secondaryTabs ?? []);
+        $secondaryTabs['fields'] = $config->fields + (array) ($secondaryTabs['fields'] ?? []);
+
+        $config->secondaryTabs = $secondaryTabs;
+        $config->fields = [];
     }
 
     /**

@@ -113,13 +113,17 @@ class Group extends FilterWidgetBase
         $activeField = HtmlHelper::nameToDot($this->valueFrom);
         if ($this->model) {
             $action = $scope->mode === static::MODE_EXCLUDE ? 'whereDoesntHave' : 'whereHas';
-            $query->{$action}($activeField, function($q) use ($activeValue) {
-                $q->whereIn($q->getModel()->getQualifiedKeyName(), $activeValue);
-            });
 
-            if ($nullKey !== false) {
-                $query->orDoesntHave($activeField);
-            }
+            // Grouped so the empty option widens only this scope, not the search and scopes before it
+            $query->where(function ($query) use ($action, $activeField, $activeValue, $nullKey) {
+                $query->{$action}($activeField, function($q) use ($activeValue) {
+                    $q->whereIn($q->getModel()->getQualifiedKeyName(), $activeValue);
+                });
+
+                if ($nullKey !== false) {
+                    $query->orDoesntHave($activeField);
+                }
+            });
         }
         elseif ($this->isJsonable) {
             $action = $scope->mode === static::MODE_EXCLUDE ? 'whereJsonDoesntContain' : 'whereJsonContains';
@@ -127,11 +131,15 @@ class Group extends FilterWidgetBase
         }
         else {
             $action = $scope->mode === static::MODE_EXCLUDE ? 'whereNotIn' : 'whereIn';
-            $query->{$action}($this->valueFrom, $activeValue);
 
-            if ($nullKey !== false) {
-                $query->orWhereNull($this->valueFrom);
-            }
+            // Grouped so the empty option widens only this scope, not the search and scopes before it
+            $query->where(function ($query) use ($action, $activeValue, $nullKey) {
+                $query->{$action}($this->valueFrom, $activeValue);
+
+                if ($nullKey !== false) {
+                    $query->orWhereNull($this->valueFrom);
+                }
+            });
         }
     }
 
@@ -355,7 +363,11 @@ class Group extends FilterWidgetBase
 
         foreach ($options as $id => $result) {
             $name = is_array($result) ? ($result[0] ?? '') : $result;
-            $processed[] = ['id' => $id, 'name' => __($name)];
+
+            // An option named like a language file, such as "validation", translates to the whole file
+            $translated = __($name);
+
+            $processed[] = ['id' => $id, 'name' => is_string($translated) ? $translated : $name];
         }
 
         return $processed;

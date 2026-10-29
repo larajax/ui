@@ -199,7 +199,7 @@ class FormField extends FieldDefinition
         if ($triggerFieldParentLevel > 0) {
             // Remove the preceding symbols from the trigger field name
             $triggerField = substr($triggerField, $triggerFieldParentLevel);
-            $triggerForm = HtmlHelper::reduceNameHierarchy($triggerForm, $triggerFieldParentLevel);
+            $triggerForm = $this->reduceTriggerFormName($triggerForm, $triggerFieldParentLevel);
         }
 
         // Preserve multi field types
@@ -208,8 +208,8 @@ class FormField extends FieldDefinition
             $triggerMulti = '[]';
         }
 
-        // Final compilation
-        if ($this->arrayName) {
+        // Final compilation, where a parent reference can climb to a top form without an array name
+        if ($triggerForm) {
             $fullTriggerField = $triggerForm.'['.implode('][', HtmlHelper::nameToArray($triggerField)).']'.$triggerMulti;
         }
         else {
@@ -224,6 +224,32 @@ class FormField extends FieldDefinition
         ];
 
         return $attributes + $newAttributes;
+    }
+
+    /**
+     * reduceTriggerFormName climbs an array name up by form levels, where a repeater item level ends in a numeric index and a nested form level does not, returning null once no array name is left.
+     */
+    protected function reduceTriggerFormName(?string $arrayName, int $levels): ?string
+    {
+        $parts = $arrayName ? HtmlHelper::nameToArray($arrayName) : [];
+
+        for ($level = 0; $level < $levels && $parts; $level++) {
+            $isRepeaterItem = is_numeric(end($parts));
+
+            array_pop($parts);
+
+            if ($isRepeaterItem) {
+                array_pop($parts);
+            }
+        }
+
+        if (!$parts) {
+            return null;
+        }
+
+        $formName = array_shift($parts);
+
+        return $parts ? $formName.'['.implode('][', $parts).']' : $formName;
     }
 
     /**
@@ -316,7 +342,10 @@ class FormField extends FieldDefinition
     public function getDisplayValue($value)
     {
         if ($this->valueTrans) {
-            return e(__($value));
+            $translated = __($value);
+
+            // A value named like a language file, such as "validation", translates to the whole file
+            return e(is_string($translated) ? $translated : $value);
         }
 
         return e($value);
@@ -348,10 +377,12 @@ class FormField extends FieldDefinition
             return $staticMethod;
         }
 
+        // A list of two plain values, such as disableDays [0, 6], is not a callable
         if (
             is_array($value) &&
             count($value) === 2 &&
-            Arr::isList($value)
+            Arr::isList($value) &&
+            is_callable($value)
         ) {
             return $value;
         }

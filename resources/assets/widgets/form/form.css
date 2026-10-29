@@ -62,6 +62,17 @@
     }
 }
 
+/* A colored dot for options and values that carry a color */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-inline-end: 3px;
+    border: 1px solid color-mix(in srgb, var(--bs-bg-body) 90%, transparent);
+    border-radius: 50%;
+    vertical-align: baseline;
+}
+
 .form-control {
     position: relative;
     -webkit-appearance: none;
@@ -569,6 +580,8 @@
 
 .field-checkboxlist-scrollable {
     height: 300px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
 
     /* First checkbox */
     .form-field {

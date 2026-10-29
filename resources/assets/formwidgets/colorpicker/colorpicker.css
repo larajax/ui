@@ -9,7 +9,9 @@
     .clr-field {
         display: block;
 
+        /* The swatch stays above the input, which form controls position relatively */
         button {
+            z-index: 1;
             width: 36px;
             border-top-right-radius: var(--bs-radius-4);
             border-bottom-right-radius: var(--bs-radius-4);

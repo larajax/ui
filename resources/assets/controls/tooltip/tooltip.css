@@ -1,0 +1,59 @@
+/*
+ * Tooltip
+ */
+.control-tooltip {
+    --tooltip-color: #fff;
+    --tooltip-bg: #536061;
+    --tooltip-hotkey-color: rgba(255, 255, 255, 0.6);
+    --tooltip-hotkey-bg: rgba(255, 255, 255, 0.11);
+
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: 200px;
+    padding: 4px 8px 5px;
+    border-radius: 4px;
+    color: var(--tooltip-color);
+    background: var(--tooltip-bg);
+    font-size: 13px;
+    line-height: 140%;
+    pointer-events: none;
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+    z-index: var(--oc-zindex-tooltip);
+
+    .tooltip-hotkey {
+        display: inline-block;
+        margin-left: 5px;
+        letter-spacing: 1px;
+
+        &:empty {
+            display: none;
+        }
+
+        i {
+            display: inline-block;
+            margin-left: 5px;
+            padding: 0 2px;
+            border-radius: 3px;
+            font-style: normal;
+            color: var(--tooltip-hotkey-color);
+            background: var(--tooltip-hotkey-bg);
+
+            &:last-child {
+                margin-right: -3px;
+            }
+        }
+    }
+
+    &.tooltip-hidden {
+        display: none;
+    }
+
+    &.tooltip-invisible {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}

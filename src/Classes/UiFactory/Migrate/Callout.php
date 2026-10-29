@@ -40,9 +40,9 @@ class Callout extends UiElement
                 <?php endif ?>
                 <?php if ($this->hasHeader()): ?>
                     <div class="header">
-                        <?php if (is_string($this->icon)): ?>
+                        <?php if ($iconKey = $this->getIconKey()): ?>
                             <div class="custom-icon">
-                                <?= \Larajax\Ui\Facades\Ui::icon($this->icon) ?>
+                                <?= \Larajax\Ui\Facades\Ui::icon($iconKey) ?>
                             </div>
                         <?php endif ?>
                         <?php if ($this->label): ?>
@@ -101,6 +101,18 @@ class Callout extends UiElement
     protected function hasHeader(): bool
     {
         return $this->label || $this->comment || $this->commentHtml;
+    }
+
+    /**
+     * getIconKey returns the custom icon, or the icon pack's `callout.<type>` key when the default icon is on.
+     */
+    protected function getIconKey(): ?string
+    {
+        if (is_string($this->icon) && $this->icon !== '') {
+            return $this->icon;
+        }
+
+        return $this->icon ? 'callout.'.$this->type : null;
     }
 
     /**

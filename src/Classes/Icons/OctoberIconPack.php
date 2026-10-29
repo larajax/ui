@@ -23,6 +23,11 @@ class OctoberIconPack implements IconPack
 
             'tooltip.info' => 'icon-info-circle',
 
+            'callout.info' => 'icon-info-circle',
+            'callout.success' => 'icon-check-circle',
+            'callout.warning' => 'icon-exclamation-triangle',
+            'callout.danger' => 'icon-exclamation-circle',
+
             'fileupload.upload' => 'icon-common-file-upload',
             'fileupload.remove' => 'icon-common-file-remove',
             'fileupload.reorder' => 'icon-list-reorder',

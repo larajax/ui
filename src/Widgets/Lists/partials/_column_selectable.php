@@ -30,7 +30,7 @@ $isComplex = is_array(array_first($selectedValues));
     <?php endforeach ?>
 <?php else: ?>
     <?= e(implode(', ', $column->valueTrans
-        ? Arr::trans($selectedValues)
+        ? \October\Rain\Support\Arr::trans($selectedValues)
         : $selectedValues
     )) ?>
 <?php endif ?>

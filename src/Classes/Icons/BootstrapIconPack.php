@@ -23,6 +23,11 @@ class BootstrapIconPack implements IconPack
 
             'tooltip.info' => 'bi bi-info-circle',
 
+            'callout.info' => 'bi bi-info-circle',
+            'callout.success' => 'bi bi-check-circle',
+            'callout.warning' => 'bi bi-exclamation-triangle',
+            'callout.danger' => 'bi bi-exclamation-octagon',
+
             'fileupload.upload' => 'bi bi-upload',
             'fileupload.remove' => 'bi bi-trash',
             'fileupload.reorder' => 'bi bi-grip-vertical',

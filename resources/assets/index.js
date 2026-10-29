@@ -40,6 +40,9 @@ import { registerToolbar } from './controls/toolbar/toolbar-control.js';
 import { registerRowlink } from './controls/rowlink/rowlink-control.js';
 import { registerCheckbox } from './controls/checkbox/checkbox-control.js';
 import { registerCheckboxRange } from './controls/checkbox/checkbox-range.js';
+import { registerBalloonSelector } from './controls/balloon-selector/balloon-selector.js';
+import { registerTooltip } from './controls/tooltip/tooltip.js';
+import { registerSimpleList } from './controls/simplelist/simplelist.js';
 
 // Widgets
 import { registerFormWidget } from './widgets/form/form.js';
@@ -115,6 +118,9 @@ export function registerUi(jax) {
     registerRowlink(jax);
     registerCheckbox(jax);
     registerCheckboxRange(jax);
+    registerBalloonSelector(jax);
+    registerTooltip(jax);
+    registerSimpleList(jax);
 
     // Widgets
     registerFormWidget(jax);

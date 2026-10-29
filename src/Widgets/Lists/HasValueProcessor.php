@@ -396,7 +396,7 @@ trait HasValueProcessor
         }
 
         if (!$this->isSafeLinkageUrl((string) $linkUrl)) {
-            return e(__($linkText));
+            return $column->getDisplayValue($linkText);
         }
 
         return $this->makePartial('column_linkage', [

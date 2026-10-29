@@ -23,6 +23,11 @@ class PhosphorIconPack implements IconPack
 
             'tooltip.info' => 'ph ph-info',
 
+            'callout.info' => 'ph ph-info',
+            'callout.success' => 'ph ph-check-circle',
+            'callout.warning' => 'ph ph-warning',
+            'callout.danger' => 'ph ph-warning-octagon',
+
             'fileupload.upload' => 'ph ph-upload-simple',
             'fileupload.remove' => 'ph ph-trash',
             'fileupload.reorder' => 'ph ph-dots-six-vertical',

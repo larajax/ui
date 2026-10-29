@@ -1,0 +1,77 @@
+/*
+ * Simple list control, a bordered stack of items with optional checkboxes and drag handles
+ * --------------------------------------------------
+ */
+
+.control-simplelist {
+    margin-bottom: 1rem;
+
+    > ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border: 1px solid var(--oc-border-color);
+        border-radius: var(--bs-border-radius, .375rem);
+
+        > li {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .375rem .75rem;
+            background: var(--oc-body-bg);
+
+            &:first-child {
+                border-top-left-radius: inherit;
+                border-top-right-radius: inherit;
+            }
+
+            &:last-child {
+                border-bottom-left-radius: inherit;
+                border-bottom-right-radius: inherit;
+            }
+
+            & + li {
+                border-top: 1px solid var(--oc-border-color);
+            }
+
+            > .form-field {
+                display: flex;
+                flex: 1;
+                align-items: center;
+                gap: .5rem;
+                margin: 0;
+
+                > label {
+                    flex: 1;
+                    margin: 0;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    .drag-handle {
+        display: none;
+        color: var(--oc-text-muted);
+    }
+
+    &.is-sortable {
+        .drag-handle {
+            display: inline-flex;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .sortable-chosen {
+            background: var(--oc-brand-light);
+        }
+
+        .sortable-ghost {
+            opacity: .4;
+        }
+    }
+}
+
+[data-bs-theme="dark"] .control-simplelist.is-sortable .sortable-chosen {
+    background: var(--oc-brand-dark);
+}

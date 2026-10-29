@@ -98,13 +98,9 @@ export function registerRowlink(jax) {
             };
 
             this.listen('click', row, (ev) => {
-                // Mirrors the "td:not(.nolink) > .nolink" delegated guard.
-                const excluded = ev.target.closest('.' + exclude);
-                if (excluded &&
-                    excluded.parentElement &&
-                    excluded.parentElement.matches('td:not(.' + exclude + ')') &&
-                    row.contains(excluded)
-                ) {
+                // Mirrors the "td:not(.nolink) > .nolink" delegated guard, which matches any such element on the click path, even around a nested exclude element.
+                const excluded = ev.target.closest('td:not(.' + exclude + ') > .' + exclude);
+                if (excluded && row.contains(excluded)) {
                     state.skipNextBubble = true;
                 }
             });

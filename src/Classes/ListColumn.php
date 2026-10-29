@@ -114,7 +114,10 @@ class ListColumn extends ColumnDefinition
     public function getDisplayValue($value)
     {
         if ($this->valueTrans) {
-            return e(__($value));
+            $translated = __($value);
+
+            // A value named like a language file, such as "validation", translates to the whole file
+            return e(is_string($translated) ? $translated : $value);
         }
 
         return e($value);

@@ -143,7 +143,14 @@ class ViewComponent implements Htmlable
     {
         $kebabAttributes = [];
         foreach ($this->attributes as $key => $value) {
-            $kebabAttributes[Str::kebab($key)] = $value;
+            $key = Str::kebab($key);
+
+            // A true data attribute renders as "true", since the attribute bag would repeat its name and the framework reads that as an option value
+            if ($value === true && str_starts_with($key, 'data-')) {
+                $value = 'true';
+            }
+
+            $kebabAttributes[$key] = $value;
         }
 
         $attributes = new ComponentAttributeBag($kebabAttributes);

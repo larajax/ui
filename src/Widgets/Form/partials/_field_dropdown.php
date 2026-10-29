@@ -10,6 +10,8 @@
     ?>
     <option
         <?= $field->isSelected($value) ? 'selected="selected"' : '' ?>
+        <?php /* A disabled option already saved stays enabled, since a disabled selection would not be posted */ ?>
+        <?= $option->disabled && !$field->isSelected($value) ? 'disabled' : '' ?>
         <?php if ($option->color): ?>
             data-status="<?= e($option->color) ?>"
         <?php elseif ($option->image): ?>

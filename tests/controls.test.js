@@ -176,6 +176,37 @@ describe('rowlink', () => {
         expect(document.getElementById('excluded').hasAttribute('tabindex')).toBe(false);
         expect(document.getElementById('excluded').classList.contains('rowlink')).toBe(false);
     });
+
+    test('a click inside a nested exclude element of a linked cell does not follow the row link', () => {
+        const jax = makeFakeJax();
+        registerRowlink(jax);
+
+        // Mirrors the tree toggle, a nolink anchor inside a nolink wrapper inside the linked cell
+        document.body.innerHTML = `
+            <table data-control="rowlink">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="nolink">
+                                <a href="javascript:;" class="tree-toggle nolink"><span id="toggle-icon"></span></a>
+                            </div>
+                            <a href="/categories/1/edit">Guides</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+
+        const control = new (jax.controls.get('rowlink'))(document.querySelector('table'));
+        control.init?.();
+        control.connect();
+
+        document.getElementById('toggle-icon').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(jax.visits).toEqual([]);
+
+        document.querySelector('td').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(jax.visits).toEqual(['/categories/1/edit']);
+    });
 });
 
 describe('repeater defaults', () => {
