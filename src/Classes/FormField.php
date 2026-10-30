@@ -158,7 +158,7 @@ class FormField extends FieldDefinition
         if ($position === 'field' && $this->readOnly) {
             $attributes = $attributes + ['readonly' => 'readonly'];
 
-            if ($this->type === 'checkbox' || $this->type === 'switch') {
+            if (in_array($this->type, ['checkbox', 'switch', 'radio'])) {
                 $attributes = $attributes + ['onclick' => 'return false;'];
             }
         }

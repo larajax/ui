@@ -75,8 +75,9 @@ export function registerFormWidget(jax) {
             const field = ev.target.closest('.field-checkboxlist'),
                 isDisabled = field.classList.contains('control-disabled');
 
+            // An attribute rather than the property, since the quick select buttons are links with no disabled property
             field.querySelectorAll('input[type=checkbox]:not([data-option-disabled]), .checkboxlist-controls > .control-button').forEach((el) => {
-                el.disabled = isDisabled;
+                el.toggleAttribute('disabled', isDisabled);
             });
         }
 
@@ -87,7 +88,7 @@ export function registerFormWidget(jax) {
         bindCheckboxlist() {
             this.listen('click', '[data-field-checkboxlist-all]', (event) => {
                 const el = event.delegateTarget;
-                if (el.disabled || el.readOnly) {
+                if (el.hasAttribute('disabled') || el.hasAttribute('readonly')) {
                     return;
                 }
 
@@ -96,7 +97,7 @@ export function registerFormWidget(jax) {
 
             this.listen('click', '[data-field-checkboxlist-none]', (event) => {
                 const el = event.delegateTarget;
-                if (el.disabled || el.readOnly) {
+                if (el.hasAttribute('disabled') || el.hasAttribute('readonly')) {
                     return;
                 }
 

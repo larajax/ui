@@ -205,6 +205,17 @@ describe('checkbox lists', () => {
         expect(changes).toBe(2);
     });
 
+    test('select all and none leave a read-only list alone', () => {
+        connectForm(list().replace(/data-field-checkboxlist-(all|none)>/g, 'readonly data-field-checkboxlist-$1>'));
+        const boxes = [...document.querySelectorAll('input[type=checkbox]')];
+
+        document.querySelector('[data-field-checkboxlist-all]').click();
+        expect(boxes.map((box) => box.checked)).toEqual([false, false, true]);
+
+        document.querySelector('[data-field-checkboxlist-none]').click();
+        expect(boxes.map((box) => box.checked)).toEqual([false, false, true]);
+    });
+
     test('a disabled list disables its options and buttons, and the trigger re-enables them', () => {
         connectForm(list('control-disabled'));
         const field = document.querySelector('.field-checkboxlist');
@@ -218,6 +229,10 @@ describe('checkbox lists', () => {
 
         expect(field.querySelector('input[value="1"]').disabled).toBe(false);
         expect(field.querySelector('input[value="2"]').disabled).toBe(true);
+        expect(field.querySelector('[data-field-checkboxlist-all]').hasAttribute('disabled')).toBe(false);
+
+        document.querySelector('[data-field-checkboxlist-all]').click();
+        expect(field.querySelector('input[value="1"]').checked).toBe(true);
     });
 
     test('a trigger empty action clears the list', () => {

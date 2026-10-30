@@ -28,11 +28,24 @@
         <?php endforeach ?>
     <?php endif ?>
 <?php }; ?>
+<?php $findDropdownOptionFunc = function($options) use (&$findDropdownOptionFunc, $field) {
+    foreach ($options as $value => $option) {
+        if (!$option->optgroup && (string) $value === (string) $field->value) {
+            return $option;
+        }
+
+        if ($option->children && ($childOption = $findDropdownOptionFunc($option->children))) {
+            return $childOption;
+        }
+    }
+
+    return null;
+}; ?>
 
 <!-- Dropdown -->
 <?php if ($this->previewMode || $field->readOnly): ?>
     <div class="form-control" <?= $field->readOnly ? 'readonly' : '' ?>>
-        <?php if ($option = $fieldOptions[$field->value] ?? null): ?>
+        <?php if ($option = $findDropdownOptionFunc($fieldOptions)): ?>
             <?php if ($option->color): ?>
                 <span class="status-indicator" style="background:<?= e($option->color) ?>"></span>
             <?php elseif ($option->image): ?>
