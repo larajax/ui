@@ -258,15 +258,7 @@
     }
 }
 
-/* Tab modification for dialogs */
+/* Tabs in a dialog sit on the dialog's own background */
 .dialog {
-    .control-tabs.primary-tabs {
-        > ul.nav-tabs,
-        > div > ul.nav-tabs,
-        > div > div > ul.nav-tabs {
-            > li.active a:before {
-                background: var(--tab-popup-bg);
-            }
-        }
-    }
+    --tab-surface: var(--oc-popup-bg);
 }

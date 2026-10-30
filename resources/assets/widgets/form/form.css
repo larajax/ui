@@ -8,6 +8,7 @@
  */
 
 .form-preview {
+    --tab-surface: var(--oc-primary-bg);
     padding: 20px;
     margin-bottom: 20px;
     background: var(--oc-primary-bg);
@@ -24,25 +25,6 @@
     /* Form to sit flush to the element above */
     &.form-flush {
         border-top: none;
-    }
-
-    /* Style primary tabs */
-    .control-tabs.primary-tabs {
-        > ul.nav-tabs,
-        > div > ul.nav-tabs,
-        > div > div > ul.nav-tabs {
-            > li a > span.title {
-                &:before,
-                &:after {
-                    background: var(--oc-primary-bg);
-                }
-            }
-            > li.active a {
-                &:before {
-                    background-color: var(--oc-primary-bg);
-                }
-            }
-        }
     }
 }
 

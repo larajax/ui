@@ -1,4 +1,5 @@
 .field-repeater > ul > li.field-repeater-item {
+    --tab-surface: var(--oc-repeater-body-bg);
     position: relative;
     background: var(--oc-repeater-body-bg);
     border: 1px solid var(--oc-repeater-body-border);
@@ -7,6 +8,7 @@
     min-height: 30px;
 
     .field-repeater > ul > li.field-repeater-item {
+        --tab-surface: var(--oc-repeater-body-inner-bg);
         background: var(--oc-repeater-body-inner-bg);
     }
 

@@ -29,6 +29,16 @@
  */
 
 .control-tabs.primary-tabs {
+    /* The active tab is one shape, masked in three slices (two fixed corners and a stretching middle) so its corners never distort */
+    --tab-shape-fill:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 39' preserveAspectRatio='none'%3E%3Cpath d='M0 39V38Q6 38 6.65 32.03L9.14 8.96Q10 1 18 1V39Z'/%3E%3C/svg%3E") left top / 18px 100% no-repeat,
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 39' preserveAspectRatio='none'%3E%3Crect width='10' height='39'/%3E%3C/svg%3E") center top / calc(100% - 34px) 100% no-repeat,
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 39' preserveAspectRatio='none'%3E%3Cpath d='M18 39V38Q12 38 11.35 32.03L8.86 8.96Q8 1 0 1V39Z'/%3E%3C/svg%3E") right top / 18px 100% no-repeat;
+    --tab-shape-stroke:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 39' preserveAspectRatio='none'%3E%3Cpath d='M0 38Q6 38 6.65 32.03L9.14 8.96Q10 1 18 1' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E") left top / 18px 100% no-repeat,
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 39' preserveAspectRatio='none'%3E%3Cpath d='M0 1H10' stroke='black' stroke-width='2'/%3E%3C/svg%3E") center top / calc(100% - 34px) 100% no-repeat,
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 39' preserveAspectRatio='none'%3E%3Cpath d='M18 38Q12 38 11.35 32.03L8.86 8.96Q8 1 0 1' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E") right top / 18px 100% no-repeat;
+
     margin-bottom: 5px;
 
     > ul.nav-tabs,
@@ -70,7 +80,8 @@
                 padding-bottom: 3px;
                 margin: 0;
                 position: relative;
-                top: -1px;
+                /* Every tab sits at the active tab's offset, so labels share one baseline when the selection moves */
+                top: 2px;
                 z-index: calc(var(--tab-zindex) + 1);
                 background: transparent;
                 overflow: visible;
@@ -89,53 +100,44 @@
                         border-top: 2px solid transparent;
                     }
 
+                    /* The shape runs from the top of the title to the bottom of the baseline, with feet that flare into it */
                     &:before,
                     &:after {
                         content: '';
-                        display: none;
-                        border-top: 2px solid var(--tab-border);
                         position: absolute;
-                        background: transparent;
                         top: 0;
+                        bottom: -4px;
+                        left: -6px;
+                        right: -6px;
                         z-index: -1;
-                        width: 20px;
-                        bottom: -2px;
-                        transform-origin: bottom;
+                        opacity: 0;
+                        transition: opacity 0.12s ease-out;
                     }
 
                     &:before {
-                        left: 0;
-                        border-left: 2px solid var(--tab-border);
-                        border-radius: 8px 0 0 0;
-                        transform: skewX(-10deg);
+                        background: var(--tab-surface, var(--bs-bg-body));
+                        mask: var(--tab-shape-fill);
                     }
 
                     &:after {
-                        right: 0;
-                        border-right: 2px solid var(--tab-border);
-                        border-radius: 0 8px 0 0;
-                        transform: skewX(10deg);
+                        background: var(--tab-border);
+                        mask: var(--tab-shape-stroke);
                     }
                 }
-            }
 
-            &:not(.active) {
-                a:before {
-                    content: '';
-                    left: 12px;
-                    right: 12px;
-                    top: 6px;
-                    bottom: 3px;
-                    border-radius: 4px;
-                    position: absolute;
-                    background: var(--tab-hover-bg);
-                    opacity: 0;
-                    transition: none;
+                /* Hovering an inactive tab previews its outline */
+                &:hover > span.title:after {
+                    opacity: 0.5;
                 }
 
-                &:hover a:before {
-                    transition: opacity 0.1s ease-out, color 0.1s ease-out;
-                    opacity: 1;
+                /* The keyboard focus ring follows the shape */
+                &:focus-visible {
+                    outline: 0;
+
+                    > span.title:after {
+                        opacity: 1;
+                        background: var(--tab-brand-primary);
+                    }
                 }
             }
 
@@ -151,31 +153,14 @@
 
             &.active a {
                 z-index: calc(var(--tab-zindex) + 3);
-                top: 2px;
 
                 > span.title {
                     z-index: calc(var(--tab-zindex) + 2);
-                    border-top-color: #d6d6d6;
 
                     &:before,
                     &:after {
-                        display: block;
-                        border-color: var(--tab-border);
+                        opacity: 1;
                     }
-
-                    span {
-                        border-top-color: var(--tab-border);
-                    }
-                }
-
-                &:before {
-                    position: absolute;
-                    bottom: -1px;
-                    height: 2.6px;
-                    right: 2px;
-                    left: 2px;
-                    content: ' ';
-                    background-color: var(--tab-body-bg);
                 }
             }
         }

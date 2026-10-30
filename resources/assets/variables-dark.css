@@ -55,7 +55,7 @@
     --oc-toolbar-hover-color: white;
     --oc-toolbar-hover-bg: #43484e; /* rgba(215,225,234,0.2); */
 
-    --oc-tab-color: var(--bs-fg-body);
+    --oc-tab-color: var(--bs-fg-3);
     --oc-tab-active-color: #e0e0e0;
     --oc-tab-border: #383a3e;
     --oc-tab-hover-bg: rgba(215,225,234,0.2);

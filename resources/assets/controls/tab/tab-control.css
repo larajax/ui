@@ -46,11 +46,7 @@
     --tab-brand-primary: var(--bs-primary-base);
     --tab-brand-danger: var(--bs-danger-base);
 
-    /* Body background */
-    --tab-body-bg: var(--bs-bg-body);
-
-    /* Popup background */
-    --tab-popup-bg: var(--oc-popup-bg);
+    /* The surface behind the tabs is --tab-surface, which a container sets and the tabs read with the body color as fallback */
 
     /* Content tabs specific */
     --tab-content-bg: var(--oc-content-tab-content-bg, #e9edf3);
