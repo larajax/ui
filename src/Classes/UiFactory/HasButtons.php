@@ -19,7 +19,6 @@ trait HasButtons
      * @param bool $secondary Secondary styling
      */
     public static function button(
-        string $_migrate = '',
         string $label = '',
         string $href = '',
         string $icon = '',
@@ -28,11 +27,7 @@ trait HasButtons
         bool $danger = false,
         string|array $hotkey = '',
         ...$attributes
-    ): ViewComponent|\Larajax\Ui\Classes\UiFactory\Migrate\Button {
-        if ($_migrate !== '') {
-            return new \Larajax\Ui\Classes\UiFactory\Migrate\Button($_migrate, $label);
-        }
-
+    ): ViewComponent {
         return new ViewComponent('button', compact(
             'label',
             'href',
@@ -55,7 +50,6 @@ trait HasButtons
      * @param array $requestData Request data to pass with the AJAX request
      */
     public static function popupButton(
-        string $_migrate = '',
         string $label = '',
         string $handler = '',
         string $icon = '',
@@ -65,11 +59,7 @@ trait HasButtons
         string|array $hotkey = '',
         array $requestData = [],
         ...$attributes
-    ): ViewComponent|\Larajax\Ui\Classes\UiFactory\Migrate\PopupButton {
-        if ($_migrate !== '') {
-            return new \Larajax\Ui\Classes\UiFactory\Migrate\PopupButton($_migrate, $label);
-        }
-
+    ): ViewComponent {
         return new ViewComponent('button.popup-button', compact(
             'label',
             'handler',
@@ -93,7 +83,6 @@ trait HasButtons
      * @param array $requestData Request data to pass with the AJAX request
      */
     public static function ajaxButton(
-        string $_migrate = '',
         string $label = '',
         string $handler = '',
         string $icon = '',
@@ -103,11 +92,7 @@ trait HasButtons
         string|array $hotkey = '',
         array $requestData = [],
         ...$attributes
-    ): ViewComponent|\Larajax\Ui\Classes\UiFactory\Migrate\AjaxButton {
-        if ($_migrate !== '') {
-            return new \Larajax\Ui\Classes\UiFactory\Migrate\AjaxButton($_migrate, $label);
-        }
-
+    ): ViewComponent {
         return new ViewComponent('button.ajax-button', compact(
             'label',
             'handler',

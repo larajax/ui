@@ -17,7 +17,7 @@ A highlighted message block in four types: `callout-info`, `callout-success`, `c
 </div>
 ```
 
-The icon is an icon pack class inside `.custom-icon`. `Ui::callout()` uses the pack's `callout.info`, `callout.success`, `callout.warning` or `callout.danger` key unless `->icon()` names another icon, and `->icon(false)` leaves it out.
+The icon is an icon pack class inside `.custom-icon`. `Ui::callout()` uses the pack's `callout.info`, `callout.success`, `callout.warning` or `callout.danger` key unless its `icon` argument names another icon, and `icon: false` leaves it out. Its body is captured with `->slot()` up to `Ui::end()`, and `Ui::slot('action')` fills an `.action` element placed before the header.
 
 ## Modifiers
 

@@ -49,11 +49,6 @@ class ViewComponent implements Htmlable
     protected ?string $currentSlot = null;
 
     /**
-     * @var \Closure|null renderer renders the captured slots in place of the component view.
-     */
-    protected ?\Closure $renderer = null;
-
-    /**
      * @var array stack of active components for nesting support
      */
     protected static array $stack = [];
@@ -65,17 +60,6 @@ class ViewComponent implements Htmlable
         $this->name = $name;
         $this->props = $props;
         $this->attributes = $attributes;
-    }
-
-    /**
-     * using creates a component that passes its captured slots, keyed by name, to a callback that returns the HTML.
-     */
-    public static function using(\Closure $renderer): static
-    {
-        $component = new static('');
-        $component->renderer = $renderer;
-
-        return $component;
     }
 
     /**
@@ -157,10 +141,6 @@ class ViewComponent implements Htmlable
      */
     protected function render(): string
     {
-        if ($this->renderer) {
-            return (string) ($this->renderer)($this->slots);
-        }
-
         $kebabAttributes = [];
         foreach ($this->attributes as $key => $value) {
             $key = Str::kebab($key);

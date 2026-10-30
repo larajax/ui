@@ -119,10 +119,41 @@ class UiFactory
     }
 
     /**
-     * callout creates a callout, where the optional body is a string, closure or UI element
+     * callout creates a callout component, whose body is captured with slot() and whose action area is the "action" slot.
+     *
+     * Usage:
+     *     <?php Ui::callout(label: 'Trial ending', warning: true)->slot() ?>
+     *         <p>Add a payment method to keep your projects.</p>
+     *     <?php Ui::slot('action') ?>
+     *         <?= Ui::ajaxButton(label: 'Add a card', handler: 'onAddCard') ?>
+     *     <?php Ui::end() ?>
+     *
+     * @param string $label Title in the header
+     * @param string $comment Text under the title
+     * @param bool $success Success styling
+     * @param bool $warning Warning styling
+     * @param bool $danger Danger styling
+     * @param string|bool $icon Icon class, true for the type's icon from the icon pack, or false for none
+     * @param bool $commentHtml Render the comment as HTML
      */
-    public static function callout($body = null)
-    {
-        return new \Larajax\Ui\Classes\UiFactory\Migrate\Callout($body);
+    public static function callout(
+        string $label = '',
+        string $comment = '',
+        bool $success = false,
+        bool $warning = false,
+        bool $danger = false,
+        string|bool $icon = true,
+        bool $commentHtml = false,
+        ...$attributes
+    ): ViewComponent {
+        return new ViewComponent('callout', compact(
+            'label',
+            'comment',
+            'success',
+            'warning',
+            'danger',
+            'icon',
+            'commentHtml'
+        ), $attributes);
     }
 }
