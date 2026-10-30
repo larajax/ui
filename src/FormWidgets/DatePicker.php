@@ -196,6 +196,15 @@ class DatePicker extends FormWidgetBase
             }
         }
 
+        // The value renders with both parts, so an unchanged date or time field posts its part alone again
+        if ($this->mode === 'date' || $this->mode === 'time') {
+            $carbon = DateTimeHelper::makeCarbon($value, false);
+
+            if ($carbon instanceof Carbon) {
+                return $this->mode === 'date' ? $carbon->toDateString() : $carbon->toTimeString();
+            }
+        }
+
         return $value;
     }
 

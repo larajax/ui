@@ -8,7 +8,7 @@
                 <?= \Larajax\Ui\Facades\Ui::icon('search.icon') ?>
             </span>
             <input
-                placeholder="<?= $placeholder ?>"
+                placeholder="<?= e($placeholder) ?>"
                 type="text"
                 name="<?= $this->getName() ?>"
                 value="<?= e($value) ?>"

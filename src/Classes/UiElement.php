@@ -36,4 +36,20 @@ class UiElement extends ElementBase implements Htmlable
 
         parent::__construct([]);
     }
+
+    /**
+     * slot captures the markup up to Ui::end() as the element body, where Ui::slot() switches to the property of that name, such as a callout action.
+     */
+    public function slot(string $name = 'default'): void
+    {
+        ViewComponent::using(function (array $slots): string {
+            foreach ($slots as $slotName => $html) {
+                if (($html = trim((string) $html)) !== '') {
+                    $this->config[$slotName === 'default' ? 'body' : $slotName] = $html;
+                }
+            }
+
+            return $this->renderAsString();
+        })->slot($name);
+    }
 }

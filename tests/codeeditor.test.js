@@ -158,6 +158,7 @@ describe('code editor', () => {
         expect(options.wordWrap).toBe('wordWrapColumn');
         expect(options.wordWrapColumn).toBe(80);
         expect(options.lineNumbers).toBe('off');
+        expect(options.lineDecorationsWidth).toBe(20);
         expect(options.showFoldingControls).toBe('never');
         expect(options.quickSuggestions).toBe(true);
         expect(options.rulers).toEqual([80]);

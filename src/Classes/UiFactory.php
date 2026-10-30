@@ -87,7 +87,7 @@ class UiFactory
     }
 
     /**
-     * url returns the address for a widget path.
+     * url returns the address for a widget path, or for a link with a registered scheme.
      */
     public static function url(string $path): string
     {

@@ -220,9 +220,10 @@ export function registerCodeEditor(jax) {
                 options.wordWrapColumn = parseInt(wordWrap, 10) || 80;
             }
 
+            // Without a gutter the text keeps the same space on its left as above and below it
             if (!config.showGutter) {
                 options.lineNumbers = 'off';
-                options.lineDecorationsWidth = 0;
+                options.lineDecorationsWidth = padding;
                 options.lineNumbersMinChars = 0;
                 options.showFoldingControls = 'never';
             }

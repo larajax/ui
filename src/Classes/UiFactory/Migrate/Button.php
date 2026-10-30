@@ -1,7 +1,6 @@
 <?php namespace Larajax\Ui\Classes\UiFactory\Migrate;
 
 use Html;
-use Backend;
 use Larajax\Ui\Classes\UiElement;
 use Larajax\Ui\Facades\Ui;
 
@@ -180,11 +179,11 @@ class Button extends UiElement
     }
 
     /**
-     * linkTo
+     * linkTo links the button to a widget path resolved by Ui::url(), or to the address as given when it is raw.
      */
     public function linkTo(string $linkUrl, bool $isRaw = false): static
     {
-        $this->linkUrl = $isRaw ? $linkUrl : Backend::url($linkUrl);
+        $this->linkUrl = $isRaw ? $linkUrl : Ui::url($linkUrl);
 
         return $this;
     }

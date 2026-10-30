@@ -1,6 +1,6 @@
 <div
     id="<?= $this->getId() ?>"
-    class="control-filter"
+    class="control-filter <?= $cssClasses ?>"
     data-control="filterwidget"
     data-popover-template="#<?= $this->getId('popoverTemplate') ?>"
     data-update-handler="<?= $this->getEventHandler('onFilterUpdate') ?>"

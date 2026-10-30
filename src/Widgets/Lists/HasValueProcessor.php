@@ -362,7 +362,8 @@ trait HasValueProcessor
                 if (
                     !str_starts_with($linkUrl, '//') &&
                     !str_starts_with($linkUrl, 'http://') &&
-                    !str_starts_with($linkUrl, 'https://')
+                    !str_starts_with($linkUrl, 'https://') &&
+                    !UrlHelper::isResolvableLink($linkUrl)
                 ) {
                     $linkUrl = UrlHelper::to($linkUrl);
                 }

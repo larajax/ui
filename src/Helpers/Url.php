@@ -42,10 +42,14 @@ class Url
     }
 
     /**
-     * to returns the address for a widget path.
+     * to returns the address for a widget path, or for a link with a registered scheme, which is empty when the link points nowhere.
      */
     public static function to(string $path): string
     {
+        if (static::isResolvableLink($path)) {
+            return (string) static::resolveLink($path);
+        }
+
         if (static::$urlResolver) {
             return (string) (static::$urlResolver)($path);
         }

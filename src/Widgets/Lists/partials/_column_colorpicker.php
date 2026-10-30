@@ -2,10 +2,10 @@
     <span
         class="list-colorpicker is-twotone"
         style="--background-color:<?= e($value[0]) ?>;--foreground-color:<?= e($value[1]) ?>"
-    ><span>
+    ></span>
 <?php elseif ($value): ?>
     <span
         class="list-colorpicker"
         style="--background-color:<?= e($value) ?>"
-    ><span>
+    ></span>
 <?php endif ?>
