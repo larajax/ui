@@ -12,6 +12,15 @@ export const MIN_FLEX_WIDTH = 60;
 export const MIN_COLUMN_WIDTH = 30;
 export const ROW_HEADER_WIDTH = 50;
 
+/**
+ * scaledRowHeight returns the row height in pixels, given for a 16px root font and scaled with the page's, so rows grow with the text.
+ */
+export function scaledRowHeight(rowHeight) {
+    const rootSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+
+    return Math.round(rowHeight * rootSize / 16);
+}
+
 function element(tag, className, attributes = {}) {
     const el = document.createElement(tag);
     if (className) {
@@ -273,7 +282,8 @@ export function applyLayout(sheet) {
     table.setAttribute('aria-readonly', String(!!sheet.options.readOnly));
     table.style.setProperty('--hotsheet-columns', template);
     table.style.setProperty('--hotsheet-min-width', `${minWidth}px`);
-    table.style.setProperty('--hotsheet-row-height', `${sheet.options.rowHeight}px`);
+    sheet.rowHeightPx = scaledRowHeight(sheet.options.rowHeight);
+    table.style.setProperty('--hotsheet-row-height', `${sheet.rowHeightPx}px`);
     table.style.setProperty('--hotsheet-row-header-width', `${sheet.options.rowHeaders ? ROW_HEADER_WIDTH : 0}px`);
 
     if (typeof sheet.options.height === 'number') {

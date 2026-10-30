@@ -23,7 +23,7 @@
     background-color: var(--oc-filter-bg);
     border-top: 1px solid var(--oc-filter-border);
     border-bottom: 1px solid var(--oc-filter-border);
-    font-size: 14px;
+    font-size: 0.875rem;
     display: flex;
     align-items: center;
 
@@ -33,7 +33,7 @@
     }
 
     > .filter-setup {
-        padding: 6px 10px;
+        padding: 0.375rem 0.625rem;
         flex-shrink: 0;
 
         > a {
@@ -42,14 +42,14 @@
                 margin-right: -2px;
                 display: block;
                 color: var(--oc-toolbar-color);
-                width: 24px;
-                height: 24px;
+                width: 1.5rem;
+                height: 1.5rem;
                 text-align: center;
-                border-radius: 3px;
+                border-radius: 0.1875rem;
                 > i {
                     position: relative;
                     top: 2px;
-                    font-size: 20px;
+                    font-size: 1.25rem;
                 }
             }
 
@@ -72,7 +72,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 10px;
+            width: 0.625rem;
             z-index: 2;
             opacity: 0;
             transition: opacity 0.1s ease-out;
@@ -81,12 +81,12 @@
 
         &::before {
             background: transparent linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0) 100%);
-            left: -3px;
+            left: -0.1875rem;
         }
 
         &::after {
             background: transparent linear-gradient(270deg, #000 0%, rgba(0, 0, 0, 0) 100%);
-            right: -3px;
+            right: -0.1875rem;
         }
 
         &.scroll-before::before {
@@ -112,16 +112,16 @@
     }
 
     .filter-group > .filter-scope {
-        padding: 8px;
+        padding: 0.5rem;
         display: block;
 
         .filter-label {
-            margin-right: 5px;
+            margin-right: 0.3125rem;
         }
 
         .filter-setting {
             display: inline-block;
-            margin-right: 5px;
+            margin-right: 0.3125rem;
             transition: color 0.6s;
         }
 
@@ -135,29 +135,29 @@
                 > span {
                     left: unset;
                     right: 0;
-                    top: 10px;
+                    top: 0.625rem;
                     background-color: var(--oc-filter-bg);
                     border-radius: 50%;
                     margin-top: 0;
-                    width: 20px;
-                    height: 20px;
-                    background-size: 15px 15px;
+                    width: 1.25rem;
+                    height: 1.25rem;
+                    background-size: 0.9375rem 0.9375rem;
                 }
             }
         }
 
         /* Caret rendered via Ui::icon('filter.caret') in the scope partials */
         .filter-caret {
-            font-size: 14px;
+            font-size: 0.875rem;
         }
 
         &.active {
             .filter-setting {
-                padding-left: 5px;
-                padding-right: 5px;
+                padding-left: 0.3125rem;
+                padding-right: 0.3125rem;
                 color: #FFF;
                 background-color: var(--oc-filter-bg-active);
-                border-radius: 4px;
+                border-radius: 0.25rem;
                 transition: color 1s, background-color 1s;
             }
         }
@@ -177,23 +177,23 @@
 
     .filter-group > .filter-has-popover {
         display: inline-block;
-        padding: 10px;
+        padding: 0.625rem;
         .filter-setting {
             display: inline-block;
             transition: color 0.6s;
         }
 
         .filter-caret {
-            font-size: 14px;
+            font-size: 0.875rem;
         }
 
         &.active {
             .filter-setting {
-                padding-left: 5px;
-                padding-right: 5px;
+                padding-left: 0.3125rem;
+                padding-right: 0.3125rem;
                 color: #FFF;
                 background-color: var(--oc-filter-bg-active);
-                border-radius: 4px;
+                border-radius: 0.25rem;
                 transition: color 1s, background-color 1s;
             }
         }
@@ -224,7 +224,7 @@
         }
 
         &:after {
-            --loader-size: 20px;
+            --loader-size: 1.25rem;
             content: '';
             position: absolute;
             left: 50%;
@@ -242,13 +242,13 @@
 }
 
 .control-filter-popover {
-    min-width: 275px;
+    min-width: 17.1875rem;
 
     > .loading-indicator-container > .loading-indicator {
-        border-radius: 4px;
+        border-radius: 0.25rem;
 
         > span {
-            left: 10px;
+            left: 0.625rem;
         }
     }
 
@@ -265,10 +265,10 @@
 
     .filter-buttons {
         border-top: 1px solid var(--oc-filter-border);
-        padding: 10px;
+        padding: 0.625rem;
         display: flex;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 0.3125rem;
+        border-bottom-right-radius: 0.3125rem;
 
         > div {
             flex-grow: 1;

@@ -27,13 +27,13 @@
     /* Control UI */
 
     .recordfinder-control-container {
-        border-radius: 4px;
+        border-radius: 0.25rem;
         border: 1px solid var(--bs-border-color);
         background: var(--oc-form-control-bg);
     }
 
     .recordfinder-control-toolbar {
-        padding: 3px;
+        padding: 0.1875rem;
         font-size: 0;
 
         .backend-toolbar-button {
@@ -67,7 +67,7 @@
         position: relative;
         outline: none;
         display: block;
-        margin: 4px;
+        margin: 0.25rem;
 
         .record-data-container-inner {
             position: relative;
@@ -79,24 +79,24 @@
         }
 
         .icon-container {
-            width: 20px;
-            height: 20px;
+            width: 1.25rem;
+            height: 1.25rem;
             position: absolute;
 
             i {
                 position: relative;
                 top: 2px;
-                left: 3px;
+                left: 0.1875rem;
             }
         }
 
         .info {
-            padding-left: 26px;
+            padding-left: 1.625rem;
         }
 
         .recordname, .description {
             color: var(--bs-fg-body);
-            font-size: 14px;
+            font-size: 0.875rem;
             word-break: break-all;
             margin-bottom: 0;
         }
@@ -110,7 +110,7 @@
     &.is-single {
         .record-item {
             .record-data-container {
-                padding: 4px 3px 3px;
+                padding: 0.25rem 0.1875rem 0.1875rem;
             }
 
             .icon-container {
@@ -122,12 +122,12 @@
     &.is-multi {
         .record-item {
             .record-data-container-inner {
-                padding-top: 4px;
+                padding-top: 0.25rem;
             }
 
             .record-data-container {
-                padding: 3px;
-                border-radius: 4px;
+                padding: 0.1875rem;
+                border-radius: 0.25rem;
 
                 &:hover {
                     background: var(--oc-toolbar-hover-bg);

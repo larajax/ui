@@ -5,7 +5,7 @@
 
 .nested-form {
     position: relative;
-    min-height: 30px;
+    min-height: 1.875rem;
 
     .control-tabs.primary-tabs {
         .nav-tabs {
@@ -17,14 +17,14 @@
         --tab-surface: var(--oc-nestedform-bg);
         background: var(--oc-nestedform-bg);
         border: 1px solid var(--oc-nestedform-border);
-        border-radius: 4px;
+        border-radius: 0.25rem;
         box-shadow: none;
-        margin-top: 5px;
-        padding: 10px 15px 0 15px !important;
+        margin-top: 0.3125rem;
+        padding: 0.625rem 0.9375rem 0 0.9375rem !important;
 
         .control-tabs.primary-tabs .nav-tabs {
-            margin-left: -15px !important;
-            margin-right: -15px !important;
+            margin-left: -0.9375rem !important;
+            margin-right: -0.9375rem !important;
         }
     }
 }

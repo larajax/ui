@@ -12,7 +12,7 @@ img.fr-dib {
     display: block;
     float: none;
     max-width: 100%;
-    margin: 5px auto;
+    margin: 0.3125rem auto;
     vertical-align: top;
 }
 
@@ -30,24 +30,24 @@ img.oc-dii,
 img.fr-dii {
     display: inline-block;
     float: none;
-    max-width: calc(100% - 10px);
-    margin-left: 5px;
-    margin-right: 5px;
+    max-width: calc(100% - 0.625rem);
+    margin-left: 0.3125rem;
+    margin-right: 0.3125rem;
     vertical-align: bottom;
 }
 
 img.oc-dii.oc-fil,
 img.fr-dii.fr-fil {
     float: left;
-    max-width: calc(100% - 5px);
-    margin: 5px 5px 5px 0;
+    max-width: calc(100% - 0.3125rem);
+    margin: 0.3125rem 0.3125rem 0.3125rem 0;
 }
 
 img.oc-dii.oc-fir,
 img.fr-dii.fr-fir {
     float: right;
-    max-width: calc(100% - 5px);
-    margin: 5px 0 5px 5px;
+    max-width: calc(100% - 0.3125rem);
+    margin: 0.3125rem 0 0.3125rem 0.3125rem;
 }
 
 img.oc-img-rounded {
@@ -89,7 +89,7 @@ a.fr-file::before {
 .oc-text-bordered {
     border-top: solid 1px #222;
     border-bottom: solid 1px #222;
-    padding: 10px 0;
+    padding: 0.625rem 0;
 }
 
 /* The dark rules would vanish on a dark page, so they take the text colour */
@@ -117,7 +117,7 @@ a.fr-file::before {
     border-color: #ccc;
     border-radius: 2px;
     background: #f5f5f5;
-    padding: 10px;
+    padding: 0.625rem;
     font-family: "Courier New", Courier, monospace;
 }
 
@@ -181,8 +181,8 @@ table th.oc-cell-thick-border {
 
 .rich-editor-content :where(td, th) {
     border: 1px solid var(--oc-editor-table-border, #ddd);
-    padding: 5px;
-    min-width: 5px;
+    padding: 0.3125rem;
+    min-width: 0.3125rem;
     vertical-align: top;
 }
 
@@ -211,7 +211,7 @@ table th.oc-cell-thick-border {
         }
 
         p {
-            margin: 0 0 10px;
+            margin: 0 0 0.625rem;
         }
 
         a {
@@ -220,31 +220,31 @@ table th.oc-cell-thick-border {
         }
 
         h1 {
-            font-size: 34px;
+            font-size: 2.125rem;
             font-weight: normal;
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
 
         h2 {
-            font-size: 26px;
+            font-size: 1.625rem;
             font-weight: normal;
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
 
         h3 {
-            font-size: 21px;
+            font-size: 1.3125rem;
             font-weight: normal;
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
 
         h4 {
-            font-size: 18px;
+            font-size: 1.125rem;
             font-weight: normal;
-            margin: 20px 0;
+            margin: 1.25rem 0;
         }
 
         h5 {
-            font-size: 16px;
+            font-size: 1rem;
             font-weight: normal;
             color: var(--oc-editor-muted-color);
         }
@@ -255,8 +255,8 @@ table th.oc-cell-thick-border {
 
         ul,
         ol {
-            margin: 0 0 10px;
-            padding-left: 30px;
+            margin: 0 0 0.625rem;
+            padding-left: 1.875rem;
 
             p {
                 margin: 0;
@@ -266,8 +266,8 @@ table th.oc-cell-thick-border {
         pre {
             white-space: pre-wrap;
             word-wrap: break-word;
-            padding: 5px 10px;
-            border-radius: 4px;
+            padding: 0.3125rem 0.625rem;
+            border-radius: 0.25rem;
             background: var(--oc-editor-code-bg);
 
             code {
@@ -279,15 +279,15 @@ table th.oc-cell-thick-border {
 
         code {
             background: var(--oc-editor-code-bg);
-            padding: 0 3px 2px;
+            padding: 0 0.1875rem 2px;
             display: inline-block;
-            border-radius: 4px;
+            border-radius: 0.25rem;
         }
 
         blockquote {
             border-left: solid 2px var(--oc-editor-blockquote-l1);
             margin-left: 0;
-            padding-left: 5px;
+            padding-left: 0.3125rem;
             color: var(--oc-editor-blockquote-l1);
             font-size: inherit;
 
@@ -308,7 +308,7 @@ table th.oc-cell-thick-border {
             empty-cells: show;
             max-width: 100%;
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 0.625rem;
 
             td p,
             th p {

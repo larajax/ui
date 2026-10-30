@@ -1,5 +1,6 @@
 import { describe, test, expect } from 'bun:test';
 import { rowOffsets, rowAt, windowFor, covers } from '../src/view/window.js';
+import { scaledRowHeight } from '../src/view/renderer.js';
 
 describe('rowOffsets', () => {
     test('adds up row heights, ending with the total', () => {
@@ -56,5 +57,20 @@ describe('covers', () => {
         expect(covers({ first: 10, last: 50 }, { first: 5, last: 40 })).toBe(false);
         expect(covers({ first: 10, last: 50 }, { first: 20, last: 51 })).toBe(false);
         expect(covers({ first: 0, last: -1 }, { first: 0, last: -1 })).toBe(true);
+    });
+});
+
+describe('scaledRowHeight', () => {
+    test('scales the row height, given for a 16px root, with the page root font size', () => {
+        expect(scaledRowHeight(30)).toBe(30);
+
+        document.documentElement.style.fontSize = '20px';
+        try {
+            expect(scaledRowHeight(30)).toBe(38);
+            expect(scaledRowHeight(32)).toBe(40);
+        }
+        finally {
+            document.documentElement.style.fontSize = '';
+        }
     });
 });

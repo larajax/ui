@@ -1,7 +1,7 @@
 .control-filter {
     .form-field {
         label {
-            font-size: 14px;
+            font-size: 0.875rem;
             color: var(--oc-filter-text);
         }
     }

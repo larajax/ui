@@ -6,7 +6,7 @@
     &.form-control-sm,
     &.form-control-lg {
         border-radius: 0;
-        font-size: 12px;
+        font-size: 0.75rem;
         height: auto;
         line-height: 1;
         padding: 0;
@@ -80,7 +80,7 @@
             .select2-selection__choice {
                 font-size: var(--custom-select-font-size-large);
                 line-height: var(--custom-select-line-height-large);
-                border-radius: 4px;
+                border-radius: 0.25rem;
                 margin: calc(var(--custom-select-padding-large-vertical) - 1px) 0 0 calc(var(--custom-select-padding-large-horizontal) / 2);
                 padding: 0 var(--custom-select-padding-large-vertical);
             }

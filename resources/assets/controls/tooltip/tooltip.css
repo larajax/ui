@@ -11,12 +11,12 @@
     position: absolute;
     top: 0;
     left: 0;
-    max-width: 200px;
-    padding: 4px 8px 5px;
-    border-radius: 4px;
+    max-width: 12.5rem;
+    padding: 0.25rem 0.5rem 0.3125rem;
+    border-radius: 0.25rem;
     color: var(--tooltip-color);
     background: var(--tooltip-bg);
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 140%;
     pointer-events: none;
     opacity: 1;
@@ -26,7 +26,7 @@
 
     .tooltip-hotkey {
         display: inline-block;
-        margin-left: 5px;
+        margin-left: 0.3125rem;
         letter-spacing: 1px;
 
         &:empty {
@@ -35,15 +35,15 @@
 
         i {
             display: inline-block;
-            margin-left: 5px;
+            margin-left: 0.3125rem;
             padding: 0 2px;
-            border-radius: 3px;
+            border-radius: 0.1875rem;
             font-style: normal;
             color: var(--tooltip-hotkey-color);
             background: var(--tooltip-hotkey-bg);
 
             &:last-child {
-                margin-right: -3px;
+                margin-right: -0.1875rem;
             }
         }
     }

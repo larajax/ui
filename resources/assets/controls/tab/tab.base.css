@@ -4,7 +4,7 @@
 
 .control-tabs {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
 
     &:last-child {
         margin-bottom: 0;
@@ -15,7 +15,7 @@
     &:before {
         display: none;
         position: absolute;
-        top: 10px;
+        top: 0.625rem;
         margin-top: 0;
         width: 0;
         height: 0;
@@ -26,12 +26,12 @@
     }
 
     &:before {
-        left: -6px;
+        left: -0.375rem;
         border-right: 5px solid currentColor;
     }
 
     &:after {
-        right: -8px;
+        right: -0.5rem;
         border-left: 5px solid currentColor;
     }
 
@@ -54,8 +54,8 @@
         vertical-align: bottom;
 
         > li {
-            font-size: 15px;
-            margin-right: 20px;
+            font-size: 0.9375rem;
+            margin-right: 1.25rem;
             position: relative;
             z-index: calc(var(--tab-zindex) - 2);
 
@@ -68,7 +68,7 @@
                 border-left: none;
                 border-top: none;
                 border-right: none;
-                padding: 0 0 10px 0;
+                padding: 0 0 0.625rem 0;
                 color: var(--tab-color);
                 font-weight: 400;
                 overflow: hidden;
@@ -80,29 +80,29 @@
                 }
 
                 &:before {
-                    font-size: 14px;
+                    font-size: 0.875rem;
                 }
 
                 > span.title > span {
-                    max-width: 150px;
+                    max-width: 9.375rem;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     display: inline-block;
 
                     > span:not([class*="oc-icon"]) {
-                        margin-right: 8px;
+                        margin-right: 0.5rem;
                     }
                 }
 
                 span.badge-colorpicker {
                     text-decoration: none;
                     display: inline-block;
-                    width: 20px;
-                    height: 20px;
-                    border-radius: 6px;
+                    width: 1.25rem;
+                    height: 1.25rem;
+                    border-radius: 0.375rem;
                     background-color: var(--background-color, var(--oc-brand-secondary));
-                    margin-left: 15px;
-                    margin-right: -15px;
+                    margin-left: 0.9375rem;
+                    margin-right: -0.9375rem;
                     opacity: .3;
                 }
             }
@@ -125,7 +125,7 @@
 
                 &:after {
                     width: 100%;
-                    height: 3px;
+                    height: 0.1875rem;
                     bottom: 0;
                     background: var(--tab-border);
                 }
@@ -165,7 +165,7 @@
                 padding: 0;
             }
             &.pane-padded {
-                padding: 20px 20px 0 20px;
+                padding: 1.25rem 1.25rem 0 1.25rem;
             }
             &.pane-bordered {
                 border-left: 1px solid var(--tab-border);
@@ -180,31 +180,31 @@
         > div > ul.nav-tabs,
         > div > div > ul.nav-tabs {
             > li {
-                margin-right: 5px;
+                margin-right: 0.3125rem;
 
                 a {
-                    padding-left: 20px !important;
+                    padding-left: 1.25rem !important;
                     padding-right: 0 !important;
                 }
 
                 span.tab-close {
                     display: block;
                     position: absolute;
-                    width: 20px;
-                    height: 20px;
-                    top: 5px;
-                    left: -5px;
+                    width: 1.25rem;
+                    height: 1.25rem;
+                    top: 0.3125rem;
+                    left: -0.3125rem;
                     z-index: calc(var(--tab-zindex) + 4);
                     text-align: right;
-                    font-size: 12px;
+                    font-size: 0.75rem;
                     cursor: pointer;
                     color: var(--tab-color);
 
                     i {
                         display: inline-block;
                         z-index: calc(var(--tab-zindex) + 1);
-                        top: -7px;
-                        right: 5px;
+                        top: -0.4375rem;
+                        right: 0.3125rem;
                         position: relative;
                     }
 
@@ -220,13 +220,13 @@
                 /* Modified tabs show a dot instead of the close cross */
                 &[data-modified] {
                     span.tab-close i {
-                        top: -4px;
+                        top: -0.25rem;
                         font-size: 0;
 
                         &:before {
                             display: inline-block;
-                            width: 7px;
-                            height: 7px;
+                            width: 0.4375rem;
+                            height: 0.4375rem;
                             border-radius: 50%;
                             background-color: currentColor;
                             content: '';

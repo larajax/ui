@@ -4,7 +4,7 @@
  */
 
 .form-control.is-searchable {
-    border-radius: 100px;
+    border-radius: 6.25rem;
 }
 
 /* Clear button at the end of an adorned search field, shown by the search input control while it holds text */

@@ -19,9 +19,9 @@ div.scoreboard {
         display: none;
         position: absolute;
         top: 50%;
-        margin-top: -10px;
-        height: 9px;
-        font-size: 10px;
+        margin-top: -0.625rem;
+        height: 0.5625rem;
+        font-size: 0.625rem;
         color: var(--scoreboard-scroll-indicator-color);
         font-family: bootstrap-icons !important;
         speak: none;
@@ -34,12 +34,12 @@ div.scoreboard {
     }
 
     &::before {
-        left: 7px;
+        left: 0.4375rem;
         content: "\f284";
     }
 
     &::after {
-        right: 10px;
+        right: 0.625rem;
         content: "\f285";
     }
 
@@ -54,8 +54,8 @@ div.scoreboard {
     /* Scoreboard items */
     div.scoreboard-item {
         display: inline-block;
-        margin-right: 40px;
-        margin-bottom: 20px;
+        margin-right: 2.5rem;
+        margin-bottom: 1.25rem;
         vertical-align: top;
 
         &:last-child {
@@ -63,10 +63,10 @@ div.scoreboard {
         }
 
         &.thumbnail-value {
-            margin-right: 20px;
+            margin-right: 1.25rem;
 
             img {
-                height: 72px;
+                height: 4.5rem;
             }
         }
 
@@ -80,35 +80,35 @@ div.scoreboard {
             border-left-color: var(--foreground-color);
             border-width: 10px;
             border-style: solid;
-            border-radius: 20px;
+            border-radius: 1.25rem;
             display: inline-block;
 
             &::after {
                 content: "";
-                top: -10px;
-                left: -10px;
-                width: 20px;
-                height: 20px;
+                top: -0.625rem;
+                left: -0.625rem;
+                width: 1.25rem;
+                height: 1.25rem;
                 position: absolute;
                 box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--bs-bg-body) 20%, transparent);
-                border-radius: 20px;
+                border-radius: 1.25rem;
             }
         }
     }
 
     /* Chart within scoreboard */
     .control-chart {
-        height: 67px;
+        height: 4.1875rem;
 
         ul {
-            margin-left: 77px;
+            margin-left: 4.8125rem;
             top: -2px;
 
             li {
-                padding-left: 18px;
+                padding-left: 1.125rem;
 
                 > i {
-                    margin-left: -18px;
+                    margin-left: -1.125rem;
                 }
             }
         }
@@ -119,12 +119,12 @@ div.scoreboard {
     }
 
     .scoreboard-offset {
-        padding-left: 20px;
+        padding-left: 1.25rem;
     }
 }
 
 body.slim-container div.scoreboard {
-    padding: 0 20px;
+    padding: 0 1.25rem;
 }
 
 /* Title value */
@@ -140,12 +140,12 @@ body.slim-container div.scoreboard {
     p {
         color: var(--scoreboard-body-color);
         margin: 0;
-        font-size: 28px;
+        font-size: 1.75rem;
 
         i,
         &::before {
             color: var(--scoreboard-icon-color);
-            font-size: 22px;
+            font-size: 1.375rem;
             position: relative;
             top: -2px;
         }
@@ -169,11 +169,11 @@ body.slim-container div.scoreboard {
                 text-transform: none;
                 line-height: 1;
                 -webkit-font-smoothing: antialiased;
-                font-size: 17px;
+                font-size: 1.0625rem;
                 vertical-align: middle;
                 position: relative;
-                top: -3px;
-                left: 5px;
+                top: -0.1875rem;
+                left: 0.3125rem;
             }
         }
 
@@ -196,7 +196,7 @@ body.slim-container div.scoreboard {
         &.description {
             color: var(--scoreboard-description-color);
             line-height: 100%;
-            font-size: 13px;
+            font-size: 0.8125rem;
         }
     }
 }

@@ -1340,7 +1340,7 @@ export class Sheet extends Emitter {
      * getRowOffsets returns where each row starts, using measured heights for wrapped rows.
      */
     getRowOffsets() {
-        const { rowHeight } = this.options;
+        const rowHeight = this.rowHeightPx || this.options.rowHeight;
         return rowOffsets(this.viewRows.length, (row) => this.rowHeights.get(this.viewRows[row]) || rowHeight);
     }
 

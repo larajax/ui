@@ -5,10 +5,10 @@
     --callout-color: var(--bs-fg-body);
     --callout-bg: light-dark(#e6e7fc, #12262c);
     --callout-icon-color: #6a6cf7;
-    --callout-radius: 4px;
+    --callout-radius: 0.25rem;
 
-    font-size: var(--bs-body-font-size, 14px);
-    margin-bottom: 20px;
+    font-size: var(--bs-body-font-size, 0.875rem);
+    margin-bottom: 1.25rem;
 
     &.fade {
         opacity: 0;
@@ -23,7 +23,7 @@
 
     > .action {
         float: right;
-        padding: 10px;
+        padding: 0.625rem;
     }
 
     > .header + .content {
@@ -31,7 +31,7 @@
     }
 
     > .header {
-        padding: 15px 20px 5px;
+        padding: 0.9375rem 1.25rem 0.3125rem;
         border-radius: var(--callout-radius) var(--callout-radius) 0 0;
         color: var(--callout-color);
         background: var(--callout-bg);
@@ -39,20 +39,20 @@
 
         /* The icon comes from the icon pack, as the custom icon or the pack's callout key for the type */
         > .custom-icon {
-            width: 27.5px;
+            width: 1.71875rem;
             text-align: center;
-            font-size: 22px;
+            font-size: 1.375rem;
             line-height: 1;
             float: left;
             position: relative;
             top: -1px;
-            left: -5px;
+            left: -0.3125rem;
             color: var(--callout-icon-color);
         }
 
         h3 {
             letter-spacing: 0;
-            font-size: var(--bs-body-font-size, 14px);
+            font-size: var(--bs-body-font-size, 0.875rem);
             font-weight: 600;
             line-height: 150%;
             margin: 0;
@@ -62,13 +62,13 @@
         p,
         ul,
         ol {
-            margin-left: 32px;
-            margin-bottom: 7px;
+            margin-left: 2rem;
+            margin-bottom: 0.4375rem;
         }
 
         ul,
         ol {
-            padding-left: 20px;
+            padding-left: 1.25rem;
         }
 
         &:last-child {
@@ -80,7 +80,7 @@
     > .content {
         color: var(--callout-color);
         background: var(--callout-bg);
-        padding: 0 20px 15px 52px;
+        padding: 0 1.25rem 0.9375rem 3.25rem;
         border-radius: 0 0 var(--callout-radius) var(--callout-radius);
 
         h1,
@@ -91,33 +91,33 @@
         h6 {
             color: var(--callout-color);
             text-transform: none;
-            margin: 20px 0 5px 0;
+            margin: 1.25rem 0 0.3125rem 0;
             line-height: 150%;
             font-weight: 600;
         }
 
         h1 {
-            font-size: 30px;
+            font-size: 1.875rem;
         }
 
         h2 {
-            font-size: 26px;
+            font-size: 1.625rem;
         }
 
         h3 {
-            font-size: 24px;
+            font-size: 1.5rem;
         }
 
         h4 {
-            font-size: 20px;
+            font-size: 1.25rem;
         }
 
         h5 {
-            font-size: 18px;
+            font-size: 1.125rem;
         }
 
         h6 {
-            font-size: 16px;
+            font-size: 1rem;
         }
 
         *:last-child {
@@ -126,33 +126,33 @@
 
         ul,
         ol {
-            padding-left: 20px;
+            padding-left: 1.25rem;
 
             li {
-                margin-bottom: 5px;
+                margin-bottom: 0.3125rem;
             }
         }
 
         .action-panel {
-            padding: 10px 0 0 0;
+            padding: 0.625rem 0 0 0;
         }
     }
 
     /* Modifiers */
     &.no-title {
         > .content {
-            padding-top: 15px;
+            padding-top: 0.9375rem;
             border-radius: var(--callout-radius);
         }
     }
 
     &.no-subheader {
         > .header {
-            padding-bottom: 10px;
+            padding-bottom: 0.625rem;
         }
 
         > .header + .content {
-            margin-top: -5px;
+            margin-top: -0.3125rem;
         }
     }
 
@@ -171,7 +171,7 @@
         }
 
         > .content {
-            padding-left: 20px;
+            padding-left: 1.25rem;
         }
     }
 

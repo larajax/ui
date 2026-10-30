@@ -7,7 +7,7 @@
 @import "_repeater_palette.css";
 
 :root {
-    --oc-repeater-icon-size: 24px;
+    --oc-repeater-icon-size: 1.5rem;
     --oc-repeater-body-bg: var(--bs-bg-body);
     --oc-repeater-body-border: var(--bs-border-color);
     --oc-repeater-body-inner-bg: var(--bs-bg-body);
@@ -27,7 +27,7 @@
     > ul > li.field-repeater-item {
         padding: 0;
         margin: 0;
-        margin-bottom: 10px;
+        margin-bottom: 0.625rem;
         list-style: none;
     }
 
@@ -42,8 +42,8 @@
 
     .repeater-item-checkbox .check {
         position: relative;
-        top: 5px;
-        left: 5px;
+        top: 0.3125rem;
+        left: 0.3125rem;
         vertical-align: top;
     }
 
@@ -55,12 +55,12 @@
         display: block;
         color: var(--oc-toolbar-color);
         text-decoration: none;
-        border-radius: 3px;
+        border-radius: 0.1875rem;
         text-align: center;
         margin: -2px 2px;
 
         i {
-            font-size: 18px;
+            font-size: 1.125rem;
             vertical-align: middle;
         }
     }
@@ -79,7 +79,7 @@
     }
 
     .repeater-item-dropdown {
-        padding-right: 3px;
+        padding-right: 0.1875rem;
     }
 }
 
@@ -88,7 +88,7 @@
         position: absolute;
         height: 100%;
         width: 100%;
-        padding: 20px;
+        padding: 1.25rem;
         overflow: auto;
 
         &[data-external-toolbar-bus] {
@@ -125,14 +125,14 @@
     }
 
     > .field-repeater-builder {
-        width: 250px;
-        padding-right: 20px;
+        width: 15.625rem;
+        padding-right: 1.25rem;
         flex-shrink: 0;
-        flex-basis: 250px;
+        flex-basis: 15.625rem;
     }
 }
 
-@media (max-width: 769px) {
+@media (max-width: 48.0625em) {
     .field-repeater.repeater-mode-builder {
         flex-direction: column;
 
@@ -144,7 +144,7 @@
             > ul {
                 overflow-x: auto;
                 white-space: nowrap;
-                margin-bottom: 5px;
+                margin-bottom: 0.3125rem;
             }
 
             > ul > li {
@@ -156,11 +156,11 @@
             }
 
             > ul > li.field-repeater-group {
-                width: 250px;
+                width: 15.625rem;
                 display: inline-block;
                 vertical-align: top;
-                margin-right: 10px;
-                margin-bottom: 5px;
+                margin-right: 0.625rem;
+                margin-bottom: 0.3125rem;
             }
         }
     }

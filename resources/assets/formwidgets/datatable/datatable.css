@@ -7,7 +7,7 @@
 .field-datatable:has(> [data-hot-container]) {
     --datatable-text-color: var(--oc-text-color, var(--bs-fg-body, #212529));
     --datatable-border: var(--oc-border-color, var(--bs-border-color, #dee2e6));
-    --datatable-radius: var(--bs-radius-5, 4px);
+    --datatable-radius: var(--bs-radius-5, 0.25rem);
     --datatable-inner-radius: calc(var(--datatable-radius) - 1px);
     --datatable-scrollbar: color-mix(in srgb, var(--datatable-text-color) 30%, transparent);
     --datatable-scrollbar-hover: color-mix(in srgb, var(--datatable-text-color) 50%, transparent);
@@ -20,7 +20,7 @@
     > .toolbar {
         /* Contains the floated search box, which would otherwise narrow the grid's scroller below it */
         display: flow-root;
-        padding: 3px;
+        padding: 0.1875rem;
         font-size: 0;
         white-space: nowrap;
         border-bottom: 1px solid var(--datatable-border);
@@ -29,13 +29,13 @@
 
         .toolbar-search {
             float: right;
-            margin: 0 3px 0 0;
+            margin: 0 0.1875rem 0 0;
 
             .form-control {
                 height: auto;
                 min-height: 0;
-                padding: 5px 13px;
-                font-size: 13px;
+                padding: 0.3125rem 0.8125rem;
+                font-size: 0.8125rem;
             }
         }
     }
@@ -63,8 +63,8 @@
        standard properties apply only elsewhere */
     .hotsheet-scroller {
         &::-webkit-scrollbar {
-            width: 9px;
-            height: 9px;
+            width: 0.5625rem;
+            height: 0.5625rem;
         }
 
         &::-webkit-scrollbar-track {
@@ -73,7 +73,7 @@
 
         &::-webkit-scrollbar-thumb {
             background-color: var(--datatable-scrollbar);
-            border-radius: 4px;
+            border-radius: 0.25rem;
 
             &:hover {
                 background-color: var(--datatable-scrollbar-hover);

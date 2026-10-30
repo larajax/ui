@@ -16,8 +16,8 @@
 :root {
     /* Shared with .taglist--preview */
     --custom-select-choice-bg: #72809d;
-    --custom-select-padding-base-vertical: 8px;
-    --custom-select-padding-base-horizontal: 13px;
+    --custom-select-padding-base-vertical: 0.5rem;
+    --custom-select-padding-base-horizontal: 0.8125rem;
 }
 
 .select2-container {
@@ -63,12 +63,12 @@
     --custom-select-font-size-small: var(--bs-btn-input-sm-font-size);
     --custom-select-font-size-large: var(--bs-btn-input-lg-font-size);
 
-    --custom-select-border-radius-base: 4px;
+    --custom-select-border-radius-base: 0.25rem;
     --custom-select-border-radius-small: var(--bs-btn-input-sm-border-radius);
     --custom-select-border-radius-large: var(--bs-btn-input-lg-border-radius);
 
-    --custom-select-caret-width-base: 4px;
-    --custom-select-caret-width-large: 5px;
+    --custom-select-caret-width-base: 0.25rem;
+    --custom-select-caret-width-large: 0.3125rem;
 
     /* Height calculations */
     --custom-select-input-height-base: var(--bs-btn-input-min-height);

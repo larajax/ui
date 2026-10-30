@@ -6,11 +6,11 @@
  */
 
 .control-popup {
-    --bs-dialog-width: 598px;
+    --bs-dialog-width: 37.375rem;
     --bs-dialog-backdrop-bg: rgba(0, 0, 0, var(--oc-backdrop-opacity));
     background-color: var(--oc-popup-bg);
     border: var(--oc-popup-border);
-    border-radius: 8px;
+    border-radius: 0.5rem;
     box-shadow: 0 0 32px rgba(67, 86, 100, 0.2);
 
     &:focus {
@@ -39,30 +39,30 @@
     .dialog-header {
         background: transparent;
         color: var(--bs-heading-color);
-        border-top-right-radius: 4px;
-        border-top-left-radius: 4px;
-        padding: 15px 20px;
+        border-top-right-radius: 0.25rem;
+        border-top-left-radius: 0.25rem;
+        padding: 0.9375rem 1.25rem;
         border-bottom: var(--oc-popup-border);
 
         h4 {
             font-weight: normal;
-            font-size: 18px;
+            font-size: 1.125rem;
         }
     }
 
     .dialog-body {
-        padding: 20px 20px 0 20px;
+        padding: 1.25rem 1.25rem 0 1.25rem;
 
         > p:last-child {
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
 
         &.dialog-no-header {
-            padding-top: 20px;
+            padding-top: 1.25rem;
         }
 
         &.dialog-no-footer {
-            padding-bottom: 20px;
+            padding-bottom: 1.25rem;
         }
     }
 
@@ -70,7 +70,7 @@
         background: transparent;
         border: none;
         margin-top: 0;
-        padding: 0 20px 20px 20px;
+        padding: 0 1.25rem 1.25rem 1.25rem;
         justify-content: flex-start;
 
         > .pull-right {
@@ -86,36 +86,36 @@
         }
 
         .btn-link {
-            padding-left: 5px;
-            padding-right: 5px;
+            padding-left: 0.3125rem;
+            padding-right: 0.3125rem;
         }
     }
 
     /* Popup widths over the Bootstrap dialog size classes, numeric sizes set the width inline */
     &.size-tiny {
-        --bs-dialog-width: 300px;
+        --bs-dialog-width: 18.75rem;
     }
 
     &.size-small {
-        --bs-dialog-width: 400px;
+        --bs-dialog-width: 25rem;
     }
 
     &.size-large {
-        --bs-dialog-width: 750px;
+        --bs-dialog-width: 46.875rem;
     }
 
     &.size-huge {
-        --bs-dialog-width: 900px;
+        --bs-dialog-width: 56.25rem;
     }
 
     &.size-giant {
-        --bs-dialog-width: 982px;
+        --bs-dialog-width: 61.375rem;
     }
 
     &.size-adaptive {
-        --bs-dialog-width: calc(100% - 100px);
+        --bs-dialog-width: calc(100% - 6.25rem);
 
-        @media (width < 768px) {
+        @media (width < 48em) {
             --bs-dialog-width: 100%;
         }
     }
@@ -125,7 +125,7 @@
     }
 
     &.adaptive-height {
-        height: calc(100% - 100px);
+        height: calc(100% - 6.25rem);
     }
 
     /* The popup chrome above would otherwise outrank Bootstrap's fullscreen size */
@@ -162,21 +162,21 @@
     .popup-loading-indicator {
         background: var(--oc-popup-bg);
         border: var(--oc-popup-border);
-        border-radius: 8px;
+        border-radius: 0.5rem;
         box-shadow: 0 0 32px rgba(67, 86, 100, 0.2);
         display: block;
-        width: 100px;
-        height: 100px;
+        width: 6.25rem;
+        height: 6.25rem;
         position: absolute;
-        top: 130px;
+        top: 8.125rem;
         left: 50%;
-        margin-left: -50px;
+        margin-left: -3.125rem;
         transition: all 0.3s, width 0s;
         transform: scale(0.7);
         opacity: 0;
 
         &:after {
-            --loader-size: 50px;
+            --loader-size: 3.125rem;
             content: '';
             position: absolute;
             top: 50%;

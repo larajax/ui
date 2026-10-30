@@ -37,7 +37,7 @@ div.control-popover {
         position: relative;
         background: var(--popover-bg);
         box-shadow: var(--oc-overlay-box-shadow, 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24));
-        border-radius: 6px;
+        border-radius: 0.375rem;
 
         &::after,
         &::before {
@@ -63,27 +63,27 @@ div.control-popover {
         &::after {
             border-width: 0 7.5px 8px 7.5px;
             border-color: transparent transparent var(--popover-bg) transparent;
-            left: 15px;
-            top: -8px;
+            left: 0.9375rem;
+            top: -0.5rem;
         }
 
         &::before {
             border-width: 0 8.5px 9px 8.5px;
             border-color: transparent transparent var(--popover-border) transparent;
-            left: 14px;
-            top: -9px;
+            left: 0.875rem;
+            top: -0.5625rem;
         }
     }
 
     &.placement-bottom.placement-bottom-right > div {
         &::after {
             left: auto;
-            right: 15px;
+            right: 0.9375rem;
         }
 
         &::before {
             left: auto;
-            right: 14px;
+            right: 0.875rem;
         }
     }
 
@@ -92,15 +92,15 @@ div.control-popover {
         &::after {
             border-width: 8px 7.5px 0 7.5px;
             border-color: var(--popover-bg) transparent transparent transparent;
-            left: 15px;
-            bottom: -8px;
+            left: 0.9375rem;
+            bottom: -0.5rem;
         }
 
         &::before {
             border-width: 9px 8.5px 0 8.5px;
             border-color: var(--popover-border) transparent transparent transparent;
-            left: 14px;
-            bottom: -9px;
+            left: 0.875rem;
+            bottom: -0.5625rem;
         }
     }
 
@@ -109,15 +109,15 @@ div.control-popover {
         &::after {
             border-width: 7.5px 0 7.5px 8px;
             border-color: transparent transparent transparent var(--popover-bg);
-            right: -8px;
-            top: 7px;
+            right: -0.5rem;
+            top: 0.4375rem;
         }
 
         &::before {
             border-width: 8.5px 0 8.5px 9px;
             border-color: transparent transparent transparent var(--popover-border);
-            right: -9px;
-            top: 6px;
+            right: -0.5625rem;
+            top: 0.375rem;
         }
     }
 
@@ -126,21 +126,21 @@ div.control-popover {
         &::after {
             border-width: 7.5px 8px 7.5px 0;
             border-color: transparent var(--popover-bg) transparent transparent;
-            left: -8px;
-            top: 7px;
+            left: -0.5rem;
+            top: 0.4375rem;
         }
 
         &::before {
             border-width: 8.5px 9px 8.5px 0;
             border-color: transparent var(--popover-border) transparent transparent;
-            left: -9px;
-            top: 6px;
+            left: -0.5625rem;
+            top: 0.375rem;
         }
     }
 
     /* Body and footer */
     div.popover-body {
-        padding: 15px;
+        padding: 0.9375rem;
 
         &.form-container {
             padding-bottom: 0;
@@ -148,17 +148,17 @@ div.control-popover {
     }
 
     div.popover-footer {
-        padding: 0 20px 20px 20px;
+        padding: 0 1.25rem 1.25rem 1.25rem;
     }
 
     /* Head */
     .popover-head {
         background: var(--popover-head-bg);
-        padding: 14px 16px;
+        padding: 0.875rem 1rem;
         position: relative;
         color: var(--popover-head-text);
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
+        border-top-left-radius: 0.375rem;
+        border-top-right-radius: 0.375rem;
         border-bottom: 1px solid var(--popover-border);
 
         &::before {
@@ -172,18 +172,18 @@ div.control-popover {
         }
 
         h3 {
-            font-size: var(--bs-body-font-size, 14px);
+            font-size: var(--bs-body-font-size, 0.875rem);
             font-weight: 600;
             margin-top: 0;
             margin-bottom: 0;
-            padding-right: 15px;
+            padding-right: 0.9375rem;
             line-height: 130%;
         }
 
         p {
-            font-size: 12px;
+            font-size: 0.75rem;
             font-weight: normal;
-            margin: 5px 0 0 0;
+            margin: 0.3125rem 0 0 0;
 
             &:empty {
                 display: none;
@@ -194,8 +194,8 @@ div.control-popover {
         .close {
             float: none;
             position: absolute;
-            right: 11px;
-            top: 12px;
+            right: 0.6875rem;
+            top: 0.75rem;
             color: var(--popover-head-text);
             outline: none;
             opacity: .4;
@@ -211,24 +211,24 @@ div.control-popover {
         display: block;
         border-width: 0 7.5px 8px 7.5px;
         border-color: transparent transparent var(--popover-head-bg) transparent;
-        left: 15px;
-        top: -8px;
+        left: 0.9375rem;
+        top: -0.5rem;
     }
 
     &.placement-left .popover-head::before {
         display: block;
         border-width: 7.5px 0 7.5px 8px;
         border-color: transparent transparent transparent var(--popover-head-bg);
-        right: -8px;
-        top: 7px;
+        right: -0.5rem;
+        top: 0.4375rem;
     }
 
     &.placement-right .popover-head::before {
         display: block;
         border-width: 7.5px 8px 7.5px 0;
         border-color: transparent var(--popover-head-bg) transparent transparent;
-        left: -8px;
-        top: 7px;
+        left: -0.5rem;
+        top: 0.4375rem;
     }
 
     /* Danger variant */
@@ -282,7 +282,7 @@ div.control-popover {
 
     /* Fixed height */
     div.popover-fixed-height {
-        height: 300px;
+        height: 18.75rem;
     }
 }
 
@@ -327,7 +327,7 @@ div.popover-overlay {
 }
 
 /* Mobile: full-screen bottom sheet, important rules override the inline position */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
     body.popover-open {
         overflow: hidden;
 
@@ -336,7 +336,7 @@ div.popover-overlay {
             overflow-y: scroll;
             position: fixed !important;
             margin: 0;
-            padding: 10px;
+            padding: 0.625rem;
             width: 100% !important;
             z-index: calc(var(--oc-zindex-popover) + 3);
             top: auto !important;

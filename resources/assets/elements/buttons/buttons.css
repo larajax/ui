@@ -87,12 +87,12 @@
  */
 .button-separator {
     color: var(--bs-fg-3);
-    margin: 0 10px;
-    font-size: 14px;
+    margin: 0 0.625rem;
+    font-size: 0.875rem;
     padding-bottom: 2px;
 
     + .btn-link {
-        margin-left: -5px;
+        margin-left: -0.3125rem;
     }
 }
 
@@ -103,16 +103,16 @@
     &[class^="oc-icon-"],
     &[class*=" oc-icon-"] {
         &::before {
-            font-size: 14px;
-            line-height: 14px;
+            font-size: 0.875rem;
+            line-height: 0.875rem;
             position: relative;
             text-decoration: none;
         }
     }
 
     i {
-        font-size: 14px;
-        line-height: 14px;
+        font-size: 0.875rem;
+        line-height: 0.875rem;
         position: relative;
         top: 1px;
         text-decoration: none;
@@ -131,8 +131,8 @@
         }
 
         &.last {
-            border-bottom-right-radius: 4px !important;
-            border-top-right-radius: 4px !important;
+            border-bottom-right-radius: 0.25rem !important;
+            border-top-right-radius: 0.25rem !important;
         }
     }
 }
@@ -140,15 +140,15 @@
 :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon),
 .btn-group {
     &.offset-right {
-        margin-right: 10px;
+        margin-right: 0.625rem;
     }
 }
 
 /* Display a button as an icon link, the icon class on the element draws the glyph */
 .btn-icon-link {
     display: inline-block;
-    height: 36px;
-    font-size: 21px;
+    height: 2.25rem;
+    font-size: 1.3125rem;
     background: transparent;
     border: none;
     outline: none;
@@ -177,34 +177,34 @@
     }
 
     &.margin-left {
-        margin-left: 5px;
+        margin-left: 0.3125rem;
     }
 
     &.small {
-        font-size: 17px;
-        height: 17px;
-        line-height: 15px;
+        font-size: 1.0625rem;
+        height: 1.0625rem;
+        line-height: 0.9375rem;
     }
 
     &.larger {
-        font-size: 21px;
-        height: 21px;
-        line-height: 17px;
+        font-size: 1.3125rem;
+        height: 1.3125rem;
+        line-height: 1.0625rem;
     }
 }
 
 /* Text beside the buttons, such as "or Cancel" */
 .button-text {
-    font-size: 14px;
+    font-size: 0.875rem;
     color: var(--bs-fg-3);
     vertical-align: middle;
     display: inline-block;
-    padding: 8px 0;
+    padding: 0.5rem 0;
 
     a,
     .btn-link {
         min-height: 0;
-        font-size: 14px;
+        font-size: 0.875rem;
         color: var(--bs-fg-3);
         text-decoration: underline;
         vertical-align: baseline;
@@ -217,33 +217,33 @@
 
 /* Circular button with icon inside */
 .btn-circle {
-    width: 30px;
-    height: 30px;
+    width: 1.875rem;
+    height: 1.875rem;
     min-height: 0;
     text-align: center;
     padding-left: 0;
     padding-right: 0;
-    font-size: 12px;
+    font-size: 0.75rem;
     line-height: 1.428571429;
-    border-radius: 30px;
+    border-radius: 1.875rem;
 
     i {
         margin: 0;
     }
 
     &.btn-lg {
-        width: 50px;
-        height: 50px;
-        font-size: 18px;
+        width: 3.125rem;
+        height: 3.125rem;
+        font-size: 1.125rem;
         line-height: 1.33;
-        border-radius: 25px;
+        border-radius: 1.5625rem;
     }
 
     &.btn-xl {
-        width: 70px;
-        height: 70px;
-        font-size: 24px;
+        width: 4.375rem;
+        height: 4.375rem;
+        font-size: 1.5rem;
         line-height: 1.33;
-        border-radius: 35px;
+        border-radius: 2.1875rem;
     }
 }

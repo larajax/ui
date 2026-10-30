@@ -5,10 +5,10 @@
 @import './base-styles.css';
 
 .rich-editor {
-    --rich-editor-min-height: 200px;
-    --rich-editor-button-size: 30px;
+    --rich-editor-min-height: 12.5rem;
+    --rich-editor-button-size: 1.875rem;
     --rich-editor-border: var(--bs-border-color, #d7e1ea);
-    --rich-editor-radius: var(--bs-radius-5, 4px);
+    --rich-editor-radius: var(--bs-radius-5, 0.25rem);
     --rich-editor-bg: var(--bs-btn-input-bg, var(--oc-form-control-bg, #fff));
     --rich-editor-color: var(--bs-fg-body, #212529);
     --rich-editor-muted: var(--bs-fg-3, #6c757d);
@@ -70,7 +70,7 @@ html.rich-editor-has-fullscreen body {
     flex-wrap: wrap;
     align-items: center;
     gap: 2px;
-    padding: 5px 6px;
+    padding: 0.3125rem 0.375rem;
     border-bottom: 1px solid var(--rich-editor-toolbar-border);
     border-radius: calc(var(--rich-editor-radius) - 1px) calc(var(--rich-editor-radius) - 1px) 0 0;
     background: var(--rich-editor-toolbar-bg);
@@ -88,12 +88,12 @@ html.rich-editor-has-fullscreen body {
     gap: 2px;
     min-width: var(--rich-editor-button-size);
     height: var(--rich-editor-button-size);
-    padding: 0 5px;
+    padding: 0 0.3125rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     background: transparent;
     color: var(--oc-toolbar-color, #536061);
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 1;
     cursor: pointer;
 
@@ -119,19 +119,19 @@ html.rich-editor-has-fullscreen body {
     }
 
     .rich-editor-icon {
-        font-size: 18px;
+        font-size: 1.125rem;
         line-height: 1;
     }
 
     .rich-editor-caret {
-        font-size: 10px;
+        font-size: 0.625rem;
         opacity: .7;
     }
 
     &.has-label {
-        min-width: 100px;
+        min-width: 6.25rem;
         justify-content: space-between;
-        padding: 0 6px 0 8px;
+        padding: 0 0.375rem 0 0.5rem;
     }
 }
 
@@ -139,13 +139,13 @@ html.rich-editor-has-fullscreen body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    max-width: 120px;
+    max-width: 7.5rem;
 }
 
 .rich-editor-separator {
     width: 1px;
-    height: 20px;
-    margin: 0 4px;
+    height: 1.25rem;
+    margin: 0 0.25rem;
     background: var(--oc-toolbar-border, #d7e1ea);
 }
 
@@ -179,10 +179,10 @@ html.rich-editor-has-fullscreen body {
 .rich-editor-content {
     flex: 1;
     min-height: var(--rich-editor-min-height);
-    padding: 20px 24px;
+    padding: 1.25rem 1.5rem;
     outline: none;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 150%;
     word-wrap: break-word;
     white-space: pre-wrap;
@@ -239,12 +239,12 @@ html.rich-editor-has-fullscreen body {
     figure[data-video],
     figure[data-audio] {
         display: block;
-        margin: 0 0 15px;
-        padding: 10px 12px;
+        margin: 0 0 0.9375rem;
+        padding: 0.625rem 0.75rem;
         border: 1px dashed var(--rich-editor-placeholder-border);
         background: var(--rich-editor-bg);
         color: var(--bs-heading-color, inherit);
-        font-size: 15px;
+        font-size: 0.9375rem;
         line-height: 150%;
         cursor: pointer;
         user-select: none;
@@ -252,7 +252,7 @@ html.rich-editor-has-fullscreen body {
         &::before {
             font-family: 'Phosphor' !important;
             font-style: normal;
-            margin-right: 8px;
+            margin-right: 0.5rem;
             vertical-align: -2px;
         }
 
@@ -279,14 +279,14 @@ html.rich-editor-has-fullscreen body {
     .rich-editor-snippet {
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin: 0 0 15px;
-        padding: 10px 12px;
+        gap: 0.5rem;
+        margin: 0 0 0.9375rem;
+        padding: 0.625rem 0.75rem;
         border: 1px dashed var(--rich-editor-placeholder-border);
-        border-radius: 4px;
+        border-radius: 0.25rem;
         background: var(--rich-editor-placeholder-bg);
         color: var(--rich-editor-color);
-        font-size: 14px;
+        font-size: 0.875rem;
         line-height: 1.5;
         white-space: nowrap;
         cursor: pointer;
@@ -295,15 +295,15 @@ html.rich-editor-has-fullscreen body {
         .rich-editor-icon {
             flex-shrink: 0;
             color: var(--rich-editor-muted);
-            font-size: 18px;
+            font-size: 1.125rem;
         }
     }
 
     span.rich-editor-snippet {
         display: inline-flex;
-        gap: 4px;
+        gap: 0.25rem;
         margin: 0 1px;
-        padding: 0 6px;
+        padding: 0 0.375rem;
         vertical-align: baseline;
         font-size: inherit;
         line-height: inherit;
@@ -323,7 +323,7 @@ html.rich-editor-has-fullscreen body {
         text-overflow: ellipsis;
         color: var(--rich-editor-muted);
         font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-        font-size: 12px;
+        font-size: 0.75rem;
     }
 
     /* Snippets, the snippet control or the placeholder supplies the label styles */
@@ -339,7 +339,7 @@ html.rich-editor-has-fullscreen body {
         display: block;
         width: fit-content;
         max-width: 100%;
-        margin: 0 0 15px;
+        margin: 0 0 0.9375rem;
 
         iframe {
             display: block;
@@ -385,14 +385,14 @@ html.rich-editor-has-fullscreen body {
     flex: 1;
     width: 100%;
     min-height: var(--rich-editor-min-height);
-    padding: 16px 20px;
+    padding: 1rem 1.25rem;
     border: none;
     outline: none;
     resize: vertical;
     background: transparent;
     color: inherit;
     font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 1.6;
     tab-size: 4;
     white-space: pre;
@@ -416,8 +416,8 @@ html.rich-editor-has-fullscreen body {
 .rich-editor-resizer-handle {
     position: absolute;
     box-sizing: border-box;
-    width: 10px;
-    height: 10px;
+    width: 0.625rem;
+    height: 0.625rem;
     border: 1px solid var(--rich-editor-bg);
     background: var(--bs-primary-base, #3498db);
     pointer-events: auto;
@@ -427,30 +427,30 @@ html.rich-editor-has-fullscreen body {
     &::before {
         content: '';
         position: absolute;
-        inset: -6px;
+        inset: -0.375rem;
     }
 
     &.is-nw {
-        top: -5px;
-        left: -5px;
+        top: -0.3125rem;
+        left: -0.3125rem;
         cursor: nwse-resize;
     }
 
     &.is-ne {
-        top: -5px;
-        right: -5px;
+        top: -0.3125rem;
+        right: -0.3125rem;
         cursor: nesw-resize;
     }
 
     &.is-sw {
-        bottom: -5px;
-        left: -5px;
+        bottom: -0.3125rem;
+        left: -0.3125rem;
         cursor: nesw-resize;
     }
 
     &.is-se {
-        right: -5px;
-        bottom: -5px;
+        right: -0.3125rem;
+        bottom: -0.3125rem;
         cursor: nwse-resize;
     }
 }
@@ -478,11 +478,11 @@ html.rich-editor-resizing {
     position: fixed;
     z-index: 9995;
     border: 1px solid var(--bs-border-color, #d7e1ea);
-    border-radius: 6px;
+    border-radius: 0.375rem;
     background: var(--bs-dialog-bg, var(--bs-bg-body, #fff));
     color: var(--bs-fg-body, #212529);
     box-shadow: 0 6px 20px rgba(0, 0, 0, .15);
-    font-size: 13px;
+    font-size: 0.8125rem;
 }
 
 .rich-editor-bubble {
@@ -490,7 +490,7 @@ html.rich-editor-resizing {
     display: flex;
     align-items: center;
     gap: 2px;
-    padding: 3px;
+    padding: 0.1875rem;
 
     &[hidden] {
         display: none;
@@ -498,20 +498,20 @@ html.rich-editor-resizing {
 }
 
 .rich-editor-menu {
-    min-width: 170px;
-    max-height: 320px;
+    min-width: 10.625rem;
+    max-height: 20rem;
     overflow-y: auto;
-    padding: 4px;
+    padding: 0.25rem;
 }
 
 .rich-editor-menu-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
     width: 100%;
-    padding: 6px 10px;
+    padding: 0.375rem 0.625rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     background: transparent;
     color: inherit;
     text-align: left;
@@ -531,11 +531,11 @@ html.rich-editor-resizing {
     }
 
     .rich-editor-icon {
-        font-size: 16px;
+        font-size: 1rem;
     }
 
     .rich-editor-menu-check {
-        width: 14px;
+        width: 0.875rem;
         visibility: hidden;
     }
 
@@ -543,56 +543,56 @@ html.rich-editor-resizing {
         visibility: visible;
     }
 
-    &.is-format-h1 .rich-editor-menu-label { font-size: 20px; }
-    &.is-format-h2 .rich-editor-menu-label { font-size: 18px; }
-    &.is-format-h3 .rich-editor-menu-label { font-size: 16px; }
+    &.is-format-h1 .rich-editor-menu-label { font-size: 1.25rem; }
+    &.is-format-h2 .rich-editor-menu-label { font-size: 1.125rem; }
+    &.is-format-h3 .rich-editor-menu-label { font-size: 1rem; }
     &.is-format-pre .rich-editor-menu-label { font-family: monospace; }
 }
 
 .rich-editor-menu-separator {
     height: 1px;
-    margin: 4px 0;
+    margin: 0.25rem 0;
     background: var(--bs-border-color, #d7e1ea);
 }
 
 .rich-editor-menu-header {
-    padding: 6px 10px 2px;
+    padding: 0.375rem 0.625rem 2px;
     color: var(--bs-fg-3, #6c757d);
-    font-size: 11px;
+    font-size: 0.6875rem;
     text-transform: uppercase;
 }
 
 .rich-editor-form {
-    width: 320px;
-    max-width: calc(100vw - 16px);
-    padding: 12px;
+    width: 20rem;
+    max-width: calc(100vw - 1rem);
+    padding: 0.75rem;
 }
 
 .rich-editor-form-title {
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
     font-weight: 600;
 }
 
 .rich-editor-form-field {
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
 
     label {
         display: block;
-        margin-bottom: 4px;
+        margin-bottom: 0.25rem;
         color: var(--bs-fg-3, #6c757d);
-        font-size: 12px;
+        font-size: 0.75rem;
     }
 
     input,
     textarea,
     select {
         width: 100%;
-        padding: 6px 8px;
+        padding: 0.375rem 0.5rem;
         border: 1px solid var(--bs-border-color, #d7e1ea);
-        border-radius: 4px;
+        border-radius: 0.25rem;
         background: var(--oc-form-control-bg, #fff);
         color: inherit;
-        font-size: 13px;
+        font-size: 0.8125rem;
 
         /* The same ring a focused Bootstrap form control draws, with a matching one when Bootstrap is absent */
         &:focus {
@@ -611,8 +611,8 @@ html.rich-editor-resizing {
 .rich-editor-form-check {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-bottom: 10px;
+    gap: 0.375rem;
+    margin-bottom: 0.625rem;
 
     /* Bootstrap enlarges a small check's label, which keeps the form's own size here */
     label {
@@ -621,9 +621,9 @@ html.rich-editor-resizing {
 }
 
 .rich-editor-form-error {
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
     color: var(--bs-danger-base, #dc3545);
-    font-size: 12px;
+    font-size: 0.75rem;
 
     &[hidden] {
         display: none;
@@ -633,7 +633,7 @@ html.rich-editor-resizing {
 .rich-editor-form-footer {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.375rem;
 }
 
 .rich-editor-form-spacer {
@@ -641,12 +641,12 @@ html.rich-editor-resizing {
 }
 
 .rich-editor-form-button {
-    padding: 5px 12px;
+    padding: 0.3125rem 0.75rem;
     border: 1px solid var(--bs-border-color, #d7e1ea);
-    border-radius: 4px;
+    border-radius: 0.25rem;
     background: transparent;
     color: inherit;
-    font-size: 13px;
+    font-size: 0.8125rem;
     cursor: pointer;
 
     &:hover {
@@ -673,17 +673,17 @@ html.rich-editor-resizing {
  */
 
 .rich-editor-colors {
-    padding: 8px;
+    padding: 0.5rem;
 }
 
 .rich-editor-colors-tabs {
     display: flex;
-    gap: 4px;
-    margin-bottom: 8px;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
 
     button {
         flex: 1;
-        padding: 4px 8px;
+        padding: 0.25rem 0.5rem;
         border: none;
         border-bottom: 2px solid transparent;
         background: transparent;
@@ -698,16 +698,16 @@ html.rich-editor-resizing {
 
 .rich-editor-colors-grid {
     display: grid;
-    grid-template-columns: repeat(7, 24px);
-    gap: 3px;
+    grid-template-columns: repeat(7, 1.5rem);
+    gap: 0.1875rem;
 }
 
 .rich-editor-swatch {
-    width: 24px;
-    height: 24px;
+    width: 1.5rem;
+    height: 1.5rem;
     padding: 0;
     border: 1px solid var(--bs-border-color, rgba(0, 0, 0, .15));
-    border-radius: 3px;
+    border-radius: 0.1875rem;
     cursor: pointer;
 
     &.is-active,
@@ -727,19 +727,19 @@ html.rich-editor-resizing {
 
 .rich-editor-emoticons {
     display: grid;
-    grid-template-columns: repeat(10, 30px);
+    grid-template-columns: repeat(10, 1.875rem);
     gap: 2px;
-    padding: 6px;
+    padding: 0.375rem;
 }
 
 .rich-editor-emoticon {
-    width: 30px;
-    height: 30px;
+    width: 1.875rem;
+    height: 1.875rem;
     padding: 0;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     background: transparent;
-    font-size: 18px;
+    font-size: 1.125rem;
     cursor: pointer;
 
     &:hover {
@@ -748,17 +748,17 @@ html.rich-editor-resizing {
 }
 
 .rich-editor-table-picker {
-    padding: 8px;
+    padding: 0.5rem;
 }
 
 .rich-editor-table-grid {
     display: grid;
-    grid-template-columns: repeat(10, 16px);
+    grid-template-columns: repeat(10, 1rem);
     gap: 2px;
 
     button {
-        width: 16px;
-        height: 16px;
+        width: 1rem;
+        height: 1rem;
         padding: 0;
         border: 1px solid var(--bs-border-color, #d7e1ea);
         border-radius: 2px;
@@ -773,8 +773,8 @@ html.rich-editor-resizing {
 }
 
 .rich-editor-table-label {
-    margin-top: 6px;
+    margin-top: 0.375rem;
     text-align: center;
     color: var(--bs-fg-3, #6c757d);
-    font-size: 12px;
+    font-size: 0.75rem;
 }
