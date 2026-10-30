@@ -30,18 +30,21 @@ export function registerSearchInput(jax) {
             this.element.classList.remove('loading-indicator-container');
         }
 
+        // Empties the input and gives it focus, which would otherwise be lost with the hidden button.
         clearInput() {
             this.$input.value = '';
             this.toggleClearButton();
+            this.$input.focus();
 
             if (this.$input.dataset.request) {
                 jax.request(this.$input);
             }
         }
 
+        // Shows the clear button while the input holds text, leaving its display to the stylesheet.
         toggleClearButton() {
             if (this.$input.value) {
-                this.$clearBtn.style.display = 'block';
+                this.$clearBtn.style.display = '';
             }
             else {
                 this.$clearBtn.style.display = 'none';

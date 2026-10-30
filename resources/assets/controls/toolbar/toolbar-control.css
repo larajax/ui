@@ -129,7 +129,8 @@
         float: none;
     }
 
-    input.form-control[type=text] {
+    input.form-control[type=text],
+    .form-control.form-adorn {
         height: auto;
         padding: 7px 13px 6px;
     }
@@ -395,15 +396,12 @@
             box-shadow: none;
         }
 
-        input.form-control {
+        input.form-control,
+        .form-control.form-adorn {
             border: none;
             padding: 11px 13px 12px;
             height: auto;
             border-radius: 0 !important;
-
-            &.icon.search {
-                background-position: right -78px;
-            }
         }
 
         div.loading-indicator-container.size-input-text {

@@ -67,11 +67,16 @@ afterEach(() => {
     document.documentElement.removeAttribute('data-bs-theme');
 });
 
+// Renders a facade inside an adorned field with its icon at the end, as the picker partials do
+function adornedFacade(facadeAttributes) {
+    return `<label class="form-control form-adorn form-adorn-end"><span class="form-adorn-icon" aria-hidden="true"><i></i></span><input type="text" class="form-ghost" ${facadeAttributes} /></label>`;
+}
+
 // Renders a picker: a date facade, a time facade, or one facade for both in datetime mode
 function connectPicker({ mode = 'datetime', attributes = '', value = '', dateAttributes = '' } = {}) {
     const date = mode !== 'time', time = mode === 'time';
 
-    document.body.innerHTML = `<div data-control="datepicker" data-mode="${mode}" ${attributes}>${date ? `<input type="text" data-datepicker ${dateAttributes} />` : ''}${time ? '<input type="text" data-timepicker />' : ''}<input type="hidden" name="when" value="${value}" data-datetime-value /></div>`;
+    document.body.innerHTML = `<div data-control="datepicker" data-mode="${mode}" ${attributes}>${date ? adornedFacade('data-datepicker ' + dateAttributes) : ''}${time ? adornedFacade('data-timepicker') : ''}<input type="hidden" name="when" value="${value}" data-datetime-value /></div>`;
 
     const element = document.querySelector('[data-control="datepicker"]');
     const control = new (jax.controls.get('datepicker'))(element);
@@ -732,6 +737,91 @@ describe('datepicker mounting', () => {
         time.control.disconnect();
         expect(panel.isConnected).toBe(false);
         expect(time.timeFacade.hasAttribute('aria-haspopup')).toBe(false);
+    });
+});
+
+// Gives an element a fixed viewport box
+function stubRect(element, { left, top, right, bottom }) {
+    element.getBoundingClientRect = () => ({ left, top, right, bottom, x: left, y: top, width: right - left, height: bottom - top });
+}
+
+describe('datepicker adorned field', () => {
+    afterEach(() => {
+        delete document.documentElement.clientWidth;
+        delete document.documentElement.clientHeight;
+    });
+
+    test('the calendar and the time panel line up with the adorned field, not the input inside it', async () => {
+        // The viewport needs a size, since a picker is kept inside it
+        Object.defineProperty(document.documentElement, 'clientWidth', { value: 1024, configurable: true });
+        Object.defineProperty(document.documentElement, 'clientHeight', { value: 768, configurable: true });
+
+        const date = connectPicker({ mode: 'date' });
+        stubRect(date.dateFacade.closest('.form-adorn'), { left: 100, top: 50, right: 400, bottom: 88 });
+        stubRect(date.dateFacade, { left: 113, top: 57, right: 370, bottom: 81 });
+
+        const calendar = await openCalendar(date.control);
+        expect(calendar.style.left).toBe('400px');
+        expect(calendar.style.top).toBe('88px');
+        date.control.disconnect();
+
+        const time = connectPicker({ mode: 'time' });
+        stubRect(time.timeFacade.closest('.form-adorn'), { left: 100, top: 50, right: 400, bottom: 88 });
+        stubRect(time.timeFacade, { left: 113, top: 57, right: 370, bottom: 81 });
+
+        const panel = openTimePanel(time.control);
+        expect(panel.style.left).toBe('400px');
+        expect(panel.style.top).toBe('88px');
+    });
+
+    test('a press on the adorned field focuses the facade and keeps the open calendar on its month', async () => {
+        const { control, dateFacade } = connectPicker({ mode: 'date', value: '2026-03-14' });
+        const calendar = await openCalendar(control);
+        const month = () => calendar.querySelector('[data-vc="month"]').textContent;
+
+        calendar.querySelector('[data-vc-arrow="next"]').click();
+        await sleep();
+        const shownMonth = month();
+        expect(shownMonth).not.toBe('March');
+
+        const field = dateFacade.closest('.form-adorn');
+        const press = new MouseEvent('click', { bubbles: true, cancelable: true });
+        field.querySelector('.form-adorn-icon').dispatchEvent(press);
+        field.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        await sleep();
+
+        expect(press.defaultPrevented).toBe(true);
+        expect(document.activeElement).toBe(dateFacade);
+        expect(control.picker.context.isShowInInputMode).toBe(true);
+        expect(month()).toBe(shownMonth);
+
+        // A press elsewhere still closes it
+        document.body.click();
+        await sleep();
+        expect(control.picker.context.isShowInInputMode).toBe(false);
+    });
+
+    test('a press on the adorned field after the calendar closes is left to the label', async () => {
+        const { control, dateFacade } = connectPicker({ mode: 'date' });
+        await openCalendar(control);
+        control.picker.hide();
+
+        const press = new MouseEvent('click', { bubbles: true, cancelable: true });
+        dateFacade.closest('.form-adorn').dispatchEvent(press);
+        expect(press.defaultPrevented).toBe(false);
+    });
+
+    test('a press on the adorned field around a time facade keeps its panel open', () => {
+        const { control, timeFacade } = connectPicker({ mode: 'time' });
+        const field = timeFacade.closest('.form-adorn');
+
+        openTimePanel(control);
+        pressPointer(field);
+        pressPointer(field.querySelector('.form-adorn-icon'));
+        expect(control.timePicker.isShown).toBe(true);
+
+        pressPointer(document.body);
+        expect(control.timePicker.isShown).toBe(false);
     });
 });
 

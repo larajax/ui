@@ -2,7 +2,7 @@
     min-height: 36px;
     position: relative;
 
-    input {
+    > .form-control.form-adorn {
         height: auto;
         border: none;
         border-bottom: 1px solid var(--oc-filter-border);
@@ -12,7 +12,6 @@
         background: transparent !important;
         padding-top: 6px;
         padding-bottom: 6px;
-        padding-right: 35px;
     }
 
     .close {

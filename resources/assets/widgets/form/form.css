@@ -78,32 +78,41 @@
     -webkit-appearance: none;
 
     /* Preview values keep block text flow, since Bootstrap 6 lays out every form control as flex */
-    &:not(input, select, textarea, button) {
+    &:not(input, select, textarea, button, .form-adorn) {
         display: block;
     }
 
-    &:focus {
+    &:focus,
+    &.form-adorn:focus-within {
         border: 1px solid var(--oc-border-focus);
     }
 
     &[readonly],
-    &[readonly]:focus {
+    &[readonly]:focus,
+    &.form-adorn:has(.form-ghost[readonly]) {
         color: var(--oc-form-control-readonly-color);
         border-color: var(--oc-form-control-readonly-border);
         background-color: var(--oc-form-control-readonly-bg);
     }
 
     &:disabled,
-    &[disabled] {
+    &[disabled],
+    &.form-adorn:has(.form-ghost:disabled) {
         color: var(--oc-form-control-disabled-color);
         background-color: var(--oc-form-control-disabled-bg);
         cursor: not-allowed;
+    }
+
+    /* A disabled input takes the field's disabled text colour, as a plain disabled input shows it */
+    &.form-adorn > .form-ghost:disabled {
+        color: inherit;
     }
 
     &.growable, /* @deprecated */
     &.is-growable {
         width: 110px;
         &:focus,
+        &:focus-within,
         &:active {
             width: 200px !important;
         }
@@ -113,17 +122,20 @@
             text-indent: -999px;
 
             &:focus,
+            &:focus-within,
             &:active {
                 text-indent: 0;
                 width: 100px !important;
             }
-
-            &.icon {
-                padding-right: 0 !important;
-            }
         }
     }
 
+}
+
+/* Font icons in an adornment take the size Bootstrap gives an SVG one */
+.form-adorn-icon > i {
+    font-size: var(--bs-form-adorn-icon-size);
+    line-height: 1;
 }
 
 .form-group {
@@ -374,45 +386,6 @@
 .control-disabled {
     .form-text {
         opacity: .5;
-    }
-}
-
-.input-with-icon {
-    position: relative;
-
-    > .icon {
-        position: absolute;
-        z-index: var(--oc-zindex-form);
-        padding: 10px;
-        pointer-events: none;
-        color: #bdbdbd;
-        font-size: 15px;
-        margin-top: 1px;
-    }
-
-    &.right-align {
-        > .icon {
-            right: 0;
-        }
-        input {
-            padding-right: 32px !important;
-        }
-    }
-
-    &.left-align {
-        > .icon {
-            left: 0;
-        }
-        input {
-            padding-left: 32px !important;
-        }
-    }
-
-    &.size-sm {
-        > .icon {
-            margin-top: 0;
-            padding: 5px 8px;
-        }
     }
 }
 
@@ -730,6 +703,11 @@ body.compact-container .form-fatal-error {
     .form-control {
         display: inline-block;
         margin-right: 15px;
+
+        /* An adorned field keeps the flex layout that lines its icon up with the input */
+        &.form-adorn {
+            display: inline-flex;
+        }
     }
 
     input[type=text].form-control,

@@ -89,7 +89,19 @@ const COLUMNS = [
     { data: 'qty', title: 'Qty', type: 'numeric' }
 ];
 
-function field({ rows = [{ country: 'AU', state: 'NSW', qty: 1 }, { country: 'US', state: 'CA', qty: 2 }], value, columns = COLUMNS, ajaxColumns = [], dependencies = { state: 'country' }, attributes = '' } = {}) {
+// The toolbar search as the partial renders it, an input inside an adorned field
+const SEARCH_TOOLBAR = `
+    <div class="toolbar" data-table-toolbar>
+        <div class="toolbar-search">
+            <label class="form-control form-adorn">
+                <span class="form-adorn-icon" aria-hidden="true"><i></i></span>
+                <input type="text" class="form-ghost" aria-label="Search..." placeholder="Search..." data-table-search>
+            </label>
+        </div>
+    </div>
+`;
+
+function field({ rows = [{ country: 'AU', state: 'NSW', qty: 1 }, { country: 'US', state: 'CA', qty: 2 }], value, columns = COLUMNS, ajaxColumns = [], dependencies = { state: 'country' }, attributes = '', toolbar = '' } = {}) {
     const saved = value !== undefined ? value : JSON.stringify(rows);
 
     return `
@@ -98,6 +110,7 @@ function field({ rows = [{ country: 'AU', state: 'NSW', qty: 1 }, { country: 'US
                 data-columns='${JSON.stringify(columns)}' data-hot-options='{"minRows":1}' data-ajax-columns='${JSON.stringify(ajaxColumns)}'
                 data-column-dependencies='${JSON.stringify(dependencies)}' data-data-locker="#locker" data-adding="true" data-deleting="true"
                 ${attributes}>
+                ${toolbar}
                 <div data-hot-container></div>
                 <input type="hidden" id="locker" name="lines" value='${saved}'>
             </div>
@@ -335,6 +348,19 @@ describe('datatable control', () => {
 
         expect(() => options.success({ rows: [{ country: 'FR' }] })).not.toThrow();
     });
+
+    test('searches the grid as text is typed into the adorned toolbar search', () => {
+        const { element, sheet } = connect(field({ toolbar: SEARCH_TOOLBAR }));
+        const search = element.querySelector('.form-adorn [data-table-search]');
+
+        search.value = 'nsw';
+        search.dispatchEvent(new Event('input', { bubbles: true }));
+        expect(sheet.getSearchHits()).toEqual([{ row: 0, col: 1 }]);
+
+        search.value = '';
+        search.dispatchEvent(new Event('input', { bubbles: true }));
+        expect(sheet.getSearchHits()).toEqual([]);
+    });
 });
 
 describe('datatable validation rules', () => {
@@ -430,5 +456,15 @@ describe('datatable form widget', () => {
 
             expect(keys).toEqual(used);
         });
+    });
+
+    test('renders the toolbar search as an input inside an adorned field with the search icon', () => {
+        const partial = read('../src/FormWidgets/DataTable/partials/_datatable.php');
+        const search = partial.slice(partial.indexOf('<div class="toolbar-search">'), partial.indexOf('</label>') + 8);
+
+        expect(search).toContain('<label class="form-control form-adorn">');
+        expect(search).toContain('<span class="form-adorn-icon" aria-hidden="true">');
+        expect(search).toContain("Ui::icon('search.icon')");
+        expect(search).toMatch(/<input type="text" class="form-ghost" aria-label="[^"]+" placeholder="[^"]+" data-table-search>/);
     });
 });

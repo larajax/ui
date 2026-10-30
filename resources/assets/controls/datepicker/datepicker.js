@@ -12,6 +12,7 @@
  * - data-control="datepicker" - enables the plugin on the wrapper element
  * - data-datepicker - the visible date facade input (text)
  * - data-timepicker - the visible time facade input (text)
+ * - a facade inside an adorned field (.form-adorn) has its pickers placed against the field
  * - data-datetime-value - the hidden locker input carrying the stored value
  * - data-default-time-midnight - fill a missing time with 00:00 instead of the current time
  * - data-ignore-timezone - set when the value is not converted to the user's timezone
@@ -100,6 +101,9 @@ const ordinal = (n) => {
     const suffixes = ['th', 'st', 'nd', 'rd'], v = n % 100;
     return n + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 };
+
+// Returns the box a picker lines up with, the adorned field around a facade or the facade itself.
+const pickerAnchorFor = (facade) => facade.closest('.form-adorn') || facade;
 
 /**
  * loadCalendar imports Vanilla Calendar Pro on first use and resolves with its exports.
@@ -269,6 +273,7 @@ export function registerDatepicker(jax) {
             this.isDatePickerBound = false;
             this.onDocumentKeydown = this.onDocumentKeydown.bind(this);
             this.onWindowResize = this.onWindowResize.bind(this);
+            this.onAnchorClick = this.onAnchorClick.bind(this);
         }
 
         connect() {
@@ -481,6 +486,7 @@ export function registerDatepicker(jax) {
 
             document.addEventListener('keydown', this.onDocumentKeydown, true);
             window.addEventListener('resize', this.onWindowResize);
+            window.addEventListener('click', this.onAnchorClick, true);
         }
 
         // Announces a value picked while the calendar was open, as a typed value would.
@@ -492,6 +498,7 @@ export function registerDatepicker(jax) {
         unbindCalendarEvents() {
             document.removeEventListener('keydown', this.onDocumentKeydown, true);
             window.removeEventListener('resize', this.onWindowResize);
+            window.removeEventListener('click', this.onAnchorClick, true);
         }
 
         // Stores a clicked date, keeping the stored time, and closes a date-only calendar.
@@ -548,6 +555,20 @@ export function registerDatepicker(jax) {
             this.positionCalendar();
         }
 
+        // A press on the adorned field around the facade focuses the facade without reaching the calendar's outside-press check, so the open calendar keeps its month as on a press on the facade.
+        onAnchorClick(ev) {
+            const facade = this.dateFacade,
+                anchor = facade ? pickerAnchorFor(facade) : null;
+
+            if (!anchor || anchor === facade || ev.target === facade || !anchor.contains(ev.target)) {
+                return;
+            }
+
+            ev.stopPropagation();
+            ev.preventDefault();
+            facade.focus();
+        }
+
         // A picker mounts on the body, but the page outside an open modal dialog is inert.
         mountPicker(element, facade) {
             const parent = mountParentFor(facade);
@@ -595,7 +616,7 @@ export function registerDatepicker(jax) {
                 return;
             }
 
-            const rect = facade.getBoundingClientRect(),
+            const rect = pickerAnchorFor(facade).getBoundingClientRect(),
                 width = element.offsetWidth,
                 height = element.offsetHeight,
                 viewportWidth = document.documentElement.clientWidth,

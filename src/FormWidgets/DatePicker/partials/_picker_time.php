@@ -1,11 +1,13 @@
 <!-- Time -->
-<div class="input-with-icon right-align">
-    <?= \Larajax\Ui\Facades\Ui::icon('datepicker.time', ['class' => 'icon']) ?>
+<label class="form-control form-adorn form-adorn-end">
+    <span class="form-adorn-icon" aria-hidden="true">
+        <?= \Larajax\Ui\Facades\Ui::icon('datepicker.time') ?>
+    </span>
     <input
         type="text"
         id="<?= $this->getId('time') ?>"
-        class="form-control align-right"
+        class="form-ghost"
         autocomplete="off"
         <?= $field->getAttributes() ?>
         data-timepicker />
-</div>
+</label>

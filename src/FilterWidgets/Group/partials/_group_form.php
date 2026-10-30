@@ -19,17 +19,23 @@
         <input type="hidden" name="Filter[mode]" value="<?= $scope->matchMode ?: 'include' ?>">
     <?php endif ?>
 
-    <div class="filter-search search-input-container loading-indicator-container size-input-text">
-        <input
-            type="text"
-            name="search"
-            autocomplete="off"
-            placeholder="<?= e(__('Search...')) ?>"
-            class="filter-search-input form-control form-control-sm popup-allow-focus"
-            data-request="<?= $this->getEventHandler('onGetGroupOptions') ?>"
-            data-load-indicator-opaque
-            data-load-indicator
-            data-track-input />
+    <div class="filter-search loading-indicator-container size-input-text">
+        <label class="form-control form-control-sm form-adorn">
+            <span class="form-adorn-icon" aria-hidden="true">
+                <?= \Larajax\Ui\Facades\Ui::icon('search.icon') ?>
+            </span>
+            <input
+                type="text"
+                name="search"
+                autocomplete="off"
+                placeholder="<?= e(__('Search...')) ?>"
+                aria-label="<?= e(__('Search...')) ?>"
+                class="filter-search-input form-ghost popup-allow-focus"
+                data-request="<?= $this->getEventHandler('onGetGroupOptions') ?>"
+                data-load-indicator-opaque
+                data-load-indicator
+                data-track-input />
+        </label>
         <div class="filter-active-items">
             <ul data-groupfilter-active></ul>
         </div>

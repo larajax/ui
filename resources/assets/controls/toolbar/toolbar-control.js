@@ -37,9 +37,10 @@ export function registerToolbar(jax) {
 
             if (this.toolbar) {
                 this.growables = this.toolbar.querySelectorAll('.form-control.is-growable');
+                // An adorned field grows while its input has focus, so the focus events are the bubbling ones
                 this.growables.forEach((el) => {
-                    this.listen('focus', el, this.onGrowableFocus);
-                    this.listen('blur', el, this.onGrowableFocus);
+                    this.listen('focusin', el, this.onGrowableFocus);
+                    this.listen('focusout', el, this.onGrowableFocus);
                     this.listen('transitionend', el, this.onGrowableFocus);
                 });
             }

@@ -17,18 +17,23 @@ if ($handler) {
     'data-control' => 'search-input',
     'class' => $attributes->get('outer-class')
 ]) ?>>
-    <div class="search-input-container storm-icon-pseudo">
+    <label <?= $attributes->only(['class'])->merge(['class' => 'form-control form-adorn']) ?>>
+        <span class="form-adorn-icon" aria-hidden="true">
+            <?= \Larajax\Ui\Facades\Ui::icon('search.icon') ?>
+        </span>
         <input
-            <?= $attributes->merge([
+            <?= $attributes->except([
+                'outer-class',
+                'class'
+            ])->merge([
                 'type' => 'text',
                 'name' => $name,
                 'placeholder' => $placeholder,
                 'value' => $value,
-                'class' => 'form-control',
+                'aria-label' => $placeholder ?: __('Search'),
+                'class' => 'form-ghost',
                 'autocomplete' => 'off',
                 'data-search-input' => true
-            ])->except([
-                'outer-class'
             ]) ?>
         />
         <button
@@ -36,9 +41,10 @@ if ($handler) {
             type="button"
             value=""
             style="display:none"
+            aria-label="<?= e(__('Clear')) ?>"
             data-search-clear
         >
             <?= \Larajax\Ui\Facades\Ui::icon('search.clear') ?>
         </button>
-    </div>
+    </label>
 </div>

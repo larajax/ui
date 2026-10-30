@@ -44,7 +44,12 @@
         <?php endif ?>
         <?php if ($searching): ?>
             <div class="toolbar-search">
-                <input type="text" class="form-control" placeholder="<?= e(__('Search...')) ?>" data-table-search>
+                <label class="form-control form-adorn">
+                    <span class="form-adorn-icon" aria-hidden="true">
+                        <?= \Larajax\Ui\Facades\Ui::icon('search.icon') ?>
+                    </span>
+                    <input type="text" class="form-ghost" aria-label="<?= e(__('Search...')) ?>" placeholder="<?= e(__('Search...')) ?>" data-table-search>
+                </label>
             </div>
         <?php endif ?>
     </div>

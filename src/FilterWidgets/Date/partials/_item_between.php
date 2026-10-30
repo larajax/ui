@@ -6,13 +6,18 @@
         <?php if ($scope->firstDay !== null && $scope->firstDay !== ''): ?>data-first-day="<?= e($scope->firstDay) ?>"<?php endif ?>
         data-year-range="<?= e($scope->yearRange) ?>"
         data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
-        <input
-            type="text"
-            name="Filter[afterRaw]"
-            value="<?= e($scope->afterRaw) ?>"
-            class="form-control form-control-sm popup-allow-focus w-120"
-            autocomplete="off"
-            data-datepicker />
+        <label class="form-control form-control-sm form-adorn form-adorn-end w-120">
+            <span class="form-adorn-icon" aria-hidden="true">
+                <?= \Larajax\Ui\Facades\Ui::icon('datepicker.date') ?>
+            </span>
+            <input
+                type="text"
+                name="Filter[afterRaw]"
+                value="<?= e($scope->afterRaw) ?>"
+                class="form-ghost popup-allow-focus"
+                autocomplete="off"
+                data-datepicker />
+        </label>
         <input
             type="hidden"
             name="Filter[after]"
@@ -32,13 +37,18 @@
         <?php if ($scope->firstDay !== null && $scope->firstDay !== ''): ?>data-first-day="<?= e($scope->firstDay) ?>"<?php endif ?>
         data-year-range="<?= e($scope->yearRange) ?>"
         data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
-        <input
-            type="text"
-            name="Filter[beforeRaw]"
-            value="<?= e($scope->beforeRaw) ?>"
-            class="form-control form-control-sm popup-allow-focus w-120"
-            autocomplete="off"
-            data-datepicker />
+        <label class="form-control form-control-sm form-adorn form-adorn-end w-120">
+            <span class="form-adorn-icon" aria-hidden="true">
+                <?= \Larajax\Ui\Facades\Ui::icon('datepicker.date') ?>
+            </span>
+            <input
+                type="text"
+                name="Filter[beforeRaw]"
+                value="<?= e($scope->beforeRaw) ?>"
+                class="form-ghost popup-allow-focus"
+                autocomplete="off"
+                data-datepicker />
+        </label>
         <input
             type="hidden"
             name="Filter[before]"

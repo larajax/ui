@@ -16,11 +16,6 @@
     .control-filter {
         border-top: none;
     }
-
-    .search-input-container:before {
-        top: 12px;
-        right: 12px;
-    }
 }
 
 /*

@@ -372,11 +372,16 @@ export class TimePicker {
         }
     }
 
-    // A press or focus outside the panel and its input closes the panel.
+    // A press or focus outside the panel, its input and the input's labels closes the panel.
     onDocumentInteract(ev) {
-        if (ev.target !== this.input && !this.element.contains(ev.target)) {
+        if (ev.target !== this.input && !this.element.contains(ev.target) && !this.isInputLabel(ev.target)) {
             this.hide();
         }
+    }
+
+    // A press on a label of the input, such as the adorned field around it, focuses the input instead.
+    isInputLabel(target) {
+        return Array.from(this.input.labels || []).some((label) => label.contains(target));
     }
 
     onWindowResize() {

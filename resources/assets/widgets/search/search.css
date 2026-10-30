@@ -7,69 +7,38 @@
     border-radius: 100px;
 }
 
-.search-input-container {
-    position: relative;
-
-    /* Reserve space so input text does not run under the icon */
-    > input.form-control[type=text] {
-        padding-right: 30px;
-    }
-
-    /* Magnifier rendered via Ui::icon('search.icon') in the search partial */
-    > .search-icon {
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        font-size: 16px;
-        line-height: 1;
-        color: var(--bs-fg-3);
-        pointer-events: none;
-        z-index: 1;
-        right: 8px;
-        top: 11px;
-    }
-}
-
-/* Clear input text button */
+/* Clear button at the end of an adorned search field, shown by the search input control while it holds text */
 .clear-input-text {
-    padding: 0 5px;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-block: -.25rem;
+    margin-inline-end: -.375rem;
+    padding: 0;
+    color: var(--bs-form-adorn-icon-color, var(--bs-fg-2));
     cursor: pointer;
-    border: none;
-    border-radius: 100px;
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
     -webkit-appearance: none;
-    font-size: 21px;
-    font-weight: bold;
-    line-height: 1;
-    color: var(--bs-fg-body);
-    text-shadow: 0 1px 0 var(--bs-bg-body);
-    font-family: sans-serif;
-    display: inline-block;
-    position: absolute;
-    right: 3px;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    background-color: var(--oc-form-control-bg);
-    height: 28px;
-    width: 26px;
-    z-index: 2;
 
     > i {
-        opacity: 1;
-        width: 16px;
-        height: 16px;
-        font-size: 16px;
+        font-size: var(--bs-form-adorn-icon-size, 1rem);
         line-height: 1;
-        display: block;
     }
 
-    &:hover,
-    &:focus {
-        text-decoration: none;
-        cursor: pointer;
+    &:hover {
+        color: var(--bs-fg-body);
+        background-color: var(--bs-bg-2);
     }
 
-    &:focus {
-        outline: none;
+    &:focus-visible {
+        color: var(--bs-fg-body);
+        background-color: var(--bs-bg-2);
+        outline: var(--bs-focus-ring);
+        outline-offset: 0;
     }
 }
