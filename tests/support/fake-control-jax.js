@@ -30,6 +30,16 @@ export function makeFakeJax() {
             this.bound = [];
         }
 
+        // Lifecycle methods default to doing nothing, as in the framework's ControlBase
+        init() {
+        }
+
+        connect() {
+        }
+
+        disconnect() {
+        }
+
         proxy(method) {
             if (!this.proxied.has(method)) {
                 this.proxied.set(method, method.bind(this));

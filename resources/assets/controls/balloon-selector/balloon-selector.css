@@ -1,66 +1,39 @@
 /*
- * Balloon selector, a row of joined options where one is active
+ * Balloon selector, a group of radio buttons where one is checked
  */
 
-.control-balloon-selector {
-    ul {
-        display: inline-flex;
-        flex-wrap: wrap;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-    }
+[data-control="balloon-selector"] > .btn-group {
+    /* Many options wrap onto another row instead of overflowing the field */
+    flex-wrap: wrap;
 
-    li {
-        position: relative;
-        min-height: var(--bs-btn-input-min-height);
-        padding: var(--bs-btn-input-padding-y) var(--bs-btn-input-padding-x);
-        border: var(--bs-border-width) solid var(--bs-border-color);
-        background: var(--bs-btn-input-bg);
-        color: var(--bs-btn-input-fg);
-        font-size: var(--bs-btn-input-font-size);
-        line-height: var(--bs-btn-input-line-height);
-        cursor: pointer;
-        user-select: none;
+    /* Options are sized and coloured like the other inputs in the form */
+    > .btn-check.btn-outline {
+        --bs-btn-padding-x: var(--bs-btn-input-padding-x);
+        --bs-btn-padding-y: var(--bs-btn-input-padding-y);
+        --bs-btn-bg: var(--bs-btn-input-bg);
+        --bs-btn-color: var(--bs-btn-input-fg);
+        --bs-btn-border-color: var(--bs-border-color);
+        --bs-btn-hover-bg: var(--bs-bg-1);
+        --bs-btn-hover-color: var(--bs-btn-input-fg);
+        --bs-btn-hover-border-color: var(--bs-border-color);
+        --bs-btn-disabled-bg: var(--bs-btn-input-bg);
+        --bs-btn-disabled-color: var(--bs-btn-input-fg);
+        --bs-btn-disabled-border-color: var(--bs-border-color);
 
-        &:first-child {
-            border-start-start-radius: var(--bs-btn-input-border-radius);
-            border-end-start-radius: var(--bs-btn-input-border-radius);
-        }
-
-        &:last-child {
-            border-start-end-radius: var(--bs-btn-input-border-radius);
-            border-end-end-radius: var(--bs-btn-input-border-radius);
-        }
-
-        + li {
-            margin-inline-start: calc(var(--bs-border-width) * -1);
-        }
-
-        &:hover {
-            background: var(--bs-bg-1);
-        }
-
-        &:focus-visible {
-            z-index: 2;
-            outline: 0;
-            box-shadow: 0 0 0 var(--bs-focus-ring-width) var(--bs-primary-focus-ring);
-        }
-
-        &.active {
-            z-index: 1;
-            border-color: var(--bs-primary-bg);
-            background: var(--bs-primary-bg);
-            color: var(--bs-primary-contrast);
+        /* Only the checked option takes the theme colour, also when disabled so preview mode shows the value */
+        &:has(input:checked) {
+            --bs-btn-active-bg: var(--bs-theme-bg);
+            --bs-btn-active-color: var(--bs-theme-contrast);
+            --bs-btn-active-border-color: var(--bs-theme-bg);
+            --bs-btn-disabled-bg: var(--bs-theme-bg);
+            --bs-btn-disabled-color: var(--bs-theme-contrast);
+            --bs-btn-disabled-border-color: var(--bs-theme-bg);
         }
     }
 
-    &.control-disabled li {
-        cursor: default;
-        opacity: 0.65;
-
-        &:hover:not(.active) {
-            background: var(--bs-btn-input-bg);
-        }
+    /* A read-only selector looks like a disabled one, while its checked value still posts */
+    &[aria-readonly="true"] > .btn-check {
+        pointer-events: none;
+        opacity: var(--bs-btn-disabled-opacity);
     }
 }

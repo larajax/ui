@@ -15,15 +15,22 @@ afterEach(() => {
 });
 
 // Renders a selector the way the form's balloon-selector field partial does
-function mountSelector({ value = '', allowEmpty = false, disabled = false } = {}) {
+function mountSelector({ value = '', allowEmpty = false, readOnly = false, disabled = false } = {}) {
+    const option = (optionValue, label) => `
+        <label class="btn-check btn-outline theme-primary">
+            <input type="radio" name="status" value="${optionValue}" autocomplete="off" ${value === optionValue ? 'checked' : ''} ${disabled ? 'disabled' : ''} />
+            ${label}
+        </label>
+    `;
+
     document.body.innerHTML = `
         <form>
-            <div class="control-balloon-selector ${disabled ? 'control-disabled' : ''}" data-control="balloon-selector" ${allowEmpty ? 'data-selector-allow-empty' : ''}>
-                <ul role="radiogroup">
-                    <li data-value="draft" role="radio" tabindex="0" class="${value === 'draft' ? 'active' : ''}">Draft</li>
-                    <li data-value="active" role="radio" tabindex="0" class="${value === 'active' ? 'active' : ''}">Active</li>
-                </ul>
-                <input type="hidden" name="status" value="${value}" />
+            <div data-control="balloon-selector" ${allowEmpty ? 'data-selector-allow-empty' : ''}>
+                <input type="hidden" name="status" value="" ${disabled ? 'disabled' : ''} />
+                <div class="btn-group" role="radiogroup" aria-label="Status" ${readOnly ? 'aria-readonly="true"' : ''}>
+                    ${option('draft', 'Draft')}
+                    ${option('active', 'Active')}
+                </div>
             </div>
         </form>
     `;
@@ -31,74 +38,138 @@ function mountSelector({ value = '', allowEmpty = false, disabled = false } = {}
     jax.connectAll();
 
     const element = document.querySelector('[data-control="balloon-selector"]');
-    const input = element.querySelector('input');
     const changes = [];
-    input.addEventListener('change', () => changes.push(input.value));
+    element.addEventListener('change', (ev) => changes.push(`${ev.target.type}:${ev.target.value}`));
 
-    return { element, input, changes, option: (value) => element.querySelector(`li[data-value="${value}"]`) };
+    return {
+        element,
+        changes,
+        control: jax.fetchControl(element, 'balloon-selector'),
+        radio: (optionValue) => element.querySelector(`input[value="${optionValue}"]`),
+        posted: () => new FormData(document.querySelector('form')).getAll('status')
+    };
+}
+
+function pressSpace(target) {
+    const down = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+    target.dispatchEvent(down);
+    target.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', bubbles: true }));
+
+    return down;
 }
 
 describe('balloon selector', () => {
-    test('clicking an option stores its value, marks it active and announces the change', () => {
-        const { input, changes, option } = mountSelector({ value: 'draft' });
+    test('the checked option posts after the empty hidden input, so it wins', () => {
+        const { posted, control } = mountSelector({ value: 'draft' });
 
-        option('active').click();
-
-        expect(input.value).toBe('active');
-        expect(option('active').classList.contains('active')).toBe(true);
-        expect(option('active').getAttribute('aria-checked')).toBe('true');
-        expect(option('draft').classList.contains('active')).toBe(false);
-        expect(changes).toEqual(['active']);
+        expect(posted()).toEqual(['', 'draft']);
+        expect(control.getValue()).toBe('draft');
     });
 
-    test('clicking the active option keeps it unless empty values are allowed', () => {
-        const kept = mountSelector({ value: 'draft' });
-        kept.option('draft').click();
+    test('with no option checked only the empty value posts', () => {
+        const { posted, control } = mountSelector();
 
-        expect(kept.input.value).toBe('draft');
+        expect(posted()).toEqual(['']);
+        expect(control.getValue()).toBe('');
+    });
+
+    test('clicking the checked option keeps it unless empty values are allowed', () => {
+        const kept = mountSelector({ value: 'draft' });
+        kept.radio('draft').click();
+
+        expect(kept.control.getValue()).toBe('draft');
         expect(kept.changes).toEqual([]);
 
         jax.disconnectAll();
 
         const cleared = mountSelector({ value: 'draft', allowEmpty: true });
-        cleared.option('draft').click();
+        cleared.radio('draft').click();
 
-        expect(cleared.input.value).toBe('');
-        expect(cleared.option('draft').classList.contains('active')).toBe(false);
-        expect(cleared.changes).toEqual(['']);
+        expect(cleared.radio('draft').checked).toBe(false);
+        expect(cleared.posted()).toEqual(['']);
+        expect(cleared.changes).toEqual(['hidden:']);
     });
 
-    test('enter and space pick the focused option', () => {
-        const { input, option } = mountSelector({ value: 'draft' });
+    test('after clearing, clicking the option checks it again', () => {
+        const { radio, control } = mountSelector({ value: 'draft', allowEmpty: true });
 
-        option('active').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-        expect(input.value).toBe('active');
+        radio('draft').click();
+        radio('draft').click();
 
-        option('draft').dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
-        expect(input.value).toBe('draft');
+        expect(control.getValue()).toBe('draft');
     });
 
-    test('a disabled selector ignores clicks', () => {
-        const { input, changes, option } = mountSelector({ value: 'draft', disabled: true });
+    test('space on the checked option clears it when empty values are allowed', () => {
+        const { radio, posted, changes } = mountSelector({ value: 'draft', allowEmpty: true });
 
-        option('active').click();
+        const down = pressSpace(radio('draft'));
 
-        expect(input.value).toBe('draft');
-        expect(changes).toEqual([]);
+        expect(down.defaultPrevented).toBe(true);
+        expect(posted()).toEqual(['']);
+        expect(changes).toEqual(['hidden:']);
     });
 
-    test('the trigger API can empty, fill and disable the selector', () => {
-        const { element, input, option } = mountSelector({ value: 'draft' });
+    test('a click that follows the space key does not check the cleared option again', () => {
+        const { radio, control } = mountSelector({ value: 'draft', allowEmpty: true });
+
+        radio('draft').dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }));
+        const click = new MouseEvent('click', { bubbles: true, cancelable: true });
+        radio('draft').dispatchEvent(click);
+
+        expect(click.defaultPrevented).toBe(true);
+        expect(control.getValue()).toBe('');
+    });
+
+    test('space leaves the checked option alone unless empty values are allowed', () => {
+        const { radio, control } = mountSelector({ value: 'draft' });
+
+        const down = pressSpace(radio('draft'));
+
+        expect(down.defaultPrevented).toBe(false);
+        expect(control.getValue()).toBe('draft');
+    });
+
+    // A cancelled click is how a browser keeps the previous radio checked, after a press or an arrow key alike
+    test('a read-only selector cancels a click on any option', () => {
+        const { radio } = mountSelector({ value: 'draft', allowEmpty: true, readOnly: true });
+
+        for (const optionValue of ['active', 'draft']) {
+            const click = new MouseEvent('click', { bubbles: true, cancelable: true });
+            radio(optionValue).dispatchEvent(click);
+
+            expect(click.defaultPrevented).toBe(true);
+        }
+    });
+
+    test('space does not clear a read-only selector', () => {
+        const { radio, control } = mountSelector({ value: 'draft', allowEmpty: true, readOnly: true });
+
+        pressSpace(radio('draft'));
+
+        expect(control.getValue()).toBe('draft');
+    });
+
+    test('the trigger API can fill, empty and disable the selector', () => {
+        const { element, radio, posted, changes } = mountSelector({ value: 'draft' });
 
         element.dispatchEvent(new CustomEvent('trigger:fill', { detail: { fillValue: 'active' } }));
-        expect(input.value).toBe('active');
-        expect(option('active').classList.contains('active')).toBe(true);
+        expect(radio('active').checked).toBe(true);
+        expect(radio('draft').checked).toBe(false);
 
         element.dispatchEvent(new CustomEvent('trigger:empty'));
-        expect(input.value).toBe('');
-        expect(element.querySelector('li.active')).toBeNull();
+        expect(posted()).toEqual(['']);
+        expect(changes).toEqual(['radio:active', 'hidden:']);
 
         element.dispatchEvent(new CustomEvent('trigger:disable', { detail: { status: true } }));
-        expect(input.disabled).toBe(true);
+        expect([...element.querySelectorAll('input')].every((input) => input.disabled)).toBe(true);
+        expect(posted()).toEqual([]);
+    });
+
+    test('a fill with the current value announces no change', () => {
+        const { element, changes } = mountSelector({ value: 'draft' });
+
+        element.dispatchEvent(new CustomEvent('trigger:fill', { detail: { fillValue: 'draft' } }));
+
+        expect(changes).toEqual([]);
     });
 });

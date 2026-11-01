@@ -119,8 +119,9 @@
     }
 }
 
+/* Joined buttons get a faint divider, except outline buttons whose own borders divide them */
 .btn-group {
-    :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
+    :is(.btn, .btn-solid, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
         border-right: 1px solid rgba(0, 0, 0, 0.09);
         margin-left: 0 !important;
 
