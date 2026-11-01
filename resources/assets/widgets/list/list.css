@@ -829,9 +829,15 @@ table.table.data {
                     border-color: transparent;
                     box-shadow: none;
 
-                    /* The footer link color sits outside the component layer, so the hover color is restated here */
                     &:hover {
                         color: var(--bs-pagination-hover-color);
+                    }
+                }
+
+                .page-item.active > .page-link {
+                    &,
+                    &:hover {
+                        color: var(--bs-pagination-active-color);
                     }
                 }
 
@@ -851,6 +857,75 @@ table.table.data {
                 margin-bottom: .5rem;
             }
         }
+    }
+}
+
+/*
+ * Page change: the list control marks itself is-updating and the pressed link is-loading while the next
+ * page loads, and everything shows only after a short delay, so a quick page change looks instant
+ */
+
+.control-list {
+    --list-updating-delay: .3s;
+
+    .list-content tbody {
+        transition: opacity .15s ease;
+    }
+
+    &.is-updating {
+        .list-content tbody {
+            pointer-events: none;
+            opacity: .5;
+            transition-delay: var(--list-updating-delay);
+        }
+
+        .list-pagination .page-link {
+            pointer-events: none;
+
+            &:not(.is-loading) {
+                opacity: .5;
+                transition: opacity .15s ease var(--list-updating-delay);
+            }
+
+            /* The pressed link swaps its number or arrow for a spinner, in the active text colour once it is the current page */
+            &.is-loading {
+                --list-spinner-color: var(--oc-accent);
+                position: relative;
+
+                /* An animation, so the link keeps its own colour until the delay ends and then hides its text whatever rule set it */
+                animation: list-loading-hide-text 0s var(--list-updating-delay) both;
+
+                &::after {
+                    --loader-size: 1rem;
+                    position: absolute;
+                    inset: 50% auto auto 50%;
+                    width: var(--loader-size);
+                    height: var(--loader-size);
+                    margin: calc(var(--loader-size) / -2) 0 0 calc(var(--loader-size) / -2);
+                    content: '';
+                    border: 2px solid color-mix(in srgb, var(--list-spinner-color) 30%, transparent);
+                    border-top-color: var(--list-spinner-color);
+                    border-radius: 50%;
+                    animation: spin .8s linear infinite, list-loading-appear .15s ease var(--list-updating-delay) both;
+                }
+            }
+        }
+
+        .list-pagination .page-item.active > .page-link.is-loading {
+            --list-spinner-color: var(--bs-pagination-active-color, #fff);
+        }
+    }
+}
+
+@keyframes list-loading-appear {
+    from {
+        opacity: 0;
+    }
+}
+
+@keyframes list-loading-hide-text {
+    to {
+        color: transparent;
     }
 }
 

@@ -9,8 +9,12 @@
  * jax.fetchControl(element, 'listwidget')
  * jax.fetchControl(el.closest('.control-list'), 'listwidget').getChecked() - values of the checked rows
  * jax.fetchControl(el.closest('.control-list'), 'listwidget').toggleChecked(el) - toggles the row containing el
+ * jax.fetchControl(el.closest('.control-list'), 'listwidget').setUpdating(true) - marks the list as updating, as a linked filter does
  * jax.listOnLoadForm(recordId, context) - opens the onLoadPopupForm handler in a popup,
  *   used by the recordOnClick "popup" shorthand
+ *
+ * While a pagination request runs, the list has the is-updating class and aria-busy="true", the pressed
+ * link has is-loading and the target page shows as the current one; a failed request puts them back.
  *
  * Toolbar buttons inside a [data-list-linkage] container:
  * - data-list-checked-trigger - enabled through the trigger API while rows are checked,
@@ -45,6 +49,8 @@ export function registerListWidget(jax) {
             this.body = this.element.querySelector('tbody');
 
             this.listen('ajax:setup', this.beforeAjaxRequest);
+            this.listen('ajax:promise', this.onPageRequest);
+            this.listen('ajax:always', this.onPageRequestEnd);
             this.listen('click', this.onClickCheckbox);
             this.listen('change', this.onChangeCheckbox);
 
@@ -54,6 +60,69 @@ export function registerListWidget(jax) {
         disconnect() {
             this.head = null;
             this.body = null;
+            this.pageChange = null;
+        }
+
+        // A page change marks the list as updating, turns the pressed link into a spinner and shows the target page as current straight away.
+        onPageRequest(ev) {
+            const link = pageLinkFor(ev, this.element);
+            if (!link) {
+                return;
+            }
+
+            const current = this.element.querySelector('.list-pagination .page-item.active');
+            const target = this.pageItemFor(targetPageFor(ev, link));
+
+            this.setUpdating(true);
+            link.classList.add('is-loading');
+
+            if (target && current && target !== current) {
+                current.classList.remove('active');
+                target.classList.add('active');
+            }
+
+            this.pageChange = { link, current, target };
+        }
+
+        // A successful page change redraws the list, so this only undoes the state when the request failed or changed nothing.
+        onPageRequestEnd(ev) {
+            if (!pageLinkFor(ev, this.element) || !this.pageChange) {
+                return;
+            }
+
+            const { link, current, target } = this.pageChange;
+
+            this.setUpdating(false);
+            link.classList.remove('is-loading');
+
+            if (target && current && target !== current) {
+                target.classList.remove('active');
+                current.classList.add('active');
+            }
+
+            this.pageChange = null;
+        }
+
+        // Marks the list as updating while a request that redraws it runs, which the stylesheet shows after a short delay.
+        setUpdating(isUpdating) {
+            this.element.classList.toggle('is-updating', !!isUpdating);
+
+            if (isUpdating) {
+                this.element.setAttribute('aria-busy', 'true');
+            }
+            else {
+                this.element.removeAttribute('aria-busy');
+            }
+        }
+
+        // The numbered page item for a page, when it is shown.
+        pageItemFor(page) {
+            if (page === null) {
+                return null;
+            }
+
+            return [...this.element.querySelectorAll('.list-pagination .page-item:not(.page-choose)')]
+                .find((item) => item.textContent.trim() === String(page)) || null;
         }
 
         updateUi() {
@@ -291,4 +360,29 @@ export function registerListWidget(jax) {
             [transportMethod]: { [pageName]: pageNumber }
         });
     });
+}
+
+// The pagination link of this list that sent a request, if one did
+function pageLinkFor(ev, listElement) {
+    const link = ev.target instanceof Element ? ev.target.closest('.list-pagination .page-link') : null;
+
+    return link && listElement.contains(link) ? link : null;
+}
+
+// The page a pagination request asks for, from the link's request data such as { page: 2 } or the request's own options
+function targetPageFor(ev, link) {
+    const match = /:\s*(\d+)\s*}\s*$/.exec(link.dataset.requestQuery || link.dataset.requestData || '');
+    if (match) {
+        return match[1];
+    }
+
+    const options = (ev.detail && ev.detail.context && ev.detail.context.options) || {};
+    for (const values of [options.query, options.data]) {
+        const page = values && Object.values(values).find((value) => /^\d+$/.test(String(value)));
+        if (page !== undefined) {
+            return String(page);
+        }
+    }
+
+    return null;
 }

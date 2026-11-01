@@ -7,6 +7,7 @@
  * - data-update-handler - AJAX handler for scope updates
  * - data-load-handler - AJAX handler for popover form contents
  * - data-page-name - page parameter to reset when a filter is applied
+ * - data-list-linkage - id of the linked list widget, shown as updating while a scope update redraws it
  *
  * Events:
  * - filter-scope:change - dispatched on the scope element after its value is updated
@@ -504,6 +505,7 @@ export function registerFilterWidget(jax) {
             data.scopeName = scopeName;
 
             this.element.classList.add('is-loading');
+            this.setListUpdating(true);
 
             const submitData = { data: data };
 
@@ -515,6 +517,7 @@ export function registerFilterWidget(jax) {
             jax.request(this.element, this.config.updateHandler, submitData)
                 .always(() => {
                     this.element.classList.remove('is-loading');
+                    this.setListUpdating(false);
                 })
                 .done(() => {
                     // Trigger dependsOn updates on successful requests
@@ -524,6 +527,18 @@ export function registerFilterWidget(jax) {
                         }
                     });
                 });
+        }
+
+        // Marks the linked list as updating while a scope update redraws it, finding the list each time since the update replaces it.
+        setListUpdating(isUpdating) {
+            const listId = this.element.dataset.listLinkage;
+            const container = listId ? document.getElementById(listId) : null;
+            const listElement = container ? container.querySelector(':scope > .control-list') : null;
+            const list = listElement ? jax.fetchControl(listElement, 'listwidget') : null;
+
+            if (list && list.setUpdating) {
+                list.setUpdating(isUpdating);
+            }
         }
     });
 }

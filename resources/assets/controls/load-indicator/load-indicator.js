@@ -11,6 +11,12 @@
  * LoadIndicator.show(element, { size: 'small' }) - display the indicator in small size
  * LoadIndicator.show(element, { text: 'Saving...' }) - display the indicator in a transparent state
  * LoadIndicator.hide(element) - hide the indicator
+ *
+ * Data attributes, on an element that sends an AJAX request:
+ * - data-load-indicator - shows the indicator, with this text, in the closest loading-indicator-container while the request runs
+ * - data-load-indicator-opaque - shows it in the solid state
+ * - data-load-indicator-centered - centers it horizontally
+ * - data-load-indicator-size - its size, such as small
  */
 'use strict';
 
@@ -98,4 +104,46 @@ export class LoadIndicator
     static getInstance(element) {
         return instances.get(element) || null;
     }
+}
+
+/**
+ * registerLoadIndicator shows the indicator for elements with data-load-indicator while their AJAX requests run.
+ */
+export function registerLoadIndicator() {
+    document.addEventListener('ajax:promise', (ev) => {
+        const element = indicatorElementFor(ev);
+        const container = element && element.closest('.loading-indicator-container');
+        if (!container) {
+            return;
+        }
+
+        const options = {
+            opaque: element.dataset.loadIndicatorOpaque,
+            centered: element.dataset.loadIndicatorCentered,
+            size: element.dataset.loadIndicatorSize
+        };
+
+        if (element.dataset.loadIndicator) {
+            options.text = element.dataset.loadIndicator;
+        }
+
+        LoadIndicator.show(container, options);
+    });
+
+    const onRequestEnd = (ev) => {
+        const element = indicatorElementFor(ev);
+        const container = element && element.closest('.loading-indicator-container');
+
+        if (container) {
+            LoadIndicator.hide(container);
+        }
+    };
+
+    document.addEventListener('ajax:done', onRequestEnd);
+    document.addEventListener('ajax:fail', onRequestEnd);
+}
+
+// The element that sent the request, when it asks for a load indicator
+function indicatorElementFor(ev) {
+    return ev.target instanceof Element && ev.target.matches('[data-load-indicator]') ? ev.target : null;
 }

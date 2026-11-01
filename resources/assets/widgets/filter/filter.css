@@ -32,7 +32,9 @@
         color: var(--oc-filter-text);
     }
 
+    /* Positioned, so the loading spinner centres over the setup button it replaces */
     > .filter-setup {
+        position: relative;
         padding: 0.375rem 0.625rem;
         flex-shrink: 0;
 
@@ -210,17 +212,28 @@
     }
 }
 
+/* While a scope update runs, shown only after the same short delay as the linked list, so a quick update looks instant */
+.control-filter {
+    --filter-loading-delay: .3s;
+
+    .filter-group {
+        transition: opacity .15s ease;
+    }
+}
+
 .control-filter.is-loading {
     cursor: wait;
 
     .filter-group {
         pointer-events: none;
         opacity: .7;
+        transition-delay: var(--filter-loading-delay);
     }
 
     > .filter-setup {
         > a {
             opacity: 0;
+            transition: opacity 0s var(--filter-loading-delay);
         }
 
         &:after {
@@ -236,8 +249,14 @@
             border: 2px solid var(--oc-primary-border);
             border-top-color: var(--oc-accent);
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            animation: spin 0.8s linear infinite, filter-loading-appear .15s ease var(--filter-loading-delay) both;
         }
+    }
+}
+
+@keyframes filter-loading-appear {
+    from {
+        opacity: 0;
     }
 }
 

@@ -342,3 +342,68 @@ describe('inline scopes', () => {
         expect(Popover.activeInstance).toBe(null);
     });
 });
+
+describe('linked list', () => {
+    // A stand-in list control that records what the filter asks of it, since the list widget's own state has its own tests
+    beforeAll(() => {
+        jax.registerControl('listwidget', class extends jax.ControlBase {
+            setUpdating(isUpdating) {
+                this.element.classList.toggle('is-updating', isUpdating);
+
+                if (isUpdating) {
+                    this.element.setAttribute('aria-busy', 'true');
+                }
+                else {
+                    this.element.removeAttribute('aria-busy');
+                }
+            }
+        });
+    });
+
+    // Renders a list for the filter to link to, as the list widget's container and control
+    function renderList() {
+        document.body.insertAdjacentHTML('beforeend', `
+            <div class="list-widget" id="Lists">
+                <div class="control-list" data-control="listwidget">
+                    <div class="list-content"><table class="table data"><tbody><tr><td>Row</td></tr></tbody></table></div>
+                </div>
+            </div>
+        `);
+
+        return jax.connect('listwidget', document.querySelector('#Lists > .control-list'));
+    }
+
+    function changeDomain() {
+        const select = document.querySelector('[data-scope-name="domain"] select');
+        select.value = 'example.com';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    test('a scope update marks the linked list as updating until the request ends', () => {
+        renderFilter();
+        document.getElementById('Filter').dataset.listLinkage = 'Lists';
+        renderList();
+        jax.requests = [];
+
+        const list = document.querySelector('#Lists > .control-list');
+        changeDomain();
+
+        expect(list.classList.contains('is-updating')).toBe(true);
+        expect(list.getAttribute('aria-busy')).toBe('true');
+
+        jax.requests[0].resolve();
+
+        expect(list.classList.contains('is-updating')).toBe(false);
+        expect(list.hasAttribute('aria-busy')).toBe(false);
+    });
+
+    test('a filter without a linked list leaves lists alone', () => {
+        renderFilter();
+        renderList();
+        jax.requests = [];
+
+        changeDomain();
+
+        expect(document.querySelector('#Lists > .control-list').classList.contains('is-updating')).toBe(false);
+    });
+});

@@ -294,3 +294,96 @@ describe('page chooser', () => {
         expect(jax.requests.at(-1).options).toEqual({ data: { _page: '2' } });
     });
 });
+
+describe('page change', () => {
+    // Adds a pagination footer like the list pagination partial's, on page 1 of 3
+    function renderPagedList() {
+        const control = renderList();
+        const link = (page, className, label) => `<li class="page-item"><a href="javascript:;" class="page-link ${className}" data-request="list::onPaginate" data-request-query="{ page: ${page} }">${label}</a></li>`;
+
+        document.querySelector('.control-list').insertAdjacentHTML('beforeend', `
+            <div class="list-footer"><div class="list-pagination"><nav class="list-pagination-links"><ul class="pagination">
+                <li class="page-item active"><span class="page-link page-active">1</span></li>
+                ${link(2, 'page-back', '2')}
+                ${link(3, 'page-back', '3')}
+                ${link(2, 'page-next', '<i></i>')}
+                <li class="page-item page-choose"><a href="javascript:;" id="ListsPageChooser" class="page-link page-dots">...</a></li>
+            </ul></nav></div></div>
+        `);
+
+        return control;
+    }
+
+    const list = () => document.querySelector('.control-list');
+    const activePage = () => document.querySelector('.page-item.active').textContent.trim();
+
+    function fire(element, name, options = null) {
+        element.dispatchEvent(new CustomEvent(name, { bubbles: true, detail: { context: { options: options || {} } } }));
+    }
+
+    test('a page link marks the list as updating, the link as loading and its page as current', () => {
+        renderPagedList();
+        const link = document.querySelector('.page-link[data-request-query="{ page: 3 }"]');
+
+        fire(link, 'ajax:promise');
+
+        expect(list().classList.contains('is-updating')).toBe(true);
+        expect(list().getAttribute('aria-busy')).toBe('true');
+        expect(link.classList.contains('is-loading')).toBe(true);
+        expect(activePage()).toBe('3');
+    });
+
+    test('the next arrow shows its target page as current', () => {
+        renderPagedList();
+
+        fire(document.querySelector('.page-next'), 'ajax:promise');
+
+        expect(activePage()).toBe('2');
+        expect(document.querySelector('.page-next').classList.contains('is-loading')).toBe(true);
+    });
+
+    test('the page chooser takes its target page from the request options', () => {
+        renderPagedList();
+
+        fire(document.getElementById('ListsPageChooser'), 'ajax:promise', { query: { page: '3' } });
+
+        expect(activePage()).toBe('3');
+    });
+
+    test('a failed request puts the list, the link and the current page back', () => {
+        renderPagedList();
+        const link = document.querySelector('.page-link[data-request-query="{ page: 3 }"]');
+
+        fire(link, 'ajax:promise');
+        fire(link, 'ajax:always');
+
+        expect(list().classList.contains('is-updating')).toBe(false);
+        expect(list().hasAttribute('aria-busy')).toBe(false);
+        expect(link.classList.contains('is-loading')).toBe(false);
+        expect(activePage()).toBe('1');
+    });
+
+    test('requests from outside the pagination leave the list alone', () => {
+        renderPagedList();
+
+        fire(document.querySelector('tbody td'), 'ajax:promise');
+
+        expect(list().classList.contains('is-updating')).toBe(false);
+        expect(activePage()).toBe('1');
+    });
+});
+
+describe('updating state', () => {
+    test('setUpdating marks and clears the list as updating', () => {
+        const control = renderList();
+        const list = document.querySelector('.control-list');
+
+        control.setUpdating(true);
+        expect(list.classList.contains('is-updating')).toBe(true);
+        expect(list.getAttribute('aria-busy')).toBe('true');
+
+        control.setUpdating(false);
+        expect(list.classList.contains('is-updating')).toBe(false);
+        expect(list.hasAttribute('aria-busy')).toBe(false);
+    });
+});

@@ -3,10 +3,10 @@
 ?>
 <div class="list-pagination">
     <div class="list-pagination-summary fg-3 me-auto">
-        <?= e(__('records :from to :to of :total', ['from' => $pageFrom, 'to' => $pageTo, 'total' => $recordTotal])) ?>
+        <?= e(__('Displayed Records: :from-:to of :total', ['from' => $pageFrom, 'to' => $pageTo, 'total' => $recordTotal])) ?>
     </div>
     <?php if ($pageLast > 1): ?>
-        <nav class="list-pagination-links loading-indicator-container size-small">
+        <nav class="list-pagination-links">
             <ul class="pagination">
                 <?php if ($pageCurrent > 1): ?>
                     <li class="page-item">
@@ -15,7 +15,6 @@
                             class="page-link page-first"
                             data-request="<?= $this->getEventHandler('onPaginate') ?>"
                             data-request-<?= $transportMethod ?>="{ <?= e($pageName) ?>: 1 }"
-                            data-load-indicator="<?= e(__('Loading...')) ?>"
                             title="<?= e(__('First page')) ?>">
                             <?= \Larajax\Ui\Facades\Ui::icon('pagination.first') ?>
                         </a>
@@ -36,7 +35,6 @@
                             class="page-link page-back"
                             data-request="<?= $this->getEventHandler('onPaginate') ?>"
                             data-request-<?= $transportMethod ?>="{ <?= e($pageName) ?>: <?= $pageCurrent - 1 ?> }"
-                            data-load-indicator="<?= e(__('Loading...')) ?>"
                             title="<?= e(__('Previous page')) ?>">
                             <?= \Larajax\Ui\Facades\Ui::icon('pagination.previous') ?>
                         </a>
@@ -59,8 +57,7 @@
                                 class="page-link page-dots"
                                 data-control="popover"
                                 data-content-from="#<?= $this->getId('pageChooserPopover') ?>"
-                                data-fallback-placement="left"
-                                data-load-indicator="<?= e(__('Loading...')) ?>">
+                                data-fallback-placement="left">
                                 <?= e($element) ?>
                             </a>
                         </li>
@@ -79,7 +76,6 @@
                                         class="page-link page-back"
                                         data-request="<?= $this->getEventHandler('onPaginate') ?>"
                                         data-request-<?= $transportMethod ?>="{ <?= e($pageName) ?>: <?= $page ?> }"
-                                        data-load-indicator="<?= e(__('Loading...')) ?>"
                                     >
                                         <?= $page ?>
                                     </a>
@@ -95,7 +91,6 @@
                             class="page-link page-next"
                             data-request-<?= $transportMethod ?>="{ <?= e($pageName) ?>: <?= $pageCurrent + 1 ?> }"
                             data-request="<?= $this->getEventHandler('onPaginate') ?>"
-                            data-load-indicator="<?= e(__('Loading...')) ?>"
                             title="<?= e(__('Next page')) ?>">
                             <?= \Larajax\Ui\Facades\Ui::icon('pagination.next') ?>
                         </a>
@@ -116,7 +111,6 @@
                             class="page-link page-last"
                             data-request-<?= $transportMethod ?>="{ <?= e($pageName) ?>: <?= $pageLast ?> }"
                             data-request="<?= $this->getEventHandler('onPaginate') ?>"
-                            data-load-indicator="<?= e(__('Loading...')) ?>"
                             title="<?= e(__('Last page')) ?>">
                             <?= \Larajax\Ui\Facades\Ui::icon('pagination.last') ?>
                         </a>

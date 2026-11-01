@@ -6,12 +6,16 @@
 .field-phone {
     /* The country picker at the start of the field: a flag, the calling code and a caret */
     .combobox-toggle.phone-country {
+        /* The space after the picker, on top of the field's own gap, with the divider in the middle */
+        --phone-country-space: .625rem;
+
         position: relative;
         flex-shrink: 0;
         gap: .375rem;
         width: auto;
         margin-block: -.25rem;
         margin-inline-start: -.375rem;
+        margin-inline-end: var(--phone-country-space);
         padding: .25rem .375rem;
         font: inherit;
         color: var(--bs-fg-body);
@@ -19,11 +23,11 @@
         border: 0;
         border-radius: .375rem;
 
-        /* The divider sits in the gap between the picker and the number */
+        /* The divider sits as far from the caret as from the number */
         &::after {
             position: absolute;
             inset-block: .25rem;
-            inset-inline-end: calc(var(--bs-form-adorn-gap, .375rem) / -2);
+            inset-inline-end: calc(var(--phone-country-space) / -2);
             content: '';
             border-inline-end: 1px solid var(--bs-border-color);
         }

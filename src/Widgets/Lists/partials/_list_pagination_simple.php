@@ -2,7 +2,7 @@
     $transportMethod = $pageName === '_page' ? 'data' : 'query';
 ?>
 <div class="list-pagination">
-    <nav class="list-pagination-links ms-auto loading-indicator-container size-small">
+    <nav class="list-pagination-links ms-auto">
         <ul class="pagination">
             <?php if ($pageCurrent > 1): ?>
                 <li class="page-item">
@@ -11,7 +11,6 @@
                         class="page-link page-first"
                         data-request="<?= $this->getEventHandler('onPaginate') ?>"
                         data-request-<?= $transportMethod ?>="{ <?= e($pageName) ?>: 1 }"
-                        data-load-indicator="<?= e(__('Loading...')) ?>"
                         title="<?= e(__('First page')) ?>">
                         <?= \Larajax\Ui\Facades\Ui::icon('pagination.first') ?>
                     </a>
@@ -31,7 +30,6 @@
                         class="page-link page-back"
                         data-request="<?= $this->getEventHandler('onPaginate') ?>"
                         data-request-<?= $transportMethod ?>="{ <?= e($pageName) ?>: <?= $pageCurrent - 1 ?> }"
-                        data-load-indicator="<?= e(__('Loading...')) ?>"
                         title="<?= e(__('Previous page')) ?>">
                         <?= \Larajax\Ui\Facades\Ui::icon('pagination.previous') ?>
                     </a>
@@ -57,7 +55,6 @@
                         class="page-link page-next"
                         data-request-<?= $transportMethod ?>="{ <?= e($pageName) ?>: <?= $pageCurrent + 1 ?> }"
                         data-request="<?= $this->getEventHandler('onPaginate') ?>"
-                        data-load-indicator="<?= e(__('Loading...')) ?>"
                         title="<?= e(__('Next page')) ?>">
                         <?= \Larajax\Ui\Facades\Ui::icon('pagination.next') ?>
                     </a>

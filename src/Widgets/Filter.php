@@ -182,6 +182,7 @@ class Filter extends WidgetBase implements FilterElement
         $this->vars['cssClasses'] = implode(' ', $this->cssClasses);
         $this->vars['scopes'] = $this->allScopes;
         $this->vars['pageName'] = $this->customPageName;
+        $this->vars['listWidgetId'] = $this->listWidget ? $this->listWidget->getId() : null;
     }
 
     /**

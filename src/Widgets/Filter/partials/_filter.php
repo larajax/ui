@@ -6,6 +6,7 @@
     data-update-handler="<?= $this->getEventHandler('onFilterUpdate') ?>"
     data-load-handler="<?= $this->getEventHandler('onLoadFilterForm') ?>"
     <?php if ($pageName !== '_page'): ?>data-page-name="<?= $pageName ?>"<?php endif ?>
+    <?php if ($listWidgetId): ?>data-list-linkage="<?= e($listWidgetId) ?>"<?php endif ?>
 >
     <?= $this->makePartial('filter-container') ?>
 </div>
