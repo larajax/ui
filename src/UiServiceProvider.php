@@ -129,6 +129,7 @@ class UiServiceProvider extends ServiceProvider
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\CodeEditor::class, 'codeeditor');
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\MarkdownEditor::class, 'markdown');
             $manager->registerFormWidget(\Larajax\Ui\FormWidgets\DataTable::class, 'datatable');
+            $manager->registerFormWidget(\Larajax\Ui\FormWidgets\Phone::class, 'phone');
         });
 
         app('system.widgets')->registerFilterWidgets(function ($manager) {

@@ -34,6 +34,7 @@ const CONTROL_IDS = [
     'codeeditor',
     'markdowneditor',
     'datatable',
+    'phone-input',
     'repeateraccordion',
     'repeaterbuilder',
 ];

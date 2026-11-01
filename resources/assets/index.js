@@ -62,6 +62,7 @@ import { registerRichEditor } from './formwidgets/richeditor/richeditor.js';
 import { registerCodeEditor } from './formwidgets/codeeditor/codeeditor.js';
 import { registerMarkdownEditor } from './formwidgets/markdowneditor/markdowneditor.js';
 import { registerDataTable } from './formwidgets/datatable/datatable.js';
+import { registerPhone } from './formwidgets/phone/phone.js';
 import { registerRepeaterAccordion } from './formwidgets/repeater/repeater-accordion.js';
 import { registerRepeaterBuilder } from './formwidgets/repeater/repeater-builder.js';
 
@@ -142,6 +143,7 @@ export function registerUi(jax) {
     registerCodeEditor(jax);
     registerMarkdownEditor(jax);
     registerDataTable(jax);
+    registerPhone(jax);
     registerRepeaterAccordion(jax);
     registerRepeaterBuilder(jax);
 

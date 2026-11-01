@@ -144,6 +144,12 @@
         font-size: var(--bs-form-adorn-icon-size);
         line-height: 1;
     }
+
+    &:focus-visible {
+        color: var(--bs-btn-hover-color);
+        background-color: var(--bs-btn-hover-bg);
+        outline: 0;
+    }
 }
 
 .form-group {

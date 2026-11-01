@@ -48,6 +48,13 @@ copy('easymde/dist/easymde.min.css', 'easymde/easymde.css');
 await bundle('dropzone', 'dropzone/dropzone.esm.js');
 await bundle('sortablejs', 'sortablejs/sortable.esm.js');
 
+// libphonenumber-js (Google's libphonenumber rules with the compact metadata, which checks a number's
+// length for its country) - bundled as ESM for the phone form widget, which loads it on first use.
+await bundleVirtual(
+    "export { AsYouType, parsePhoneNumberFromString, getCountries, getCountryCallingCode } from 'libphonenumber-js/min';",
+    'libphonenumber/libphonenumber.esm.js'
+);
+
 // Select2 with a private jQuery instance in a single ESM bundle. The
 // custom-select control imports the returned jQuery; window.jQuery is never
 // touched, so jQuery stays an implementation detail of this one control.

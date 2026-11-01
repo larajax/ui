@@ -17,6 +17,7 @@
 @import "./elements/scoreboard/scoreboard.css";
 @import "./elements/buttons/buttons.css";
 @import "./elements/callout/callout.css";
+@import "./elements/flag/flag.css";
 
 /* Controls */
 @import "./controls/datepicker/datepicker.css";
@@ -54,4 +55,5 @@
 @import "./formwidgets/codeeditor/codeeditor.css";
 @import "./formwidgets/markdowneditor/markdowneditor.css";
 @import "./formwidgets/datatable/datatable.css";
+@import "./formwidgets/phone/phone.css";
 @import "./formwidgets/repeater/repeater.css";
