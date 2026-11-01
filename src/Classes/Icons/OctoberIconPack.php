@@ -41,6 +41,9 @@ class OctoberIconPack implements IconPack
             'recordfinder.remove' => 'icon-common-file-remove',
             'recordfinder.record' => 'icon-chain',
 
+            'password.show' => 'icon-eye',
+            'password.hide' => 'icon-eye-slash',
+
             'sensitive.copy' => 'icon-copy',
             'sensitive.show' => 'icon-eye',
             'sensitive.hide' => 'icon-eye-slash',

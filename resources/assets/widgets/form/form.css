@@ -120,6 +120,32 @@
     line-height: 1;
 }
 
+/* An icon button inside an adorned field, such as a password's show button, is a round target around an adornment-sized icon */
+.form-adorn > .btn-icon {
+    --bs-btn-min-height: 1.5rem;
+    --bs-btn-border-radius: 50%;
+    --bs-btn-color: var(--bs-form-adorn-icon-color);
+    --bs-btn-bg: transparent;
+    --bs-btn-hover-color: var(--bs-fg-body);
+    --bs-btn-hover-bg: var(--bs-bg-2);
+    --bs-btn-active-color: var(--bs-fg-body);
+    --bs-btn-active-bg: var(--bs-bg-2);
+    --bs-btn-disabled-color: var(--bs-form-adorn-icon-color);
+    --bs-btn-disabled-bg: transparent;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-block: -.25rem;
+    margin-inline-end: -.375rem;
+    border: 0;
+
+    > i {
+        top: 0;
+        font-size: var(--bs-form-adorn-icon-size);
+        line-height: 1;
+    }
+}
+
 .form-group {
     position: relative;
     box-sizing: border-box;

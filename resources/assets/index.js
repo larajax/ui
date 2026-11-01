@@ -26,6 +26,7 @@ import { registerAjax } from './ajax.js';
 // Controls
 import { registerLoaderContainer } from './controls/loader-container/loader-container-control.js';
 import { registerSearchInput } from './controls/search-input/search-input-control.js';
+import { registerPasswordReveal } from './controls/password-reveal/password-reveal.js';
 import { registerCustomSelect } from './controls/custom-select/custom-select-control.js';
 import { registerPopover } from './controls/popover/popover.js';
 import { registerPopup } from './controls/popup/popup.js';
@@ -104,6 +105,7 @@ export function registerUi(jax) {
     // Controls
     registerLoaderContainer(jax);
     registerSearchInput(jax);
+    registerPasswordReveal(jax);
     registerCustomSelect(jax);
     registerPopover(jax);
     registerPopup(jax);

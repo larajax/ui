@@ -5,6 +5,7 @@ import { CheckboxRange } from '../resources/assets/controls/checkbox/checkbox-ra
 const CONTROL_IDS = [
     'loader-container',
     'search-input',
+    'password-reveal',
     'custom-select',
     'popover',
     'popup',

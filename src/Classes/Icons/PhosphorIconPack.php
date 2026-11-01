@@ -41,6 +41,9 @@ class PhosphorIconPack implements IconPack
             'recordfinder.remove' => 'ph ph-x',
             'recordfinder.record' => 'ph ph-link',
 
+            'password.show' => 'ph ph-eye',
+            'password.hide' => 'ph ph-eye-slash',
+
             'sensitive.copy' => 'ph ph-copy',
             'sensitive.show' => 'ph ph-eye',
             'sensitive.hide' => 'ph ph-eye-slash',

@@ -37,6 +37,7 @@ use Exception;
  * @method FormField suffix(string $suffix) suffix text shown inside the input after the value, such as a unit
  * @method FormField prefixIcon(string $prefixIcon) prefixIcon classes of an icon shown inside the input before the value
  * @method FormField suffixIcon(string $suffixIcon) suffixIcon classes of an icon shown inside the input after the value
+ * @method FormField revealable(bool $revealable) revealable adds a button inside a password field that shows and hides what was typed
  *
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
@@ -92,7 +93,7 @@ class FormField extends FieldDefinition
     }
 
     /**
-     * hasAdornment returns true when the field shows text or an icon inside its input, before or after the value.
+     * hasAdornment returns true when the field shows text, an icon or a button inside its input.
      */
     public function hasAdornment(): bool
     {
@@ -102,7 +103,15 @@ class FormField extends FieldDefinition
             }
         }
 
-        return false;
+        return $this->isRevealable();
+    }
+
+    /**
+     * isRevealable returns true when a password field has a button that shows and hides its value.
+     */
+    public function isRevealable(): bool
+    {
+        return $this->type === 'password' && (bool) $this->revealable;
     }
 
     /**

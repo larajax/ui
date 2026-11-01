@@ -41,6 +41,9 @@ class BootstrapIconPack implements IconPack
             'recordfinder.remove' => 'bi bi-x-lg',
             'recordfinder.record' => 'bi bi-link-45deg',
 
+            'password.show' => 'bi bi-eye',
+            'password.hide' => 'bi bi-eye-slash',
+
             'sensitive.copy' => 'bi bi-copy',
             'sensitive.show' => 'bi bi-eye',
             'sensitive.hide' => 'bi bi-eye-slash',
