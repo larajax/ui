@@ -5,7 +5,7 @@
  * - data-control="filterwidget" - enables the filter widget
  * - data-popover-template - selector of the template wrapping each scope popover form
  * - data-update-handler - AJAX handler for scope updates
- * - data-load-handler - AJAX handler for popover form contents
+ * - data-load-handler - AJAX handler for the popover form of a scope rendered without its form template
  * - data-page-name - page parameter to reset when a filter is applied
  * - data-list-linkage - id of the linked list widget, shown as updating while a scope update redraws it
  *
@@ -39,22 +39,17 @@ export function registerFilterWidget(jax) {
         }
 
         connect() {
-            this.popoverContent = {};
-
             this.listen('change', this.onChange);
             this.listen('click', this.onClick);
             this.listen('ajax:update', this.onContainerUpdate);
 
             this.bindScrollable();
             this.bindCheckboxes();
-            this.preloadContent();
         }
 
         disconnect() {
             this.hidePopover();
             this.unbindScrollable();
-
-            this.popoverContent = null;
         }
 
         bindScrollable() {
@@ -75,34 +70,12 @@ export function registerFilterWidget(jax) {
             this.scrollable = null;
         }
 
+        // Rebinds the scrollable area when the entire container is replaced.
         onContainerUpdate(ev) {
-            // Rebind the scrollable area when the entire container is replaced
             if (ev.target === this.element) {
                 this.unbindScrollable();
                 this.bindScrollable();
             }
-
-            // Scopes rendered again by the server drop their preloaded popover content
-            this.forgetPopoverContent(ev.target);
-        }
-
-        // preloadContent requests every popover scope form at once so popovers open without a round trip.
-        preloadContent() {
-            if (!this.config.updateHandler) {
-                return;
-            }
-
-            jax.request(this.element, this.config.updateHandler, {
-                data: {
-                    preload: true
-                },
-                success: (data) => {
-                    if (this.popoverContent && data && data.popoverContent) {
-                        this.popoverContent = data.popoverContent;
-                    }
-                },
-                error: () => {}
-            });
         }
 
         onChange(ev) {
@@ -216,14 +189,8 @@ export function registerFilterWidget(jax) {
             }
         }
 
-        // hidePopover closes the active scope popover and discards its cached content.
+        // hidePopover closes the active scope popover.
         hidePopover() {
-            const scopeLink = this.activeScope;
-
-            if (scopeLink && this.popoverContent) {
-                this.popoverContent[scopeLink.dataset.scopeName] = null;
-            }
-
             if (this.popover) {
                 this.popover.hide();
                 this.popover = null;
@@ -256,22 +223,17 @@ export function registerFilterWidget(jax) {
                 return;
             }
 
-            if (!this.popoverContent) {
-                this.popoverContent = {};
-            }
+            // The form comes rendered with the scope, so it reflects the scope's value and opens without a request
+            const formTemplate = this.scopeFormTemplate(scopeLink);
 
-            if (this.popoverContent[scopeName]) {
-                this.setPopoverContent(container, this.popoverContent[scopeName]);
+            if (formTemplate) {
+                this.setPopoverContent(container, formTemplate.innerHTML);
             }
             else {
                 jax.request(container.querySelector('form'), this.config.loadHandler, {
                     success: (data) => {
                         if (popover.element && typeof data.result === 'string') {
                             this.setPopoverContent(container, data.result);
-
-                            if (this.popoverContent) {
-                                this.popoverContent[scopeName] = data.result;
-                            }
                         }
                     }
                 });
@@ -296,23 +258,11 @@ export function registerFilterWidget(jax) {
             return template ? template.innerHTML : '';
         }
 
-        updatePopoverContent(content) {
-            if (!this.popoverContent) {
-                this.popoverContent = {};
-            }
+        // The popover form rendered alongside a scope, which the server renders again whenever the scope changes.
+        scopeFormTemplate(scopeLink) {
+            const group = scopeLink.closest('.filter-group');
 
-            Object.assign(this.popoverContent, content);
-        }
-
-        // forgetPopoverContent discards cached content for the scopes found inside an element.
-        forgetPopoverContent(element) {
-            if (!this.popoverContent || !element.querySelectorAll) {
-                return;
-            }
-
-            element.querySelectorAll('[data-scope-name]').forEach((scope) => {
-                this.popoverContent[scope.dataset.scopeName] = null;
-            });
+            return group ? group.querySelector(':scope > template[data-scope-form]') : null;
         }
 
         // A press inside a date picker calendar, which mounts outside the popover, keeps the popover open.
@@ -393,14 +343,21 @@ export function registerFilterWidget(jax) {
                 }
             });
 
-            // Initial load
-            jax.request(group, handler, {
-                success: (data) => {
-                    if (data.options) {
-                        renderOptions(data.options);
+            // The form carries its first options, and only a form rendered without them asks for them
+            const initialOptions = readJson(group.dataset.options);
+
+            if (initialOptions) {
+                renderOptions(initialOptions);
+            }
+            else {
+                jax.request(group, handler, {
+                    success: (data) => {
+                        if (data.options) {
+                            renderOptions(data.options);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         //
@@ -556,4 +513,18 @@ function escapeHtml(value) {
         '"': '&quot;',
         "'": '&#39;'
     })[char]);
+}
+
+// Parses JSON from a data attribute, or null when it is missing or invalid
+function readJson(value) {
+    if (!value) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(value);
+    }
+    catch (e) {
+        return null;
+    }
 }

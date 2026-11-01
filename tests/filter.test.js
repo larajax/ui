@@ -57,6 +57,7 @@ function renderFilter(extraScopes = '') {
             </div>
             <div class="filter-group" id="Filter-scope-id-group">
                 <a href="javascript:;" class="filter-scope" data-scope-name="id">ID</a>
+                <template data-scope-form>${numberForm}</template>
             </div>
             <div class="filter-group" id="Filter-scope-name-group">
                 <a href="javascript:;" class="filter-scope" data-scope-name="name">Name</a>
@@ -76,11 +77,6 @@ function renderFilter(extraScopes = '') {
     return jax.connect('filterwidget', document.getElementById('Filter'));
 }
 
-// The connect-time preload request
-function preloadRequest() {
-    return jax.requests.find((request) => request.options.data && request.options.data.preload);
-}
-
 // Stands in for the framework's render pass: render hooks mark controls, then the observer connects them
 function bindRenderedControls() {
     addEventListener('render', () => jax.connectAll(), { once: true });
@@ -91,20 +87,15 @@ function openScope(name) {
     return Popover.activeInstance;
 }
 
-describe('preloaded popover content', () => {
-    test('connect requests every popover scope form through the update handler', () => {
+describe('popover content', () => {
+    test('connect sends no request', () => {
         renderFilter();
 
-        const request = preloadRequest();
-        expect(request.handler).toBe('filter::onFilterUpdate');
-        expect(request.options.data).toEqual({ preload: true });
-        expect(typeof request.options.error).toBe('function');
+        expect(jax.requests.length).toBe(0);
     });
 
-    test('a preloaded scope opens without a load request and initializes its controls', () => {
+    test('a scope opens with the form rendered alongside it, without a request, and initializes its controls', () => {
         renderFilter();
-        preloadRequest().resolve({ popoverContent: { id: numberForm } });
-        jax.requests = [];
 
         let renders = 0;
         addEventListener('render', () => renders++, { once: true });
@@ -119,64 +110,99 @@ describe('preloaded popover content', () => {
         expect(renders).toBe(1);
     });
 
+    test('closing and opening a scope again shows its form again, still without a request', () => {
+        renderFilter();
+
+        openScope('id').hide();
+        const popover = openScope('id');
+
+        expect(jax.requests.length).toBe(0);
+        expect(popover.element.querySelector('#facet-between')).not.toBe(null);
+    });
+
     test('the scope name is escaped into the popover template', () => {
         renderFilter('<div class="filter-group"><a href="javascript:;" class="filter-scope" data-scope-name="a&quot;b">Odd</a></div>');
-        preloadRequest().resolve({ popoverContent: {} });
 
         const popover = openScope('a"b');
 
         expect(popover.element.querySelector('[name="scopeName"]').value).toBe('a"b');
     });
 
-    test('a scope without preloaded content loads it and caches it until the scope is applied', () => {
+    test('a form rendered again by the server is the one the next popover shows', () => {
         renderFilter();
-        preloadRequest().resolve({ popoverContent: {} });
-        jax.requests = [];
 
-        let popover = openScope('id');
+        // An update re-renders the scope group with the form for the new value
+        const group = document.getElementById('Filter-scope-id-group');
+        group.innerHTML = '<a href="javascript:;" class="filter-scope" data-scope-name="id">ID</a><template data-scope-form><p id="updated-form">Updated</p></template>';
+        jax.Events.dispatch('ajax:update', { target: group });
+
+        const popover = openScope('id');
+
+        expect(popover.element.querySelector('#updated-form')).not.toBe(null);
+        expect(jax.requests.length).toBe(0);
+    });
+
+    test('a scope rendered without its form loads it through the load handler each time it opens', () => {
+        renderFilter();
+
+        let popover = openScope('name');
         const load = jax.requests[0];
         expect(load.handler).toBe('filter::onLoadFilterForm');
         expect(load.element).toBe(popover.element.querySelector('form'));
 
-        load.resolve({ result: numberForm });
-        expect(popover.element.querySelector('#facet-between')).not.toBe(null);
+        load.resolve({ result: '<p id="names-form">Names</p>' });
+        expect(popover.element.querySelector('#names-form')).not.toBe(null);
 
-        // Closing without applying keeps the cached form
         popover.hide();
         jax.requests = [];
-        openScope('id');
-        expect(jax.requests.length).toBe(0);
-
-        // Applying forgets it
-        Popover.activeInstance.element.querySelector('[data-filter-action="apply"]').click();
-        jax.requests = [];
-        openScope('id');
-        expect(jax.requests.map((request) => request.handler)).toEqual(['filter::onLoadFilterForm']);
-    });
-
-    test('scopes rendered again by the server drop their preloaded content', () => {
-        renderFilter();
-        preloadRequest().resolve({ popoverContent: { id: numberForm, name: '<p>Names</p>' } });
-        jax.requests = [];
-
-        // A dependsOn reset patches the name scope group
-        const group = document.getElementById('Filter-scope-name-group');
-        group.innerHTML = '<a href="javascript:;" class="filter-scope" data-scope-name="name">Name</a>';
-        jax.Events.dispatch('ajax:update', { target: group });
-
         openScope('name');
         expect(jax.requests.map((request) => request.handler)).toEqual(['filter::onLoadFilterForm']);
+    });
+});
 
-        jax.requests = [];
-        openScope('id');
+describe('group options', () => {
+    // A group scope form as the group filter widget renders it, with or without its first options
+    function groupForm(options) {
+        return `
+            <div data-control="groupfilter" data-options-handler="groupFilter::onGetGroupOptions"
+                ${options ? `data-options='${JSON.stringify(options)}'` : ''}>
+                <input type="hidden" name="Filter[value]" value='["2"]' data-groupfilter-datalocker />
+                <ul data-groupfilter-active></ul>
+                <ul data-groupfilter-available></ul>
+            </div>
+        `;
+    }
+
+    const names = (list) => [...document.querySelectorAll(`[data-groupfilter-${list}] li`)].map((li) => li.textContent);
+
+    test('a group renders the options it was rendered with, without a request', () => {
+        renderFilter(`<div class="filter-group"><a href="javascript:;" class="filter-scope" data-scope-name="tags">Tags</a><template data-scope-form>${groupForm({
+            active: [{ id: '2', name: 'Lamps' }],
+            available: [{ id: '1', name: 'Desks' }, { id: '2', name: 'Lamps' }]
+        })}</template></div>`);
+
+        openScope('tags');
+
         expect(jax.requests.length).toBe(0);
+        expect(names('active')).toEqual(['Lamps']);
+        expect(names('available')).toEqual(['Desks']);
+    });
+
+    test('a group rendered without its options asks for them', () => {
+        renderFilter(`<div class="filter-group"><a href="javascript:;" class="filter-scope" data-scope-name="tags">Tags</a><template data-scope-form>${groupForm(null)}</template></div>`);
+
+        openScope('tags');
+
+        expect(jax.requests.map((request) => request.handler)).toEqual(['groupFilter::onGetGroupOptions']);
+
+        jax.requests[0].resolve({ options: { active: [], available: [{ id: '1', name: 'Desks' }] } });
+        expect(names('available')).toEqual(['Desks']);
     });
 });
 
 describe('condition triggers', () => {
     test('condition facets toggle through the input-trigger control', async () => {
         renderFilter();
-        preloadRequest().resolve({ popoverContent: { id: numberForm } });
 
         bindRenderedControls();
         const popover = openScope('id'),
@@ -201,7 +227,6 @@ describe('condition triggers', () => {
 describe('scope updates', () => {
     test('popover apply submits the form values for the active scope and closes', () => {
         renderFilter();
-        preloadRequest().resolve({ popoverContent: { id: numberForm } });
         jax.requests = [];
 
         const popover = openScope('id');
@@ -266,7 +291,6 @@ describe('scope updates', () => {
 
     test('a press inside a date picker calendar keeps the scope popover open, a press elsewhere closes it', async () => {
         renderFilter();
-        preloadRequest().resolve({ popoverContent: { id: numberForm } });
 
         openScope('id');
         await sleep(0);
@@ -282,7 +306,6 @@ describe('scope updates', () => {
 
     test('changing a dropdown scope closes an open scope popover', () => {
         renderFilter();
-        preloadRequest().resolve({ popoverContent: { id: numberForm } });
 
         openScope('id');
         expect(Popover.activeInstance).not.toBe(null);
@@ -332,7 +355,6 @@ describe('inline scopes', () => {
 
     test('clear resets the scope and closes an open popover', () => {
         renderFilter(inlineScope);
-        preloadRequest().resolve({ popoverContent: { id: numberForm } });
         openScope('id');
         jax.requests = [];
 

@@ -35,6 +35,8 @@ class Group extends FilterWidgetBase
     public function renderForm()
     {
         $this->prepareVars();
+        $this->vars['initialOptions'] = $this->getOptionsData();
+
         return $this->makePartial('group_form');
     }
 
@@ -148,17 +150,22 @@ class Group extends FilterWidgetBase
      */
     public function onGetGroupOptions()
     {
-        $scope = $this->filterScope;
-        $searchQuery = post('search');
+        return ['options' => $this->getOptionsData(post('search'))];
+    }
 
+    /**
+     * getOptionsData returns the available options and the active ones among them, for the form and the search.
+     *
+     * @return array{available: array<int, array{id: mixed, name: string}>, active: array<int, array{id: mixed, name: string}>}
+     */
+    public function getOptionsData(?string $searchQuery = null): array
+    {
         $available = $this->getAvailableOptions($searchQuery);
-        $active = $searchQuery ? [] : $this->filterActiveOptions((array) $scope->value, $available);
+        $active = $searchQuery ? [] : $this->filterActiveOptions((array) $this->filterScope->value, $available);
 
         return [
-            'options' => [
-                'available' => $this->optionsToAjax($available),
-                'active' => $this->optionsToAjax($active),
-            ]
+            'available' => $this->optionsToAjax($available),
+            'active' => $this->optionsToAjax($active),
         ];
     }
 

@@ -605,7 +605,7 @@ class Filter extends WidgetBase implements FilterElement
     }
 
     /**
-     * onLoadFilterForm
+     * onLoadFilterForm returns a scope's popover form, for a scope rendered without its form template.
      */
     public function onLoadFilterForm()
     {
@@ -624,10 +624,6 @@ class Filter extends WidgetBase implements FilterElement
      */
     public function onFilterUpdate()
     {
-        if (post('preload')) {
-            return $this->onPreloadContent();
-        }
-
         $updateScopePartial = false;
         $this->defineFilterScopes();
 
@@ -688,27 +684,6 @@ class Filter extends WidgetBase implements FilterElement
         }
 
         return $result;
-    }
-
-    /**
-     * onPreloadContent
-     */
-    public function onPreloadContent()
-    {
-        $this->defineFilterScopes();
-
-        $result = [];
-
-        foreach ($this->getScopes() as $scope) {
-            $hasNoForm = in_array($scope->type, ['checkbox', 'switch', 'dropdown']);
-            if ($hasNoForm) {
-                continue;
-            }
-
-            $result[$scope->scopeName] = $this->renderScopeFormElement($scope);
-        }
-
-        return ['popoverContent' => $result];
     }
 
     /**
