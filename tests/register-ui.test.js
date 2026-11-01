@@ -6,6 +6,7 @@ const CONTROL_IDS = [
     'loader-container',
     'search-input',
     'password-reveal',
+    'number-input',
     'custom-select',
     'popover',
     'popup',

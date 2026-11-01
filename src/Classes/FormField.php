@@ -38,6 +38,7 @@ use Exception;
  * @method FormField prefixIcon(string $prefixIcon) prefixIcon classes of an icon shown inside the input before the value
  * @method FormField suffixIcon(string $suffixIcon) suffixIcon classes of an icon shown inside the input after the value
  * @method FormField revealable(bool $revealable) revealable shows a button inside a password field that shows and hides what was typed (default: true)
+ * @method FormField format(bool|array $format) format shows a number field's value with thousands separators and fixed decimals, as true or an array of locale, decimals and grouping
  *
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
@@ -113,6 +114,26 @@ class FormField extends FieldDefinition
     public function isRevealable(): bool
     {
         return $this->type === 'password' && (bool) $this->revealable;
+    }
+
+    /**
+     * getNumberFormat returns how a number field shows its value, or null when it shows the value as stored.
+     *
+     * @return array{locale: string, decimals: int|null, grouping: bool}|null
+     */
+    public function getNumberFormat(): ?array
+    {
+        if ($this->type !== 'number' || !$this->format) {
+            return null;
+        }
+
+        $options = is_array($this->format) ? $this->format : [];
+
+        return [
+            'locale' => str_replace('_', '-', (string) ($options['locale'] ?? app()->getLocale())),
+            'decimals' => isset($options['decimals']) ? max(0, (int) $options['decimals']) : null,
+            'grouping' => (bool) ($options['grouping'] ?? true),
+        ];
     }
 
     /**

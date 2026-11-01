@@ -290,7 +290,8 @@
     }
 
     &.number-field {
-        > .form-control {
+        > .form-control,
+        > .form-adorn > .form-ghost {
             text-align: right;
         }
     }

@@ -1016,9 +1016,10 @@ class Form extends WidgetBase implements FormElement
             if ($this->dataArrayExists($data, $parts)) {
                 $value = $this->dataArrayGet($data, $parts) ?? '';
 
-                // Convert number to float
-                if ($field->type === 'number') {
-                    $value = !strlen(trim($value)) ? null : (float) $value;
+                // A number keeps the digits as typed, since a float rounds long values and drops trailing zeros
+                if ($field->type === 'number' && is_string($value)) {
+                    $value = trim($value);
+                    $value = $value === '' ? null : $value;
                 }
 
                 $this->dataArraySet($result, $parts, $value);
