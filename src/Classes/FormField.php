@@ -33,6 +33,10 @@ use Exception;
  * @method FormField valueTrans(bool $valueTrans) valueTrans determines if display values (model attributes) should be translated
  * @method FormField valuePopulate(bool $valuePopulate) valuePopulate determines if the value should be populated from the data source (default: true)
  * @method FormField tooltip(array|string $tooltip) tooltip to display next to the field label, as an array supports: title, placement, icon, isHtml
+ * @method FormField prefix(string $prefix) prefix text shown inside the input before the value, such as a currency symbol
+ * @method FormField suffix(string $suffix) suffix text shown inside the input after the value, such as a unit
+ * @method FormField prefixIcon(string $prefixIcon) prefixIcon classes of an icon shown inside the input before the value
+ * @method FormField suffixIcon(string $suffixIcon) suffixIcon classes of an icon shown inside the input after the value
  *
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
@@ -85,6 +89,20 @@ class FormField extends FieldDefinition
             ->valuePopulate(true)
             ->attributes([])
         ;
+    }
+
+    /**
+     * hasAdornment returns true when the field shows text or an icon inside its input, before or after the value.
+     */
+    public function hasAdornment(): bool
+    {
+        foreach (['prefix', 'suffix', 'prefixIcon', 'suffixIcon'] as $option) {
+            if ((string) $this->{$option} !== '') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
