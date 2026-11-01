@@ -1,8 +1,8 @@
 /*
- * Balloon selector, a group of radio buttons where one is checked
+ * Selector, a group of radio buttons where one is checked
  */
 
-[data-control="balloon-selector"] > .btn-group {
+[data-control~="selector"] > .btn-group {
     /* Many options wrap onto another row instead of overflowing the field */
     flex-wrap: wrap;
 

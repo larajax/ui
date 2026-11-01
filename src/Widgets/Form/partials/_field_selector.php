@@ -4,10 +4,10 @@
     $isDisabled = $this->previewMode || $field->disabled;
     $isReadOnly = !$isDisabled && $field->readOnly;
 ?>
-<!-- Balloon selector -->
+<!-- Selector -->
 <div
     id="<?= $field->getId() ?>"
-    data-control="balloon-selector"
+    data-control="selector"
     <?= $emptyOption ? 'data-selector-allow-empty' : '' ?>
     <?= $field->getAttributes() ?>
 >

@@ -1,12 +1,12 @@
 import { afterEach, beforeAll, describe, expect, test } from 'bun:test';
-import { registerBalloonSelector } from '../resources/assets/controls/balloon-selector/balloon-selector.js';
+import { registerSelector } from '../resources/assets/controls/selector/selector.js';
 import { makeFakeJax } from './support/fake-control-jax.js';
 
 let jax;
 
 beforeAll(() => {
     jax = makeFakeJax();
-    registerBalloonSelector(jax);
+    registerSelector(jax);
 });
 
 afterEach(() => {
@@ -14,7 +14,7 @@ afterEach(() => {
     document.body.innerHTML = '';
 });
 
-// Renders a selector the way the form's balloon-selector field partial does
+// Renders a selector the way the form's selector field partial does
 function mountSelector({ value = '', allowEmpty = false, readOnly = false, disabled = false } = {}) {
     const option = (optionValue, label) => `
         <label class="btn-check btn-outline theme-primary">
@@ -25,7 +25,7 @@ function mountSelector({ value = '', allowEmpty = false, readOnly = false, disab
 
     document.body.innerHTML = `
         <form>
-            <div data-control="balloon-selector" ${allowEmpty ? 'data-selector-allow-empty' : ''}>
+            <div data-control="selector" ${allowEmpty ? 'data-selector-allow-empty' : ''}>
                 <input type="hidden" name="status" value="" ${disabled ? 'disabled' : ''} />
                 <div class="btn-group" role="radiogroup" aria-label="Status" ${readOnly ? 'aria-readonly="true"' : ''}>
                     ${option('draft', 'Draft')}
@@ -37,14 +37,14 @@ function mountSelector({ value = '', allowEmpty = false, readOnly = false, disab
 
     jax.connectAll();
 
-    const element = document.querySelector('[data-control="balloon-selector"]');
+    const element = document.querySelector('[data-control="selector"]');
     const changes = [];
     element.addEventListener('change', (ev) => changes.push(`${ev.target.type}:${ev.target.value}`));
 
     return {
         element,
         changes,
-        control: jax.fetchControl(element, 'balloon-selector'),
+        control: jax.fetchControl(element, 'selector'),
         radio: (optionValue) => element.querySelector(`input[value="${optionValue}"]`),
         posted: () => new FormData(document.querySelector('form')).getAll('status')
     };
@@ -58,7 +58,7 @@ function pressSpace(target) {
     return down;
 }
 
-describe('balloon selector', () => {
+describe('selector', () => {
     test('the checked option posts after the empty hidden input, so it wins', () => {
         const { posted, control } = mountSelector({ value: 'draft' });
 

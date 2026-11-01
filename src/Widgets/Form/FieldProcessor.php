@@ -135,7 +135,7 @@ trait FieldProcessor
             'dropdown',
             'radio',
             'checkboxlist',
-            'balloon-selector'
+            'selector'
         ];
 
         foreach ($fields as $field) {

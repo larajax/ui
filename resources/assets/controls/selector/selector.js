@@ -1,11 +1,11 @@
 /*
- * Balloon selector control
+ * Selector control
  *
  * Picks one value from a group of radio buttons, where a hidden empty input before them posts an empty value
  * when no option is checked.
  *
  * Data attributes:
- * - data-control="balloon-selector" - enables the control on the element around the hidden input and radio group
+ * - data-control="selector" - enables the control on the element around the hidden input and radio group
  * - data-selector-allow-empty - clicking the checked option, or pressing Space on it, clears the value
  * - aria-readonly="true" on the radio group - the checked option cannot be changed, while its value still posts
  *
@@ -15,13 +15,13 @@
  * - trigger:disable - disables the inputs when event.detail.status is true
  *
  * JavaScript API:
- * jax.fetchControl(element, 'balloon-selector').getValue()
- * jax.fetchControl(element, 'balloon-selector').setValue('active')
+ * jax.fetchControl(element, 'selector').getValue()
+ * jax.fetchControl(element, 'selector').setValue('active')
  */
 'use strict';
 
-export function registerBalloonSelector(jax) {
-    jax.registerControl('balloon-selector', class extends jax.ControlBase {
+export function registerSelector(jax) {
+    jax.registerControl('selector', class extends jax.ControlBase {
         init() {
             this.allowEmpty = this.element.hasAttribute('data-selector-allow-empty');
         }

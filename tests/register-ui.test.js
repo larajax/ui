@@ -19,7 +19,7 @@ const CONTROL_IDS = [
     'toolbar',
     'rowlink',
     'checkbox',
-    'balloon-selector',
+    'selector',
     'simplelist',
     'formwidget',
     'listwidget',

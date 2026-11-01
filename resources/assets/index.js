@@ -42,7 +42,7 @@ import { registerToolbar } from './controls/toolbar/toolbar-control.js';
 import { registerRowlink } from './controls/rowlink/rowlink-control.js';
 import { registerCheckbox } from './controls/checkbox/checkbox-control.js';
 import { registerCheckboxRange } from './controls/checkbox/checkbox-range.js';
-import { registerBalloonSelector } from './controls/balloon-selector/balloon-selector.js';
+import { registerSelector } from './controls/selector/selector.js';
 import { registerTooltip } from './controls/tooltip/tooltip.js';
 import { registerSimpleList } from './controls/simplelist/simplelist.js';
 
@@ -122,7 +122,7 @@ export function registerUi(jax) {
     registerRowlink(jax);
     registerCheckbox(jax);
     registerCheckboxRange(jax);
-    registerBalloonSelector(jax);
+    registerSelector(jax);
     registerTooltip(jax);
     registerSimpleList(jax);
 

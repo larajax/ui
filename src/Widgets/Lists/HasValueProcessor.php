@@ -313,7 +313,7 @@ trait HasValueProcessor
 
     /**
      * evalSelectableTypeValue processes as selectable value types for 'dropdown',
-     * 'radio', 'balloon-selector' and similar form field types
+     * 'radio', 'selector' and similar form field types
      */
     protected function evalSelectableTypeValue($record, $column, $value)
     {

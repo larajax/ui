@@ -26,7 +26,7 @@
 @import "./controls/password-reveal/password-reveal.css";
 @import "./controls/custom-select/custom-select-control.css";
 @import "./controls/checkbox/checkbox-control.css";
-@import "./controls/balloon-selector/balloon-selector.css";
+@import "./controls/selector/selector.css";
 @import "./controls/input-trigger/input-trigger.css";
 @import "./controls/dropdown/dropdown.css";
 @import "./controls/popover/popover.css";

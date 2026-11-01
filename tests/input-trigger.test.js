@@ -35,8 +35,8 @@ function mountTrigger(sourceHtml, condition) {
     return () => !document.getElementById('target').classList.contains('oc-hide');
 }
 
-// A balloon selector posts an empty hidden input followed by its radios
-function balloonSource(checked) {
+// A selector posts an empty hidden input followed by its radios
+function selectorSource(checked) {
     const radio = (value) => `<input type="radio" name="style" value="${value}" ${checked === value ? 'checked' : ''} />`;
 
     return `<input type="hidden" name="style" value="" />${radio('simple')}${radio('detailed')}`;
@@ -44,17 +44,17 @@ function balloonSource(checked) {
 
 describe('input trigger value condition', () => {
     test('reads the checked radio rather than the hidden input before it', () => {
-        expect(mountTrigger(balloonSource('detailed'), 'value[detailed]')()).toBe(true);
+        expect(mountTrigger(selectorSource('detailed'), 'value[detailed]')()).toBe(true);
     });
 
     test('a different checked radio does not match', () => {
-        expect(mountTrigger(balloonSource('simple'), 'value[detailed]')()).toBe(false);
+        expect(mountTrigger(selectorSource('simple'), 'value[detailed]')()).toBe(false);
     });
 
     test('with no radio checked the hidden input gives the empty value', () => {
-        expect(mountTrigger(balloonSource(null), 'value[]')()).toBe(true);
+        expect(mountTrigger(selectorSource(null), 'value[]')()).toBe(true);
         jax.disconnectAll();
-        expect(mountTrigger(balloonSource(null), 'value[detailed]')()).toBe(false);
+        expect(mountTrigger(selectorSource(null), 'value[detailed]')()).toBe(false);
     });
 
     test('a plain input is still read for its value', () => {
