@@ -29,7 +29,7 @@ The button sits at the end of a Bootstrap 6 adorned field, after the password in
 </label>
 ```
 
-A form field renders this markup when its `revealable` option is set.
+A password form field renders this markup unless its `revealable` option is `false`.
 
 ## Behavior
 

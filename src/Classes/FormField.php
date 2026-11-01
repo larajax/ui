@@ -37,7 +37,7 @@ use Exception;
  * @method FormField suffix(string $suffix) suffix text shown inside the input after the value, such as a unit
  * @method FormField prefixIcon(string $prefixIcon) prefixIcon classes of an icon shown inside the input before the value
  * @method FormField suffixIcon(string $suffixIcon) suffixIcon classes of an icon shown inside the input after the value
- * @method FormField revealable(bool $revealable) revealable adds a button inside a password field that shows and hides what was typed
+ * @method FormField revealable(bool $revealable) revealable shows a button inside a password field that shows and hides what was typed (default: true)
  *
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
@@ -88,6 +88,7 @@ class FormField extends FieldDefinition
         $this
             ->valueTrans(true)
             ->valuePopulate(true)
+            ->revealable(true)
             ->attributes([])
         ;
     }
