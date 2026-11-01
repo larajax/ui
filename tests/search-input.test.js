@@ -23,12 +23,16 @@ function makeFakeJax() {
     return {
         controls: new Map(),
         requests: [],
+        lists: new Map(),
         ControlBase,
         registerControl(id, control) {
             this.controls.set(id, control);
         },
         request(element) {
             this.requests.push(element);
+        },
+        fetchControl(element, name) {
+            return name === 'listwidget' ? this.lists.get(element) || null : null;
         }
     };
 }
@@ -43,6 +47,7 @@ beforeAll(() => {
 afterEach(() => {
     document.body.innerHTML = '';
     jax.requests.length = 0;
+    jax.lists.clear();
 });
 
 // Renders a search field as Ui::searchInput does: the icon, input and clear button inside an adorned label
@@ -122,6 +127,78 @@ describe('search input clear button', () => {
 
         document.querySelector('form').dispatchEvent(new Event('ajax:request-complete'));
         expect(clear.style.display).toBe('');
+    });
+});
+
+describe('linked list', () => {
+    // Renders a list for the search to link to, with a stand-in control that records what the search asks of it
+    function mountList() {
+        document.getElementById('Lists').innerHTML = '<div class="control-list"></div>';
+
+        const element = document.querySelector('#Lists > .control-list'),
+            updates = [];
+
+        jax.lists.set(element, { getAllChecked: () => false, setUpdating: (isUpdating) => updates.push(isUpdating) });
+
+        return updates;
+    }
+
+    // Wraps the search in a toolbar linked to the list, as the toolbar widget renders it
+    function connectLinkedSearch() {
+        const search = connectSearch({ request: 'onSearch' });
+        const toolbar = document.createElement('div');
+
+        toolbar.dataset.listLinkage = 'Lists';
+        document.body.prepend(toolbar);
+        toolbar.append(document.querySelector('form'));
+        document.body.insertAdjacentHTML('beforeend', '<div id="Lists"></div>');
+
+        return search;
+    }
+
+    const fire = (input, name) => input.dispatchEvent(new CustomEvent(name, { bubbles: true }));
+
+    test('a search marks the linked list as updating until its request ends', () => {
+        const { input } = connectLinkedSearch();
+        const updates = mountList();
+
+        fire(input, 'ajax:promise');
+        expect(updates).toEqual([true]);
+
+        fire(input, 'ajax:always');
+        expect(updates).toEqual([true, false]);
+    });
+
+    test('a newer search that aborts the last keeps the list updating until it ends', () => {
+        const { input } = connectLinkedSearch();
+        const updates = mountList();
+
+        fire(input, 'ajax:promise');
+        fire(input, 'ajax:promise');
+        fire(input, 'ajax:always');
+
+        expect(updates).toEqual([true, true, false]);
+    });
+
+    test('the list is looked up again when the request ends, since the search redraws it', () => {
+        const { input } = connectLinkedSearch();
+        const before = mountList();
+
+        fire(input, 'ajax:promise');
+        const after = mountList();
+        fire(input, 'ajax:always');
+
+        expect(before).toEqual([true]);
+        expect(after).toEqual([false]);
+    });
+
+    test('a search outside a linked container leaves lists alone', () => {
+        const { input } = connectSearch({ request: 'onSearch' });
+
+        expect(() => {
+            fire(input, 'ajax:promise');
+            fire(input, 'ajax:always');
+        }).not.toThrow();
     });
 });
 

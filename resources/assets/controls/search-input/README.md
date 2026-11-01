@@ -40,3 +40,7 @@ The field is a Bootstrap 6 adorned control: a `<label class="form-control form-a
 ```
 
 The input carries its own `aria-label`, since the wrapping label would otherwise name it after the clear button.
+
+## Linked List
+
+Inside a `[data-list-linkage]` container, such as a toolbar bound to a list, the search sends the list's `allChecked` state with its request and marks the list as updating while the request runs, so the rows fade as they do for a filter update. A newer search aborts the last one, which keeps the list updating until the newest search ends.

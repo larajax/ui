@@ -43,11 +43,17 @@ export function registerFilterWidget(jax) {
             this.listen('click', this.onClick);
             this.listen('ajax:update', this.onContainerUpdate);
 
+            // Bootstrap's own event names, which the framework's listener would read as namespaced events
+            this.element.addEventListener('change.bs.combobox', this.proxy(this.onPickDropdown));
+            this.element.addEventListener('shown.bs.combobox', this.proxy(this.onDropdownShown));
+
             this.bindScrollable();
             this.bindCheckboxes();
         }
 
         disconnect() {
+            this.element.removeEventListener('change.bs.combobox', this.proxy(this.onPickDropdown));
+            this.element.removeEventListener('shown.bs.combobox', this.proxy(this.onDropdownShown));
             this.hidePopover();
             this.unbindScrollable();
         }
@@ -83,12 +89,6 @@ export function registerFilterWidget(jax) {
                 scope = el.closest('.filter-scope');
 
             if (!scope || this.popover?.element?.contains(el)) {
-                return;
-            }
-
-            // Dropdown scope
-            if (el.matches('select')) {
-                this.onToggleDropdown(el, scope);
                 return;
             }
 
@@ -390,11 +390,33 @@ export function registerFilterWidget(jax) {
         // Dropdowns
         //
 
-        onToggleDropdown(el, scope) {
-            // Hide any old scopes
-            this.hidePopover();
+        // A dropdown scope is Bootstrap's combobox, which shows the picked label itself, so a pick copies the option's mark beside it and updates the scope.
+        onPickDropdown(ev) {
+            const toggle = ev.target instanceof Element ? ev.target.closest('.scope-dropdown > .combobox-toggle') : null;
+            const scope = toggle ? toggle.closest('.filter-scope') : null;
+            const item = scope ? scope.querySelector('.menu > .menu-item.selected') : null;
 
-            this.submitUpdate(scope, { value: el.value });
+            if (!item || !this.element.contains(scope)) {
+                return;
+            }
+
+            const mark = [...item.children].filter((child) => !child.classList.contains('menu-item-content'));
+            toggle.querySelector('[data-scope-mark]')?.replaceChildren(...mark.map((child) => child.cloneNode(true)));
+
+            this.hidePopover();
+            this.submitUpdate(scope, { value: item.dataset.bsValue });
+        }
+
+        // The open options start at the picked one, after the combobox focuses its first item, so Escape and the arrow keys work from there.
+        onDropdownShown(ev) {
+            const toggle = ev.target instanceof Element ? ev.target.closest('.scope-dropdown > .combobox-toggle') : null;
+            const item = toggle ? toggle.closest('.filter-scope').querySelector('.menu > .menu-item.selected') : null;
+
+            if (!item || !this.element.contains(item)) {
+                return;
+            }
+
+            requestAnimationFrame(() => item.focus());
         }
 
         //

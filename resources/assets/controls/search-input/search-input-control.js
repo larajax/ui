@@ -18,6 +18,8 @@ export function registerSearchInput(jax) {
             this.element.classList.add('size-input-text');
             this.element.classList.add('loading-indicator-container');
             this.listen('ajax:setup', this.linkToListWidget);
+            this.listen('ajax:promise', this.onSearchRequest);
+            this.listen('ajax:always', this.onSearchRequestEnd);
             this.listen('ajax:request-complete', this.$triggerEl, this.toggleClearButton);
             this.listen('input', this.$input, this.toggleClearButton);
             this.listen('click', this.$clearBtn, this.clearInput);
@@ -53,18 +55,37 @@ export function registerSearchInput(jax) {
 
         // @todo this should be moved to the list widget
         linkToListWidget(ev) {
-            const linkage = this.element.closest('[data-list-linkage]');
-            if (!linkage) {
-                return;
-            }
-
-            const widget = document.querySelector('#' + linkage.dataset.listLinkage + ' > .control-list');
-            const control = widget ? jax.fetchControl(widget, 'listwidget') : null;
+            const control = this.linkedList();
             if (!control) {
                 return;
             }
 
             ev.detail.context.options.data.allChecked = control.getAllChecked();
+        }
+
+        // Marks the linked list as updating while a search redraws it, where a newer search aborts the last one without it ending.
+        onSearchRequest() {
+            this.setListUpdating(true);
+        }
+
+        onSearchRequestEnd() {
+            this.setListUpdating(false);
+        }
+
+        setListUpdating(isUpdating) {
+            const control = this.linkedList();
+
+            if (control && control.setUpdating) {
+                control.setUpdating(isUpdating);
+            }
+        }
+
+        // Finds the list control named by the enclosing [data-list-linkage], each time since a search replaces it.
+        linkedList() {
+            const linkage = this.element.closest('[data-list-linkage]');
+            const widget = linkage ? document.querySelector('#' + linkage.dataset.listLinkage + ' > .control-list') : null;
+
+            return widget ? jax.fetchControl(widget, 'listwidget') : null;
         }
     });
 }

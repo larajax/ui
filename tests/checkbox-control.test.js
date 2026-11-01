@@ -10,6 +10,14 @@ function makeFakeJax() {
         constructor(element) {
             this.element = element;
             this.config = { ...element.dataset };
+            this.proxied = new Map();
+        }
+
+        proxy(method) {
+            if (!this.proxied.has(method)) {
+                this.proxied.set(method, method.bind(this));
+            }
+            return this.proxied.get(method);
         }
 
         listen(eventName, targetOrHandler, handler) {

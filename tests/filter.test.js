@@ -52,7 +52,14 @@ function renderFilter(extraScopes = '') {
             data-load-handler="filter::onLoadFilterForm">
             <div class="filter-group" id="Filter-scope-domain-group">
                 <div class="filter-scope scope-dropdown" data-scope-name="domain">
-                    <select><option value="">All</option><option value="example.com">example.com</option></select>
+                    <button type="button" class="combobox-toggle" data-bs-toggle="combobox">
+                        <span aria-hidden="true" data-scope-mark></span>
+                        <span class="combobox-value">All</span>
+                    </button>
+                    <div class="menu control-dropdown" role="listbox">
+                        <button type="button" class="menu-item selected" role="option" data-bs-value=""><span class="menu-item-content"><span>All</span></span></button>
+                        <button type="button" class="menu-item" role="option" data-bs-value="example.com"><i class="ph ph-globe" aria-hidden="true"></i><span class="menu-item-content"><span>example.com</span></span></button>
+                    </div>
                 </div>
             </div>
             <div class="filter-group" id="Filter-scope-id-group">
@@ -85,6 +92,14 @@ function bindRenderedControls() {
 function openScope(name) {
     [...document.querySelectorAll('a.filter-scope')].find((el) => el.dataset.scopeName === name).click();
     return Popover.activeInstance;
+}
+
+// Picks a domain option as Bootstrap's combobox does, marking it selected and announcing the change from the toggle
+function pickDomain(value) {
+    const scope = document.querySelector('[data-scope-name="domain"]');
+
+    scope.querySelectorAll('.menu-item').forEach((item) => item.classList.toggle('selected', item.dataset.bsValue === value));
+    scope.querySelector('.combobox-toggle').dispatchEvent(new CustomEvent('change.bs.combobox', { bubbles: true }));
 }
 
 describe('popover content', () => {
@@ -254,9 +269,7 @@ describe('scope updates', () => {
 
         filter.addEventListener('filter-scope:change', (ev) => seen.push(ev.target));
 
-        const select = document.querySelector('[data-scope-name="domain"] select');
-        select.value = 'example.com';
-        select.dispatchEvent(new Event('change', { bubbles: true }));
+        pickDomain('example.com');
 
         const request = jax.requests[0];
         expect(request.options.data).toEqual({ value: 'example.com', scopeName: 'domain' });
@@ -310,11 +323,46 @@ describe('scope updates', () => {
         openScope('id');
         expect(Popover.activeInstance).not.toBe(null);
 
-        const select = document.querySelector('[data-scope-name="domain"] select');
-        select.value = 'example.com';
-        select.dispatchEvent(new Event('change', { bubbles: true }));
+        pickDomain('example.com');
 
         expect(Popover.activeInstance).toBe(null);
+    });
+
+    test('picking a dropdown option copies its mark beside the label, leaving the label to the combobox', () => {
+        renderFilter();
+
+        pickDomain('example.com');
+
+        const mark = document.querySelector('[data-scope-name="domain"] [data-scope-mark]');
+        expect(mark.innerHTML).toBe('<i class="ph ph-globe" aria-hidden="true"></i>');
+        expect(document.querySelector('[data-scope-name="domain"] .combobox-value').textContent).toBe('All');
+
+        pickDomain('');
+
+        expect(mark.childNodes.length).toBe(0);
+        expect(jax.requests.map((request) => request.options.data.value)).toEqual(['example.com', '']);
+    });
+
+    test('opening a dropdown scope focuses its picked option', async () => {
+        renderFilter();
+
+        const scope = document.querySelector('[data-scope-name="domain"]');
+        pickDomain('example.com');
+        scope.querySelector('.combobox-toggle').focus();
+
+        scope.querySelector('.combobox-toggle').dispatchEvent(new CustomEvent('shown.bs.combobox', { bubbles: true }));
+        await sleep(50);
+
+        expect(document.activeElement).toBe(scope.querySelector('.menu-item[data-bs-value="example.com"]'));
+    });
+
+    test('a combobox change from outside the dropdown scopes is left alone', () => {
+        renderFilter('<div class="filter-group"><button type="button" id="other-toggle" class="combobox-toggle"></button></div>');
+        jax.requests = [];
+
+        document.getElementById('other-toggle').dispatchEvent(new CustomEvent('change.bs.combobox', { bubbles: true }));
+
+        expect(jax.requests.length).toBe(0);
     });
 
     test('the page parameter resets with each update', () => {
@@ -324,8 +372,7 @@ describe('scope updates', () => {
         jax.connect('filterwidget', document.getElementById('Filter'));
         jax.requests = [];
 
-        const select = document.querySelector('[data-scope-name="domain"] select');
-        select.dispatchEvent(new Event('change', { bubbles: true }));
+        pickDomain('');
 
         expect(jax.requests[0].options.query).toEqual({ usersPage: null });
     });
@@ -395,11 +442,7 @@ describe('linked list', () => {
         return jax.connect('listwidget', document.querySelector('#Lists > .control-list'));
     }
 
-    function changeDomain() {
-        const select = document.querySelector('[data-scope-name="domain"] select');
-        select.value = 'example.com';
-        select.dispatchEvent(new Event('change', { bubbles: true }));
-    }
+    const changeDomain = () => pickDomain('example.com');
 
     test('a scope update marks the linked list as updating until the request ends', () => {
         renderFilter();
