@@ -36,8 +36,8 @@
             box-shadow: none;
         }
 
-        &.active > .filter-scope,
-        &.active > .combobox-toggle {
+        /* Beside a clear button, while an active toggle keeps the spacing of the icon it swaps */
+        &:has(> .filter-chip-clear) > :is(.filter-scope, .combobox-toggle) {
             padding-inline-start: 0.375rem;
         }
 
@@ -64,9 +64,11 @@
             }
         }
 
+        /* At least a line tall, so a value that is only an icon has a divider as tall as the others */
         .filter-setting {
             display: inline-flex;
             align-items: center;
+            min-height: 1lh;
             gap: 0.375rem;
             padding-inline-start: 0.5rem;
             border-inline-start: var(--bs-border-width) solid var(--oc-filter-border);
@@ -83,5 +85,10 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+    }
+
+    /* The check and cross that stand for yes and no, stroked heavier so they hold their own beside semibold text */
+    .filter-mark {
+        -webkit-text-stroke: 0.5px currentColor;
     }
 }

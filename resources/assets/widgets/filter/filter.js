@@ -23,6 +23,7 @@
 
 import { Popover } from '../../controls/popover/popover.js';
 import DragScroll from '../../controls/drag-scroll/drag-scroll.js';
+import { isTouchEnabled } from '../liststructure/liststructure.js';
 
 export function registerFilterWidget(jax) {
     jax.registerControl('filterwidget', class extends jax.ControlBase {
@@ -470,6 +471,20 @@ export function registerFilterWidget(jax) {
                     }
                 });
             }
+
+            this.focusGroupSearch(group);
+        }
+
+        // Puts the caret at the end of the group search, except on touch devices, where the on-screen keyboard would cover the options.
+        focusGroupSearch(group) {
+            const input = group.querySelector('input[name="search"]');
+
+            if (!input || isTouchEnabled()) {
+                return;
+            }
+
+            input.focus({ preventScroll: true });
+            input.setSelectionRange(input.value.length, input.value.length);
         }
 
         //
@@ -499,12 +514,12 @@ export function registerFilterWidget(jax) {
         }
 
         //
-        // Dropdowns
+        // Dropdowns and switches
         //
 
-        // A dropdown scope is Bootstrap's combobox, which shows the picked label itself, so a pick copies the option's mark beside it and updates the scope.
+        // Dropdown and switch scopes are Bootstrap's combobox, which shows the picked label itself, so a pick copies the option's mark beside it and updates the scope.
         onPickDropdown(ev) {
-            const toggle = ev.target instanceof Element ? ev.target.closest('.scope-dropdown > .combobox-toggle') : null;
+            const toggle = ev.target instanceof Element ? ev.target.closest('.filter-scope > .combobox-toggle') : null;
             const scope = toggle ? toggle.closest('.filter-scope') : null;
             const item = scope ? scope.querySelector('.menu > .menu-item.selected') : null;
 
@@ -521,7 +536,7 @@ export function registerFilterWidget(jax) {
 
         // The open options start at the picked one, after the combobox focuses its first item, so Escape and the arrow keys work from there.
         onDropdownShown(ev) {
-            const toggle = ev.target instanceof Element ? ev.target.closest('.scope-dropdown > .combobox-toggle') : null;
+            const toggle = ev.target instanceof Element ? ev.target.closest('.filter-scope > .combobox-toggle') : null;
             const item = toggle ? toggle.closest('.filter-scope').querySelector('.menu > .menu-item.selected') : null;
 
             if (!item || !this.element.contains(item)) {

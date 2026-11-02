@@ -7,5 +7,4 @@
     'isToggle' => true,
     'active' => (bool) $activeValue,
     'label' => $this->getHeaderValue($scope),
-    'valueLabel' => __('Yes'),
 ]) ?>

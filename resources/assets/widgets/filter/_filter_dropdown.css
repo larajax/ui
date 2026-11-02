@@ -1,5 +1,5 @@
 .control-filter {
-    .filter-group > .filter-scope.scope-dropdown {
+    .filter-group > .filter-scope:is(.scope-dropdown, .scope-switch) {
         &:has(> .combobox-toggle:focus-visible) {
             outline: var(--bs-focus-ring);
             outline-offset: var(--bs-focus-ring-offset);

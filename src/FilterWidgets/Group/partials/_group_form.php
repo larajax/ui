@@ -20,21 +20,21 @@
         <h3 class="filter-title" id="<?= $scope->getId('title') ?>"><?= e($this->getHeaderValue()) ?></h3>
 
         <?php if ($scope->matchMode === 'toggle' || $scope->matchMode === true): ?>
-            <div class="filter-mode d-flex flex-wrap gap-3">
-                <?php foreach (['include' => __('Includes'), 'exclude' => __('Excludes')] as $mode => $label): ?>
-                    <div class="form-field mb-0">
-                        <input
-                            class="radio radio-sm"
-                            type="radio"
-                            id="<?= $scope->getId('mode-'.$mode) ?>"
-                            name="Filter[mode]"
-                            value="<?= $mode ?>"
-                            <?= ($scope->mode ?: 'include') === $mode ? 'checked' : '' ?> />
-                        <div class="form-field-content">
-                            <label for="<?= $scope->getId('mode-'.$mode) ?>"><?= e($label) ?></label>
-                        </div>
-                    </div>
-                <?php endforeach ?>
+            <?php /* Posts exclude while on, and nothing while off, which the group reads as include */ ?>
+            <div class="filter-mode form-field mb-0">
+                <div class="switch">
+                    <input
+                        type="checkbox"
+                        role="switch"
+                        switch
+                        id="<?= $scope->getId('mode') ?>"
+                        name="Filter[mode]"
+                        value="exclude"
+                        <?= $scope->mode === 'exclude' ? 'checked' : '' ?> />
+                </div>
+                <div class="form-field-content">
+                    <label for="<?= $scope->getId('mode') ?>"><?= e(__('Exclude selected')) ?></label>
+                </div>
             </div>
         <?php else: ?>
             <input type="hidden" name="Filter[mode]" value="<?= $scope->matchMode ?: 'include' ?>">

@@ -707,7 +707,7 @@ class Filter extends WidgetBase implements FilterElement
         switch ($scope->type) {
             case 'checkbox':
             case 'switch':
-                $value = post('clearScope') ? 0 : post('value', 0);
+                $value = post('clearScope') ? 0 : (int) post('value', 0);
                 $this->putScopeValue($scope, ['value' => $value]);
                 $updateScopePartial = true;
                 break;

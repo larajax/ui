@@ -123,6 +123,14 @@ abstract class FilterWidgetBase extends WidgetBase
     }
 
     /**
+     * getActiveValueMark returns the markup shown before the value in the filter chip, such as an icon.
+     */
+    public function getActiveValueMark(): string
+    {
+        return '';
+    }
+
+    /**
      * getActiveValue
      */
     public function getActiveValue()

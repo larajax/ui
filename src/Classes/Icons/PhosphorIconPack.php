@@ -16,6 +16,8 @@ class PhosphorIconPack implements IconPack
             'filter.clear' => 'ph ph-eraser',
             'filter.add' => 'ph ph-plus-circle',
             'filter.remove' => 'ph ph-x-circle',
+            'filter.yes' => 'ph ph-check',
+            'filter.no' => 'ph ph-x',
             'filter.item.add' => 'ph ph-plus',
             'filter.item.remove' => 'ph ph-x',
 

@@ -177,12 +177,12 @@ describe('popover content', () => {
 
 describe('group options', () => {
     // A group scope form as the group filter widget renders it, with or without its first options
-    function groupForm(options) {
+    function groupForm(options, search = '') {
         return `
             <div data-control="groupfilter" data-options-handler="groupFilter::onGetGroupOptions"
                 ${options ? `data-options='${JSON.stringify(options)}'` : ''}>
                 <input type="hidden" name="Filter[value]" value='["2"]' data-groupfilter-datalocker />
-                <input type="text" name="search" />
+                <input type="text" name="search" value="${search}" />
                 <ul data-groupfilter-active></ul>
                 <ul data-groupfilter-available></ul>
             </div>
@@ -213,6 +213,31 @@ describe('group options', () => {
 
         jax.requests[0].resolve({ options: { active: [], available: [{ id: '1', name: 'Desks' }] } });
         expect(names('available')).toEqual(['Desks']);
+    });
+
+    test('opening a group puts the caret at the end of its search', () => {
+        renderFilter(`<div class="filter-group"><a href="javascript:;" class="filter-scope" data-scope-name="tags">Tags</a><template data-scope-form>${groupForm({ active: [], available: [] }, 'lam')}</template></div>`);
+
+        const search = openScope('tags').element.querySelector('input[name="search"]');
+
+        expect(document.activeElement).toBe(search);
+        expect([search.selectionStart, search.selectionEnd]).toEqual([3, 3]);
+    });
+
+    test('on a touch-only device a group leaves its search alone, so the keyboard does not cover the options', () => {
+        const originalMatchMedia = window.matchMedia;
+        window.matchMedia = (query) => ({ matches: query === '(pointer: coarse)' });
+
+        try {
+            renderFilter(`<div class="filter-group"><a href="javascript:;" class="filter-scope" data-scope-name="tags">Tags</a><template data-scope-form>${groupForm({ active: [], available: [] })}</template></div>`);
+
+            const search = openScope('tags').element.querySelector('input[name="search"]');
+
+            expect(document.activeElement).not.toBe(search);
+        }
+        finally {
+            window.matchMedia = originalMatchMedia;
+        }
     });
 
     test('group option buttons add and remove selections without applying, retaining keyboard focus', () => {
@@ -509,11 +534,11 @@ describe('active scope ordering', () => {
 });
 
 describe('checkbox chips', () => {
+    // A checkbox chip as its partial renders it, with a check in place of the plus while it is on
     function scopeMarkup(active = false) {
         return `<div class="filter-chip ${active ? 'active' : ''}">
-            ${active ? '<button type="button" data-filter-clear-scope>Clear</button>' : ''}
             <button type="button" class="filter-scope scope-checkbox ${active ? 'active' : ''}"
-                data-scope-name="verified" aria-pressed="${active}"><span>Verified</span></button>
+                data-scope-name="verified" aria-pressed="${active}"><i class="ph ${active ? 'ph-check' : 'ph-plus-circle'}" aria-hidden="true"></i><span>Verified</span></button>
         </div>`;
     }
 
@@ -537,15 +562,6 @@ describe('checkbox chips', () => {
 
         expect(jax.requests.length).toBe(1);
         expect(jax.requests[0].options.data).toEqual({ scopeName: 'verified', value: 0 });
-        expect(Popover.activeInstance).toBe(null);
-    });
-
-    test('the checkbox chip cross clears without also toggling', () => {
-        renderFilter(`<div class="filter-group">${scopeMarkup(true)}</div>`);
-        document.querySelector('[data-filter-clear-scope]').click();
-
-        expect(jax.requests.length).toBe(1);
-        expect(jax.requests[0].options.data).toEqual({ scopeName: 'verified', clearScope: true });
         expect(Popover.activeInstance).toBe(null);
     });
 });
@@ -631,129 +647,72 @@ describe('primary scope tabs', () => {
     });
 });
 
-describe('switch popovers', () => {
-    function scopeMarkup(value = 0) {
-        const name = 'published';
-        const inputs = `<label><input type="radio" name="value" value="0" ${value === 0 ? 'checked' : ''} /> Show All</label>
-               <label><input type="radio" name="value" value="2" ${value === 2 ? 'checked' : ''} /> Include Published</label>
-               <label><input type="radio" name="value" value="1" ${value === 1 ? 'checked' : ''} /> Exclude Published</label>`;
+describe('switch menus', () => {
+    // The three states as the switch partial renders them: Any, then a check and a cross beside the label
+    const states = [[0, '', 'Any'], [2, '<i class="ph ph-check" aria-hidden="true"></i>', 'Published'], [1, '<i class="ph ph-x" aria-hidden="true"></i>', 'Published']];
 
-        return `
-            <a href="javascript:;" class="filter-scope ${value ? 'active' : ''}" data-scope-name="${name}">${name}</a>
-            <template data-scope-form>
-                <div class="filter-box">
-                    ${inputs}
-                    <div class="filter-buttons">
-                        <button type="button" data-filter-action="clear">Clear</button>
-                        <button type="button" data-filter-action="apply">Apply</button>
-                    </div>
+    function switchMarkup(value = 0) {
+        const mark = states.find(([state]) => state === value)[1];
+
+        return `<div class="filter-group" id="published-group">
+            <div class="filter-scope filter-chip scope-switch ${value ? 'active' : ''}" data-scope-name="published">
+                ${value ? '<button type="button" class="filter-chip-clear" data-filter-clear-scope>Clear</button>' : ''}
+                <button type="button" class="combobox-toggle" data-bs-toggle="combobox">
+                    <span class="filter-label">Published</span>
+                    <span class="filter-setting"><span aria-hidden="true" data-scope-mark>${mark}</span><span class="combobox-value visually-hidden"></span></span>
+                </button>
+                <div class="menu control-dropdown" role="listbox">
+                    ${states.map(([state, icon, label]) => `<button type="button" class="menu-item ${state === value ? 'selected' : ''}" role="option" data-bs-value="${state}">${icon}<span class="menu-item-content"><span>${label}</span></span></button>`).join('')}
                 </div>
-            </template>
-        `;
+            </div>
+        </div>`;
     }
 
-    function renderSwitchScope(value = 0) {
-        const name = 'published';
-        renderFilter(`<div class="filter-group" id="Filter-scope-${name}-group">${scopeMarkup(value)}</div>`);
-        return openScope(name);
+    // Picks a state as Bootstrap's combobox does, marking it selected and announcing the change from the toggle
+    function pickSwitch(value) {
+        const scope = document.querySelector('[data-scope-name="published"]');
+
+        scope.querySelectorAll('.menu-item').forEach((item) => item.classList.toggle('selected', item.dataset.bsValue === String(value)));
+        scope.querySelector('.combobox-toggle').dispatchEvent(new CustomEvent('change.bs.combobox', { bubbles: true }));
     }
 
-    // Picks a radio the way a pointer does, then presses Apply
-    function pickAndApply(popover, value) {
-        popover.element.querySelector(`input[type="radio"][value="${value}"]`).click();
-        popover.element.querySelector('[data-filter-action="apply"]').click();
-    }
+    const mark = () => document.querySelector('[data-scope-name="published"] [data-scope-mark]');
 
-    test('a switch opens its form without a request or changing the filter', () => {
-        const popover = renderSwitchScope();
+    test.each([[2, 'ph ph-check'], [1, 'ph ph-x']])('picking state %i submits it at once and shows its mark beside the label', (value, icon) => {
+        renderFilter(switchMarkup());
+        openScope('id');
 
-        expect(popover.element.querySelector('input[type="radio"]')).not.toBe(null);
-        expect(popover.element.querySelector('input:checked').value).toBe('0');
-        expect([...popover.element.querySelectorAll('[data-filter-action]')].map((el) => el.dataset.filterAction)).toEqual(['clear', 'apply']);
-        expect(jax.requests.length).toBe(0);
-    });
+        pickSwitch(value);
 
-    test.each([['Show All', '0'], ['Include Published', '2'], ['Exclude Published', '1']])('picking %s waits for Apply, which submits it and closes the popover', (label, value) => {
-        const popover = renderSwitchScope();
-        const radio = popover.element.querySelector(`input[type="radio"][value="${value}"]`);
-        expect(radio.closest('label').textContent.trim()).toBe(label);
-
-        radio.click();
-        expect(jax.requests.length).toBe(0);
-        expect(Popover.activeInstance).toBe(popover);
-
-        popover.element.querySelector('[data-filter-action="apply"]').click();
-        expect(jax.requests.length).toBe(1);
-        expect(jax.requests[0].options.data).toEqual({ scopeName: 'published', value });
+        expect(jax.requests.map((request) => request.options.data)).toEqual([{ scopeName: 'published', value: String(value) }]);
+        expect(mark().querySelector('i').className).toBe(icon);
         expect(Popover.activeInstance).toBe(null);
     });
 
-    test('moving through the radios with the keyboard applies nothing until Apply', () => {
-        const popover = renderSwitchScope();
-        const include = popover.element.querySelector('input[type="radio"][value="2"]'),
-            exclude = popover.element.querySelector('input[type="radio"][value="1"]');
+    test('picking Any submits no filter and clears the mark', () => {
+        renderFilter(switchMarkup(2));
 
-        // An arrow key checks each radio it passes and fires a click and a change on it
-        [include, exclude].forEach((radio) => {
-            radio.click();
-            radio.dispatchEvent(new Event('change', { bubbles: true }));
-        });
+        pickSwitch(0);
 
-        expect(jax.requests.length).toBe(0);
-        expect(Popover.activeInstance).toBe(popover);
-
-        popover.element.querySelector('[data-filter-action="apply"]').click();
-        expect(jax.requests.map((request) => request.options.data)).toEqual([{ scopeName: 'published', value: '1' }]);
+        expect(jax.requests[0].options.data).toEqual({ scopeName: 'published', value: '0' });
+        expect(mark().childNodes.length).toBe(0);
     });
 
-    test('Clear removes the switch filter and closes the popover', () => {
-        const popover = renderSwitchScope(2);
+    test('the cross on an active switch chip clears it', () => {
+        renderFilter(switchMarkup(1));
 
-        popover.element.querySelector('[data-filter-action="clear"]').click();
+        document.querySelector('[data-filter-clear-scope]').click();
 
-        expect(jax.requests[0].options.data).toEqual({ scopeName: 'published', clearScope: true });
-        expect(Popover.activeInstance).toBe(null);
+        expect(jax.requests.map((request) => request.options.data)).toEqual([{ scopeName: 'published', clearScope: true }]);
     });
 
-    test('other radio controls keep their changes pending', () => {
-        renderFilter();
-        const popover = openScope('id');
-        popover.element.querySelector('form').insertAdjacentHTML('beforeend', '<input type="radio" name="Filter[mode]" value="exclude" />');
-        popover.element.querySelector('input[type="radio"]').click();
+    test('opening the menu focuses the picked state', async () => {
+        renderFilter(switchMarkup(1));
 
-        expect(jax.requests.length).toBe(0);
-        expect(Popover.activeInstance).toBe(popover);
-    });
+        document.querySelector('[data-scope-name="published"] .combobox-toggle').dispatchEvent(new CustomEvent('shown.bs.combobox', { bubbles: true }));
+        await sleep(50);
 
-    test('Show All clears a switch and stays selected when reopened', () => {
-        const name = 'published';
-        const popover = renderSwitchScope(2);
-        pickAndApply(popover, 0);
-
-        expect(jax.requests[0].options.data).toEqual({ scopeName: name, value: '0' });
-        expect(Popover.activeInstance).toBe(null);
-
-        // The update response replaces the trigger and stored form together.
-        document.getElementById(`Filter-scope-${name}-group`).innerHTML = scopeMarkup();
-        jax.requests[0].resolve();
-        jax.requests = [];
-
-        const reopened = openScope(name);
-        expect(reopened.element.querySelector('input:checked').value).toBe('0');
-        expect(jax.requests.length).toBe(0);
-    });
-
-    test.each([0, 1, 2])('reopening a switch uses the server-rendered value %i', (value) => {
-        const popover = renderSwitchScope();
-        pickAndApply(popover, value);
-
-        document.getElementById('Filter-scope-published-group').innerHTML = scopeMarkup(value);
-        jax.requests[0].resolve();
-        jax.requests = [];
-
-        const reopened = openScope('published');
-        expect(reopened.element.querySelector('input[type="radio"]:checked').value).toBe(String(value));
-        expect(jax.requests.length).toBe(0);
+        expect(document.activeElement).toBe(document.querySelector('[data-scope-name="published"] .menu-item[data-bs-value="1"]'));
     });
 });
 

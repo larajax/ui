@@ -16,6 +16,8 @@ class OctoberIconPack implements IconPack
             'filter.clear' => 'icon-eraser',
             'filter.add' => 'icon-plus-circle',
             'filter.remove' => 'icon-times-circle',
+            'filter.yes' => 'icon-check',
+            'filter.no' => 'icon-times',
             'filter.item.add' => 'icon-plus',
             'filter.item.remove' => 'icon-times',
 

@@ -49,7 +49,7 @@ class Group extends FilterWidgetBase
     }
 
     /**
-     * getActiveValueLabel shows the selected count and the mode when it is selectable.
+     * getActiveValueLabel shows how many options are picked.
      */
     public function getActiveValueLabel(): string
     {
@@ -57,14 +57,19 @@ class Group extends FilterWidgetBase
             return '';
         }
 
-        $count = count((array) $this->filterScope->value);
-        if ($this->filterScope->matchMode === 'toggle' || $this->filterScope->matchMode === true) {
-            return __($this->filterScope->mode === self::MODE_EXCLUDE ? 'Excludes :count' : 'Includes :count', [
-                'count' => $count,
-            ]);
+        return (string) count((array) $this->filterScope->value);
+    }
+
+    /**
+     * getActiveValueMark shows a cross before the count while the picked options are excluded, with words for assistive tech only.
+     */
+    public function getActiveValueMark(): string
+    {
+        if (!$this->filterScope->scopeValue || $this->filterScope->mode !== self::MODE_EXCLUDE) {
+            return '';
         }
 
-        return (string) $count;
+        return \Larajax\Ui\Facades\Ui::icon('filter.no', ['class' => 'filter-mark']).'<span class="visually-hidden">'.e(__('Excluding')).'</span>';
     }
 
     /**
