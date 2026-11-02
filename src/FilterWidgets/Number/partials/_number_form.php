@@ -8,7 +8,7 @@
                 </div>
                 <?php if ($condition === 'between'): ?>
                     <?= $this->makePartial('item_between') ?>
-                <?php else: ?>
+                <?php elseif (!$this->isEmptyCondition($condition)): ?>
                     <?= $this->makePartial('item_single') ?>
                 <?php endif ?>
             </div>
@@ -29,7 +29,7 @@
         <div class="filter-facet"
             data-trigger="[name='Filter[condition]']"
             data-trigger-action="hide"
-            data-trigger-condition="value[between]"
+            data-trigger-condition="value[between][empty][notEmpty]"
             data-trigger-closest-parent="form">
             <div class="facet-item">
                 <span>└─</span>

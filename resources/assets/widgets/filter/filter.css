@@ -428,6 +428,11 @@
         width: 100%;
     }
 
+    /* The count of a relative date, beside its unit */
+    .filter-count {
+        width: 4.5rem;
+    }
+
     /* The saved sets, each with its delete button, in a list that scrolls once it is long */
     .filter-saved-list {
         max-height: 15rem;

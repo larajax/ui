@@ -6,7 +6,9 @@
                     <input type="hidden" name="Filter[condition]" value="<?= $condition ?>" />
                     <span><?= $this->getConditionLang($condition) ?></span>
                 </div>
-                <?= $this->makePartial('item_single') ?>
+                <?php if (!$this->isEmptyCondition($condition)): ?>
+                    <?= $this->makePartial('item_single') ?>
+                <?php endif ?>
             </div>
         <?php endforeach ?>
     <?php else: ?>
@@ -22,7 +24,11 @@
                 </select>
             </div>
         </div>
-        <div class="filter-facet">
+        <div class="filter-facet"
+            data-trigger="[name='Filter[condition]']"
+            data-trigger-action="hide"
+            data-trigger-condition="value[empty][notEmpty]"
+            data-trigger-closest-parent="form">
             <div class="facet-item">
                 <span>└─</span>
             </div>

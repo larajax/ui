@@ -137,6 +137,7 @@ class UiServiceProvider extends ServiceProvider
             $manager->registerFilterWidget(\Larajax\Ui\FilterWidgets\Date::class, 'date');
             $manager->registerFilterWidget(\Larajax\Ui\FilterWidgets\Text::class, 'text');
             $manager->registerFilterWidget(\Larajax\Ui\FilterWidgets\Number::class, 'number');
+            $manager->registerFilterWidget(\Larajax\Ui\FilterWidgets\Trashed::class, 'trashed');
         });
     }
 }

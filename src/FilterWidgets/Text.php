@@ -25,7 +25,9 @@ class Text extends FilterWidgetBase
         if (!$scope->conditions) {
             $scope->conditions = [
                 self::CONDITION_EQUALS => true,
-                self::CONDITION_CONTAINS => true
+                self::CONDITION_CONTAINS => true,
+                self::CONDITION_EMPTY => true,
+                self::CONDITION_NOT_EMPTY => true,
             ];
         }
     }
@@ -57,12 +59,29 @@ class Text extends FilterWidgetBase
     }
 
     /**
+     * getActiveValueLabel shows the typed text, or whether the value is empty.
+     */
+    public function getActiveValueLabel(): string
+    {
+        return match ($this->filterScope->condition) {
+            self::CONDITION_EMPTY => __('Empty'),
+            self::CONDITION_NOT_EMPTY => __('Not empty'),
+            default => (string) $this->filterScope->value,
+        };
+    }
+
+    /**
      * getActiveValue
      */
     public function getActiveValue()
     {
         if (post('clearScope')) {
             return null;
+        }
+
+        $condition = post('Filter[condition]');
+        if ($this->isEmptyCondition($condition)) {
+            return ['condition' => $condition];
         }
 
         if (!$this->hasPostValue('value')) {
@@ -100,6 +119,18 @@ class Text extends FilterWidgetBase
         }
 
         // Default query
+        if ($activeCondition === self::CONDITION_EMPTY) {
+            $query->where(function ($query) {
+                $query->whereNull($this->valueFrom)->orWhere($this->valueFrom, '');
+            });
+            return;
+        }
+
+        if ($activeCondition === self::CONDITION_NOT_EMPTY) {
+            $query->whereNotNull($this->valueFrom)->where($this->valueFrom, '!=', '');
+            return;
+        }
+
         if ($activeCondition === self::CONDITION_CONTAINS) {
             $query->where($this->valueFrom, 'LIKE', '%'.$activeValue.'%');
             return;
@@ -119,6 +150,12 @@ class Text extends FilterWidgetBase
 
             case self::CONDITION_CONTAINS:
                 return __('contains');
+
+            case self::CONDITION_EMPTY:
+                return __('is empty');
+
+            case self::CONDITION_NOT_EMPTY:
+                return __('is not empty');
         }
     }
 }

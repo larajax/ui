@@ -1192,13 +1192,13 @@ class Lists extends WidgetBase implements ListElement
     }
 
     /**
-     * getRowClass adds a custom CSS class string to a record row
+     * getRowClass adds a custom CSS class string to a record row, starting with deleted for a soft deleted record
      * @param  Model $record Populated model
      * @return string
      */
     public function getRowClass($record)
     {
-        $value = '';
+        $value = method_exists($record, 'trashed') && $record->trashed() ? 'deleted' : '';
 
         if ($response = $this->eventInjectRowClass($record, $value)) {
             $value = $response;

@@ -8,6 +8,9 @@
  */
 abstract class FilterWidgetBase extends WidgetBase
 {
+    const CONDITION_EMPTY = 'empty';
+    const CONDITION_NOT_EMPTY = 'notEmpty';
+
     /**
      * @var \October\Rain\Database\Model|null model is the related model object for the filter.
      */
@@ -155,6 +158,14 @@ abstract class FilterWidgetBase extends WidgetBase
      */
     public function applyScopeToQuery($query)
     {
+    }
+
+    /**
+     * isEmptyCondition returns true for the conditions that match a missing or present value, which take no input.
+     */
+    protected function isEmptyCondition($condition): bool
+    {
+        return $condition === self::CONDITION_EMPTY || $condition === self::CONDITION_NOT_EMPTY;
     }
 
     /**

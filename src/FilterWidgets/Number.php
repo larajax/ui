@@ -30,7 +30,9 @@ class Number extends FilterWidgetBase
                 self::CONDITION_EQUALS => true,
                 self::CONDITION_BETWEEN => true,
                 self::CONDITION_GREATER => true,
-                self::CONDITION_LESSER => true
+                self::CONDITION_LESSER => true,
+                self::CONDITION_EMPTY => true,
+                self::CONDITION_NOT_EMPTY => true,
             ];
         }
     }
@@ -69,6 +71,14 @@ class Number extends FilterWidgetBase
         $scope = $this->filterScope;
         if ($scope->condition === self::CONDITION_BETWEEN) {
             return $this->getDisplayValue($scope->min).' – '.$this->getDisplayValue($scope->max);
+        }
+
+        if ($scope->condition === self::CONDITION_EMPTY) {
+            return __('Empty');
+        }
+
+        if ($scope->condition === self::CONDITION_NOT_EMPTY) {
+            return __('Not empty');
         }
 
         $operator = match ($scope->condition) {
@@ -142,6 +152,10 @@ class Number extends FilterWidgetBase
         $value = post('Filter');
         $condition = post('Filter[condition]');
 
+        if ($this->isEmptyCondition($condition)) {
+            return ['condition' => $condition];
+        }
+
         if ($condition === self::CONDITION_BETWEEN) {
             if (!$this->hasPostValue('min') && !$this->hasPostValue('max')) {
                 return null;
@@ -195,6 +209,16 @@ class Number extends FilterWidgetBase
         }
 
         // Default query
+        if ($activeCondition === self::CONDITION_EMPTY) {
+            $query->whereNull($this->valueFrom);
+            return;
+        }
+
+        if ($activeCondition === self::CONDITION_NOT_EMPTY) {
+            $query->whereNotNull($this->valueFrom);
+            return;
+        }
+
         if ($activeCondition === self::CONDITION_EQUALS) {
             $query->where($this->valueFrom, $scope->value);
             return;
@@ -248,6 +272,12 @@ class Number extends FilterWidgetBase
 
             case self::CONDITION_LESSER:
                 return __('is less than');
+
+            case self::CONDITION_EMPTY:
+                return __('is empty');
+
+            case self::CONDITION_NOT_EMPTY:
+                return __('is not empty');
         }
     }
 }
