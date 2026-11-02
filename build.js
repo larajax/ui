@@ -80,12 +80,12 @@ console.log('  ✓ hotsheet/hotsheet.js and hotsheet.css (bundled)');
 
 // Monaco (code editor) - Monaco's own editor.main.js limited to the languages
 // the codeeditor form widget offers, with Emmet, bundled as ESM alongside its
-// stylesheet, icon font and the language service workers it starts.
+// stylesheet (including its icon font) and the language service workers it starts.
 await bundleMonaco({
     languages: ['css', 'html', 'javascript', 'less', 'markdown', 'php', 'scss', 'twig', 'yaml'],
     services: ['css', 'html', 'json']
 });
-console.log('  ✓ monaco/monaco.js, monaco.css, codicon.ttf and workers (bundled)');
+console.log('  ✓ monaco/monaco.js, monaco.css and workers (bundled)');
 
 console.log('\n  Done.\n');
 
@@ -97,6 +97,14 @@ async function bundleMonaco({ languages, services }) {
     const editorDir = path.join(nodeModules, 'monaco-editor/esm/vs/editor');
     const outdir = path.join(vendorDir, 'monaco');
     const toImportPath = (file) => file.split(path.sep).join('/');
+    const excludedFeatures = new Set([
+        'contrib/codelens/browser/codelensController.js',
+        'contrib/inlineCompletions/browser/inlineCompletions.contribution.js',
+        'contrib/inlayHints/browser/inlayHintsContribution.js',
+        'contrib/rename/browser/rename.js',
+        'contrib/stickyScroll/browser/stickyScrollContribution.js',
+        'standalone/browser/quickAccess/standaloneCommandsQuickAccess.js'
+    ].map((file) => path.join(editorDir, file)));
 
     const lines = fs.readFileSync(path.join(editorDir, 'editor.main.js'), 'utf8').split('\n');
     const kept = lines.filter((line) => {
@@ -128,7 +136,17 @@ const workerLabels = ${JSON.stringify(workerLabels)};
 if (!self.MonacoEnvironment) {
     self.MonacoEnvironment = {
         getWorker(moduleId, label) {
-            return new Worker(new URL('./' + (workerLabels[label] || 'editor') + '.worker.js', import.meta.url));
+            // Literal worker URLs let Vite resolve and fingerprint these files.
+            switch (workerLabels[label]) {
+                case 'css':
+                    return new Worker(new URL('./css.worker.js', import.meta.url));
+                case 'html':
+                    return new Worker(new URL('./html.worker.js', import.meta.url));
+                case 'json':
+                    return new Worker(new URL('./json.worker.js', import.meta.url));
+                default:
+                    return new Worker(new URL('./editor.worker.js', import.meta.url));
+            }
         }
     };
 }
@@ -141,8 +159,22 @@ if (!self.MonacoEnvironment) {
         bundle: true,
         format: 'esm',
         outfile: path.join(outdir, 'monaco.js'),
-        loader: { '.ttf': 'file' },
+        // Vite copies this stylesheet verbatim when loaded via new URL().
+        loader: { '.ttf': 'dataurl' },
         assetNames: '[name]',
+        plugins: [{
+            name: 'omit-ide-features',
+            setup(build) {
+                // These optional registrations also arrive through language services.
+                // Let esbuild omit their side-effect imports throughout the bundle.
+                build.onResolve({ filter: /^\./ }, (args) => {
+                    const resolved = path.resolve(args.resolveDir, args.path);
+                    if (excludedFeatures.has(resolved)) {
+                        return { path: resolved, sideEffects: false };
+                    }
+                });
+            }
+        }],
         minify: true,
         logLevel: 'warning'
     });
