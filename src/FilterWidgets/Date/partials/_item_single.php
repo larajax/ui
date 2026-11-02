@@ -13,7 +13,7 @@
             <input
                 type="text"
                 name="Filter[valueRaw]"
-                value="<?= e($scope->valueRaw) ?>"
+                value="<?= $scope->scopeValue ? e($scope->valueRaw) : '' ?>"
                 class="form-ghost popup-allow-focus"
                 autocomplete="off"
                 data-datepicker />
@@ -22,7 +22,7 @@
             type="hidden"
             name="Filter[value]"
             id="<?= $scope->getId('value') ?>"
-            value="<?= e($scope->value) ?>"
+            value="<?= $scope->scopeValue ? e($scope->value) : '' ?>"
             data-datetime-value />
     </div>
 </div>

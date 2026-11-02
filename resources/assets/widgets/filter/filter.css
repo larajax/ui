@@ -8,6 +8,7 @@
 @import "_filter_inline.css";
 @import "_filter_group.css";
 @import "_filter_box.css";
+@import "_filter_chip.css";
 
 :root {
     --oc-filter-text: var(--bs-fg-3);
@@ -15,7 +16,6 @@
     --oc-filter-border: var(--bs-border-color);
     --oc-filter-bg: var(--bs-bg-body);
     --oc-filter-bg-active: var(--bs-success-base);
-    --oc-filter-items-bg-hover: var(--oc-selection);
 }
 
 .control-filter {
@@ -25,7 +25,121 @@
     border-bottom: 1px solid var(--oc-filter-border);
     font-size: 0.875rem;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
+    /* Match the list header's line, vertical padding and collapsed border. */
+    min-height: calc(1lh + 1.25rem + var(--bs-border-width));
+
+    .filter-row {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        min-height: calc(1lh + 1.25rem - var(--bs-border-width));
+    }
+
+    .filter-primary {
+        min-height: calc(1lh + 1.25rem + var(--bs-border-width));
+        border-bottom: var(--bs-border-width) solid var(--oc-filter-border);
+
+        > .filter-list-controls {
+            flex: 1;
+            width: 100%;
+
+            > .filter-search {
+                flex: 1;
+                width: auto;
+            }
+        }
+
+        > .filter-group {
+            display: flex;
+            flex: 1;
+            align-self: stretch;
+            min-width: 0;
+            padding-inline: 0.625rem;
+        }
+    }
+
+    .scope-tabs {
+        --bs-nav-link-color: var(--oc-filter-text);
+        --bs-nav-link-hover-color: var(--bs-primary-base);
+        --bs-nav-link-hover-bg: transparent;
+        --bs-nav-underline-link-active-color: var(--bs-primary-base);
+        flex: 1;
+        flex-wrap: nowrap;
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            flex-shrink: 0;
+            min-height: calc(1lh + 1.25rem);
+            font: inherit;
+            white-space: nowrap;
+
+            &.active {
+                font-weight: 600;
+            }
+        }
+
+        .select-image {
+            height: 1em;
+            width: auto;
+        }
+
+        .status-indicator {
+            margin: 0;
+        }
+    }
+
+    .filter-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        line-height: 1;
+        border-radius: 0.1875rem;
+        color: var(--oc-toolbar-color);
+
+        > i {
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+
+        &:hover {
+            color: var(--oc-toolbar-hover-color);
+            background: var(--oc-toolbar-hover-bg);
+        }
+    }
+
+    .filter-row > .filter-list-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        margin-inline-start: auto;
+        padding: 0.25rem 0.625rem;
+        flex-shrink: 0;
+        min-width: 0;
+
+        > .filter-search {
+            width: 16rem;
+            min-width: 0;
+
+            .form-control {
+                --bs-control-min-height: 1.75rem;
+                --bs-control-padding-y: 0;
+                --bs-control-padding-x: 0.625rem;
+                --bs-control-font-size: 0.875rem;
+                --bs-form-adorn-icon-size: 1rem;
+                height: 1.75rem;
+            }
+        }
+    }
 
     a {
         text-decoration: none;
@@ -33,39 +147,17 @@
     }
 
     /* Positioned, so the loading spinner centres over the setup button it replaces */
-    > .filter-setup {
+    .filter-row > .filter-setup {
         position: relative;
         padding: 0.375rem 0.625rem;
         flex-shrink: 0;
 
-        > a {
-            > span {
-                margin-left: -2px;
-                margin-right: -2px;
-                display: block;
-                color: var(--oc-toolbar-color);
-                width: 1.5rem;
-                height: 1.5rem;
-                text-align: center;
-                border-radius: 0.1875rem;
-                > i {
-                    position: relative;
-                    top: 2px;
-                    font-size: 1.25rem;
-                }
-            }
-
-            &:hover > span {
-                color: var(--oc-toolbar-hover-color);
-                background: var(--oc-toolbar-hover-bg);
-            }
-        }
     }
 
     /* Scroll wrapper with edge shadows */
-    > .filter-scroll {
+    .filter-row > .filter-scroll {
         position: relative;
-        flex: 1 1 auto;
+        flex: 1 1 0%;
         min-width: 0;
 
         &::before,
@@ -100,6 +192,9 @@
         }
 
         > .filter-scopes {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             white-space: nowrap;
             width: 100%;
             overflow: hidden;
@@ -111,9 +206,10 @@
     .filter-group {
         display: inline-block;
         vertical-align: middle;
+        flex-shrink: 0;
     }
 
-    .filter-group > .filter-scope {
+    .filter-group > .filter-scope:not(.filter-chip):not(.scope-tabs) {
         padding: 0.5rem;
         display: block;
 
@@ -148,11 +244,6 @@
             }
         }
 
-        /* Caret rendered via Ui::icon('filter.caret') in the scope partials */
-        .filter-caret {
-            font-size: 0.875rem;
-        }
-
         &.active {
             .filter-setting {
                 padding-left: 0.3125rem;
@@ -185,10 +276,6 @@
             transition: color 0.6s;
         }
 
-        .filter-caret {
-            font-size: 0.875rem;
-        }
-
         &.active {
             .filter-setting {
                 padding-left: 0.3125rem;
@@ -212,6 +299,31 @@
     }
 }
 
+@media (max-width: 48em) {
+    .control-filter .filter-secondary > .filter-list-controls {
+        max-width: 55%;
+        flex-shrink: 1;
+
+        > .filter-search {
+            flex: 1 1 auto;
+
+            .form-adorn-icon {
+                display: none;
+            }
+
+            .form-control {
+                --bs-control-padding-x: 0.375rem;
+            }
+
+            .clear-input-text {
+                width: 1rem;
+                height: 1rem;
+                margin: 0;
+            }
+        }
+    }
+}
+
 /* While a scope update runs, shown only after the same short delay as the linked list, so a quick update looks instant */
 .control-filter {
     --filter-loading-delay: .3s;
@@ -230,7 +342,7 @@
         transition-delay: var(--filter-loading-delay);
     }
 
-    > .filter-setup {
+    .filter-row > .filter-setup {
         > a {
             opacity: 0;
             transition: opacity 0s var(--filter-loading-delay);
@@ -262,6 +374,12 @@
 
 .control-filter-popover {
     min-width: 17.1875rem;
+    font-size: var(--bs-btn-input-sm-font-size);
+    line-height: var(--bs-btn-input-sm-line-height);
+
+    .form-adorn {
+        --bs-form-adorn-icon-size: 1rem;
+    }
 
     > .loading-indicator-container > .loading-indicator {
         border-radius: 0.25rem;
@@ -294,6 +412,8 @@
         }
 
         > :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
+            --bs-btn-padding-y: var(--bs-btn-input-sm-padding-y);
+            --bs-btn-padding-x: var(--bs-btn-input-sm-padding-x);
             text-align: center;
         }
     }

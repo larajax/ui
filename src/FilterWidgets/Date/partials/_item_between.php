@@ -13,7 +13,7 @@
             <input
                 type="text"
                 name="Filter[afterRaw]"
-                value="<?= e($scope->afterRaw) ?>"
+                value="<?= $scope->scopeValue ? e($scope->afterRaw) : '' ?>"
                 class="form-ghost popup-allow-focus"
                 autocomplete="off"
                 data-datepicker />
@@ -22,7 +22,7 @@
             type="hidden"
             name="Filter[after]"
             id="<?= $scope->getId('after') ?>"
-            value="<?= e($scope->after) ?>"
+            value="<?= $scope->scopeValue ? e($scope->after) : '' ?>"
             data-datetime-value />
     </div>
 </div>
@@ -44,7 +44,7 @@
             <input
                 type="text"
                 name="Filter[beforeRaw]"
-                value="<?= e($scope->beforeRaw) ?>"
+                value="<?= $scope->scopeValue ? e($scope->beforeRaw) : '' ?>"
                 class="form-ghost popup-allow-focus"
                 autocomplete="off"
                 data-datepicker />
@@ -53,7 +53,7 @@
             type="hidden"
             name="Filter[before]"
             id="<?= $scope->getId('before') ?>"
-            value="<?= e($scope->before) ?>"
+            value="<?= $scope->scopeValue ? e($scope->before) : '' ?>"
             data-datetime-value />
     </div>
 </div>

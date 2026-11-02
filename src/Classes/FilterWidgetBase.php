@@ -115,6 +115,14 @@ abstract class FilterWidgetBase extends WidgetBase
     }
 
     /**
+     * getActiveValueLabel returns the value displayed in the filter chip.
+     */
+    public function getActiveValueLabel(): string
+    {
+        return (string) $this->filterScope->value;
+    }
+
+    /**
      * getActiveValue
      */
     public function getActiveValue()

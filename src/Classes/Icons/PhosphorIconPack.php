@@ -14,7 +14,8 @@ class PhosphorIconPack implements IconPack
 
             'filter.menu' => 'ph ph-funnel-simple',
             'filter.clear' => 'ph ph-eraser',
-            'filter.caret' => 'ph ph-caret-down',
+            'filter.add' => 'ph ph-plus-circle',
+            'filter.remove' => 'ph ph-x-circle',
             'filter.item.add' => 'ph ph-plus',
             'filter.item.remove' => 'ph ph-x',
 

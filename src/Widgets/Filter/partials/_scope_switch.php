@@ -1,11 +1,11 @@
 <?php
-    $activeValue = $scope->scopeValue !== null ? $scope->value : $scope->default;
+    $activeValue = $scope->scopeValue !== null ? $scope->value : null;
 ?>
-<div
-    class="filter-scope form-field is-indeterminate"
-    data-scope-name="<?= $scope->scopeName ?>">
-    <input class="check check-sm" type="checkbox" id="<?= $scope->getId() ?>" data-checked="<?= $activeValue ?: '0' ?>" />
-    <label for="<?= $scope->getId() ?>">
-        <?= e($this->getHeaderValue($scope)) ?>
-    </label>
-</div>
+<?= $this->makePartial('chip', [
+    'scope' => $scope,
+    'scopeClass' => 'scope-switch',
+    'active' => (bool) $activeValue,
+    'label' => $this->getHeaderValue($scope),
+    'valueLabel' => (int) $activeValue === 2 ? __('Include') : __('Exclude'),
+]) ?>
+<template data-scope-form><?= $this->renderScopeFormElement($scope) ?></template>

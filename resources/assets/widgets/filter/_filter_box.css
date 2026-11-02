@@ -3,15 +3,16 @@
     .filter-facet {
         padding: 0.625rem 0.3125rem;
         display: flex;
+        align-items: center;
 
         .facet-item {
             white-space: nowrap;
             padding-left: 0.3125rem;
             padding-right: 0.3125rem;
-            line-height: 1.8;
+            line-height: inherit;
 
             > span {
-                font-size: 0.75rem;
+                font-size: inherit;
                 color: var(--oc-filter-text);
             }
 

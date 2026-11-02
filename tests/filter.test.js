@@ -182,6 +182,7 @@ describe('group options', () => {
             <div data-control="groupfilter" data-options-handler="groupFilter::onGetGroupOptions"
                 ${options ? `data-options='${JSON.stringify(options)}'` : ''}>
                 <input type="hidden" name="Filter[value]" value='["2"]' data-groupfilter-datalocker />
+                <input type="text" name="search" />
                 <ul data-groupfilter-active></ul>
                 <ul data-groupfilter-available></ul>
             </div>
@@ -213,6 +214,57 @@ describe('group options', () => {
         jax.requests[0].resolve({ options: { active: [], available: [{ id: '1', name: 'Desks' }] } });
         expect(names('available')).toEqual(['Desks']);
     });
+
+    test('group option buttons add and remove selections without applying, retaining keyboard focus', () => {
+        renderFilter(`<div class="filter-group"><a href="javascript:;" class="filter-scope" data-scope-name="tags">Tags</a><template data-scope-form>${groupForm({
+            active: [{ id: '2', name: 'Lamps' }],
+            available: [{ id: '1', name: 'Desks' }, { id: '2', name: 'Lamps' }]
+        })}</template></div>`);
+        openScope('tags');
+
+        const add = document.querySelector('[data-groupfilter-available] button');
+        expect(add.getAttribute('aria-label')).toBe('Add Desks');
+        add.focus();
+        add.click();
+
+        expect(names('active')).toEqual(['Lamps', 'Desks']);
+        expect(names('available')).toEqual([]);
+        expect(JSON.parse(document.querySelector('[data-groupfilter-datalocker]').value)).toEqual(['2', '1']);
+        expect(document.activeElement.getAttribute('aria-label')).toBe('Remove Desks');
+        document.activeElement.click();
+
+        expect(names('active')).toEqual(['Lamps']);
+        expect(names('available')).toEqual(['Desks']);
+        expect(document.activeElement.getAttribute('aria-label')).toBe('Add Desks');
+        expect(jax.requests.length).toBe(0);
+    });
+
+    test('search keeps selected chips visible and does not restore a locally removed selection', () => {
+        renderFilter(`<div class="filter-group"><a href="javascript:;" class="filter-scope" data-scope-name="tags">Tags</a><template data-scope-form>${groupForm({
+            active: [{ id: '2', name: 'Lamps' }],
+            available: [{ id: '1', name: 'Desks' }, { id: '2', name: 'Lamps' }]
+        })}</template></div>`);
+        openScope('tags');
+        document.querySelector('[data-groupfilter-available] button').click();
+
+        const group = document.querySelector('[data-control="groupfilter"]');
+        const searchResult = options => group.dispatchEvent(new CustomEvent('ajax:done', { bubbles: true, detail: { data: { options } } }));
+        searchResult({ active: [], available: [{ id: '3', name: 'Tables' }] });
+
+        expect(names('active')).toEqual(['Lamps', 'Desks']);
+        expect(names('available')).toEqual(['Tables']);
+        const remove = document.querySelector('[data-groupfilter-active] button');
+        remove.focus();
+        remove.click();
+        expect(names('active')).toEqual(['Desks']);
+        expect(names('available')).toEqual(['Tables']);
+        expect(document.activeElement).toBe(group.querySelector('input[name="search"]'));
+
+        searchResult({ active: [{ id: '2', name: 'Lamps' }], available: [{ id: '1', name: 'Desks' }, { id: '2', name: 'Lamps' }, { id: '3', name: 'Tables' }] });
+        expect(names('active')).toEqual(['Desks']);
+        expect(names('available')).toEqual(['Lamps', 'Tables']);
+        expect(JSON.parse(group.querySelector('[data-groupfilter-datalocker]').value)).toEqual(['1']);
+    });
 });
 
 describe('condition triggers', () => {
@@ -240,6 +292,20 @@ describe('condition triggers', () => {
 });
 
 describe('scope updates', () => {
+    test.each(['popover', 'dropdown'])('a %s chip cross clears only that scope without opening it', (type) => {
+        const scope = type === 'dropdown'
+            ? '<div class="filter-scope scope-dropdown" data-scope-name="status"><button class="combobox-toggle">Status</button></div>'
+            : '<a href="javascript:;" class="filter-scope" data-scope-name="status">Status</a>';
+        renderFilter(`<div class="filter-group"><div class="filter-chip active"><button type="button" data-filter-clear-scope><i id="clear-chip-icon"></i></button>${scope}</div></div>`);
+        openScope('id');
+
+        document.getElementById('clear-chip-icon').click();
+
+        expect(jax.requests.length).toBe(1);
+        expect(jax.requests[0].options.data).toEqual({ scopeName: 'status', clearScope: true });
+        expect(Popover.activeInstance).toBe(null);
+    });
+
     test('popover apply submits the form values for the active scope and closes', () => {
         renderFilter();
         jax.requests = [];
@@ -282,24 +348,6 @@ describe('scope updates', () => {
 
         expect(filter.classList.contains('is-loading')).toBe(false);
         expect(seen).toEqual([document.querySelector('[data-scope-name="domain"]')]);
-    });
-
-    test('a checkbox scope submits its checked state and marks the scope active', () => {
-        renderFilter(`
-            <div class="filter-group" id="Filter-scope-verified-group">
-                <div class="filter-scope scope-checkbox form-field" data-scope-name="verified">
-                    <input class="check check-sm" type="checkbox" id="scopeVerified" />
-                    <label for="scopeVerified">Verified</label>
-                </div>
-            </div>
-        `);
-        jax.requests = [];
-
-        const scope = document.querySelector('[data-scope-name="verified"]');
-        scope.querySelector('input').click();
-
-        expect(jax.requests[0].options.data).toEqual({ value: true, scopeName: 'verified' });
-        expect(scope.classList.contains('active')).toBe(true);
     });
 
     test('a press inside a date picker calendar keeps the scope popover open, a press elsewhere closes it', async () => {
@@ -375,6 +423,313 @@ describe('scope updates', () => {
         pickDomain('');
 
         expect(jax.requests[0].options.query).toEqual({ usersPage: null });
+    });
+});
+
+describe('active scope ordering', () => {
+    const names = ['alpha', 'beta', 'gamma', 'delta'];
+
+    function scopeMarkup(name, active = false) {
+        return `<button type="button" class="filter-scope scope-checkbox ${active ? 'active' : ''}" data-scope-name="${name}">${name}</button>`;
+    }
+
+    function groupsMarkup(active = [], order = names) {
+        return order.map(name => `<div class="filter-group" data-filter-order="${names.indexOf(name) * 100}">${scopeMarkup(name, active.includes(name))}</div>`).join('');
+    }
+
+    function renderOrderedFilter(active = [], order = names) {
+        const control = renderFilter(`<div class="filter-scroll"><div class="filter-scopes">${groupsMarkup(active, order)}</div></div>`);
+        return { control, scrollable: document.querySelector('.filter-scopes') };
+    }
+
+    function scopeOrder() {
+        return [...document.querySelectorAll('.filter-scopes > .filter-group > .filter-scope')].map(el => el.dataset.scopeName);
+    }
+
+    function updateScope(name, active) {
+        const scope = document.querySelector(`.filter-scopes [data-scope-name="${name}"]`);
+        scope.click();
+        scope.parentNode.innerHTML = scopeMarkup(name, active);
+        jax.requests.at(-1).resolve();
+    }
+
+    test('restored active scopes lead in configured order, followed by inactive scopes', () => {
+        renderOrderedFilter(['alpha', 'gamma'], ['gamma', 'alpha', 'delta', 'beta']);
+
+        expect(scopeOrder()).toEqual(['alpha', 'gamma', 'beta', 'delta']);
+        expect(jax.requests.length).toBe(0);
+    });
+
+    test('applying a rightmost scope moves it first and scrolls back after a successful response', () => {
+        const { scrollable } = renderOrderedFilter();
+        scrollable.scrollLeft = 200;
+        const scope = document.querySelector('[data-scope-name="delta"]');
+        scope.click();
+
+        expect(scopeOrder()).toEqual(names);
+        expect(scrollable.scrollLeft).toBe(200);
+
+        scope.parentNode.innerHTML = scopeMarkup('delta', true);
+        jax.requests[0].resolve();
+
+        expect(scopeOrder()).toEqual(['delta', 'alpha', 'beta', 'gamma']);
+        expect(scrollable.scrollLeft).toBe(0);
+    });
+
+    test('clearing scopes restores their configured place among inactive scopes', () => {
+        const { scrollable } = renderOrderedFilter(['gamma', 'delta']);
+        scrollable.scrollLeft = 200;
+        updateScope('gamma', false);
+        expect(scopeOrder()).toEqual(['delta', 'alpha', 'beta', 'gamma']);
+        expect(scrollable.scrollLeft).toBe(0);
+
+        updateScope('delta', false);
+        expect(scopeOrder()).toEqual(names);
+    });
+
+    test('another active scope remains in order and the newly applied scope is revealed', () => {
+        const { scrollable } = renderOrderedFilter(['gamma']);
+        Object.defineProperty(document.querySelector('[data-scope-name="gamma"]').parentNode, 'offsetLeft', { value: 40 });
+        Object.defineProperty(document.querySelector('[data-scope-name="delta"]').parentNode, 'offsetLeft', { value: 180 });
+
+        updateScope('delta', true);
+
+        expect(scopeOrder()).toEqual(['gamma', 'delta', 'alpha', 'beta']);
+        expect(scrollable.scrollLeft).toBe(140);
+    });
+
+    test('replacing the full filter container rebinds and orders the new scopes', () => {
+        const { control, scrollable } = renderOrderedFilter(['gamma']);
+        document.getElementById('Filter').innerHTML = `<div class="filter-scroll"><div class="filter-scopes">${groupsMarkup(['beta', 'delta'])}</div></div>`;
+        jax.Events.dispatch('ajax:update', { target: document.getElementById('Filter') });
+
+        expect(control.scrollable).not.toBe(scrollable);
+        expect(scopeOrder()).toEqual(['beta', 'delta', 'alpha', 'gamma']);
+    });
+});
+
+describe('checkbox chips', () => {
+    function scopeMarkup(active = false) {
+        return `<div class="filter-chip ${active ? 'active' : ''}">
+            ${active ? '<button type="button" data-filter-clear-scope>Clear</button>' : ''}
+            <button type="button" class="filter-scope scope-checkbox ${active ? 'active' : ''}"
+                data-scope-name="verified" aria-pressed="${active}"><span>Verified</span></button>
+        </div>`;
+    }
+
+    test.each([false, true])('clicking a checkbox chip with active=%s toggles it directly', (active) => {
+        renderFilter(`<div class="filter-group">${scopeMarkup(active)}</div>`);
+        openScope('id');
+        document.querySelector('[data-scope-name="verified"] span').click();
+
+        expect(jax.requests.length).toBe(1);
+        expect(jax.requests[0].options.data).toEqual({ scopeName: 'verified', value: active ? 0 : 1 });
+        expect(Popover.activeInstance).toBe(null);
+    });
+
+    test('a second click uses the state returned by the server to toggle off', () => {
+        renderFilter(`<div class="filter-group" id="checkbox-group">${scopeMarkup()}</div>`);
+        document.querySelector('[data-scope-name="verified"]').click();
+        document.getElementById('checkbox-group').innerHTML = scopeMarkup(true);
+        jax.requests[0].resolve();
+        jax.requests = [];
+        document.querySelector('[data-scope-name="verified"]').click();
+
+        expect(jax.requests.length).toBe(1);
+        expect(jax.requests[0].options.data).toEqual({ scopeName: 'verified', value: 0 });
+        expect(Popover.activeInstance).toBe(null);
+    });
+
+    test('the checkbox chip cross clears without also toggling', () => {
+        renderFilter(`<div class="filter-group">${scopeMarkup(true)}</div>`);
+        document.querySelector('[data-filter-clear-scope]').click();
+
+        expect(jax.requests.length).toBe(1);
+        expect(jax.requests[0].options.data).toEqual({ scopeName: 'verified', clearScope: true });
+        expect(Popover.activeInstance).toBe(null);
+    });
+});
+
+describe('primary scope tabs', () => {
+    function tabsMarkup(value = '') {
+        return `<div class="filter-scope scope-tabs nav nav-underline" data-scope-name="status" role="group" aria-label="Status">
+            ${[['', 'All statuses'], ['open', 'Open'], ['0', 'Draft']].map(([key, label]) => `<button type="button" class="nav-link ${key === value ? 'active' : ''}" data-filter-tab-value="${key}" aria-pressed="${key === value}"><span>${label}</span></button>`).join('')}
+        </div>`;
+    }
+
+    function renderTabs() {
+        const control = renderFilter('<div class="filter-scroll"><div class="filter-scopes"><div class="filter-group"><button class="filter-scope" data-scope-name="secondary">Secondary</button></div></div></div>');
+        control.element.insertAdjacentHTML('afterbegin', `<div class="filter-row filter-primary"><div class="filter-group" id="status-group">${tabsMarkup()}</div></div>`);
+        control.config.pageName = 'projectsPage';
+        return control;
+    }
+
+    test.each(['open', '', '0'])('a primary tab submits its value %s once and resets pagination', (value) => {
+        renderTabs();
+        openScope('id');
+        document.querySelector(`[data-filter-tab-value="${value}"] span`).click();
+
+        expect(jax.requests.length).toBe(1);
+        expect(jax.requests[0].options.data).toEqual({ scopeName: 'status', value });
+        expect(jax.requests[0].options.query).toEqual({ projectsPage: null });
+        expect(Popover.activeInstance).toBe(null);
+    });
+
+    test('a successful tab update restores focus to the rendered selection and preserves secondary scroll', () => {
+        const control = renderTabs();
+        control.scrollable.scrollLeft = 120;
+        const tab = document.querySelector('[data-filter-tab-value="open"]');
+        tab.focus();
+        tab.click();
+
+        document.getElementById('status-group').innerHTML = tabsMarkup('open');
+        let changes = 0;
+        document.getElementById('status-group').addEventListener('filter-scope:change', () => changes++);
+        jax.requests[0].resolve();
+
+        expect(document.activeElement).toBe(document.querySelector('[data-filter-tab-value="open"]'));
+        expect(document.activeElement.getAttribute('aria-pressed')).toBe('true');
+        expect(control.scrollable.scrollLeft).toBe(120);
+        expect(changes).toBe(1);
+    });
+
+    test('a secondary update keeps primary tabs in their configured order without taking focus', () => {
+        const control = renderTabs();
+        const secondary = document.querySelector('[data-scope-name="secondary"]');
+        secondary.focus();
+        control.submitUpdate(secondary, { value: 1 });
+        secondary.classList.add('active');
+        jax.requests[0].resolve();
+
+        expect([...document.querySelectorAll('[data-filter-tab-value]')].map(tab => tab.dataset.filterTabValue)).toEqual(['', 'open', '0']);
+        expect(document.activeElement).toBe(secondary);
+        expect(document.querySelector('.filter-primary .scope-tabs')).not.toBe(null);
+    });
+});
+
+describe('switch popovers', () => {
+    function scopeMarkup(value = 0) {
+        const name = 'published';
+        const inputs = `<label><input type="radio" name="value" value="0" ${value === 0 ? 'checked' : ''} /> Show All</label>
+               <label><input type="radio" name="value" value="2" ${value === 2 ? 'checked' : ''} /> Include Published</label>
+               <label><input type="radio" name="value" value="1" ${value === 1 ? 'checked' : ''} /> Exclude Published</label>`;
+
+        return `
+            <a href="javascript:;" class="filter-scope ${value ? 'active' : ''}" data-scope-name="${name}">${name}</a>
+            <template data-scope-form>
+                <div class="filter-box">
+                    ${inputs}
+                    <div class="filter-buttons">
+                        <button type="button" data-filter-action="clear">Clear</button>
+                        <button type="button" data-filter-action="apply">Apply</button>
+                    </div>
+                </div>
+            </template>
+        `;
+    }
+
+    function renderSwitchScope(value = 0) {
+        const name = 'published';
+        renderFilter(`<div class="filter-group" id="Filter-scope-${name}-group">${scopeMarkup(value)}</div>`);
+        return openScope(name);
+    }
+
+    // Picks a radio the way a pointer does, then presses Apply
+    function pickAndApply(popover, value) {
+        popover.element.querySelector(`input[type="radio"][value="${value}"]`).click();
+        popover.element.querySelector('[data-filter-action="apply"]').click();
+    }
+
+    test('a switch opens its form without a request or changing the filter', () => {
+        const popover = renderSwitchScope();
+
+        expect(popover.element.querySelector('input[type="radio"]')).not.toBe(null);
+        expect(popover.element.querySelector('input:checked').value).toBe('0');
+        expect([...popover.element.querySelectorAll('[data-filter-action]')].map((el) => el.dataset.filterAction)).toEqual(['clear', 'apply']);
+        expect(jax.requests.length).toBe(0);
+    });
+
+    test.each([['Show All', '0'], ['Include Published', '2'], ['Exclude Published', '1']])('picking %s waits for Apply, which submits it and closes the popover', (label, value) => {
+        const popover = renderSwitchScope();
+        const radio = popover.element.querySelector(`input[type="radio"][value="${value}"]`);
+        expect(radio.closest('label').textContent.trim()).toBe(label);
+
+        radio.click();
+        expect(jax.requests.length).toBe(0);
+        expect(Popover.activeInstance).toBe(popover);
+
+        popover.element.querySelector('[data-filter-action="apply"]').click();
+        expect(jax.requests.length).toBe(1);
+        expect(jax.requests[0].options.data).toEqual({ scopeName: 'published', value });
+        expect(Popover.activeInstance).toBe(null);
+    });
+
+    test('moving through the radios with the keyboard applies nothing until Apply', () => {
+        const popover = renderSwitchScope();
+        const include = popover.element.querySelector('input[type="radio"][value="2"]'),
+            exclude = popover.element.querySelector('input[type="radio"][value="1"]');
+
+        // An arrow key checks each radio it passes and fires a click and a change on it
+        [include, exclude].forEach((radio) => {
+            radio.click();
+            radio.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+        expect(jax.requests.length).toBe(0);
+        expect(Popover.activeInstance).toBe(popover);
+
+        popover.element.querySelector('[data-filter-action="apply"]').click();
+        expect(jax.requests.map((request) => request.options.data)).toEqual([{ scopeName: 'published', value: '1' }]);
+    });
+
+    test('Clear removes the switch filter and closes the popover', () => {
+        const popover = renderSwitchScope(2);
+
+        popover.element.querySelector('[data-filter-action="clear"]').click();
+
+        expect(jax.requests[0].options.data).toEqual({ scopeName: 'published', clearScope: true });
+        expect(Popover.activeInstance).toBe(null);
+    });
+
+    test('other radio controls keep their changes pending', () => {
+        renderFilter();
+        const popover = openScope('id');
+        popover.element.querySelector('form').insertAdjacentHTML('beforeend', '<input type="radio" name="Filter[mode]" value="exclude" />');
+        popover.element.querySelector('input[type="radio"]').click();
+
+        expect(jax.requests.length).toBe(0);
+        expect(Popover.activeInstance).toBe(popover);
+    });
+
+    test('Show All clears a switch and stays selected when reopened', () => {
+        const name = 'published';
+        const popover = renderSwitchScope(2);
+        pickAndApply(popover, 0);
+
+        expect(jax.requests[0].options.data).toEqual({ scopeName: name, value: '0' });
+        expect(Popover.activeInstance).toBe(null);
+
+        // The update response replaces the trigger and stored form together.
+        document.getElementById(`Filter-scope-${name}-group`).innerHTML = scopeMarkup();
+        jax.requests[0].resolve();
+        jax.requests = [];
+
+        const reopened = openScope(name);
+        expect(reopened.element.querySelector('input:checked').value).toBe('0');
+        expect(jax.requests.length).toBe(0);
+    });
+
+    test.each([0, 1, 2])('reopening a switch uses the server-rendered value %i', (value) => {
+        const popover = renderSwitchScope();
+        pickAndApply(popover, value);
+
+        document.getElementById('Filter-scope-published-group').innerHTML = scopeMarkup(value);
+        jax.requests[0].resolve();
+        jax.requests = [];
+
+        const reopened = openScope('published');
+        expect(reopened.element.querySelector('input[type="radio"]:checked').value).toBe(String(value));
+        expect(jax.requests.length).toBe(0);
     });
 });
 

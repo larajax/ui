@@ -1,14 +1,14 @@
 <?php
     $emptyOption = $scope->emptyOption;
-    $activeValue = $scope->scopeValue !== null ? $scope->value : $scope->default;
+    $activeValue = $scope->scopeValue !== null ? $scope->value : null;
+    $active = $activeValue !== null && $activeValue !== '';
+    $label = $this->getHeaderValue($scope);
     $flatOptions = $emptyOption ? ['' => __($emptyOption)] + $scope->options() : $scope->options();
     $scopeOptions = $scope->asOptionsDefinition($flatOptions);
 
-    // Without a match the first option shows, as a select would show it
-    $firstKey = array_key_first($scopeOptions);
     $activeKey = array_key_exists((string) $activeValue, $scopeOptions)
         ? (string) $activeValue
-        : ($firstKey === null ? null : (string) $firstKey);
+        : null;
 
     // The colour, image or icon shown before an option's label
     $optionMark = function ($option) {
@@ -28,8 +28,11 @@
     };
 ?>
 <div
-    class="filter-scope scope-dropdown"
+    class="filter-scope filter-chip scope-dropdown <?= $active ? 'active' : '' ?>"
     data-scope-name="<?= $scope->scopeName ?>">
+    <?php if ($active): ?>
+        <?= $this->makePartial('chip_clear', ['label' => $label]) ?>
+    <?php endif ?>
     <button
         type="button"
         id="<?= $scope->getId() ?>"
@@ -39,14 +42,16 @@
         aria-haspopup="listbox"
         aria-expanded="false"
     >
-        <span class="visually-hidden">
-            <?= e(__($scope->label)) ?>:
+        <?php if (!$active): ?>
+            <?= \Larajax\Ui\Facades\Ui::icon('filter.add', ['class' => 'filter-chip-icon']) ?>
+        <?php endif ?>
+        <span class="filter-label"><?= e($label) ?></span>
+        <span class="filter-setting">
+            <span aria-hidden="true" data-scope-mark><?= $activeKey !== null ? $optionMark($scopeOptions[$activeKey]) : '' ?></span>
+            <span class="combobox-value filter-value">
+                <?= $activeKey !== null ? e(__($scopeOptions[$activeKey]->label)) : e($activeValue) ?>
+            </span>
         </span>
-        <span aria-hidden="true" data-scope-mark><?= $activeKey !== null ? $optionMark($scopeOptions[$activeKey]) : '' ?></span>
-        <span class="combobox-value">
-            <?= $activeKey !== null ? e(__($scopeOptions[$activeKey]->label)) : '' ?>
-        </span>
-        <?= \Larajax\Ui\Facades\Ui::icon('filter.caret', ['class' => 'combobox-caret']) ?>
     </button>
     <div class="menu control-dropdown" role="listbox">
         <?php foreach ($scopeOptions as $value => $option): ?>

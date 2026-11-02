@@ -2,7 +2,7 @@
     <input
         name="Filter[min]"
         type="number"
-        value="<?= e($scope->min) ?>"
+        value="<?= $scope->scopeValue ? e($scope->min) : '' ?>"
         class="form-control form-control-sm popup-allow-focus w-90"
         autocomplete="off" />
 </div>
@@ -13,7 +13,7 @@
     <input
         name="Filter[max]"
         type="number"
-        value="<?= e($scope->max) ?>"
+        value="<?= $scope->scopeValue ? e($scope->max) : '' ?>"
         class="form-control form-control-sm popup-allow-focus w-90"
         autocomplete="off" />
 </div>

@@ -1,9 +1,8 @@
 .control-filter {
     .filter-group > .filter-scope.scope-dropdown {
-        padding: 0.5rem 0 0.25rem;
-
-        &:after {
-            content: '';
+        &:has(> .combobox-toggle:focus-visible) {
+            outline: var(--bs-focus-ring);
+            outline-offset: var(--bs-focus-ring-offset);
         }
 
         /* Option marks keep to the text size, with the gap spacing them from the label */
@@ -16,51 +15,21 @@
             height: 1em;
         }
 
-        /* The picked option shows as inline text with a caret, like the scopes beside it */
         > .combobox-toggle {
-            position: relative;
-            top: -2px;
-            gap: 0.5rem;
-            width: auto;
-            height: 1.8125rem;
-            padding: 0 0.625rem 0 0.75rem;
-            font: inherit;
-            font-size: 0.875rem;
-            color: var(--oc-filter-text);
-            background-color: transparent;
-            border: 0;
-            border-radius: 0;
-            box-shadow: none;
-            outline: 0;
-
             &:focus-visible {
-                outline: auto 1px;
-            }
-
-            &:hover,
-            &.show {
-                color: var(--oc-filter-text-active);
-                background-color: transparent;
+                outline: 0;
             }
 
             /* The picked option's colour, image or icon, sitting as close to the label as in the options */
-            > [data-scope-mark] {
+            [data-scope-mark] {
                 display: flex;
                 align-items: center;
-                margin-inline-end: -2px;
 
                 &:empty {
                     display: none;
                 }
             }
 
-            > .combobox-value {
-                flex: none;
-            }
-
-            > .combobox-caret {
-                font-size: 0.875rem;
-            }
         }
 
         /* The options, as wide as the longest one, with the picked one highlighted */
@@ -68,9 +37,9 @@
             --bs-menu-min-width: 0;
             --bs-menu-padding-y: 0.25rem;
             --bs-menu-padding-x: 0.25rem;
-            --bs-menu-font-size: 1rem;
-            --bs-menu-item-padding-y: 0.375rem;
-            --bs-menu-item-padding-x: 0.5rem;
+            --bs-menu-font-size: var(--bs-btn-input-sm-font-size);
+            --bs-menu-item-padding-y: var(--bs-btn-input-sm-padding-y);
+            --bs-menu-item-padding-x: var(--bs-btn-input-sm-padding-x);
             --bs-menu-item-gap: 0.375rem;
             --bs-menu-item-border-radius: 0.25rem;
 

@@ -61,6 +61,25 @@ class Number extends FilterWidgetBase
     }
 
     /**
+     * getActiveValueLabel shows the selected number or range.
+     */
+    public function getActiveValueLabel(): string
+    {
+        $scope = $this->filterScope;
+        if ($scope->condition === self::CONDITION_BETWEEN) {
+            return $scope->min.' – '.$scope->max;
+        }
+
+        $prefix = match ($scope->condition) {
+            self::CONDITION_GREATER => '≥ ',
+            self::CONDITION_LESSER => '≤ ',
+            default => '',
+        };
+
+        return $prefix.$scope->value;
+    }
+
+    /**
      * getActiveValue
      */
     public function getActiveValue()

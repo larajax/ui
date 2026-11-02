@@ -14,6 +14,8 @@ use SystemException;
  */
 class Toolbar extends WidgetBase
 {
+    use \Larajax\Ui\Widgets\Common\HasListSearch;
+
     //
     // Configurable Properties
     //
@@ -25,11 +27,6 @@ class Toolbar extends WidgetBase
     public $buttons;
 
     /**
-     * @var array|string search widget configuration or partial name, optional.
-     */
-    public $search;
-
-    /**
      * @var string setupHandler displays a list configuration icon in the toolbar.
      */
     public $setupHandler;
@@ -38,11 +35,6 @@ class Toolbar extends WidgetBase
     // Object Properties
     //
 
-
-    /**
-     * @var WidgetBase searchWidget reference
-     */
-    protected $searchWidget;
 
     /**
      * @var array cssClasses to apply to the toolbar container element
@@ -69,7 +61,7 @@ class Toolbar extends WidgetBase
      * through the variadic tail.
      *
      * @param array|string|null $buttons button definitions (array or YAML file path) or a partial name
-     * @param array|string|null $search search widget configuration or partial name
+     * @param array|string|Search|null $search search configuration, partial name or widget instance
      * @param string|null $setupHandler
      * @param string|null $alias
      */
@@ -90,22 +82,7 @@ class Toolbar extends WidgetBase
     {
         $this->listWidgetId = $list->getId();
 
-        if (!$search = $this->getSearchWidget()) {
-            return;
-        }
-
-        $list->setSearchOptions([
-            'mode' => $search->mode,
-            'scope' => $search->scope,
-        ]);
-
-        $list->setSearchTerm($search->getActiveTerm());
-
-        $search->bindEvent('search.submit', function () use ($list, $search) {
-            $list->setSearchTerm($search->getActiveTerm(), true);
-
-            return $list->onRefresh();
-        });
+        $this->bindSearchToListWidget($list);
     }
 
     /**
@@ -121,19 +98,7 @@ class Toolbar extends WidgetBase
 
         $this->initButtonsConfig();
 
-        // Prepare the search widget (optional)
-        if (isset($this->search)) {
-            if (is_string($this->search)) {
-                $searchConfig = $this->makeConfig(['partial' => $this->search]);
-            }
-            else {
-                $searchConfig = $this->makeConfig($this->search);
-            }
-
-            $searchConfig->alias = $this->alias . 'Search';
-            $this->searchWidget = $this->makeWidget(\Larajax\Ui\Widgets\Search::class, $searchConfig);
-            $this->searchWidget->bindToController();
-        }
+        $this->initSearchWidget();
     }
 
     /**
@@ -154,14 +119,6 @@ class Toolbar extends WidgetBase
         $this->vars['cssClasses'] = implode(' ', $this->cssClasses);
         $this->vars['controlPanel'] = $this->makeControlPanel();
         $this->vars['setupHandler'] = $this->setupHandler;
-    }
-
-    /**
-     * getSearchWidget
-     */
-    public function getSearchWidget()
-    {
-        return $this->searchWidget;
     }
 
     /**

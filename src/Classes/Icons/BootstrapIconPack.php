@@ -14,7 +14,8 @@ class BootstrapIconPack implements IconPack
 
             'filter.menu' => 'bi bi-funnel',
             'filter.clear' => 'bi bi-eraser',
-            'filter.caret' => 'bi bi-chevron-down',
+            'filter.add' => 'bi bi-plus-circle',
+            'filter.remove' => 'bi bi-x-circle',
             'filter.item.add' => 'bi bi-plus',
             'filter.item.remove' => 'bi bi-x',
 

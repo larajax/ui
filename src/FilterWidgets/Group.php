@@ -49,6 +49,25 @@ class Group extends FilterWidgetBase
     }
 
     /**
+     * getActiveValueLabel shows the selected count and the mode when it is selectable.
+     */
+    public function getActiveValueLabel(): string
+    {
+        if (!$this->filterScope->scopeValue) {
+            return '';
+        }
+
+        $count = count((array) $this->filterScope->value);
+        if ($this->filterScope->matchMode === 'toggle' || $this->filterScope->matchMode === true) {
+            return __($this->filterScope->mode === self::MODE_EXCLUDE ? 'Excludes :count' : 'Includes :count', [
+                'count' => $count,
+            ]);
+        }
+
+        return (string) $count;
+    }
+
+    /**
      * getActiveValue
      */
     public function getActiveValue()
@@ -161,7 +180,9 @@ class Group extends FilterWidgetBase
     public function getOptionsData(?string $searchQuery = null): array
     {
         $available = $this->getAvailableOptions($searchQuery);
-        $active = $searchQuery ? [] : $this->filterActiveOptions((array) $this->filterScope->value, $available);
+        $active = $searchQuery || !$this->filterScope->scopeValue
+            ? []
+            : $this->filterActiveOptions((array) $this->filterScope->value, $available);
 
         return [
             'available' => $this->optionsToAjax($available),

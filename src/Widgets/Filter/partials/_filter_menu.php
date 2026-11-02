@@ -1,10 +1,11 @@
 <div
     class="filter-group filter-setup">
     <a href="javascript:;"
+        class="filter-action"
         data-bs-toggle="menu"
         aria-expanded="false"
         title="<?= __("Filter Setup") ?>">
-        <span><?= \Larajax\Ui\Facades\Ui::icon('filter.menu') ?></span>
+        <?= \Larajax\Ui\Facades\Ui::icon('filter.menu') ?>
     </a>
     <div class="menu control-dropdown" role="menu">
         <a

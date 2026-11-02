@@ -164,6 +164,50 @@ The package ships `october`, `phosphor`, and `bootstrap` packs. Unknown icon nam
 ],
 ```
 
+### List search and setup placement
+
+`Toolbar` and `Filter` both accept `search` and `setupHandler`, and both connect search to a list through `bindToListWidget()`:
+
+```php
+$filter = Filter::make(
+    model: $model,
+    scopes: $scopes,
+    search: ['prompt' => 'Search projects...', 'mode' => 'all'],
+    setupHandler: $list->getEventHandler('onLoadSetup'),
+);
+$filter->bindToListWidget($list);
+```
+
+Filter displays these optional controls on the right of its scopes. The same options work on `Toolbar::make()`. `search` accepts a configuration array, a controller partial name, or an existing `Search` widget; `getSearchWidget()` returns the configured instance. Search keeps its saved term and resets list pagination on submit in either location.
+
+Filter also accepts an optional `primary` placement. The default (`null`) keeps everything in one row. Set `primary: 'search'` to move search and list setup into a full-width row above the scopes:
+
+```php
+$filter = Filter::make(
+    model: $model,
+    scopes: $scopes,
+    search: ['prompt' => 'Search projects...'],
+    setupHandler: $list->getEventHandler('onLoadSetup'),
+    primary: 'search',
+);
+$filter->bindToListWidget($list);
+```
+
+Alternatively, set `primary` to the name of a `dropdown` scope, such as `primary: 'status'`. That scope renders once as underline tabs in the primary row; search and list setup stay with the remaining scopes in the secondary row. Its definition remains a normal dropdown:
+
+```yaml
+scopes:
+    status:
+        label: Status
+        type: dropdown
+        emptyOption: All statuses
+        options:
+            open: Open
+            closed: Closed
+```
+
+The tabs use the scope's existing values, defaults, saved state and query logic. The first tab clears only that scope, using `emptyOption` as its label (or `All`). Clear Filters resets scopes in both rows to their configured defaults and leaves search independent. Primary tabs keep their configured order; active scopes come first only within the secondary row. A primary scope must be a dropdown, and primary search requires a configured search widget.
+
 ## Background
 
 Larajax UI was extracted from the widget engine used in [October CMS](https://github.com/octobercms), where it has rendered admin panel forms and lists in production for many years.

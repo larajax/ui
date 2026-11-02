@@ -17,6 +17,7 @@ use SystemException;
  */
 class Filter extends WidgetBase implements FilterElement
 {
+    use \Larajax\Ui\Widgets\Common\HasListSearch;
     use \Larajax\Ui\Widgets\Filter\IsFilterElement;
     use \Larajax\Ui\Widgets\Filter\ScopeProcessor;
     use \Larajax\Ui\Widgets\Filter\HasFilterEvents;
@@ -53,6 +54,16 @@ class Filter extends WidgetBase implements FilterElement
      * @var string customPageName will be reset when a filter is applied, shared with the list widget
      */
     public $customPageName = 'page';
+
+    /**
+     * @var string setupHandler displays the linked list's configuration popup.
+     */
+    public $setupHandler;
+
+    /**
+     * @var string|null primary is 'search' or the name of a dropdown scope.
+     */
+    public $primary;
 
     //
     // Object Properties
@@ -92,12 +103,18 @@ class Filter extends WidgetBase implements FilterElement
      * @param array|string|null $scopes definitions array or YAML file path
      * @param string|null $context
      * @param string|null $alias
+     * @param array|string|Search|null $search search configuration, partial name or widget instance
+     * @param string|null $setupHandler
+     * @param string|null $primary search or a dropdown scope to place in the primary row
      */
     public static function make(
         $model = null,
         $scopes = null,
         $context = null,
         $alias = null,
+        $search = null,
+        $setupHandler = null,
+        $primary = null,
         ...$config
     ): static {
         return static::makeFromNamedArgs(get_defined_vars(), $config);
@@ -114,6 +131,9 @@ class Filter extends WidgetBase implements FilterElement
             'context',
             'arrayName',
             'customPageName',
+            'search',
+            'setupHandler',
+            'primary',
         ]);
 
         $this->initScopesConfig();
@@ -123,6 +143,7 @@ class Filter extends WidgetBase implements FilterElement
         }
 
         $this->initFilterWidgetsConcern();
+        $this->initSearchWidget();
     }
 
     /**
@@ -160,6 +181,7 @@ class Filter extends WidgetBase implements FilterElement
         $this->customPageName = $list->customPageName;
 
         $list->addFilter([$this, 'applyAllScopesToQuery']);
+        $this->bindSearchToListWidget($list);
     }
 
     /**
@@ -181,8 +203,16 @@ class Filter extends WidgetBase implements FilterElement
     {
         $this->vars['cssClasses'] = implode(' ', $this->cssClasses);
         $this->vars['scopes'] = $this->allScopes;
+        $primaryScope = $this->primary !== 'search' ? ($this->allScopes[$this->primary] ?? null) : null;
+        $this->vars['primaryScope'] = $primaryScope && !$primaryScope->hidden ? $primaryScope : null;
+        $this->vars['primarySearch'] = $this->primary === 'search';
+        if ($primaryScope) {
+            unset($this->vars['scopes'][$primaryScope->scopeName]);
+        }
         $this->vars['pageName'] = $this->customPageName;
         $this->vars['listWidgetId'] = $this->listWidget ? $this->listWidget->getId() : null;
+        $this->vars['search'] = $this->searchWidget ? $this->searchWidget->render() : '';
+        $this->vars['setupHandler'] = $this->setupHandler;
     }
 
     /**
@@ -209,6 +239,7 @@ class Filter extends WidgetBase implements FilterElement
         }
 
         $this->eventExtendScopes();
+        $this->validatePrimary();
 
         // Apply post processing
         $this->processLegacyDefinitions($this->allScopes);
@@ -224,6 +255,28 @@ class Filter extends WidgetBase implements FilterElement
         }
 
         $this->scopesDefined = true;
+    }
+
+    /**
+     * validatePrimary checks placement before scopes are hidden by permissions.
+     */
+    protected function validatePrimary(): void
+    {
+        if ($this->primary === null) {
+            return;
+        }
+
+        if ($this->primary === 'search') {
+            if (!$this->searchWidget) {
+                throw new SystemException('Primary search requires a configured search widget.');
+            }
+            return;
+        }
+
+        $scope = is_string($this->primary) ? ($this->allScopes[$this->primary] ?? null) : null;
+        if (!$scope || $scope->type !== 'dropdown') {
+            throw new SystemException('The primary filter must be search or the name of a dropdown scope.');
+        }
     }
 
     /**
@@ -445,7 +498,11 @@ class Filter extends WidgetBase implements FilterElement
             $scope = $this->allScopes[$scope];
         }
 
-        return $this->makePartial('scope_' . $scope->type, [
+        $partial = $scope->scopeName === $this->primary && $scope->type === 'dropdown'
+            ? 'primary_tabs'
+            : 'scope_' . $scope->type;
+
+        return $this->makePartial($partial, [
             'scope' => $scope,
         ]);
     }
@@ -635,14 +692,16 @@ class Filter extends WidgetBase implements FilterElement
 
         switch ($scope->type) {
             case 'checkbox':
-                $checked = post('value');
-                $this->putScopeValue($scope, ['value' => $checked]);
+            case 'switch':
+                $value = post('clearScope') ? 0 : post('value', 0);
+                $this->putScopeValue($scope, ['value' => $value]);
+                $updateScopePartial = true;
                 break;
 
             case 'dropdown':
-            case 'switch':
-                $value = post('value');
+                $value = post('clearScope') ? null : post('value');
                 $this->putScopeValue($scope, ['value' => $value]);
+                $updateScopePartial = true;
                 break;
 
             case 'widget':

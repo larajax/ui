@@ -39,7 +39,6 @@ export function registerFilterWidget(jax) {
         }
 
         connect() {
-            this.listen('change', this.onChange);
             this.listen('click', this.onClick);
             this.listen('ajax:update', this.onContainerUpdate);
 
@@ -48,7 +47,7 @@ export function registerFilterWidget(jax) {
             this.element.addEventListener('shown.bs.combobox', this.proxy(this.onDropdownShown));
 
             this.bindScrollable();
-            this.bindCheckboxes();
+            this.orderScopes();
         }
 
         disconnect() {
@@ -63,6 +62,9 @@ export function registerFilterWidget(jax) {
             if (this.scrollable) {
                 this.dragScroll = new DragScroll(this.scrollable, {
                     scrollClassContainer: this.scrollable.parentNode
+                });
+                this.scrollable.querySelectorAll(':scope > .filter-group').forEach((group, index) => {
+                    group.dataset.filterOrder ??= index;
                 });
             }
         }
@@ -81,25 +83,69 @@ export function registerFilterWidget(jax) {
             if (ev.target === this.element) {
                 this.unbindScrollable();
                 this.bindScrollable();
+                this.orderScopes();
             }
         }
 
-        onChange(ev) {
-            const el = ev.target,
-                scope = el.closest('.filter-scope');
-
-            if (!scope || this.popover?.element?.contains(el)) {
+        // Active scopes lead, with the configured order retained within both groups.
+        orderScopes(updatedScopeName) {
+            if (!this.scrollable) {
                 return;
             }
 
-            // Checkbox and switch scopes
-            if (el.matches('input[type="checkbox"]')) {
-                this.onToggleCheckbox(el, scope);
+            const groups = [...this.scrollable.querySelectorAll(':scope > .filter-group')];
+            groups.sort((a, b) => {
+                const activeA = !!a.querySelector('.filter-scope.active'),
+                    activeB = !!b.querySelector('.filter-scope.active');
+
+                return Number(activeB) - Number(activeA) || Number(a.dataset.filterOrder) - Number(b.dataset.filterOrder);
+            });
+
+            groups.forEach((group, index) => {
+                if (this.scrollable.children[index] !== group) {
+                    this.scrollable.insertBefore(group, this.scrollable.children[index]);
+                }
+            });
+
+            const updatedGroup = updatedScopeName
+                ? groups.find(group => group.querySelector('.filter-scope')?.dataset.scopeName === updatedScopeName)
+                : null;
+            if (updatedGroup) {
+                this.dragScroll.goToStart();
+                if (updatedGroup.querySelector('.filter-scope.active') && updatedGroup !== groups[0]) {
+                    this.scrollable.scrollLeft = updatedGroup.offsetLeft - groups[0].offsetLeft;
+                }
             }
+            this.dragScroll.fixScrollClasses();
         }
 
         onClick(ev) {
             if (!ev.target.closest) {
+                return;
+            }
+
+            const tab = ev.target.closest('[data-filter-tab-value]');
+            if (tab && this.element.contains(tab)) {
+                ev.preventDefault();
+                this.hidePopover();
+                this.submitUpdate(tab.closest('.scope-tabs'), { value: tab.dataset.filterTabValue });
+                return;
+            }
+
+            const clearScope = ev.target.closest('[data-filter-clear-scope]');
+            if (clearScope && this.element.contains(clearScope)) {
+                ev.preventDefault();
+                const scope = clearScope.closest('.filter-group')?.querySelector('.filter-scope');
+                this.hidePopover();
+                this.submitUpdate(scope, { clearScope: true });
+                return;
+            }
+
+            const checkboxScope = ev.target.closest('button.filter-scope.scope-checkbox, a.filter-scope.scope-checkbox');
+            if (checkboxScope && this.element.contains(checkboxScope)) {
+                ev.preventDefault();
+                this.hidePopover();
+                this.submitUpdate(checkboxScope, { value: checkboxScope.classList.contains('active') ? 0 : 1 });
                 return;
             }
 
@@ -293,53 +339,80 @@ export function registerFilterWidget(jax) {
                 locker.value = JSON.stringify(ids);
             };
 
+            let availableOptions = [],
+                selectedOptions = [];
+
             const renderItem = (list, option, isActive) => {
                 const li = document.createElement('li');
                 li.dataset.itemId = option.id;
                 li.className = isActive ? 'is-active' : '';
-                li.innerHTML = '<a href="javascript:;"></a>';
+                li.innerHTML = '<button type="button" class="filter-item"><span class="filter-item-label"></span></button>';
+                const button = li.firstChild;
+                button.querySelector('.filter-item-label').textContent = option.name;
+                button.setAttribute('aria-label', (isActive
+                    ? group.dataset.removeLabel || 'Remove :name'
+                    : group.dataset.addLabel || 'Add :name').replace(':name', option.name));
                 const iconClass = isActive ? group.dataset.removeIcon : group.dataset.addIcon;
                 if (iconClass) {
                     const icon = document.createElement('i');
-                    icon.className = iconClass;
+                    icon.className = iconClass + ' filter-item-icon';
                     icon.setAttribute('aria-hidden', 'true');
-                    li.firstChild.appendChild(icon);
+                    button.appendChild(icon);
                 }
-                li.firstChild.appendChild(document.createTextNode(option.name));
-                li.addEventListener('click', () => {
+                button.addEventListener('click', () => {
                     const ids = activeIds(),
-                        index = ids.indexOf(option.id);
+                        index = ids.indexOf(option.id),
+                        wasFocused = document.activeElement === button;
 
                     if (index > -1) {
                         ids.splice(index, 1);
+                        selectedOptions = selectedOptions.filter(item => item.id !== option.id);
                     }
                     else {
                         ids.push(option.id);
+                        selectedOptions.push(option);
                     }
 
                     saveIds(ids);
-                    li.remove();
-                    renderItem(index > -1 ? availableList : activeList, option, index === -1);
+                    renderLists();
+                    if (wasFocused) {
+                        const targetList = index > -1 ? availableList : activeList,
+                            target = [...targetList.children].find(item => item.dataset.itemId === String(option.id));
+                        (target?.querySelector('button') || group.querySelector('input[name="search"]'))?.focus();
+                    }
                 });
                 list.appendChild(li);
             };
 
-            const renderOptions = (options) => {
+            const renderLists = () => {
+                const ids = activeIds();
                 availableList.innerHTML = '';
                 activeList.innerHTML = '';
-                (options.active || []).forEach((option) => renderItem(activeList, option, true));
-                (options.available || []).forEach((option) => {
-                    if (!activeIds().includes(option.id)) {
+                selectedOptions.forEach((option) => {
+                    if (ids.includes(option.id)) {
+                        renderItem(activeList, option, true);
+                    }
+                });
+                availableOptions.forEach((option) => {
+                    if (!ids.includes(option.id)) {
                         renderItem(availableList, option, false);
                     }
                 });
+            };
+
+            const renderOptions = (options, preserveSelection = false) => {
+                availableOptions = options.available || [];
+                if (!preserveSelection) {
+                    selectedOptions = options.active || [];
+                }
+                renderLists();
             };
 
             // Expose for the search input's AJAX response
             group.addEventListener('ajax:done', (ev) => {
                 const data = ev.detail && ev.detail.data;
                 if (data && data.options) {
-                    renderOptions(data.options);
+                    renderOptions(data.options, true);
                 }
             });
 
@@ -420,56 +493,6 @@ export function registerFilterWidget(jax) {
         }
 
         //
-        // Checkboxes
-        //
-
-        bindCheckboxes() {
-            this.element.querySelectorAll('.filter-scope input[type="checkbox"]').forEach((el) => {
-                const scope = el.closest('.filter-scope');
-
-                if (scope.classList.contains('is-indeterminate')) {
-                    scope.classList.toggle('active', !!this.getSwitchValue(el));
-                }
-                else {
-                    scope.classList.toggle('active', el.checked);
-                }
-            });
-        }
-
-        onToggleCheckbox(el, scope) {
-            // Hide any old scopes
-            this.hidePopover();
-
-            if (scope.classList.contains('is-indeterminate')) {
-                this.switchToggle(el, scope);
-            }
-            else {
-                this.checkboxToggle(el, scope);
-            }
-        }
-
-        checkboxToggle(el, scope) {
-            this.submitUpdate(scope, { value: el.checked });
-
-            scope.classList.toggle('active', el.checked);
-        }
-
-        // Switch value is the checkbox control state, already advanced by its click
-        // handler: 0 = unfiltered (unchecked), 1 = first condition (indeterminate),
-        // 2 = second condition (checked)
-        switchToggle(el, scope) {
-            const switchValue = this.getSwitchValue(el);
-
-            this.submitUpdate(scope, { value: switchValue });
-
-            scope.classList.toggle('active', !!switchValue);
-        }
-
-        getSwitchValue(el) {
-            return parseInt(el.dataset.checked) || 0;
-        }
-
-        //
         // AJAX
         //
 
@@ -478,7 +501,8 @@ export function registerFilterWidget(jax) {
                 return;
             }
 
-            const scopeName = scope.dataset.scopeName;
+            const scopeName = scope.dataset.scopeName,
+                restoreTabFocus = !!scope.querySelector('[data-filter-tab-value]:focus');
 
             data = data || {};
             data.scopeName = scopeName;
@@ -499,9 +523,15 @@ export function registerFilterWidget(jax) {
                     this.setListUpdating(false);
                 })
                 .done(() => {
+                    this.orderScopes(scopeName);
                     // Trigger dependsOn updates on successful requests
                     this.element.querySelectorAll('[data-scope-name]').forEach((el) => {
                         if (el.dataset.scopeName === scopeName) {
+                            if (restoreTabFocus) {
+                                const tab = el.querySelector('[data-filter-tab-value][aria-pressed="true"]');
+                                tab?.focus({ preventScroll: true });
+                                tab?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+                            }
                             jax.Events.dispatch('filter-scope:change', { target: el });
                         }
                     });

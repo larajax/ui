@@ -82,6 +82,23 @@ class Date extends FilterWidgetBase
     }
 
     /**
+     * getActiveValueLabel uses the date picker's display values.
+     */
+    public function getActiveValueLabel(): string
+    {
+        $scope = $this->filterScope;
+        if ($scope->condition === self::CONDITION_BETWEEN) {
+            return ($scope->afterRaw ?: $scope->after).' – '.($scope->beforeRaw ?: $scope->before);
+        }
+
+        $value = $scope->valueRaw ?: $scope->value;
+
+        return $scope->condition === self::CONDITION_EQUALS
+            ? (string) $value
+            : trim($this->getConditionLang($scope->condition).' '.$value);
+    }
+
+    /**
      * getActiveValue
      */
     public function getActiveValue()

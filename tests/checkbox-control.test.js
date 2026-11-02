@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test } from 'bun:test';
 import { registerCheckbox } from '../resources/assets/controls/checkbox/checkbox-control.js';
-import { registerFilterWidget } from '../resources/assets/widgets/filter/filter.js';
 
 function makeFakeJax() {
     const controls = new Map();
@@ -10,14 +9,6 @@ function makeFakeJax() {
         constructor(element) {
             this.element = element;
             this.config = { ...element.dataset };
-            this.proxied = new Map();
-        }
-
-        proxy(method) {
-            if (!this.proxied.has(method)) {
-                this.proxied.set(method, method.bind(this));
-            }
-            return this.proxied.get(method);
         }
 
         listen(eventName, targetOrHandler, handler) {
@@ -155,42 +146,5 @@ describe('checkbox control', () => {
 
         expect(document.getElementById('tristate').dataset.control).toBe('checkbox');
         expect(document.getElementById('plain').dataset.control).toBeUndefined();
-    });
-});
-
-describe('filter switch scope', () => {
-    let jax;
-
-    beforeEach(() => {
-        jax = makeFakeJax();
-        registerCheckbox(jax);
-        registerFilterWidget(jax);
-    });
-
-    test('leaves the initial visual state to the checkbox control', () => {
-        const { filter, scope, input } = renderSwitch(1);
-        connectControl(jax, 'checkbox', scope);
-        connectControl(jax, 'filterwidget', filter);
-
-        expect(stateOf(input)).toEqual({ state: '1', indeterminate: true, checked: false });
-        expect(scope.classList.contains('active')).toBe(true);
-    });
-
-    test('submits the checkbox control state once per click', () => {
-        const { filter, scope, input } = renderSwitch(0);
-        connectControl(jax, 'checkbox', scope);
-        connectControl(jax, 'filterwidget', filter);
-
-        input.click();
-        input.click();
-        input.click();
-
-        expect(jax.requests.map((request) => request.data)).toEqual([
-            { value: 1, scopeName: 'is_approved' },
-            { value: 2, scopeName: 'is_approved' },
-            { value: 0, scopeName: 'is_approved' },
-        ]);
-        expect(stateOf(input)).toEqual({ state: '0', indeterminate: false, checked: false });
-        expect(scope.classList.contains('active')).toBe(false);
     });
 });
