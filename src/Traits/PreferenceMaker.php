@@ -128,6 +128,7 @@ trait PreferenceMaker
      */
     protected function getPreferenceStorage()
     {
-        return new PreferenceStore;
+        // Resolved from the container, so an application binds one persistent store for every widget
+        return app(PreferenceStore::class);
     }
 }

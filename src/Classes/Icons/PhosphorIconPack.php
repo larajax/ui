@@ -18,6 +18,9 @@ class PhosphorIconPack implements IconPack
             'filter.remove' => 'ph ph-x-circle',
             'filter.yes' => 'ph ph-check',
             'filter.no' => 'ph ph-x',
+            'filter.save' => 'ph ph-floppy-disk',
+            'filter.saved' => 'ph ph-bookmark-simple',
+            'filter.delete' => 'ph ph-trash',
             'filter.item.add' => 'ph ph-plus',
             'filter.item.remove' => 'ph ph-x',
 

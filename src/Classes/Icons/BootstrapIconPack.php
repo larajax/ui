@@ -18,6 +18,9 @@ class BootstrapIconPack implements IconPack
             'filter.remove' => 'bi bi-x-circle',
             'filter.yes' => 'bi bi-check-lg',
             'filter.no' => 'bi bi-x-lg',
+            'filter.save' => 'bi bi-floppy',
+            'filter.saved' => 'bi bi-bookmark',
+            'filter.delete' => 'bi bi-trash',
             'filter.item.add' => 'bi bi-plus',
             'filter.item.remove' => 'bi bi-x',
 

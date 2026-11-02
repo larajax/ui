@@ -18,6 +18,9 @@ class OctoberIconPack implements IconPack
             'filter.remove' => 'icon-times-circle',
             'filter.yes' => 'icon-check',
             'filter.no' => 'icon-times',
+            'filter.save' => 'icon-floppy-o',
+            'filter.saved' => 'icon-bookmark-o',
+            'filter.delete' => 'icon-trash-o',
             'filter.item.add' => 'icon-plus',
             'filter.item.remove' => 'icon-times',
 

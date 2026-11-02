@@ -23,6 +23,8 @@ class Filter extends WidgetBase implements FilterElement
     use \Larajax\Ui\Widgets\Filter\HasFilterEvents;
     use \Larajax\Ui\Widgets\Filter\HasFilterWidgets;
     use \Larajax\Ui\Widgets\Filter\HasLegacyDefinitions;
+    use \Larajax\Ui\Widgets\Filter\HasSavedFilters;
+    use \Larajax\Ui\Traits\PreferenceMaker;
 
     //
     // Configurable Properties
@@ -65,6 +67,11 @@ class Filter extends WidgetBase implements FilterElement
      */
     public $primary;
 
+    /**
+     * @var bool savedFilters lets the filter menu save the current scope values under a name and apply them again.
+     */
+    public $savedFilters = true;
+
     //
     // Object Properties
     //
@@ -106,6 +113,7 @@ class Filter extends WidgetBase implements FilterElement
      * @param array|string|Search|null $search search configuration, partial name or widget instance
      * @param string|null $setupHandler
      * @param string|null $primary search or a dropdown scope to place in the primary row
+     * @param bool|null $savedFilters false hides saving and applying named sets of scope values
      */
     public static function make(
         $model = null,
@@ -115,6 +123,7 @@ class Filter extends WidgetBase implements FilterElement
         $search = null,
         $setupHandler = null,
         $primary = null,
+        $savedFilters = null,
         ...$config
     ): static {
         return static::makeFromNamedArgs(get_defined_vars(), $config);
@@ -134,6 +143,7 @@ class Filter extends WidgetBase implements FilterElement
             'search',
             'setupHandler',
             'primary',
+            'savedFilters',
         ]);
 
         $this->initScopesConfig();
@@ -740,6 +750,11 @@ class Filter extends WidgetBase implements FilterElement
                 $this->putScopeValue($dScope, null);
                 $result['#' . $dScope->getId('group')] = $this->makePartial('scope', ['scope' => $dScope]);
             }
+        }
+
+        // The saved sets check the one the scopes now match
+        if ($this->savedFilters && $this->getSavedFilterSets()) {
+            $result += $this->makeSavedFiltersMenuResponse();
         }
 
         $result = $this->eventUpdate($result, func_get_args());

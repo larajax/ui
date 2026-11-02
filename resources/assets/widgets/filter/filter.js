@@ -8,6 +8,8 @@
  * - data-load-handler - AJAX handler for the popover form of a scope rendered without its form template
  * - data-page-name - page parameter to reset when a filter is applied
  * - data-list-linkage - id of the linked list widget, shown as updating while a scope update redraws it
+ * - data-save-handler, data-apply-saved-handler, data-delete-saved-handler - AJAX handlers that save,
+ *   apply and delete named sets of scope values from the filter menu
  *
  * Events:
  * - filter-scope:change - dispatched on the scope element after its value is updated
@@ -32,7 +34,10 @@ export function registerFilterWidget(jax) {
                 popoverTemplate: null,
                 updateHandler: null,
                 loadHandler: null,
-                pageName: null
+                pageName: null,
+                saveHandler: null,
+                applySavedHandler: null,
+                deleteSavedHandler: null
             }, this.config);
 
             this.popover = null;
@@ -164,6 +169,20 @@ export function registerFilterWidget(jax) {
                 return;
             }
 
+            // Saved filters, from the filter menu
+            const savedItem = ev.target.closest('[data-filter-save], [data-filter-saved], [data-filter-manage-saved]');
+            if (savedItem && this.element.contains(savedItem)) {
+                ev.preventDefault();
+
+                if (savedItem.hasAttribute('data-filter-saved')) {
+                    this.applySavedFilters(savedItem.dataset.filterSaved);
+                }
+                else {
+                    this.showSavedFiltersPopover(savedItem.hasAttribute('data-filter-save') ? 'save' : 'manage');
+                }
+                return;
+            }
+
             const tab = ev.target.closest('[data-filter-tab-value]');
             if (tab && this.element.contains(tab)) {
                 ev.preventDefault();
@@ -227,6 +246,30 @@ export function registerFilterWidget(jax) {
                 else if (actionEl.dataset.filterAction === 'clear') {
                     this.onClickScopeClear(ev);
                 }
+                else if (actionEl.dataset.filterAction === 'delete-saved') {
+                    this.deleteSavedFilters(actionEl);
+                }
+            });
+
+            // In the save form, a new name and a saved set to update each clear the other
+            container.addEventListener('input', (ev) => {
+                if (ev.target.name === 'savedFilterName' && ev.target.form) {
+                    this.syncSaveForm(ev.target.form, ev.target);
+                }
+            });
+
+            container.addEventListener('change', (ev) => {
+                if (ev.target.name === 'savedFilterExisting' && ev.target.form) {
+                    this.syncSaveForm(ev.target.form, ev.target);
+                }
+            });
+
+            // The save form saves on its button and on Enter alike, in place of the browser submitting it
+            container.addEventListener('submit', (ev) => {
+                if (ev.target.querySelector('[data-filter-action="save"]')) {
+                    ev.preventDefault();
+                    this.saveFilters(ev.target);
+                }
             });
         }
 
@@ -285,7 +328,8 @@ export function registerFilterWidget(jax) {
             this.activeScope = null;
         }
 
-        showPopover(scopeLink) {
+        // Shows a popover below the scope or button, holding the given form, or else the scope's own form.
+        showPopover(scopeLink, formHtml = null) {
             const scopeName = scopeLink.dataset.scopeName;
 
             const popover = new Popover(scopeLink, {
@@ -310,9 +354,12 @@ export function registerFilterWidget(jax) {
             }
 
             // The form comes rendered with the scope, so it reflects the scope's value and opens without a request
-            const formTemplate = this.scopeFormTemplate(scopeLink);
+            const formTemplate = formHtml === null ? this.scopeFormTemplate(scopeLink) : null;
 
-            if (formTemplate) {
+            if (formHtml !== null) {
+                this.setPopoverContent(container, formHtml);
+            }
+            else if (formTemplate) {
                 this.setPopoverContent(container, formTemplate.innerHTML);
             }
             else {
@@ -511,6 +558,144 @@ export function registerFilterWidget(jax) {
             });
 
             this.hidePopover();
+        }
+
+        //
+        // Saved filters
+        //
+
+        // Opens the save or manage form in a popover below the filter menu button, focusing its first control once the menu has closed.
+        showSavedFiltersPopover(kind) {
+            const anchor = this.element.querySelector('.filter-setup > [data-bs-toggle="menu"]'),
+                template = this.element.querySelector(`template[data-filter-${kind}-form]`);
+
+            if (!anchor || !template) {
+                return;
+            }
+
+            this.hidePopover();
+            this.activeScope = anchor;
+            this.showPopover(anchor, template.innerHTML);
+
+            if (this.popover) {
+                this.alignPopoverArrow(this.popover, anchor);
+            }
+
+            const control = this.popover?.getContainer()?.querySelector('input:not([type="hidden"]), button');
+            if (control) {
+                requestAnimationFrame(() => control.focus());
+            }
+        }
+
+        // Points the popover arrow at the middle of a trigger narrower than the default offset assumes, measuring where the stylesheet draws the arrow.
+        alignPopoverArrow(popover, anchor) {
+            const content = popover.element ? popover.element.firstElementChild : null;
+            if (!content) {
+                return;
+            }
+
+            const arrow = getComputedStyle(content, '::after'),
+                tip = parseFloat(arrow.left) + parseFloat(arrow.borderLeftWidth);
+
+            if (Number.isNaN(tip)) {
+                return;
+            }
+
+            popover.options.offsetX = anchor.offsetWidth / 2 - tip;
+            popover.reposition();
+        }
+
+        // Keeps the new name and the saved set to update apart, so the one just used clears the other, and labels the button to match.
+        syncSaveForm(form, changed) {
+            const input = form.querySelector('[name="savedFilterName"]'),
+                select = form.querySelector('[name="savedFilterExisting"]'),
+                button = form.querySelector('[data-filter-action="save"]');
+
+            if (!input || !select) {
+                return;
+            }
+
+            if (changed === select && select.value) {
+                input.value = '';
+            }
+            else if (changed === input && input.value && select.value) {
+                select.value = '';
+
+                // The select list shows the reset only once it hears of the change
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            // A name is needed only while no saved set is picked
+            input.required = !select.value;
+
+            if (button && button.dataset.labelSave) {
+                button.textContent = select.value ? button.dataset.labelUpdate : button.dataset.labelSave;
+            }
+        }
+
+        // Saves the current scope values under the picked saved set, or else the new name, once the browser finds one given.
+        saveFilters(form) {
+            const input = form.querySelector('[name="savedFilterName"]'),
+                select = form.querySelector('[name="savedFilterExisting"]'),
+                name = (select && select.value) || (input ? input.value.trim() : '');
+
+            if (!this.config.saveHandler || !form.reportValidity() || !name) {
+                input?.focus();
+                return;
+            }
+
+            jax.request(this.element, this.config.saveHandler, {
+                data: { savedFilterName: name }
+            });
+
+            this.hidePopover();
+        }
+
+        // Applies a saved set, which redraws the filter and the linked list as clearing the filters does.
+        applySavedFilters(name) {
+            if (!this.config.applySavedHandler) {
+                return;
+            }
+
+            this.hidePopover();
+            this.element.classList.add('is-loading');
+            this.setListUpdating(true);
+
+            const options = { data: { savedFilterName: name } };
+
+            // Reset the shared page parameter, as a scope update does
+            if (this.config.pageName) {
+                options.query = { [this.config.pageName]: null };
+            }
+
+            jax.request(this.element, this.config.applySavedHandler, options)
+                .always(() => {
+                    this.element.classList.remove('is-loading');
+                    this.setListUpdating(false);
+                });
+        }
+
+        // Deletes a saved set, taking its row out of the open form, which closes after the last one.
+        deleteSavedFilters(button) {
+            if (!this.config.deleteSavedHandler) {
+                return;
+            }
+
+            jax.request(this.element, this.config.deleteSavedHandler, {
+                data: { savedFilterName: button.dataset.savedName }
+            });
+
+            const row = button.closest('li'),
+                list = row ? row.parentElement : null;
+
+            row?.remove();
+
+            if (!list || !list.children.length) {
+                this.hidePopover();
+            }
+            else {
+                list.querySelector('button')?.focus();
+            }
         }
 
         //

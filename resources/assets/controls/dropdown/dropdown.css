@@ -27,8 +27,9 @@
     --bs-menu-item-border-radius: 0;
     border: var(--oc-popup-border);
 
-    /* Unlayered item states so link rules from the surrounding widget never win */
-    > .menu-item {
+    /* Unlayered item states so link rules from the surrounding widget never win, submenu triggers included */
+    > .menu-item,
+    > .submenu > .menu-item {
         padding: var(--bs-menu-item-padding-y) var(--bs-menu-item-padding-x);
         font-size: var(--bs-menu-font-size);
         color: var(--bs-theme-fg, var(--bs-menu-item-color));
@@ -38,16 +39,6 @@
             color: color-mix(in oklch, var(--bs-fg-body) 60%, transparent);
             font-size: 0.875rem;
             margin-left: -2px;
-        }
-
-        &:first-child {
-            border-top-left-radius: 0.25rem;
-            border-top-right-radius: 0.25rem;
-        }
-
-        &:last-child {
-            border-bottom-left-radius: 0.25rem;
-            border-bottom-right-radius: 0.25rem;
         }
 
         &:hover, &:focus {
@@ -75,5 +66,28 @@
                 color: color-mix(in oklch, var(--bs-fg-body) 60%, transparent);
             }
         }
+    }
+
+    /* A submenu trigger stays highlighted while its submenu is open */
+    > .submenu:is(:hover, :focus-within, .show) > .menu-item {
+        color: var(--bs-theme-fg-emphasis, var(--bs-menu-item-hover-color));
+        background-color: var(--bs-theme-bg-subtle, var(--bs-menu-item-hover-bg));
+
+        > i {
+            color: inherit;
+        }
+    }
+
+    /* Rounded to the menu's corners, where a submenu trigger counts as the row its submenu sits on */
+    > .menu-item:first-child,
+    > .submenu:first-child > .menu-item {
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+    }
+
+    > .menu-item:last-child,
+    > .submenu:last-child > .menu-item {
+        border-bottom-left-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
     }
 }

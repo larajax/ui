@@ -716,6 +716,198 @@ describe('switch menus', () => {
     });
 });
 
+describe('saved filters', () => {
+    // The filter menu as its partials render it, with one saved set and the save and manage forms beside it
+    function renderSavedFilters() {
+        renderFilter(`<div class="filter-group filter-setup">
+            <a href="javascript:;" class="filter-action" data-bs-toggle="menu">Menu</a>
+            <div class="menu control-dropdown" role="menu">
+                <a data-filter-save class="menu-item" href="javascript:;">Save Filters...</a>
+                <div class="submenu">
+                    <a class="menu-item" href="javascript:;">Saved Filters</a>
+                    <div class="menu control-dropdown" role="menu">
+                        <a data-filter-saved="Open &amp; recent" class="menu-item" href="javascript:;">Open &amp; recent</a>
+                        <a data-filter-manage-saved class="menu-item" href="javascript:;">Manage...</a>
+                    </div>
+                </div>
+            </div>
+            <div hidden>
+                <template data-filter-save-form>
+                    <div class="filter-box">
+                        <input type="text" name="savedFilterName" required />
+                        <select name="savedFilterExisting">
+                            <option value="">- Select -</option>
+                            <option value="Big">Big</option>
+                            <option value="Open &amp; recent">Open &amp; recent</option>
+                        </select>
+                        <button type="submit" data-filter-action="save" data-label-save="Save" data-label-update="Update">Save</button>
+                    </div>
+                </template>
+                <template data-filter-manage-form>
+                    <ul class="filter-saved-list">
+                        <li><span>Big</span><button type="button" data-filter-action="delete-saved" data-saved-name="Big">Delete</button></li>
+                        <li><span>Open &amp; recent</span><button type="button" data-filter-action="delete-saved" data-saved-name="Open &amp; recent">Delete</button></li>
+                    </ul>
+                </template>
+            </div>
+        </div>`);
+
+        const filter = document.getElementById('Filter');
+        Object.assign(filter.dataset, {
+            saveHandler: 'filter::onSaveFilters',
+            applySavedHandler: 'filter::onApplySavedFilters',
+            deleteSavedHandler: 'filter::onDeleteSavedFilters',
+            pageName: 'postsPage'
+        });
+
+        jax.disconnectAll();
+        jax.connect('filterwidget', filter);
+        jax.requests = [];
+
+        return filter;
+    }
+
+    const click = (selector) => document.querySelector(selector).click();
+
+    test('Save Filters opens the save form below the menu button with the name focused', async () => {
+        renderSavedFilters();
+
+        click('[data-filter-save]');
+        await sleep(50);
+
+        const popover = Popover.activeInstance;
+        expect(popover).not.toBe(null);
+        expect(document.querySelector('.filter-setup > [data-bs-toggle="menu"]').classList.contains('popover-highlight')).toBe(true);
+        expect(document.activeElement).toBe(popover.element.querySelector('[name="savedFilterName"]'));
+        expect(jax.requests.length).toBe(0);
+    });
+
+    test('submitting the save form posts the trimmed name and closes the form', () => {
+        renderSavedFilters();
+        click('[data-filter-save]');
+
+        const form = Popover.activeInstance.element.querySelector('form');
+        form.querySelector('[name="savedFilterName"]').value = '  Open invoices ';
+        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+        expect(jax.requests.map((request) => [request.handler, request.options.data])).toEqual([
+            ['filter::onSaveFilters', { savedFilterName: 'Open invoices' }]
+        ]);
+        expect(Popover.activeInstance).toBe(null);
+    });
+
+    // The save form fields, and helpers that use them as a visitor does
+    function saveForm() {
+        const form = Popover.activeInstance.element.querySelector('form'),
+            input = form.querySelector('[name="savedFilterName"]'),
+            select = form.querySelector('[name="savedFilterExisting"]');
+
+        return {
+            form,
+            input,
+            select,
+            button: form.querySelector('[data-filter-action="save"]'),
+            type: (value) => {
+                input.value = value;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            },
+            pick: (value) => {
+                select.value = value;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            },
+            submit: () => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+        };
+    }
+
+    test('picking an existing set clears the new name, turns Save into Update and saves under that set', () => {
+        renderSavedFilters();
+        click('[data-filter-save]');
+        const { input, button, type, pick, submit } = saveForm();
+
+        type('Draft name');
+        pick('Open & recent');
+
+        expect(input.value).toBe('');
+        expect(input.required).toBe(false);
+        expect(button.textContent).toBe('Update');
+
+        submit();
+        expect(jax.requests.map((request) => request.options.data)).toEqual([{ savedFilterName: 'Open & recent' }]);
+        expect(Popover.activeInstance).toBe(null);
+    });
+
+    test('typing a new name resets the picked set and turns Update back into Save', () => {
+        renderSavedFilters();
+        click('[data-filter-save]');
+        const { input, select, button, type, pick, submit } = saveForm();
+
+        let selectChanges = 0;
+        select.addEventListener('change', () => selectChanges++);
+
+        pick('Big');
+        type('Bigger');
+
+        expect(select.value).toBe('');
+        expect(selectChanges).toBe(2);
+        expect(input.required).toBe(true);
+        expect(button.textContent).toBe('Save');
+
+        submit();
+        expect(jax.requests.map((request) => request.options.data)).toEqual([{ savedFilterName: 'Bigger' }]);
+    });
+
+    test('a blank name saves nothing and keeps the form open', () => {
+        renderSavedFilters();
+        click('[data-filter-save]');
+
+        const form = Popover.activeInstance.element.querySelector('form');
+        form.querySelector('[name="savedFilterName"]').value = '   ';
+        const submit = new Event('submit', { bubbles: true, cancelable: true });
+        form.dispatchEvent(submit);
+
+        expect(submit.defaultPrevented).toBe(true);
+        expect(jax.requests.length).toBe(0);
+        expect(Popover.activeInstance).not.toBe(null);
+    });
+
+    test('a saved set applies by name, resets the page and shows the list updating until it ends', () => {
+        const filter = renderSavedFilters();
+
+        click('[data-filter-saved]');
+
+        const request = jax.requests[0];
+        expect(request.handler).toBe('filter::onApplySavedFilters');
+        expect(request.options.data).toEqual({ savedFilterName: 'Open & recent' });
+        expect(request.options.query).toEqual({ postsPage: null });
+        expect(filter.classList.contains('is-loading')).toBe(true);
+
+        request.resolve({});
+        expect(filter.classList.contains('is-loading')).toBe(false);
+    });
+
+    test('deleting from the manage form removes each row as it goes and closes after the last', async () => {
+        renderSavedFilters();
+        click('[data-filter-manage-saved]');
+        await sleep(50);
+
+        const popover = Popover.activeInstance;
+        expect(document.activeElement).toBe(popover.element.querySelector('[data-saved-name="Big"]'));
+
+        popover.element.querySelector('[data-saved-name="Big"]').click();
+        expect(popover.element.querySelectorAll('.filter-saved-list li').length).toBe(1);
+        expect(Popover.activeInstance).toBe(popover);
+        expect(document.activeElement).toBe(popover.element.querySelector('[data-saved-name="Open & recent"]'));
+
+        popover.element.querySelector('[data-saved-name="Open & recent"]').click();
+        expect(Popover.activeInstance).toBe(null);
+
+        expect(jax.requests.map((request) => [request.handler, request.options.data])).toEqual([
+            ['filter::onDeleteSavedFilters', { savedFilterName: 'Big' }],
+            ['filter::onDeleteSavedFilters', { savedFilterName: 'Open & recent' }]
+        ]);
+    });
+});
+
 describe('inline scopes', () => {
     const inlineScope = `
         <div class="filter-group" id="Filter-scope-code-group">

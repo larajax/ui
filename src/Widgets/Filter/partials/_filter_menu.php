@@ -7,17 +7,12 @@
         title="<?= __("Filter Setup") ?>">
         <?= \Larajax\Ui\Facades\Ui::icon('filter.menu') ?>
     </a>
-    <div class="menu control-dropdown" role="menu">
-        <a
-            data-filter-clear
-            class="menu-item"
-            role="menuitem"
-            href="javascript:;"
-            data-request="<?= $this->getEventHandler('onFilterClearAll') ?>"
-            data-stripe-load-indicator
-            tabindex="-1">
-            <?= \Larajax\Ui\Facades\Ui::icon('filter.clear') ?>
-            <?= __("Clear Filters") ?>
-        </a>
+    <div class="menu control-dropdown" role="menu" id="<?= $this->getId('setupMenu') ?>">
+        <?= $this->makePartial('filter_menu_items') ?>
     </div>
+    <?php if ($this->savedFilters): ?>
+        <div id="<?= $this->getId('savedForms') ?>" hidden>
+            <?= $this->makePartial('saved_filter_forms') ?>
+        </div>
+    <?php endif ?>
 </div>
