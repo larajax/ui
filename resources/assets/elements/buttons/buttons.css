@@ -27,19 +27,23 @@
 
 /* Secondary keeps the light slate fill */
 .btn-solid.theme-secondary {
+    --oc-secondary-outline: rgba(64, 68, 82, 0.16);
     --bs-btn-color: var(--bs-fg-body);
     --bs-btn-bg: var(--oc-secondary-bg);
-    --bs-btn-border-color: var(--oc-secondary-bg);
+    --bs-btn-border-color: var(--oc-secondary-outline);
     --bs-btn-hover-color: var(--bs-fg-body);
     --bs-btn-hover-bg: var(--oc-secondary-hover-bg);
-    --bs-btn-hover-border-color: var(--oc-secondary-hover-bg);
+    --bs-btn-hover-border-color: var(--oc-secondary-outline);
     --bs-btn-active-color: var(--bs-fg-body);
     --bs-btn-active-bg: var(--oc-secondary-active-bg);
-    --bs-btn-active-border-color: var(--oc-secondary-active-bg);
+    --bs-btn-active-border-color: var(--oc-secondary-outline);
     --bs-btn-disabled-color: var(--bs-fg-body);
     --bs-btn-disabled-bg: var(--oc-secondary-bg);
-    --bs-btn-disabled-border-color: var(--oc-secondary-bg);
-    --oc-btn-box-shadow: rgba(0, 0, 0, 0.12) 0 1px 1px 0, rgba(64, 68, 82, 0.16) 0 0 0 1px, rgba(64, 68, 82, 0.08) 0 2px 5px 0;
+    --bs-btn-disabled-border-color: var(--oc-secondary-outline);
+    --oc-btn-box-shadow: rgba(0, 0, 0, 0.12) 0 1px 1px 0, rgba(64, 68, 82, 0.08) 0 2px 5px 0;
+
+    /* The faint outline is the border, drawn over the page inside the button's box, so it matches the other buttons' size */
+    background-clip: padding-box;
 }
 
 /* A muted link button keeps its underline and darkens on hover */
