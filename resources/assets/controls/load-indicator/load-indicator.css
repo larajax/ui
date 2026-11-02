@@ -4,16 +4,16 @@
  */
 
 .loading-indicator {
-    padding: 1.25rem 1.25rem 1.25rem 3.75rem;
+    padding: 1.4375rem 1.4375rem 1.4375rem 4.3125rem;
     color: #999999;
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 600;
     background: var(--bs-bg-body);
     text-align: left;
     z-index: var(--oc-zindex-loader);
 
     > span {
-        --loader-size: 2.5rem;
+        --loader-size: 2.875rem;
         position: absolute;
         width: var(--loader-size);
         height: var(--loader-size);
@@ -34,7 +34,7 @@
 
 .loading-indicator-container {
     position: relative;
-    min-height: 2.5rem;
+    min-height: 2.875rem;
 
     .loading-indicator {
         position: absolute;
@@ -54,8 +54,8 @@
 
 /* For the focus border of buttons */
 .form-buttons > .loading-indicator-container {
-    padding: .3rem;
-    margin: -.3rem;
+    padding: 0.3125rem;
+    margin: -0.3125rem;
 }
 
 .loading-indicator.is-opaque,
@@ -70,16 +70,16 @@
 /* Sizes */
 
 .loading-indicator-container.size-small {
-    min-height: 1.25rem;
+    min-height: 1.4375rem;
 }
 
 .loading-indicator.size-small,
 .loading-indicator-container.size-small .loading-indicator {
-    padding: 1rem 1rem 1rem 1.875rem;
-    font-size: 0.6875rem;
+    padding: 1.125rem 1.125rem 1.125rem 2.125rem;
+    font-size: 0.8125rem;
 
     > span {
-        --loader-size: 1.25rem;
+        --loader-size: 1.4375rem;
         border-width: 2px;
     }
 }
@@ -88,7 +88,7 @@
 
 .loading-indicator.indicator-center,
 .loading-indicator-container.indicator-center .loading-indicator {
-    padding: 1.25rem;
+    padding: 1.4375rem;
 
     > span {
         left: 50%;
@@ -99,7 +99,7 @@
     > div {
         text-align: center;
         position: relative;
-        margin-top: 1.875rem;
+        margin-top: 2.125rem;
     }
 }
 
@@ -107,10 +107,10 @@
 
 .loading-indicator.indicator-inset,
 .loading-indicator-container.indicator-inset .loading-indicator {
-    padding-left: 5rem;
+    padding-left: 5.6875rem;
 
     > span {
-        left: 1.25rem;
+        left: 1.4375rem;
     }
 }
 
@@ -128,18 +128,18 @@
     margin: 0;
 
     > span {
-        --loader-size: 1.4375rem;
+        --loader-size: 1.625rem;
         padding: 0;
         margin: 0;
         left: auto;
-        right: 0.4375rem;
-        top: 0.375rem;
+        right: 0.5rem;
+        top: 0.4375rem;
         border-width: 2px;
     }
 }
 
 .loading-indicator-container.size-form-field .loading-indicator > span {
-    --loader-size: 1.25rem;
+    --loader-size: 1.4375rem;
     top: 0;
     right: 0;
 }

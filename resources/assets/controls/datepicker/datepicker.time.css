@@ -7,17 +7,17 @@
  */
 
 [data-vc="calendar"] {
-    --oc-datepicker-range-track-height: 0.5rem;
-    --oc-datepicker-range-thumb-size: 1rem;
+    --oc-datepicker-range-track-height: 0.5625rem;
+    --oc-datepicker-range-thumb-size: 1.125rem;
 
     /* Time controls: hour and minute inputs beside a slider for each */
     [data-vc="time"] {
         display: grid;
         grid-template-columns: auto 1fr;
-        gap: 0.75rem;
+        gap: 0.875rem;
         align-items: center;
-        padding-top: 0.75rem;
-        margin-top: 0.75rem;
+        padding-top: 0.875rem;
+        margin-top: 0.875rem;
         border-top: var(--bs-datepicker-border-width) solid var(--bs-datepicker-border-color);
 
         /* The time panel has no dates above to separate the controls from */
@@ -40,13 +40,13 @@
         input {
             box-sizing: border-box;
             display: block;
-            width: 2.25rem;
-            padding: 0.25rem;
+            width: 2.5625rem;
+            padding: 0.3125rem;
             margin: 0;
             font-family: inherit;
-            font-size: 1rem;
+            font-size: 1.125rem;
             font-weight: var(--bs-datepicker-header-font-weight);
-            line-height: 1.25rem;
+            line-height: 1.4375rem;
             color: var(--bs-datepicker-color);
             text-align: center;
             user-select: text;
@@ -73,17 +73,17 @@
 
     [data-vc-time-input="hour"]::after {
         padding-inline: 0.0625rem;
-        font-size: 1rem;
+        font-size: 1.125rem;
         font-weight: var(--bs-datepicker-header-font-weight);
         content: ":";
     }
 
     [data-vc-time="keeping"] {
-        padding: 0.25rem 0.375rem;
-        margin-inline-start: 0.25rem;
-        font-size: 0.75rem;
+        padding: 0.3125rem 0.4375rem;
+        margin-inline-start: 0.3125rem;
+        font-size: 0.875rem;
         font-weight: 600;
-        line-height: 1rem;
+        line-height: 1.125rem;
         color: var(--bs-datepicker-weekday-color);
         cursor: pointer;
         background-color: transparent;
@@ -102,7 +102,7 @@
     /* The sliders take the width left over, so the time controls never widen the calendar */
     [data-vc-time="ranges"] {
         display: grid;
-        gap: 0.25rem;
+        gap: 0.3125rem;
         contain: inline-size;
     }
 
@@ -124,13 +124,13 @@
         &::-webkit-slider-runnable-track {
             height: var(--oc-datepicker-range-track-height);
             background-color: var(--bs-bg-3);
-            border-radius: 1rem;
+            border-radius: 1.125rem;
         }
 
         &::-moz-range-track {
             height: var(--oc-datepicker-range-track-height);
             background-color: var(--bs-bg-3);
-            border-radius: 1rem;
+            border-radius: 1.125rem;
         }
 
         &::-webkit-slider-thumb {
@@ -140,7 +140,7 @@
             appearance: none;
             background-color: var(--bs-datepicker-day-selected-bg);
             border: 0;
-            border-radius: 1rem;
+            border-radius: 1.125rem;
             box-shadow: var(--bs-box-shadow-sm);
         }
 
@@ -150,7 +150,7 @@
             appearance: none;
             background-color: var(--bs-datepicker-day-selected-bg);
             border: 0;
-            border-radius: 1rem;
+            border-radius: 1.125rem;
             box-shadow: var(--bs-box-shadow-sm);
         }
 

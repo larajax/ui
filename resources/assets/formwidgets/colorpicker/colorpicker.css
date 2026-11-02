@@ -12,13 +12,13 @@
         /* The swatch stays above the input, which form controls position relatively */
         button {
             z-index: 1;
-            width: 2.25rem;
+            width: 2.5625rem;
             border-top-right-radius: var(--bs-radius-4);
             border-bottom-right-radius: var(--bs-radius-4);
         }
 
         input {
-            padding-right: 2.75rem;
+            padding-right: 3.125rem;
         }
     }
 }

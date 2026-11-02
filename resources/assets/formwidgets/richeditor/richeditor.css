@@ -6,23 +6,23 @@
 
 .field-richeditor {
     &.size-tiny .rich-editor {
-        --rich-editor-min-height: 3.125rem;
+        --rich-editor-min-height: 3.5625rem;
     }
 
     &.size-small .rich-editor {
-        --rich-editor-min-height: 6.25rem;
+        --rich-editor-min-height: 7.125rem;
     }
 
     &.size-large .rich-editor {
-        --rich-editor-min-height: 12.5rem;
+        --rich-editor-min-height: 14.3125rem;
     }
 
     &.size-huge .rich-editor {
-        --rich-editor-min-height: 15.625rem;
+        --rich-editor-min-height: 17.875rem;
     }
 
     &.size-giant .rich-editor {
-        --rich-editor-min-height: 21.875rem;
+        --rich-editor-min-height: 25rem;
     }
 
     &.is-stretch {

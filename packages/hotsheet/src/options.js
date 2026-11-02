@@ -9,7 +9,7 @@ export const defaultOptions = {
     rowHeaders: false,
     // A height in pixels makes the grid scroll inside itself, 'auto' grows it with its rows
     height: 'auto',
-    rowHeight: 30,
+    rowHeight: 34,
     // Arrow keys, Tab and Enter wrap to the next row or column at the edges
     wrapNavigation: true,
     decimalSeparator: '.',

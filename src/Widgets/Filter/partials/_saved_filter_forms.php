@@ -14,7 +14,7 @@
                     type="text"
                     id="<?= $this->getId('savedName') ?>"
                     name="savedFilterName"
-                    class="form-control form-control-sm popup-allow-focus"
+                    class="form-control popup-allow-focus"
                     placeholder="<?= e(__('Name')) ?>"
                     maxlength="100"
                     pattern=".*\S.*"
@@ -31,7 +31,7 @@
                     <select
                         id="<?= $this->getId('savedExisting') ?>"
                         name="savedFilterExisting"
-                        class="form-control form-control-sm custom-select select-no-search">
+                        class="form-control custom-select select-no-search">
                         <option value="">
                             <?= __('- Select -') ?>
                         </option>
@@ -48,7 +48,7 @@
             <div class="flex-grow-1"></div>
             <button
                 type="submit"
-                class="btn-solid theme-primary btn-sm"
+                class="btn-solid theme-primary"
                 data-filter-action="save"
                 data-label-save="<?= e(__('Save')) ?>"
                 data-label-update="<?= e(__('Update')) ?>">

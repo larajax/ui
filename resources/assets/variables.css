@@ -26,6 +26,10 @@
     --oc-popup-border:           1px solid rgba(149, 165, 166, 0.2);
     --oc-backdrop-opacity:       0.5;
 
+    /* The icon buttons beside a search, such as list setup, the same in a toolbar and a filter */
+    --oc-toolbar-action-size:      1.6875rem;
+    --oc-toolbar-action-icon-size: 1.4375rem;
+
     /*
     // "Windex" Z-Index Window Manager
     // --------------------------------------------------

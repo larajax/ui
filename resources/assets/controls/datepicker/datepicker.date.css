@@ -22,18 +22,18 @@
     [data-vc-week="numbers"] {
         display: flex;
         flex-direction: column;
-        margin-inline-end: 0.25rem;
+        margin-inline-end: 0.3125rem;
     }
 
     [data-vc-week-numbers="title"] {
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 1rem;
-        margin-bottom: 0.5rem;
-        font-size: 0.75rem;
+        height: 1.125rem;
+        margin-bottom: 0.5625rem;
+        font-size: 0.875rem;
         font-weight: 600;
-        line-height: 1rem;
+        line-height: 1.125rem;
         color: var(--bs-datepicker-weekday-color);
     }
 
@@ -46,12 +46,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 1.875rem;
-        min-height: 2.125rem;
+        min-width: 2.125rem;
+        min-height: 2.4375rem;
         padding: 0;
-        font-size: 0.75rem;
+        font-size: 0.875rem;
         font-weight: 600;
-        line-height: 1rem;
+        line-height: 1.125rem;
         color: var(--bs-datepicker-day-disabled-color);
         background-color: transparent;
         border: 0;

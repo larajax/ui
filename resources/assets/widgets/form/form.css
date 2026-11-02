@@ -9,8 +9,8 @@
 
 .form-preview {
     --tab-surface: var(--oc-primary-bg);
-    padding: 1.25rem;
-    margin-bottom: 1.25rem;
+    padding: 1.4375rem;
+    margin-bottom: 1.4375rem;
     background: var(--oc-primary-bg);
     border: 1px solid var(--oc-primary-border);
 
@@ -47,8 +47,8 @@
 /* A colored dot for options and values that carry a color */
 .status-indicator {
     display: inline-block;
-    width: 0.625rem;
-    height: 0.625rem;
+    width: 0.6875rem;
+    height: 0.6875rem;
     margin-inline-end: 0.1875rem;
     border: 1px solid color-mix(in srgb, var(--bs-bg-body) 90%, transparent);
     border-radius: 50%;
@@ -92,22 +92,22 @@
 
     &.growable, /* @deprecated */
     &.is-growable {
-        width: 6.875rem;
+        width: 7.875rem;
         &:focus,
         &:focus-within,
         &:active {
-            width: 12.5rem !important;
+            width: 14.3125rem !important;
         }
 
         @media (max-width: 36em) {
-            width: 2.5rem;
-            text-indent: -62.4375rem;
+            width: 2.875rem;
+            text-indent: -71.375rem;
 
             &:focus,
             &:focus-within,
             &:active {
                 text-indent: 0;
-                width: 6.25rem !important;
+                width: 7.125rem !important;
             }
         }
     }
@@ -135,8 +135,8 @@
     flex-shrink: 0;
     width: 1.5rem;
     height: 1.5rem;
-    margin-block: -.25rem;
-    margin-inline-end: -.375rem;
+    margin-block: -0.25rem;
+    margin-inline-end: -0.375rem;
     border: 0;
 
     > i {
@@ -169,50 +169,50 @@
     }
 
     &, &.layout-item {
-        padding-bottom: 1.25rem;
+        padding-bottom: 1.4375rem;
         margin-bottom: 0;
     }
 
     &.is-required {
         > label:after {
             background-color: var(--bs-danger-base);
-            width: 0.3125rem;
-            height: 0.3125rem;
+            width: 0.375rem;
+            height: 0.375rem;
             margin-left: 0.1875rem;
             vertical-align: super;
             font-size: 60%;
             content: "";
             display: inline-block;
-            border-radius: 0.5rem;
+            border-radius: 0.5625rem;
         }
     }
 
     .form-translatable {
         display: inline-block;
         position: relative;
-        height: 1.25rem;
-        width: 1.5625rem;
-        border-radius: 0.3125rem;
+        height: 1.4375rem;
+        width: 1.8125rem;
+        border-radius: 0.375rem;
         background-color: var(--oc-input-translatable-bg);
         color: var(--oc-input-translatable-color);
 
         /* Alignment */
-        margin-bottom: -0.3125rem;
+        margin-bottom: -0.375rem;
         margin-left: 2px;
 
         i {
-            font-size: 1rem;
+            font-size: 1.125rem;
             position: absolute;
             top: 2px;
-            left: 0.25rem;
+            left: 0.3125rem;
             cursor: pointer;
         }
 
         /* Inset from the corner and centered on a single line field */
         &.no-label {
             position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
+            top: 0.5625rem;
+            right: 0.5625rem;
             left: auto;
             z-index: 2;
 
@@ -226,23 +226,23 @@
     /* Keep field content clear of the translate icon when there is no label */
     &:has(> .form-translatable.no-label) {
         > .form-control {
-            padding-right: 2.5625rem;
+            padding-right: 2.9375rem;
         }
 
         > .field-richeditor,
         > .field-markdowneditor {
             .document-toolbar-container {
-                padding-right: 2.0625rem;
+                padding-right: 2.375rem;
             }
         }
 
         &:has(> .select2-container, > .relation-widget > .select2-container) {
             > .form-translatable {
-                right: 1.875rem;
+                right: 2.125rem;
             }
 
             .select2-selection__rendered {
-                padding-right: 3.875rem;
+                padding-right: 4.4375rem;
             }
         }
     }
@@ -282,16 +282,16 @@
     }
 
     &.checkbox-field {
-        padding-bottom: 0.3125rem;
+        padding-bottom: 0.375rem;
 
         > .form-field {
-            margin-bottom: 0.625rem;
+            margin-bottom: 0.6875rem;
         }
     }
 
     &.radio-field {
         > .form-field {
-            margin-bottom: 0.625rem;
+            margin-bottom: 0.6875rem;
         }
     }
 
@@ -303,17 +303,17 @@
     }
 
     &.radio-align {
-        padding-left: 1.75rem;
-        margin-top: -1.25rem;
+        padding-left: 2rem;
+        margin-top: -1.4375rem;
     }
 
     &.checkbox-align {
-        padding-left: 1.75rem;
-        margin-top: -0.3125rem;
+        padding-left: 2rem;
+        margin-top: -0.375rem;
     }
 
     &.field-align-above {
-        margin-top: -0.3125rem;
+        margin-top: -0.375rem;
     }
 
     &.field-slim {
@@ -324,18 +324,18 @@
     }
 
     &.field-indent {
-        padding-left: 1.75rem;
+        padding-left: 2rem;
     }
 
     /* @deprecated (used by sitemap and pages) */
     &.input-sidebar-control {
-        padding-right: 2.1875rem;
+        padding-right: 2.5rem;
 
         .sidebar-control {
             position: absolute;
-            right: 0.5rem;
-            top: 2.125rem;
-            font-size: 1rem;
+            right: 0.5625rem;
+            top: 2.4375rem;
+            font-size: 1.125rem;
             color: #C4C4C4;
             &:hover,
             &:focus {
@@ -349,12 +349,12 @@
 
 .form-horizontal {
     .col-horizontal {
-        width: 9.6875rem;
+        width: 11.0625rem;
     }
 
     .form-group {
         &.checkbox-field {
-            padding-bottom: 1.25rem;
+            padding-bottom: 1.4375rem;
         }
     }
 }
@@ -363,7 +363,7 @@
     .form-control {
         background-color: var(--oc-form-control-disabled-bg);
         height: auto;
-        min-height: 2.375rem;
+        min-height: var(--bs-btn-input-min-height);
         word-break: break-word;
         box-shadow: none;
     }
@@ -384,7 +384,7 @@
 .form-text {
     /* Bootstrap 6 darkened help text and dropped its top margin, so both are pinned */
     --bs-form-text-color: var(--bs-fg-3);
-    margin-top: .25rem;
+    margin-top: 0.3125rem;
     margin-bottom: 0;
 
     /* The form field grid gap already spaces help text */
@@ -393,8 +393,8 @@
     }
 
     &.before-field {
-        margin-top: -.135rem;
-        margin-bottom: .385rem;
+        margin-top: -0.125rem;
+        margin-bottom: 0.4375rem;
     }
 }
 
@@ -417,11 +417,11 @@
 .field-section {
     border-bottom: 1px solid var(--bs-border-color);
     padding-top: 0.1875rem;
-    padding-bottom: 0.4375rem;
+    padding-bottom: 0.5rem;
 
     > h4 {
         font-weight: 400;
-        font-size: 1.3rem;
+        font-size: 1.5rem;
     }
 
     > p:first-child,
@@ -441,7 +441,7 @@
             border-right: 5px solid transparent;
             border-bottom: 6px solid currentColor;
 
-            margin: 0.375rem 0.5rem 0;
+            margin: 0.4375rem 0.5625rem 0;
             float: right;
             color: rgba(0, 0, 0, .4);
             transition: all 0.3s;
@@ -459,25 +459,25 @@
 
 .field-action {
     border-bottom: 1px solid var(--bs-border-color);
-    padding: 0.625rem 0 0.3125rem;
-    margin-top: -1.25rem;
+    padding: 0.6875rem 0 0.375rem;
+    margin-top: -1.4375rem;
 
     h5 {
-        margin-bottom: .35rem;
-        margin-top: .75rem;
+        margin-bottom: 0.375rem;
+        margin-top: 0.875rem;
         font-weight: 400;
-        font-size: 1rem;
+        font-size: 1.125rem;
     }
 
     p {
         color: var(--bs-fg-3);
         margin-bottom: 0;
-        font-size: .9rem;
+        font-size: 1rem;
     }
 
     .field-action-button {
-        margin-top: 0.9375rem;
-        margin-bottom: 0.625rem;
+        margin-top: 1.0625rem;
+        margin-bottom: 0.6875rem;
 
         @media (min-width: 62em) {
             text-align: right;
@@ -501,32 +501,32 @@
 .field-textarea {
     resize: vertical;
     &.size-tiny {
-        min-height: 3.125rem;
+        min-height: 3.5625rem;
     }
     &.size-small {
-        min-height: 6.25rem;
+        min-height: 7.125rem;
     }
     &.size-large {
-        min-height: 12.5rem;
+        min-height: 14.3125rem;
     }
     &.size-huge {
-        min-height: 15.625rem;
+        min-height: 17.875rem;
     }
     &.size-giant {
-        min-height: 21.875rem;
+        min-height: 25rem;
     }
 }
 
 .field-checkboxlist {
     .field-checkboxlist-inner {
-        border-radius: 0.25rem;
+        border-radius: 0.3125rem;
         background: var(--oc-form-control-bg);
         border: 1px solid var(--bs-border-color);
     }
 
     &:not(.is-scrollable) {
         .field-checkboxlist-inner {
-            padding: 0.9375rem 0.9375rem 2px 0.9375rem;
+            padding: 1.0625rem 1.0625rem 2px 1.0625rem;
         }
     }
 
@@ -538,8 +538,8 @@
         border-top: 1px solid var(--bs-border-color);
         border-left: 1px solid var(--bs-border-color);
         border-right: 1px solid var(--bs-border-color);
-        border-top-left-radius: 0.25rem;
-        border-top-right-radius: 0.25rem;
+        border-top-left-radius: 0.3125rem;
+        border-top-right-radius: 0.3125rem;
 
         + .field-checkboxlist-inner {
             border-top-left-radius: 0;
@@ -549,12 +549,12 @@
     }
 
     .form-field {
-        margin-bottom: 0.625rem;
+        margin-bottom: 0.6875rem;
     }
 
     .checkboxlist-group {
         margin: 0;
-        padding-left: 1.1rem;
+        padding-left: 1.25rem;
         list-style: none;
     }
 
@@ -567,15 +567,15 @@
 }
 
 .field-checkboxlist-scrollable {
-    height: 18.75rem;
+    height: 21.4375rem;
     overflow-y: auto;
     overscroll-behavior: contain;
 
     /* First checkbox */
     .form-field {
-        margin-left: 0.9375rem;
-        margin-top: 0.9375rem;
-        margin-bottom: 0.625rem;
+        margin-left: 1.0625rem;
+        margin-top: 1.0625rem;
+        margin-bottom: 0.6875rem;
     }
 
     /* All others */
@@ -587,20 +587,20 @@
 .form-group.inline-options {
     .field-checkboxlist:not(.is-scrollable) {
         .field-checkboxlist-inner {
-            padding: 0.9375rem 0.9375rem 0.3125rem 0.9375rem;
+            padding: 1.0625rem 1.0625rem 0.375rem 1.0625rem;
         }
     }
 
     .form-field {
         display: inline-grid;
-        margin-right: 0.9375rem;
+        margin-right: 1.0625rem;
     }
 }
 
 /* Inline checkbox and radio options sit side by side */
 .form-field.is-inline {
     display: inline-grid;
-    margin-right: 1rem;
+    margin-right: 1.125rem;
 }
 
 .form-buttons {
@@ -612,16 +612,16 @@
     &::after {
         clear: both;
     }
-    padding-bottom: 1.25rem;
+    padding-bottom: 1.4375rem;
     font-size: 0;
     width: 100%;
 
     &.is-horizontal {
-        padding-left: 9.6875rem;
+        padding-left: 11.0625rem;
     }
 
     :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
-        margin-right: 0.4375rem;
+        margin-right: 0.5rem;
 
         &.no-margin-right {
             margin-right: 0;
@@ -629,7 +629,7 @@
     }
 
     .btn-group {
-        margin-right: 0.4375rem;
+        margin-right: 0.5rem;
 
         :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
             margin-right: 0;
@@ -638,11 +638,11 @@
 
     .pull-right {
         margin-right: 0;
-        margin-left: 0.4375rem;
+        margin-left: 0.5rem;
     }
 
     &.buttons-offset {
-        padding-left: 1.25rem;
+        padding-left: 1.4375rem;
     }
 }
 
@@ -674,7 +674,7 @@
 
 body.slim-container {
     .form-buttons {
-        padding: 0 1.25rem 1.25rem;
+        padding: 0 1.4375rem 1.4375rem;
     }
 }
 
@@ -695,7 +695,7 @@ body .dialog-footer {
 }
 
 body.compact-container .form-fatal-error {
-    padding: 1rem 1.25rem 0 1.25rem;
+    padding: 1.125rem 1.4375rem 0 1.4375rem;
 }
 
 /*
@@ -717,7 +717,7 @@ body.compact-container .form-fatal-error {
 [data-control~=toolbar] {
     .form-control {
         display: inline-block;
-        margin-right: 0.9375rem;
+        margin-right: 1.0625rem;
 
         /* An adorned field keeps the flex layout that lines its icon up with the input */
         &.form-adorn {
@@ -728,30 +728,30 @@ body.compact-container .form-fatal-error {
     input[type=text].form-control,
     label {
         position: relative;
-        top: 0.3125rem;
+        top: 0.375rem;
     }
 
     label {
-        margin-right: 0.4375rem;
+        margin-right: 0.5rem;
 
         &.standalone {
-            margin-right: 0.9375rem;
+            margin-right: 1.0625rem;
         }
     }
 
     .select2-container {
         display: inline-block;
         width: auto;
-        height: 2.25rem;
-        margin-right: 0.9375rem;
+        height: 2.5625rem;
+        margin-right: 1.0625rem;
 
         /* Fills the 36px box between the borders and the select padding so the text stays centred */
         .select2-selection__rendered {
-            line-height: calc(2.25rem - 2px - 2 * var(--custom-select-input-padding-vertical));
+            line-height: calc(2.5625rem - 2px - 2 * var(--custom-select-input-padding-vertical));
         }
 
         .select2-selection--single {
-            height: 2.25rem;
+            height: 2.5625rem;
         }
     }
 

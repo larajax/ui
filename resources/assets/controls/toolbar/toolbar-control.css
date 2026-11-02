@@ -3,7 +3,7 @@
  */
 .control-toolbar {
     font-size: 0;
-    padding: 0 0 0.625rem 0;
+    padding: 0 0 0.6875rem 0;
     position: relative;
     display: flex;
     width: 100%;
@@ -12,19 +12,19 @@
         margin-right: 1px;
         display: inline-block;
         height: 1em;
-        padding: 0.625rem 0;
+        padding: 0.6875rem 0;
         border-right: 1px solid var(--oc-toolbar-border);
         border-left: 1px solid var(--bs-border-color);
         width: 1px;
         vertical-align: middle;
-        margin-right: 0.5rem;
+        margin-right: 0.5625rem;
     }
 
     .toolbar-item {
         position: relative;
         white-space: nowrap;
         flex: 0 0 auto;
-        padding-right: 0.625rem;
+        padding-right: 0.6875rem;
 
         &:last-child,
         &.last {
@@ -45,7 +45,7 @@
                 position: absolute;
                 top: 0;
                 bottom: 0;
-                width: 0.625rem;
+                width: 0.6875rem;
                 z-index: 2;
                 opacity: 0;
                 transition: opacity 0.1s ease-out;
@@ -58,7 +58,7 @@
 
             &::after {
                 background: transparent linear-gradient(270deg, #000 0%, rgba(0, 0, 0, 0) 100%);
-                right: 0.8125rem;
+                right: 0.9375rem;
             }
 
             &.scroll-before::before {
@@ -72,25 +72,25 @@
 
         /* Setup button */
         &.toolbar-setup {
-            width: 1.75rem;
+            width: 2rem;
             align-self: center;
 
             a {
-                padding: 0.5rem 0.9375rem;
+                padding: 0.5625rem 1.0625rem;
+                text-decoration: none;
 
                 > span {
-                    display: block;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     color: var(--oc-toolbar-color);
-                    width: 1.5rem;
-                    height: 1.5rem;
-                    text-align: center;
+                    width: var(--oc-toolbar-action-size);
+                    height: var(--oc-toolbar-action-size);
                     border-radius: 0.1875rem;
 
                     > i {
-                        font-size: 0.875rem;
-                        line-height: 1.5rem;
-                        display: inline-block;
-                        vertical-align: middle;
+                        font-size: var(--oc-toolbar-action-icon-size);
+                        line-height: 1;
                     }
                 }
 
@@ -107,14 +107,14 @@
     .btn-container {
         white-space: nowrap;
         float: none;
-        margin-right: 0.625rem;
+        margin-right: 0.6875rem;
 
         &:last-child {
             margin-right: 0;
         }
 
         &.standalone {
-            margin-right: 0.9375rem;
+            margin-right: 1.0625rem;
         }
     }
 
@@ -132,11 +132,10 @@
     input.form-control[type=text],
     .form-control.form-adorn {
         height: auto;
-        padding: 0.4375rem 0.8125rem 0.375rem;
     }
 
     &.toolbar-padded {
-        padding: 1.25rem;
+        padding: 1.4375rem;
     }
 
     &.flex {
@@ -161,31 +160,31 @@
         line-height: inherit;
         display: inline-block;
         color: inherit;
-        padding: 0 0.375rem;
-        min-width: 2.5rem;
+        padding: 0 0.4375rem;
+        min-width: 2.875rem;
         min-height: 0;
         text-align: center;
         text-decoration: none !important;
-        border-radius: 0.25rem;
+        border-radius: 0.3125rem;
         outline: none;
         box-shadow: none;
         -webkit-appearance: none;
         border: none;
         background: transparent;
         color: var(--oc-toolbar-color);
-        font-size: 0.875rem;
-        margin-right: 0.5rem;
-        line-height: 1.875rem;
+        font-size: 1rem;
+        margin-right: 0.5625rem;
+        line-height: 2.125rem;
 
         &.control-button {
             color: var(--oc-toolbar-color);
-            font-size: 0.875rem;
-            margin-right: 0.5rem;
-            line-height: 1.875rem;
+            font-size: 1rem;
+            margin-right: 0.5625rem;
+            line-height: 2.125rem;
         }
 
         &.icon-only {
-            min-width: 1.875rem;
+            min-width: 2.125rem;
         }
 
         &[disabled] {
@@ -201,11 +200,11 @@
         i {
             display: inline-block;
             position: relative;
-            font-size: 1rem;
+            font-size: 1.125rem;
             top: 1px;
 
             + span.button-label {
-                margin-left: 0.375rem;
+                margin-left: 0.4375rem;
             }
         }
 
@@ -239,8 +238,8 @@
     white-space: nowrap;
     width: 100%;
     overflow: hidden;
-    padding: .3rem;
-    margin: -.3rem;
+    padding: 0.3125rem;
+    margin: -0.3125rem;
 }
 
 @media (pointer: coarse) {
@@ -254,7 +253,7 @@
  */
 .control-toolbar.form-toolbar {
     background-color: var(--oc-content-tab-content-bg);
-    border-radius: 0.375rem;
+    border-radius: 0.4375rem;
 
     /* White hover text needs the darker slate fill */
     .btn-outline.theme-secondary {
@@ -266,11 +265,11 @@
     }
 
     :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
-        --bs-btn-padding-x: .5rem;
-        --bs-btn-padding-y: .4rem;
+        --bs-btn-padding-x: 0.5625rem;
+        --bs-btn-padding-y: 0.4375rem;
         border: none;
-        font-size: 0.875rem;
-        margin-right: 0.5rem;
+        font-size: 1rem;
+        margin-right: 0.5625rem;
         transition: all 0.15s ease-in-out;
 
         &::before {
@@ -313,16 +312,16 @@
 
         :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
             text-align: center;
-            height: 2.375rem;
-            width: 2.375rem;
-            line-height: 2.375rem;
+            height: 2.6875rem;
+            width: 2.6875rem;
+            line-height: 2.6875rem;
             color: #333;
             background: transparent;
             user-select: none;
             box-shadow: none;
             text-shadow: none;
             border-radius: 0;
-            font-size: 0.875rem;
+            font-size: 1rem;
 
             > i {
                 opacity: 1;
@@ -390,8 +389,8 @@
 
         :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
             border-radius: 0 !important;
-            padding-top: 0.75rem;
-            padding-bottom: 0.8125rem;
+            padding-top: 0.875rem;
+            padding-bottom: 0.9375rem;
             margin-right: 0;
             box-shadow: none;
         }
@@ -399,14 +398,14 @@
         input.form-control,
         .form-control.form-adorn {
             border: none;
-            padding: 0.6875rem 0.8125rem 0.75rem;
+            padding: 0.8125rem 0.9375rem 0.875rem;
             height: auto;
             border-radius: 0 !important;
         }
 
         div.loading-indicator-container.size-input-text {
             .loading-indicator {
-                top: 0.375rem;
+                top: 0.4375rem;
             }
         }
     }

@@ -23,23 +23,23 @@
     background-color: var(--oc-filter-bg);
     border-top: 1px solid var(--oc-filter-border);
     border-bottom: 1px solid var(--oc-filter-border);
-    font-size: 0.875rem;
+    font-size: 1rem;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     /* Match the list header's line, vertical padding and collapsed border. */
-    min-height: calc(1lh + 1.25rem + var(--bs-border-width));
+    min-height: calc(1lh + 1.4375rem + var(--bs-border-width));
 
     .filter-row {
         display: flex;
         align-items: center;
         min-width: 0;
-        min-height: calc(1lh + 1.25rem - var(--bs-border-width));
+        min-height: calc(1lh + 1.4375rem - var(--bs-border-width));
     }
 
     .filter-primary {
         position: relative;
-        min-height: calc(1lh + 1.25rem + var(--bs-border-width));
+        min-height: calc(1lh + 1.4375rem + var(--bs-border-width));
         border-bottom: var(--bs-border-width) solid var(--oc-filter-border);
 
         > .filter-list-controls {
@@ -58,18 +58,18 @@
             flex: 1;
             align-self: stretch;
             min-width: 0;
-            padding: 0.625rem;
+            padding: 0.6875rem;
             overflow: hidden;
         }
     }
 
     /* A primary dropdown's options as a row of equal boxes, which overflow into a scroll when they no longer fit */
     .scope-tabs {
-        --bs-nav-gap: 0.625rem;
-        --bs-nav-link-gap: 0.375rem;
+        --bs-nav-gap: 0.6875rem;
+        --bs-nav-link-gap: 0.4375rem;
         --bs-nav-link-justify: flex-start;
         --bs-nav-link-padding-y: var(--bs-btn-input-padding-y);
-        --bs-nav-link-padding-x: 0.875rem;
+        --bs-nav-link-padding-x: 1rem;
         --bs-nav-link-color: var(--bs-fg-body);
         --bs-nav-link-hover-color: var(--bs-fg-body);
         --bs-nav-link-hover-bg: var(--bs-bg-body);
@@ -82,7 +82,7 @@
 
         .nav-link {
             align-items: center;
-            flex: 1 0 8rem;
+            flex: 1 0 9.125rem;
             min-height: var(--bs-btn-input-min-height);
             font: inherit;
             white-space: nowrap;
@@ -115,14 +115,14 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        width: 1.5rem;
-        height: 1.5rem;
+        width: var(--oc-toolbar-action-size);
+        height: var(--oc-toolbar-action-size);
         line-height: 1;
         border-radius: 0.1875rem;
         color: var(--oc-toolbar-color);
 
         > i {
-            font-size: 1.25rem;
+            font-size: var(--oc-toolbar-action-icon-size);
             line-height: 1;
         }
 
@@ -135,23 +135,23 @@
     .filter-row > .filter-list-controls {
         display: flex;
         align-items: center;
-        gap: 0.625rem;
+        gap: 0.6875rem;
         margin-inline-start: auto;
-        padding: 0.25rem 0.625rem;
+        padding: 0.3125rem 0.6875rem;
         flex-shrink: 0;
         min-width: 0;
 
         > .filter-search {
-            width: 16rem;
+            width: 18.3125rem;
             min-width: 0;
 
             .form-control {
-                --bs-control-min-height: 1.75rem;
+                --bs-control-min-height: 2rem;
                 --bs-control-padding-y: 0;
-                --bs-control-padding-x: 0.625rem;
-                --bs-control-font-size: 0.875rem;
-                --bs-form-adorn-icon-size: 1rem;
-                height: 1.75rem;
+                --bs-control-padding-x: 0.6875rem;
+                --bs-control-font-size: 1rem;
+                --bs-form-adorn-icon-size: 1.125rem;
+                height: 2rem;
             }
 
             /* A compact search sits against the list setup and grows to the left when focused */
@@ -169,7 +169,7 @@
     /* Positioned, so the loading spinner centres over the setup button it replaces */
     .filter-row > .filter-setup {
         position: relative;
-        padding: 0.375rem 0.625rem;
+        padding: 0.4375rem 0.6875rem;
         flex-shrink: 0;
 
     }
@@ -183,12 +183,12 @@
         > .filter-scopes {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.5625rem;
             white-space: nowrap;
             width: 100%;
             overflow: hidden;
-            padding: .3rem;
-            margin: -.3rem;
+            padding: 0.3125rem;
+            margin: -0.3125rem;
         }
     }
 
@@ -201,7 +201,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 0.625rem;
+            width: 0.6875rem;
             z-index: 2;
             opacity: 0;
             transition: opacity 0.1s ease-out;
@@ -244,16 +244,16 @@
     }
 
     .filter-group > .filter-scope:not(.filter-chip):not(.scope-tabs) {
-        padding: 0.5rem;
+        padding: 0.5625rem;
         display: block;
 
         .filter-label {
-            margin-right: 0.3125rem;
+            margin-right: 0.375rem;
         }
 
         .filter-setting {
             display: inline-block;
-            margin-right: 0.3125rem;
+            margin-right: 0.375rem;
             transition: color 0.6s;
         }
 
@@ -267,24 +267,24 @@
                 > span {
                     left: unset;
                     right: 0;
-                    top: 0.625rem;
+                    top: 0.6875rem;
                     background-color: var(--oc-filter-bg);
                     border-radius: 50%;
                     margin-top: 0;
-                    width: 1.25rem;
-                    height: 1.25rem;
-                    background-size: 0.9375rem 0.9375rem;
+                    width: 1.4375rem;
+                    height: 1.4375rem;
+                    background-size: 1.0625rem 1.0625rem;
                 }
             }
         }
 
         &.active {
             .filter-setting {
-                padding-left: 0.3125rem;
-                padding-right: 0.3125rem;
+                padding-left: 0.375rem;
+                padding-right: 0.375rem;
                 color: #FFF;
                 background-color: var(--oc-filter-bg-active);
-                border-radius: 0.25rem;
+                border-radius: 0.3125rem;
                 transition: color 1s, background-color 1s;
             }
         }
@@ -304,7 +304,7 @@
 
     .filter-group > .filter-has-popover {
         display: inline-block;
-        padding: 0.625rem;
+        padding: 0.6875rem;
         .filter-setting {
             display: inline-block;
             transition: color 0.6s;
@@ -312,11 +312,11 @@
 
         &.active {
             .filter-setting {
-                padding-left: 0.3125rem;
-                padding-right: 0.3125rem;
+                padding-left: 0.375rem;
+                padding-right: 0.375rem;
                 color: #FFF;
                 background-color: var(--oc-filter-bg-active);
-                border-radius: 0.25rem;
+                border-radius: 0.3125rem;
                 transition: color 1s, background-color 1s;
             }
         }
@@ -346,12 +346,12 @@
             }
 
             .form-control {
-                --bs-control-padding-x: 0.375rem;
+                --bs-control-padding-x: 0.4375rem;
             }
 
             .clear-input-text {
-                width: 1rem;
-                height: 1rem;
+                width: 1.125rem;
+                height: 1.125rem;
                 margin: 0;
             }
         }
@@ -383,7 +383,7 @@
         }
 
         &:after {
-            --loader-size: 1.25rem;
+            --loader-size: 1.4375rem;
             content: '';
             position: absolute;
             left: 50%;
@@ -407,17 +407,13 @@
 }
 
 .control-filter-popover {
-    min-width: 17.1875rem;
-    font-size: var(--bs-btn-input-sm-font-size);
-    line-height: var(--bs-btn-input-sm-line-height);
-
-    .form-adorn {
-        --bs-form-adorn-icon-size: 1rem;
-    }
+    min-width: 19.625rem;
+    font-size: var(--bs-btn-input-font-size);
+    line-height: var(--bs-btn-input-line-height);
 
     /* A number input, bare or with its adornments, sized for a number so a range fits on one row, while a single number fills its row */
     .filter-number {
-        width: 9rem;
+        width: 10.3125rem;
 
         > input {
             min-width: 0;
@@ -430,22 +426,22 @@
 
     /* The count of a relative date, beside its unit */
     .filter-count {
-        width: 4.5rem;
+        width: 5.125rem;
     }
 
     /* The saved sets, each with its delete button, in a list that scrolls once it is long */
     .filter-saved-list {
-        max-height: 15rem;
+        max-height: 17.125rem;
         margin: 0;
-        padding: 0.375rem 0;
+        padding: 0.4375rem 0;
         overflow: auto;
         list-style: none;
 
         > li {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.125rem 0.375rem 0.125rem 0.75rem;
+            gap: 0.5625rem;
+            padding: 0.125rem 0.4375rem 0.125rem 0.875rem;
         }
 
         .filter-saved-name {
@@ -458,7 +454,7 @@
     /* The save form's new name and saved set fields, each labelled above */
     .filter-saved-field > .form-label {
         display: block;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.3125rem;
         color: var(--bs-fg-body);
         font-weight: 500;
     }
@@ -468,27 +464,25 @@
     }
 
     > .loading-indicator-container > .loading-indicator {
-        border-radius: 0.25rem;
+        border-radius: 0.3125rem;
 
         > span {
-            left: 0.625rem;
+            left: 0.6875rem;
         }
     }
 
     .filter-buttons {
         border-top: 1px solid var(--oc-filter-border);
-        padding: 0.625rem;
+        padding: 0.6875rem;
         display: flex;
-        border-bottom-left-radius: 0.3125rem;
-        border-bottom-right-radius: 0.3125rem;
+        border-bottom-left-radius: 0.375rem;
+        border-bottom-right-radius: 0.375rem;
 
         > div {
             flex-grow: 1;
         }
 
         > :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
-            --bs-btn-padding-y: var(--bs-btn-input-sm-padding-y);
-            --bs-btn-padding-x: var(--bs-btn-input-sm-padding-x);
             text-align: center;
         }
     }

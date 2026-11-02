@@ -123,7 +123,7 @@ export function registerDataTable(jax) {
                 rows: lockerData.length ? lockerData : (hasPlaceholder ? [] : [{}]),
                 rowHeaders: !!options.rowHeaders,
                 height: typeof options.height === 'number' ? options.height : 'auto',
-                rowHeight: options.rowHeights || 30,
+                rowHeight: options.rowHeights || 34,
                 wrapNavigation: options.autoWrapRow !== false,
                 decimalSeparator: this.getDecimalSeparator(),
                 minRows: options.minRows || 0,

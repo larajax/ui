@@ -8,7 +8,7 @@
     data-add-label="<?= e(__('Add :name')) ?>"
     data-remove-label="<?= e(__('Remove :name')) ?>"
     role="group"
-    aria-labelledby="<?= $scope->getId('title') ?>"
+    aria-label="<?= e($this->getHeaderValue()) ?>"
 >
     <input
         type="hidden"
@@ -17,8 +17,6 @@
         data-groupfilter-datalocker />
 
     <div class="filter-group-body">
-        <h3 class="filter-title" id="<?= $scope->getId('title') ?>"><?= e($this->getHeaderValue()) ?></h3>
-
         <?php if ($scope->matchMode === 'toggle' || $scope->matchMode === true): ?>
             <?php /* Posts exclude while on, and nothing while off, which the group reads as include */ ?>
             <div class="filter-mode form-field mb-0">
@@ -41,7 +39,7 @@
         <?php endif ?>
 
         <div class="filter-search loading-indicator-container size-input-text">
-            <label class="form-control form-control-sm form-adorn">
+            <label class="form-control form-adorn">
                 <span class="form-adorn-icon" aria-hidden="true">
                     <?= \Larajax\Ui\Facades\Ui::icon('search.icon') ?>
                 </span>
@@ -70,11 +68,11 @@
     </div>
 
     <div class="filter-buttons">
-        <button type="button" class="btn-solid theme-secondary btn-sm" data-filter-action="clear">
+        <button type="button" class="btn-solid theme-secondary" data-filter-action="clear">
             <?= __('Clear') ?>
         </button>
         <div class="flex-grow-1"></div>
-        <button type="button" class="btn-solid theme-primary btn-sm" data-filter-action="apply">
+        <button type="button" class="btn-solid theme-primary" data-filter-action="apply">
             <?= __('Apply') ?>
         </button>
     </div>

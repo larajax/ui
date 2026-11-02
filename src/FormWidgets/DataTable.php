@@ -319,7 +319,7 @@ class DataTable extends FormWidgetBase
             'autoWrapRow' => true,
             'autoWrapCol' => true,
             'undo' => true,
-            'rowHeights' => 30,
+            'rowHeights' => 34,
             'height' => $height ?: 'auto',
             'search' => $searching,
         ];
