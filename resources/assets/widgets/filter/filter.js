@@ -67,6 +67,16 @@ export function registerFilterWidget(jax) {
                     group.dataset.filterOrder ??= index;
                 });
             }
+
+            // Primary tabs scroll inside their group, which stays in place when the tabs render again
+            const primaryGroup = this.element.querySelector('.filter-primary > .filter-group');
+            if (primaryGroup?.querySelector('.scope-tabs')) {
+                this.primaryScrollable = primaryGroup;
+                this.primaryDragScroll = new DragScroll(primaryGroup, {
+                    scrollClassContainer: primaryGroup.parentNode
+                });
+                this.revealActiveTab();
+            }
         }
 
         unbindScrollable() {
@@ -74,17 +84,46 @@ export function registerFilterWidget(jax) {
                 this.dragScroll.dispose();
             }
 
+            if (this.primaryDragScroll) {
+                this.primaryDragScroll.dispose();
+            }
+
             this.dragScroll = null;
             this.scrollable = null;
+            this.primaryDragScroll = null;
+            this.primaryScrollable = null;
         }
 
-        // Rebinds the scrollable area when the entire container is replaced.
+        // Rebinds the scrollable areas when the entire container is replaced, and keeps the primary tabs in view when they render again.
         onContainerUpdate(ev) {
             if (ev.target === this.element) {
                 this.unbindScrollable();
                 this.bindScrollable();
                 this.orderScopes();
             }
+            else if (this.primaryScrollable && ev.target instanceof Node && this.primaryScrollable.contains(ev.target)) {
+                this.revealActiveTab();
+            }
+        }
+
+        // Scrolls the primary tabs, and only them, so the active tab is in view.
+        revealActiveTab() {
+            const scrollable = this.primaryScrollable,
+                tab = scrollable ? scrollable.querySelector('.scope-tabs .active') : null;
+
+            if (tab) {
+                const left = tab.offsetLeft,
+                    right = left + tab.offsetWidth;
+
+                if (left < scrollable.scrollLeft) {
+                    scrollable.scrollLeft = left;
+                }
+                else if (right > scrollable.scrollLeft + scrollable.clientWidth) {
+                    scrollable.scrollLeft = right - scrollable.clientWidth;
+                }
+            }
+
+            this.primaryDragScroll?.fixScrollClasses();
         }
 
         // Active scopes lead, with the configured order retained within both groups.

@@ -552,7 +552,7 @@ describe('checkbox chips', () => {
 
 describe('primary scope tabs', () => {
     function tabsMarkup(value = '') {
-        return `<div class="filter-scope scope-tabs nav nav-underline" data-scope-name="status" role="group" aria-label="Status">
+        return `<div class="filter-scope scope-tabs nav" data-scope-name="status" role="group" aria-label="Status">
             ${[['', 'All statuses'], ['open', 'Open'], ['0', 'Draft']].map(([key, label]) => `<button type="button" class="nav-link ${key === value ? 'active' : ''}" data-filter-tab-value="${key}" aria-pressed="${key === value}"><span>${label}</span></button>`).join('')}
         </div>`;
     }
@@ -604,6 +604,30 @@ describe('primary scope tabs', () => {
         expect([...document.querySelectorAll('[data-filter-tab-value]')].map(tab => tab.dataset.filterTabValue)).toEqual(['', 'open', '0']);
         expect(document.activeElement).toBe(secondary);
         expect(document.querySelector('.filter-primary .scope-tabs')).not.toBe(null);
+    });
+
+    test('tabs wider than their row drag scroll in their group, which brings the picked tab into view when they render again', async () => {
+        renderFilter(`<div class="filter-row filter-primary"><div class="filter-group" id="status-group">${tabsMarkup()}</div></div>`);
+        const group = document.getElementById('status-group');
+
+        // A row narrower than its tabs, measured as a browser lays it out
+        Object.defineProperties(group, {
+            clientWidth: { configurable: true, value: 300 },
+            offsetWidth: { configurable: true, value: 300 },
+            scrollWidth: { configurable: true, value: 1000 }
+        });
+
+        group.innerHTML = tabsMarkup('0');
+        Object.defineProperties(group.querySelector('[data-filter-tab-value="0"]'), {
+            offsetLeft: { configurable: true, value: 800 },
+            offsetWidth: { configurable: true, value: 120 }
+        });
+        jax.Events.dispatch('ajax:update', { target: group });
+        await sleep(50);
+
+        expect(group.scrollLeft).toBe(620);
+        expect(group.parentNode.classList.contains('scroll-before')).toBe(true);
+        expect(group.parentNode.classList.contains('scroll-after')).toBe(true);
     });
 });
 

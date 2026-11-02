@@ -193,7 +193,7 @@ $filter = Filter::make(
 $filter->bindToListWidget($list);
 ```
 
-Alternatively, set `primary` to the name of a `dropdown` scope, such as `primary: 'status'`. That scope renders once as underline tabs in the primary row; search and list setup stay with the remaining scopes in the secondary row. Its definition remains a normal dropdown:
+Alternatively, set `primary` to the name of a `dropdown` scope, such as `primary: 'status'`. That scope renders once as a row of equal-width tabs in the primary row, which drag scrolls when the tabs no longer fit; search and list setup stay with the remaining scopes in the secondary row. Its definition remains a normal dropdown:
 
 ```yaml
 scopes:

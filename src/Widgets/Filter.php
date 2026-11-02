@@ -144,6 +144,20 @@ class Filter extends WidgetBase implements FilterElement
 
         $this->initFilterWidgetsConcern();
         $this->initSearchWidget();
+        $this->initPrimarySearch();
+    }
+
+    /**
+     * initPrimarySearch makes a search in its own row fill the row instead of growing when focused.
+     */
+    protected function initPrimarySearch(): void
+    {
+        if ($this->primary !== 'search' || !$this->searchWidget) {
+            return;
+        }
+
+        $this->searchWidget->growable = false;
+        $this->searchWidget->cssClasses = array_values(array_diff($this->searchWidget->cssClasses, ['is-growable']));
     }
 
     /**
