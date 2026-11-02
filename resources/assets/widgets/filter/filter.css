@@ -415,6 +415,19 @@
         --bs-form-adorn-icon-size: 1rem;
     }
 
+    /* A number input, bare or with its adornments, sized for a number so a range fits on one row, while a single number fills its row */
+    .filter-number {
+        width: 9rem;
+
+        > input {
+            min-width: 0;
+        }
+    }
+
+    .is-grow > .filter-number {
+        width: 100%;
+    }
+
     /* The saved sets, each with its delete button, in a list that scrolls once it is long */
     .filter-saved-list {
         max-height: 15rem;
@@ -455,17 +468,6 @@
         > span {
             left: 0.625rem;
         }
-    }
-
-    /* Hide spinner on numbers */
-    input[type="number"] {
-        -moz-appearance: textfield;
-    }
-
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
     }
 
     .filter-buttons {

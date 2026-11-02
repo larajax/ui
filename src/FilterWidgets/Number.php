@@ -3,6 +3,7 @@
 use Db;
 use DbDongle;
 use Larajax\Ui\Classes\FilterWidgetBase;
+use Larajax\Ui\Helpers\NumberFormat;
 
 /**
  * Number filter
@@ -67,16 +68,66 @@ class Number extends FilterWidgetBase
     {
         $scope = $this->filterScope;
         if ($scope->condition === self::CONDITION_BETWEEN) {
-            return $scope->min.' – '.$scope->max;
+            return $this->getDisplayValue($scope->min).' – '.$this->getDisplayValue($scope->max);
         }
 
-        $prefix = match ($scope->condition) {
+        $operator = match ($scope->condition) {
             self::CONDITION_GREATER => '≥ ',
             self::CONDITION_LESSER => '≤ ',
             default => '',
         };
 
-        return $prefix.$scope->value;
+        return $operator.$this->getDisplayValue($scope->value);
+    }
+
+    /**
+     * getNumberFormat returns how the scope shows its numbers, or null when it shows them as typed.
+     *
+     * @return array{locale: string, decimals: int|null, grouping: bool}|null
+     */
+    public function getNumberFormat(): ?array
+    {
+        return NumberFormat::resolve($this->filterScope->format);
+    }
+
+    /**
+     * hasAdornment returns true when the scope shows text or an icon inside its inputs.
+     */
+    public function hasAdornment(): bool
+    {
+        foreach (['prefix', 'suffix', 'prefixIcon', 'suffixIcon'] as $option) {
+            if ((string) $this->filterScope->{$option} !== '') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * getDisplayValue returns a number as the chip shows it, in the scope's format and between its prefix and suffix text.
+     */
+    public function getDisplayValue(mixed $value): string
+    {
+        $scope = $this->filterScope;
+        $display = NumberFormat::toPlainString($value);
+
+        if ($numberFormat = $this->getNumberFormat()) {
+            $display = NumberFormat::format($display, $numberFormat);
+        }
+
+        // A word such as USD stands apart from the number, while a symbol such as $ or % joins it
+        $prefix = (string) $scope->prefix !== '' ? (string) __($scope->prefix) : '';
+        if ($prefix !== '') {
+            $display = $prefix.(preg_match('/[\p{L}\p{N}]$/u', $prefix) ? ' ' : '').$display;
+        }
+
+        $suffix = (string) $scope->suffix !== '' ? (string) __($scope->suffix) : '';
+        if ($suffix !== '') {
+            $display .= (preg_match('/^[\p{L}\p{N}]/u', $suffix) ? ' ' : '').$suffix;
+        }
+
+        return $display;
     }
 
     /**

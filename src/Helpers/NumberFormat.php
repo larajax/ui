@@ -9,6 +9,27 @@
 class NumberFormat
 {
     /**
+     * resolve returns the display format of a format option given as true or an array of locale, decimals and grouping, or null when the option is off.
+     *
+     * @param  bool|array{locale?: string, decimals?: int, grouping?: bool}|null  $format
+     * @return array{locale: string, decimals: int|null, grouping: bool}|null
+     */
+    public static function resolve(mixed $format): ?array
+    {
+        if (!$format) {
+            return null;
+        }
+
+        $options = is_array($format) ? $format : [];
+
+        return [
+            'locale' => str_replace('_', '-', (string) ($options['locale'] ?? app()->getLocale())),
+            'decimals' => isset($options['decimals']) ? max(0, (int) $options['decimals']) : null,
+            'grouping' => (bool) ($options['grouping'] ?? true),
+        ];
+    }
+
+    /**
      * format returns a plain number with the separators and decimals of a format, or the value unchanged when it is not a plain number or the locale's separators are unknown.
      *
      * @param  array{locale: string, decimals: int|null, grouping: bool}  $format

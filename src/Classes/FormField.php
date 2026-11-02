@@ -8,6 +8,7 @@ use Lang;
 use October\Rain\Database\Model;
 use October\Rain\Html\Helper as HtmlHelper;
 use October\Rain\Element\Form\FieldDefinition;
+use Larajax\Ui\Helpers\NumberFormat;
 use Illuminate\Support\Collection;
 use SystemException;
 use Exception;
@@ -123,17 +124,11 @@ class FormField extends FieldDefinition
      */
     public function getNumberFormat(): ?array
     {
-        if ($this->type !== 'number' || !$this->format) {
+        if ($this->type !== 'number') {
             return null;
         }
 
-        $options = is_array($this->format) ? $this->format : [];
-
-        return [
-            'locale' => str_replace('_', '-', (string) ($options['locale'] ?? app()->getLocale())),
-            'decimals' => isset($options['decimals']) ? max(0, (int) $options['decimals']) : null,
-            'grouping' => (bool) ($options['grouping'] ?? true),
-        ];
+        return NumberFormat::resolve($this->format);
     }
 
     /**
