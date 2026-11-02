@@ -370,7 +370,7 @@ class Group extends FilterWidgetBase
 
         // Exact
         foreach ($options as $index => $option) {
-            if (Str::is(Str::lower($option), $query)) {
+            if (Str::is(Str::lower($this->getOptionLabel($option)), $query)) {
                 $filteredOptions[$index] = $option;
                 unset($options[$index]);
             }
@@ -379,12 +379,25 @@ class Group extends FilterWidgetBase
         // Fuzzy
         $words = explode(' ', $query);
         foreach ($options as $index => $option) {
-            if ($optionMatchesSearch($words, $option)) {
+            if ($optionMatchesSearch($words, $this->getOptionLabel($option))) {
                 $filteredOptions[$index] = $option;
             }
         }
 
         return $filteredOptions;
+    }
+
+    /**
+     * getOptionLabel returns the label an option shows, which may be given alone or as the first of a label and an icon or color.
+     */
+    protected function getOptionLabel(mixed $option): string
+    {
+        $name = (string) (is_array($option) ? ($option[0] ?? '') : $option);
+
+        // An option named like a language file, such as "validation", translates to the whole file
+        $translated = __($name);
+
+        return is_string($translated) ? $translated : $name;
     }
 
     /**
@@ -395,12 +408,7 @@ class Group extends FilterWidgetBase
         $processed = [];
 
         foreach ($options as $id => $result) {
-            $name = is_array($result) ? ($result[0] ?? '') : $result;
-
-            // An option named like a language file, such as "validation", translates to the whole file
-            $translated = __($name);
-
-            $processed[] = ['id' => $id, 'name' => is_string($translated) ? $translated : $name];
+            $processed[] = ['id' => $id, 'name' => $this->getOptionLabel($result)];
         }
 
         return $processed;
