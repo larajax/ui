@@ -6,10 +6,8 @@
  * verbatim alongside the rest of the assets. There is no runtime bundler; the
  * build only prepares vendored files ahead of publishing.
  */
-import fs from 'fs';
 import path from 'path';
-import * as esbuild from 'esbuild';
-import { bundle, bundleVirtual, copy, nodeModules, vendorDir } from './build-util.js';
+import { bundle, bundleVirtual, copy, vendorDir } from './build-util.js';
 import { buildRichArea } from './packages/richarea/build.js';
 import { buildHotsheet } from './packages/hotsheet/build.js';
 
@@ -81,118 +79,4 @@ console.log('  ✓ richarea/richarea.js, richarea.css and base-styles.css (bundl
 await buildHotsheet({ outdir: path.join(vendorDir, 'hotsheet') });
 console.log('  ✓ hotsheet/hotsheet.js and hotsheet.css (bundled)');
 
-// Monaco (code editor) - Monaco's own editor.main.js limited to the languages
-// the codeeditor form widget offers, with Emmet, bundled as ESM alongside its
-// stylesheet (including its icon font) and the language service workers it starts.
-await bundleMonaco({
-    languages: ['css', 'html', 'javascript', 'less', 'markdown', 'php', 'scss', 'twig', 'yaml'],
-    services: ['css', 'html', 'json']
-});
-console.log('  ✓ monaco/monaco.js, monaco.css and workers (bundled)');
-
 console.log('\n  Done.\n');
-
-/**
- * bundleMonaco writes monaco.js with the basic languages and language services given, plus a
- * worker file for each service, where the editor finds its workers next to itself.
- */
-async function bundleMonaco({ languages, services }) {
-    const editorDir = path.join(nodeModules, 'monaco-editor/esm/vs/editor');
-    const outdir = path.join(vendorDir, 'monaco');
-    const toImportPath = (file) => file.split(path.sep).join('/');
-    const excludedFeatures = new Set([
-        'contrib/codelens/browser/codelensController.js',
-        'contrib/inlineCompletions/browser/inlineCompletions.contribution.js',
-        'contrib/inlayHints/browser/inlayHintsContribution.js',
-        'contrib/rename/browser/rename.js',
-        'contrib/stickyScroll/browser/stickyScrollContribution.js',
-        'standalone/browser/quickAccess/standaloneCommandsQuickAccess.js'
-    ].map((file) => path.join(editorDir, file)));
-
-    const lines = fs.readFileSync(path.join(editorDir, 'editor.main.js'), 'utf8').split('\n');
-    const kept = lines.filter((line) => {
-        if (line.includes('monaco-lsp-client') || line.includes('export { index as lsp }')) {
-            return false;
-        }
-
-        const definition = /languages\/definitions\/([\w-]+)\/register\.js/.exec(line);
-        if (definition) {
-            return languages.includes(definition[1]);
-        }
-
-        const feature = /languages_features_(\w+)_register_ts/.exec(line);
-        if (feature) {
-            return services.includes(feature[1]);
-        }
-
-        return true;
-    });
-
-    // Each language service names its worker by language id, the rest use the editor worker
-    const workerLabels = { css: 'css', scss: 'css', less: 'css', html: 'html', handlebars: 'html', razor: 'html', json: 'json' };
-
-    const contents = kept.join('\n') + `
-export { emmetHTML, emmetCSS } from '${toImportPath(path.join(nodeModules, 'emmet-monaco-es/dist/emmet-monaco.esm.js'))}';
-
-const workerLabels = ${JSON.stringify(workerLabels)};
-
-if (!self.MonacoEnvironment) {
-    self.MonacoEnvironment = {
-        getWorker(moduleId, label) {
-            // Literal worker URLs let Vite resolve and fingerprint these files.
-            switch (workerLabels[label]) {
-                case 'css':
-                    return new Worker(new URL('./css.worker.js', import.meta.url));
-                case 'html':
-                    return new Worker(new URL('./html.worker.js', import.meta.url));
-                case 'json':
-                    return new Worker(new URL('./json.worker.js', import.meta.url));
-                default:
-                    return new Worker(new URL('./editor.worker.js', import.meta.url));
-            }
-        }
-    };
-}
-`;
-
-    fs.rmSync(outdir, { recursive: true, force: true });
-
-    await esbuild.build({
-        stdin: { contents, resolveDir: editorDir, sourcefile: 'monaco.js' },
-        bundle: true,
-        format: 'esm',
-        outfile: path.join(outdir, 'monaco.js'),
-        // Vite copies this stylesheet verbatim when loaded via new URL().
-        loader: { '.ttf': 'dataurl' },
-        assetNames: '[name]',
-        plugins: [{
-            name: 'omit-ide-features',
-            setup(build) {
-                // These optional registrations also arrive through language services.
-                // Let esbuild omit their side-effect imports throughout the bundle.
-                build.onResolve({ filter: /^\./ }, (args) => {
-                    const resolved = path.resolve(args.resolveDir, args.path);
-                    if (excludedFeatures.has(resolved)) {
-                        return { path: resolved, sideEffects: false };
-                    }
-                });
-            }
-        }],
-        minify: true,
-        logLevel: 'warning'
-    });
-
-    const workers = { editor: path.join(editorDir, 'editor.worker.js') };
-    services.forEach((name) => {
-        workers[name] = path.join(nodeModules, `monaco-editor/esm/vs/language/${name}/${name}.worker.js`);
-    });
-
-    await esbuild.build({
-        entryPoints: Object.fromEntries(Object.entries(workers).map(([name, file]) => [name + '.worker', file])),
-        bundle: true,
-        format: 'iife',
-        outdir,
-        minify: true,
-        logLevel: 'warning'
-    });
-}

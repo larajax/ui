@@ -31,7 +31,6 @@ const CONTROL_IDS = [
     'sensitive',
     'colorpicker',
     'richeditor',
-    'codeeditor',
     'markdowneditor',
     'datatable',
     'phone-input',

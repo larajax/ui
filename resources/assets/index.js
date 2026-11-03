@@ -60,7 +60,6 @@ import { registerRecordFinder } from './formwidgets/recordfinder/recordfinder.js
 import { registerSensitive } from './formwidgets/sensitive/sensitive.js';
 import { registerColorPicker } from './formwidgets/colorpicker/colorpicker.js';
 import { registerRichEditor } from './formwidgets/richeditor/richeditor.js';
-import { registerCodeEditor } from './formwidgets/codeeditor/codeeditor.js';
 import { registerMarkdownEditor } from './formwidgets/markdowneditor/markdowneditor.js';
 import { registerDataTable } from './formwidgets/datatable/datatable.js';
 import { registerPhone } from './formwidgets/phone/phone.js';
@@ -142,7 +141,6 @@ export function registerUi(jax) {
     registerSensitive(jax);
     registerColorPicker(jax);
     registerRichEditor(jax);
-    registerCodeEditor(jax);
     registerMarkdownEditor(jax);
     registerDataTable(jax);
     registerPhone(jax);
