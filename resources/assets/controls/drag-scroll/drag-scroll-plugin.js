@@ -18,7 +18,7 @@ if ($) {
         return this.each(function() {
             var $this = $(this);
             var data = $this.data('oc.dragScroll');
-            var options = typeof option == 'object' && option;
+            var options = typeof option == 'object' && unwrapOptions(option);
 
             if (!data) $this.data('oc.dragScroll', (data = new DragScroll(this, options)));
             if (typeof option == 'string') {
@@ -36,4 +36,17 @@ if ($) {
         $.fn.dragScroll = old;
         return this;
     };
+
+    // Options given as jQuery objects, such as scrollMarkerContainer, are passed as their element
+    function unwrapOptions(option) {
+        var options = Object.assign({}, option);
+
+        Object.keys(options).forEach(function(key) {
+            if (options[key] instanceof $) {
+                options[key] = options[key].get(0) || null;
+            }
+        });
+
+        return options;
+    }
 }

@@ -58,6 +58,8 @@ await bundleVirtual(
 // Select2 with a private jQuery instance in a single ESM bundle. The
 // custom-select control imports the returned jQuery; window.jQuery is never
 // touched, so jQuery stays an implementation detail of this one control.
+// The UMD wrappers inside would register with a page's AMD loader, such as
+// Monaco's, instead of returning their exports, so define reads as undefined.
 await bundleVirtual(
     [
         "import $ from 'jquery';",
@@ -65,7 +67,8 @@ await bundleVirtual(
         "select2(window, $);",
         "export default $;"
     ].join('\n'),
-    'select2/select2.esm.js'
+    'select2/select2.esm.js',
+    { define: { define: 'undefined' } }
 );
 
 // RichArea (rich text editor on TipTap) - built from packages/richarea for the

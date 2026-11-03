@@ -1,6 +1,5 @@
 <?php namespace Larajax\Ui\Classes;
 
-use Illuminate\View\ComponentAttributeBag;
 use Larajax\Ui\Classes\Icons\IconPack;
 
 /**
@@ -48,7 +47,17 @@ class IconManager
         $attributes['class'] = trim($class . ' ' . $this->normalizeAttributeClass($attributes['class'] ?? ''));
         $attributes['aria-hidden'] ??= 'true';
 
-        return '<i ' . (new ComponentAttributeBag($attributes)) . '></i>';
+        $html = [];
+
+        foreach ($attributes as $name => $value) {
+            if ($value === null || $value === false) {
+                continue;
+            }
+
+            $html[] = $value === true ? e($name) : e($name) . '="' . e($value) . '"';
+        }
+
+        return '<i ' . implode(' ', $html) . '></i>';
     }
 
     /**

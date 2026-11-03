@@ -757,7 +757,7 @@ table.table.data {
         background-color: var(--oc-form-control-bg);
         border-top: none;
 
-        .filter-group > .filter-scope {
+        .filter-group > .filter-scope:not(.filter-chip) {
             padding: 0.6875rem;
         }
     }
