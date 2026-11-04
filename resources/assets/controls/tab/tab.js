@@ -59,7 +59,6 @@ export function registerTab(jax) {
                 scrollClassContainer: this.element
             });
 
-            this.updateClasses();
             this.showHashedAnchorTab();
         }
 
@@ -188,10 +187,6 @@ export function registerTab(jax) {
             if (anchor) {
                 jax.Events.dispatch('tab:shown', { target: anchor });
             }
-        }
-
-        updateClasses() {
-            this.element.classList.toggle('has-tabs', this.nav.children.length > 0);
         }
 
         // Returns the index of a tab or pane, or of the active tab when none is given.

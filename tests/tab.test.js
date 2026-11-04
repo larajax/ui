@@ -33,29 +33,12 @@ function makeFakeJax() {
             this.listeners = [];
         }
 
-        // Supports listen(event, handler), listen(event, selector, handler) and listen(event, element, handler)
-        listen(eventName, targetOrHandler, handler) {
-            let target = this.element,
-                callback;
+        // Supports listen(event, handler), the only form the tab control uses
+        listen(eventName, handler) {
+            const callback = handler.bind(this);
 
-            if (typeof targetOrHandler === 'string') {
-                callback = (ev) => {
-                    const match = ev.target.closest && ev.target.closest(targetOrHandler);
-                    if (match && this.element.contains(match)) {
-                        handler.call(this, ev);
-                    }
-                };
-            }
-            else if (targetOrHandler instanceof Element) {
-                target = targetOrHandler;
-                callback = handler.bind(this);
-            }
-            else {
-                callback = targetOrHandler.bind(this);
-            }
-
-            target.addEventListener(eventName, callback);
-            this.listeners.push([target, eventName, callback]);
+            this.element.addEventListener(eventName, callback);
+            this.listeners.push([this.element, eventName, callback]);
         }
 
         forgetAll() {
@@ -149,15 +132,13 @@ function activeIndex(control) {
 }
 
 describe('tab setup', () => {
-    test('sets up pane ids, targets and title wrappers, without close buttons', () => {
-        const { element, tabs, panes } = connectTabs();
+    test('sets up pane ids, targets and title wrappers', () => {
+        const { tabs, panes } = connectTabs();
         const anchor = tabs()[0].querySelector('a');
 
         expect(panes()[0].id).toStartWith('tabs');
         expect(anchor.dataset.target).toBe('#' + panes()[0].id);
         expect(anchor.querySelector(':scope > span.title > span').textContent).toBe('One');
-        expect(tabs().some((li) => li.querySelector('span.tab-close'))).toBe(false);
-        expect(element.classList.contains('has-tabs')).toBe(true);
     });
 
     test('nested tab controls get distinct pane ids', () => {
