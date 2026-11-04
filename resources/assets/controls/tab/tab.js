@@ -3,39 +3,19 @@
  *
  * Data attributes:
  * - data-control="tab" - enables the tab control on a .control-tabs element
- * - data-closable - enables the close tab feature
  * - data-linkable - reflects the active tab in the URL hash and opens the
  *   tab matching the hash on page load
- * - data-pane-classes - a list of CSS classes to apply new pane elements
  * - data-tab-url - set on a tab anchor, the URL shown in the address bar when the tab is shown
  *
  * Config:
- * - closable - adds the close icon to the tab and lets users close tabs
  * - linkable - reflects the active tab in the URL, see data-linkable
- * - paneClasses - a list of CSS classes to apply new pane elements
- * - titleAsFileNames - treat tab titles as file names, only the file name part is displayed
- * - maxTitleSymbols - the maximum number of characters in tab titles
- * - closeConfirmation - a confirmation to show when a user tries to close a modified tab
  *
  * Events:
  * - tab:shown - dispatched on a tab anchor after its tab is shown
  * - tab:shown-linkable - dispatched on the tab anchor opened from the URL hash
  * - tab:init-tab - dispatched on the control after a tab is set up, detail { pane, tab }
- * - tab:before-close - dispatched on the control before a tab is closed, detail { relatedTarget },
- *   call preventDefault() to cancel
- * - tab:closed - dispatched on the control after a tab is closed, detail { tab, pane }
- * - tab:after-all-closed - dispatched on the control after all tabs have been closed
- *
- * Dispatch these on a tab, a tab pane or any element inside them:
- * - tab:close - closes the tab, detail { force: true } skips the close confirmation
- * - tab:modified - marks the tab as modified
- * - tab:unmodified - marks the tab as unmodified
  *
  * JavaScript API:
- * jax.fetchControl(element, 'tab').addTab(title, content, identifier, tabClass)
- * jax.fetchControl(element, 'tab').updateTab(tab, title, content)
- * jax.fetchControl(element, 'tab').closeTab(tab, force) - tab is a tab or pane element, or a selector
- * jax.fetchControl(element, 'tab').modifyTab(tab) / unmodifyTab(tab)
  * jax.fetchControl(element, 'tab').goTo(identifier) - opens a tab by its identifier
  * jax.fetchControl(element, 'tab').goToIndex(index)
  * jax.fetchControl(element, 'tab').goToPane(pane)
@@ -56,10 +36,6 @@ export function registerTab(jax) {
             this.invalidElement = false;
             this.dragScroll = null;
 
-            if (this.config.closable) {
-                this.element.setAttribute('data-closable', '');
-            }
-
             // Cast empty attribute
             if (this.config.linkable === '') {
                 this.config.linkable = true;
@@ -75,10 +51,6 @@ export function registerTab(jax) {
             }
 
             this.listen('click', this.onClick);
-            this.listen('mousedown', 'li[data-tab-id]', this.onMiddleClickTab);
-            this.listen('tab:close', this.onCloseTab);
-            this.listen('tab:modified', this.onModifyTab);
-            this.listen('tab:unmodified', this.onUnmodifyTab);
             this.listen('tab:shown', this.onContainerTabShown);
 
             this.tabs().forEach((li) => this.initTab(li));
@@ -102,16 +74,6 @@ export function registerTab(jax) {
         }
 
         onClick(ev) {
-            const closeButton = ev.target.closest('.nav-tabs span.tab-close');
-            if (closeButton) {
-                if (this.ownsElement(closeButton)) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    jax.Events.dispatch('tab:close', { target: closeButton });
-                }
-                return;
-            }
-
             const anchor = ev.target.closest('.nav-tabs a');
             if (!anchor || !this.ownsElement(anchor)) {
                 return;
@@ -119,41 +81,6 @@ export function registerTab(jax) {
 
             ev.preventDefault();
             this.activate(anchor.closest('li'));
-        }
-
-        onMiddleClickTab(ev) {
-            if (ev.button === 1 && this.ownsElement(ev.target)) {
-                jax.Events.dispatch('tab:close', { target: ev.target });
-            }
-        }
-
-        onCloseTab(ev) {
-            if (!this.ownsElement(ev.target)) {
-                return;
-            }
-
-            ev.preventDefault();
-
-            const force = ev.detail && ev.detail.force !== undefined ? ev.detail.force : false;
-            this.closeTab(ev.target.closest('ul.nav-tabs > li, div.tab-content > div'), force);
-        }
-
-        onModifyTab(ev) {
-            if (!this.ownsElement(ev.target)) {
-                return;
-            }
-
-            ev.preventDefault();
-            this.modifyTab(ev.target.closest('ul.nav-tabs > li, div.tab-content > div'));
-        }
-
-        onUnmodifyTab(ev) {
-            if (!this.ownsElement(ev.target)) {
-                return;
-            }
-
-            ev.preventDefault();
-            this.unmodifyTab(ev.target.closest('ul.nav-tabs > li, div.tab-content > div'));
         }
 
         onContainerTabShown(ev) {
@@ -235,13 +162,6 @@ export function registerTab(jax) {
                 anchor.appendChild(title);
             }
 
-            if (!li.querySelector('span.tab-close')) {
-                const closeButton = document.createElement('span');
-                closeButton.className = 'tab-close';
-                closeButton.innerHTML = '<i>&times;</i>';
-                li.appendChild(closeButton);
-            }
-
             jax.Events.dispatch('tab:init-tab', { target: this.element, detail: { pane, tab: li } });
         }
 
@@ -270,166 +190,8 @@ export function registerTab(jax) {
             }
         }
 
-        addTab(title, content, identifier, tabClass) {
-            const processedTitle = this.generateTitleText(title, -1),
-                link = document.createElement('a'),
-                li = document.createElement('li'),
-                pane = document.createElement('div');
-
-            link.setAttribute('href', 'javascript:;');
-            link.textContent = processedTitle;
-            link.setAttribute('title', title);
-            pane.classList.add('tab-pane');
-
-            li.appendChild(link);
-            this.nav.appendChild(li);
-            this.content.appendChild(pane);
-            setPaneContent(pane, content);
-
-            if (tabClass !== undefined) {
-                addClasses(link, tabClass);
-            }
-
-            if (identifier !== undefined) {
-                li.setAttribute('data-tab-id', identifier);
-            }
-
-            if (this.config.paneClasses) {
-                addClasses(pane, this.config.paneClasses);
-            }
-
-            this.initTab(li);
-            this.activate(li);
-
-            dispatchEvent(new Event('resize'));
-
-            if (this.dragScroll) {
-                this.dragScroll.goToElement(li);
-            }
-
-            const defaultFocus = pane.querySelector('[default-focus]');
-            if (defaultFocus && isVisible(defaultFocus)) {
-                defaultFocus.focus();
-            }
-
-            this.updateClasses();
-        }
-
-        updateTab(tab, title, content) {
-            const tabIndex = this.findTabIndex(tab);
-            if (tabIndex === -1) {
-                return;
-            }
-
-            const processedTitle = this.generateTitleText(title, -1),
-                li = this.tabs()[tabIndex],
-                pane = this.panes()[tabIndex],
-                link = li.querySelector('a');
-
-            if (link) {
-                link.textContent = processedTitle;
-                link.setAttribute('title', title);
-            }
-
-            if (pane) {
-                setPaneContent(pane, content);
-            }
-
-            this.initTab(li);
-
-            this.updateClasses();
-        }
-
-        generateTitleText(title, tabIndex) {
-            let newTitle = String(title);
-
-            if (this.config.titleAsFileNames) {
-                newTitle = newTitle.replace(/^.*[\\\/]/, '');
-            }
-
-            if (this.config.maxTitleSymbols && newTitle.length > this.config.maxTitleSymbols) {
-                newTitle = '...' + newTitle.substring(newTitle.length - this.config.maxTitleSymbols);
-            }
-
-            return newTitle;
-        }
-
-        closeTab(tab, force) {
-            const tabIndex = this.findTabIndex(tab);
-            if (tabIndex === -1) {
-                return;
-            }
-
-            const li = this.tabs()[tabIndex],
-                pane = this.panes()[tabIndex],
-                isActive = li.classList.contains('active'),
-                isModified = li.hasAttribute('data-modified');
-
-            if (isModified && this.config.closeConfirmation && force !== true) {
-                if (!confirm(this.config.closeConfirmation)) {
-                    return;
-                }
-            }
-
-            const event = jax.Events.dispatch('tab:before-close', {
-                target: this.element,
-                detail: { relatedTarget: pane }
-            });
-
-            if (event.defaultPrevented) {
-                return;
-            }
-
-            if (pane) {
-                pane.remove();
-            }
-
-            li.remove();
-
-            if (isActive) {
-                this.goToIndex(Math.max(tabIndex - 1, 0));
-            }
-
-            if (!this.tabs().length) {
-                jax.Events.dispatch('tab:after-all-closed', { target: this.element });
-            }
-
-            jax.Events.dispatch('tab:closed', { target: this.element, detail: { tab: li, pane } });
-
-            dispatchEvent(new Event('resize'));
-            this.updateClasses();
-        }
-
         updateClasses() {
             this.element.classList.toggle('has-tabs', this.nav.children.length > 0);
-        }
-
-        modifyTab(tab) {
-            const tabIndex = this.findTabIndex(tab);
-            if (tabIndex === -1) {
-                return;
-            }
-
-            this.tabs()[tabIndex].setAttribute('data-modified', '');
-
-            const pane = this.panes()[tabIndex];
-            if (pane) {
-                pane.setAttribute('data-modified', '');
-            }
-        }
-
-        unmodifyTab(tab) {
-            const tabIndex = this.findTabIndex(tab);
-            if (tabIndex === -1) {
-                return;
-            }
-
-            this.tabs()[tabIndex].removeAttribute('data-modified');
-
-            const pane = this.panes()[tabIndex];
-            if (pane) {
-                pane.removeAttribute('data-modified');
-            }
         }
 
         // Returns the index of a tab or pane, or of the active tab when none is given.
@@ -536,30 +298,6 @@ export function registerTab(jax) {
             return this.nav.querySelector('[data-tab-id="' + CSS.escape(String(identifier)) + '"]');
         }
 
-        updateIdentifier(tab, identifier) {
-            const index = this.findTabIndex(tab);
-            if (index === -1) {
-                return;
-            }
-
-            this.tabs()[index].setAttribute('data-tab-id', identifier);
-        }
-
-        updateTitle(tab, title) {
-            const index = this.findTabIndex(tab);
-            if (index === -1) {
-                return;
-            }
-
-            const processedTitle = this.generateTitleText(title, index),
-                link = this.nav.querySelectorAll(':scope > li > a span.title')[index];
-
-            if (link) {
-                link.setAttribute('title', title);
-                link.textContent = processedTitle;
-            }
-        }
-
         goToIndex(index) {
             const li = this.tabs()[index];
             if (li) {
@@ -618,33 +356,4 @@ function countParents(element) {
     }
 
     return count;
-}
-
-// Adds a space separated list of classes to an element.
-function addClasses(element, classes) {
-    String(classes).split(/\s+/).filter(Boolean).forEach((className) => {
-        element.classList.add(className);
-    });
-}
-
-// Replaces the pane content and runs its inline scripts, as jQuery's html() does.
-function setPaneContent(pane, content) {
-    if (content instanceof Node) {
-        pane.replaceChildren(content);
-    }
-    else {
-        pane.innerHTML = content === undefined || content === null ? '' : String(content);
-    }
-
-    pane.querySelectorAll('script').forEach((oldScript) => {
-        const script = document.createElement('script');
-
-        Array.from(oldScript.attributes).forEach((attr) => script.setAttribute(attr.name, attr.value));
-        script.textContent = oldScript.textContent;
-        oldScript.replaceWith(script);
-    });
-}
-
-function isVisible(element) {
-    return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }

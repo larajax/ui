@@ -742,16 +742,16 @@ body.compact-container .form-fatal-error {
     .select2-container {
         display: inline-block;
         width: auto;
-        height: 2.5625rem;
+        height: var(--bs-btn-input-min-height);
         margin-right: 1.0625rem;
 
-        /* Fills the 36px box between the borders and the select padding so the text stays centred */
+        /* Fills the box between the borders and the select padding so the text stays centred */
         .select2-selection__rendered {
-            line-height: calc(2.5625rem - 2px - 2 * var(--custom-select-input-padding-vertical));
+            line-height: calc(var(--bs-btn-input-min-height) - 2px - 2 * var(--custom-select-input-padding-vertical));
         }
 
         .select2-selection--single {
-            height: 2.5625rem;
+            height: var(--bs-btn-input-min-height);
         }
     }
 

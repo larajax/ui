@@ -107,10 +107,6 @@
                 }
             }
 
-            span.tab-close {
-                display: none;
-            }
-
             &.active {
                 z-index: var(--tab-zindex);
 
@@ -171,68 +167,6 @@
                 border-left: 1px solid var(--tab-border);
                 border-right: 1px solid var(--tab-border);
                 border-bottom: 1px solid var(--tab-border);
-            }
-        }
-    }
-
-    &[data-closable] {
-        > ul.nav-tabs,
-        > div > ul.nav-tabs,
-        > div > div > ul.nav-tabs {
-            > li {
-                margin-right: 0.375rem;
-
-                a {
-                    padding-left: 1.4375rem !important;
-                    padding-right: 0 !important;
-                }
-
-                span.tab-close {
-                    display: block;
-                    position: absolute;
-                    width: 1.4375rem;
-                    height: 1.4375rem;
-                    top: 0.375rem;
-                    left: -0.375rem;
-                    z-index: calc(var(--tab-zindex) + 4);
-                    text-align: right;
-                    font-size: 0.875rem;
-                    cursor: pointer;
-                    color: var(--tab-color);
-
-                    i {
-                        display: inline-block;
-                        z-index: calc(var(--tab-zindex) + 1);
-                        top: -0.5rem;
-                        right: 0.375rem;
-                        position: relative;
-                    }
-
-                    &:hover {
-                        color: var(--tab-brand-danger);
-                    }
-                }
-
-                &.active span.close {
-                    color: var(--tab-color);
-                }
-
-                /* Modified tabs show a dot instead of the close cross */
-                &[data-modified] {
-                    span.tab-close i {
-                        top: -0.3125rem;
-                        font-size: 0;
-
-                        &:before {
-                            display: inline-block;
-                            width: 0.5rem;
-                            height: 0.5rem;
-                            border-radius: 50%;
-                            background-color: currentColor;
-                            content: '';
-                        }
-                    }
-                }
             }
         }
     }
