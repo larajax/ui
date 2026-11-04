@@ -8,7 +8,7 @@ use October\Rain\Element\ElementBase;
  * @method ToolbarButton name(string $name) name of this button, a unique key
  * @method ToolbarButton label(string $label) label for the button
  * @method ToolbarButton icon(string $icon) icon key or CSS classes for the button
- * @method ToolbarButton type(string $type) type of button styling: default, primary, secondary, danger
+ * @method ToolbarButton type(string $type) type of button styling: default, primary, secondary, danger, success, warning, info
  * @method ToolbarButton url(string $url) url renders the button as a link
  * @method ToolbarButton handler(string $handler) handler renders the button as an AJAX button (data-request)
  * @method ToolbarButton popup(bool $popup) popup loads the handler response in a popup instead of running it directly

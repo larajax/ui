@@ -24,6 +24,9 @@ $args = [
     'primary' => $button->type === 'primary',
     'secondary' => $button->type === 'secondary',
     'danger' => $button->type === 'danger',
+    'success' => $button->type === 'success',
+    'warning' => $button->type === 'warning',
+    'info' => $button->type === 'info',
     'hotkey' => $button->hotkey ?: '',
 ];
 

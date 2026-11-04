@@ -17,6 +17,10 @@ trait HasButtons
      * @param string $icon Icon class
      * @param bool $primary Primary styling
      * @param bool $secondary Secondary styling
+     * @param bool $danger Danger styling
+     * @param bool $success Success styling
+     * @param bool $warning Warning styling
+     * @param bool $info Info styling
      * @param bool $outline Outline styling, in the secondary theme unless another is set
      */
     public static function button(
@@ -26,6 +30,9 @@ trait HasButtons
         bool $primary = false,
         bool $secondary = false,
         bool $danger = false,
+        bool $success = false,
+        bool $warning = false,
+        bool $info = false,
         bool $outline = false,
         string|array $hotkey = '',
         ...$attributes
@@ -37,6 +44,9 @@ trait HasButtons
             'primary',
             'secondary',
             'danger',
+            'success',
+            'warning',
+            'info',
             'outline',
             'hotkey'
         ), $attributes);
@@ -50,6 +60,10 @@ trait HasButtons
      * @param string $icon Icon class
      * @param bool $primary Primary styling
      * @param bool $secondary Secondary styling
+     * @param bool $danger Danger styling
+     * @param bool $success Success styling
+     * @param bool $warning Warning styling
+     * @param bool $info Info styling
      * @param bool $outline Outline styling, in the secondary theme unless another is set
      * @param array $requestData Request data to pass with the AJAX request
      */
@@ -60,6 +74,9 @@ trait HasButtons
         bool $primary = false,
         bool $secondary = false,
         bool $danger = false,
+        bool $success = false,
+        bool $warning = false,
+        bool $info = false,
         bool $outline = false,
         string|array $hotkey = '',
         array $requestData = [],
@@ -72,6 +89,9 @@ trait HasButtons
             'primary',
             'secondary',
             'danger',
+            'success',
+            'warning',
+            'info',
             'outline',
             'hotkey',
             'requestData'
@@ -86,6 +106,10 @@ trait HasButtons
      * @param string $icon Icon class
      * @param bool $primary Primary styling
      * @param bool $secondary Secondary styling
+     * @param bool $danger Danger styling
+     * @param bool $success Success styling
+     * @param bool $warning Warning styling
+     * @param bool $info Info styling
      * @param bool $outline Outline styling, in the secondary theme unless another is set
      * @param array $requestData Request data to pass with the AJAX request
      */
@@ -96,6 +120,9 @@ trait HasButtons
         bool $primary = false,
         bool $secondary = false,
         bool $danger = false,
+        bool $success = false,
+        bool $warning = false,
+        bool $info = false,
         bool $outline = false,
         string|array $hotkey = '',
         array $requestData = [],
@@ -108,6 +135,9 @@ trait HasButtons
             'primary',
             'secondary',
             'danger',
+            'success',
+            'warning',
+            'info',
             'outline',
             'hotkey',
             'requestData'
@@ -151,6 +181,10 @@ trait HasButtons
      * @param string $icon Icon class
      * @param bool $primary Primary styling
      * @param bool $secondary Secondary styling
+     * @param bool $danger Danger styling
+     * @param bool $success Success styling
+     * @param bool $warning Warning styling
+     * @param bool $info Info styling
      * @param bool $outline Outline styling, in the secondary theme unless another is set
      * @param bool $caret Show dropdown caret arrow
      */
@@ -159,6 +193,10 @@ trait HasButtons
         string $icon = '',
         bool $primary = false,
         bool $secondary = false,
+        bool $danger = false,
+        bool $success = false,
+        bool $warning = false,
+        bool $info = false,
         bool $outline = false,
         bool $caret = true,
         ...$attributes
@@ -168,6 +206,10 @@ trait HasButtons
             'icon',
             'primary',
             'secondary',
+            'danger',
+            'success',
+            'warning',
+            'info',
             'outline',
             'caret'
         ), $attributes);

@@ -97,16 +97,14 @@
     }
 }
 
-/* Joined buttons get a faint divider, except outline buttons whose own borders divide them */
+/* Joined buttons get a faint divider, except outline buttons whose own borders divide them.
+   The last button, or one followed only by its menu, keeps its own right border */
 .btn-group {
     :is(.btn, .btn-solid, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
-        border-right: 1px solid rgba(0, 0, 0, 0.09);
         margin-left: 0 !important;
 
-        &:last-child,
-        &.last,
-        &:has(+ .menu:last-child) {
-            border-right: none;
+        &:not(:last-child, .last, :has(+ .menu:last-child)) {
+            border-right: 1px solid rgba(0, 0, 0, 0.09);
         }
 
         &.last {
