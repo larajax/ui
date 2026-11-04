@@ -28,6 +28,11 @@
         }
     }
 
+    /* Hours only fixes the minutes at 00, so their slider has nothing to choose and is left out */
+    [data-vc-time-range="minute"]:has(> input[min="0"][max="0"]) {
+        display: none;
+    }
+
     [data-vc-time="content"] {
         display: flex;
         align-items: center;
