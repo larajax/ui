@@ -4,7 +4,7 @@
         <?php if (isset($modeMulti)): ?>
             <div class="upload-checkbox">
                 <input
-                    class="check check-sm"
+                    class="check"
                     data-record-selector
                     type="checkbox"
                     value=""

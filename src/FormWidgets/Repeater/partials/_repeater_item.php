@@ -25,7 +25,7 @@
         <?php if (!$this->previewMode): ?>
             <div class="repeater-item-checkbox">
                 <input
-                    class="check check-sm"
+                    class="check"
                     type="checkbox"
                     name="checked[]"
                     id="<?= $this->getId('item'.$indexValue) ?>"

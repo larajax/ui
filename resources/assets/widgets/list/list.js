@@ -20,6 +20,13 @@
  * - data-list-checked-trigger - enabled through the trigger API while rows are checked,
  *   a [data-list-checked-counter] element inside shows the count
  * - data-list-checked-request - AJAX requests include the checked row values as "checked"
+ *
+ * The list setup form:
+ * - data-control="list-setup-columns" - reorders the columns by dragging their .drag-handle,
+ *   so the column_order[] inputs post in the new order
+ *
+ * Dependencies:
+ * - SortableJS (vendor/sortablejs/sortable.esm.js), loaded when the setup form first opens
  */
 'use strict';
 
@@ -36,6 +43,8 @@ export function registerListWidget(jax) {
             }
         });
     };
+
+    registerListSetupColumns(jax);
 
     jax.registerControl('listwidget', class extends jax.ControlBase {
         init() {
@@ -360,6 +369,52 @@ export function registerListWidget(jax) {
             [transportMethod]: { [pageName]: pageNumber }
         });
     });
+}
+
+// The list setup form's columns, reordered by dragging their handles
+export function registerListSetupColumns(jax) {
+    jax.registerControl('list-setup-columns', class extends jax.ControlBase {
+        connect() {
+            this.listElement = this.element.querySelector(':scope > ul');
+
+            if (!this.listElement) {
+                return;
+            }
+
+            loadSortable().then((Sortable) => {
+                // The form may have closed while SortableJS loaded
+                if (!this.listElement) {
+                    return;
+                }
+
+                this.sortable = Sortable.create(this.listElement, {
+                    handle: '.drag-handle',
+                    animation: 150
+                });
+            });
+        }
+
+        disconnect() {
+            if (this.sortable) {
+                this.sortable.destroy();
+                this.sortable = null;
+            }
+
+            this.listElement = null;
+        }
+    });
+}
+
+// SortableJS for the setup form's columns, imported once
+let sortablePromise = null;
+
+function loadSortable() {
+    if (!sortablePromise) {
+        sortablePromise = import('../../vendor/sortablejs/sortable.esm.js')
+            .then((sortable) => sortable.Sortable);
+    }
+
+    return sortablePromise;
 }
 
 // The pagination link of this list that sent a request, if one did

@@ -10,7 +10,7 @@
     <div class="dialog-body">
         <p class="form-text before-field"><?= __("Use checkboxes to select columns you want to see in the list. You can change position of columns by dragging them up or down.") ?></p>
 
-        <div class="control-simplelist with-checkboxes is-sortable" data-control="simplelist">
+        <div class="list-setup-columns" data-control="list-setup-columns">
             <ul>
                 <?php foreach ($columns as $key => $column): ?>
                     <li>

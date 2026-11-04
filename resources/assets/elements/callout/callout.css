@@ -26,6 +26,12 @@
         padding: 0.6875rem;
     }
 
+    /* The dismiss button */
+    > .btn-close {
+        float: right;
+        margin: 1.0625rem 1.0625rem 0;
+    }
+
     > .header + .content {
         border-top: none;
     }

@@ -3,7 +3,7 @@ import { fakeSortableModule, sortables, resetFakeSortable } from './support/fake
 
 mock.module('../resources/assets/vendor/sortablejs/sortable.esm.js', () => fakeSortableModule);
 
-const { registerSimpleList } = await import('../resources/assets/controls/simplelist/simplelist.js');
+const { registerListSetupColumns } = await import('../resources/assets/widgets/list/list.js');
 
 function makeFakeJax() {
     const controls = new Map();
@@ -24,10 +24,10 @@ function makeFakeJax() {
     };
 }
 
-// Builds a setup style list whose items each hold a drag handle and an ordered hidden input
-function makeList(className, names) {
+// Builds the setup form's column list, each item with a drag handle and an ordered hidden input
+function makeColumns(names) {
     const element = document.createElement('div');
-    element.className = className;
+    element.className = 'list-setup-columns';
     element.innerHTML = '<ul>' + names.map((name) => (
         '<li><span class="drag-handle"></span><input type="hidden" name="column_order[]" value="' + name + '"></li>'
     )).join('') + '</ul>';
@@ -42,22 +42,22 @@ async function flush() {
 
 function connectControl(element) {
     const jax = makeFakeJax();
-    registerSimpleList(jax);
+    registerListSetupColumns(jax);
 
-    const Control = jax.controls.get('simplelist');
+    const Control = jax.controls.get('list-setup-columns');
     const control = new Control(element);
     control.connect();
     return control;
 }
 
-describe('simplelist control', () => {
+describe('list setup columns', () => {
     afterEach(() => {
         resetFakeSortable();
         document.body.innerHTML = '';
     });
 
-    test('a sortable list drags its items by the handle', async () => {
-        const element = makeList('control-simplelist is-sortable', ['title', 'status']);
+    test('the columns drag by their handle', async () => {
+        const element = makeColumns(['title', 'status']);
 
         connectControl(element);
         await flush();
@@ -67,29 +67,16 @@ describe('simplelist control', () => {
         expect(sortables[0].options.handle).toBe('.drag-handle');
     });
 
-    test('a list without the sortable class stays static', async () => {
-        const element = makeList('control-simplelist', ['title']);
-
-        connectControl(element);
-        await flush();
-
-        expect(sortables.length).toBe(0);
-    });
-
     test('disconnecting destroys the sortable', async () => {
-        const element = makeList('control-simplelist is-sortable', ['title']);
-
-        const control = connectControl(element);
+        const control = connectControl(makeColumns(['title']));
         await flush();
         control.disconnect();
 
         expect(sortables[0].destroyed).toBe(true);
     });
 
-    test('a list removed before the library loads binds nothing', async () => {
-        const element = makeList('control-simplelist is-sortable', ['title']);
-
-        const control = connectControl(element);
+    test('a form closed before the library loads binds nothing', async () => {
+        const control = connectControl(makeColumns(['title']));
         control.disconnect();
         await flush();
 

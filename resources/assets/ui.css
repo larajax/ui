@@ -36,7 +36,6 @@
 @import "./controls/toolbar/toolbar-control.css";
 @import "./controls/toolbar/toolbar-buttons.css";
 @import "./controls/tooltip/tooltip.css";
-@import "./controls/simplelist/simplelist.css";
 
 /* Widgets */
 @import "./widgets/form/form.css";

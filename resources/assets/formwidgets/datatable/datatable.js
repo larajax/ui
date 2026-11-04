@@ -141,7 +141,7 @@ export function registerDataTable(jax) {
                 keyHandler: function(event, sheet) {
                     return self.onShortcut(event, sheet);
                 },
-                checkboxClass: 'check check-sm',
+                checkboxClass: 'check',
                 striped: true,
                 lang: this.config.lang
             });

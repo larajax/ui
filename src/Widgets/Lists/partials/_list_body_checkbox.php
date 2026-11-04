@@ -1,6 +1,6 @@
 <td class="list-checkbox nolink">
     <input
-        class="check check-sm"
+        class="check"
         type="checkbox"
         name="checked[]"
         value="<?= e($this->getColumnKey($record)) ?>"

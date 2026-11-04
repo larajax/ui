@@ -37,3 +37,18 @@
         }
     }
 }
+
+/*
+ * October icon pack
+ *
+ * The editor sizes its icons for Phosphor, whose glyphs fill about three quarters of the
+ * font size, where October's icon font fills all of it, so its icons are set smaller
+ */
+.rich-editor-button .rich-editor-icon:is([class^="icon-"], [class*=" icon-"]),
+figure.rich-editor-snippet .rich-editor-icon:is([class^="icon-"], [class*=" icon-"]) {
+    font-size: 1rem;
+}
+
+.rich-editor-menu-item .rich-editor-icon:is([class^="icon-"], [class*=" icon-"]) {
+    font-size: 0.875rem;
+}

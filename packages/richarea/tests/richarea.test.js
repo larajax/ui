@@ -384,7 +384,7 @@ describe('popover forms', () => {
         expect(checkbox.type).toBe('checkbox');
         expect(checkbox.checked).toBe(true);
         expect(checkbox.classList.contains('check')).toBe(true);
-        expect(checkbox.classList.contains('check-sm')).toBe(true);
+        expect(checkbox.classList.contains('check-sm')).toBe(false);
         expect(checkbox.nextElementSibling.getAttribute('for')).toBe(checkbox.id);
 
         // Text fields keep the editor's own styling, which works with or without Bootstrap

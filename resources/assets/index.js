@@ -45,7 +45,9 @@ import { registerCheckbox } from './controls/checkbox/checkbox-control.js';
 import { registerCheckboxRange } from './controls/checkbox/checkbox-range.js';
 import { registerSelector } from './controls/selector/selector.js';
 import { registerTooltip } from './controls/tooltip/tooltip.js';
-import { registerSimpleList } from './controls/simplelist/simplelist.js';
+
+// Elements
+import { registerCallout } from './elements/callout/callout.js';
 
 // Widgets
 import { registerFormWidget } from './widgets/form/form.js';
@@ -126,7 +128,9 @@ export function registerUi(jax) {
     registerCheckboxRange(jax);
     registerSelector(jax);
     registerTooltip(jax);
-    registerSimpleList(jax);
+
+    // Elements
+    registerCallout(jax);
 
     // Widgets
     registerFormWidget(jax);

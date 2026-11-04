@@ -1,7 +1,7 @@
 <tr>
     <?php if ($showCheckboxes): ?>
         <th class="list-checkbox">
-            <input type="checkbox" class="check check-sm" />
+            <input type="checkbox" class="check" />
         </th>
     <?php endif ?>
 

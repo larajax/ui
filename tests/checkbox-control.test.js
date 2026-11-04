@@ -48,7 +48,7 @@ function renderSwitch(dataChecked) {
     document.body.innerHTML = `
         <div class="control-filter" data-update-handler="onFilterUpdate">
             <div class="filter-scope form-field is-indeterminate" data-scope-name="is_approved">
-                <input class="check check-sm" type="checkbox" id="scopeApproved"${attr} />
+                <input class="check" type="checkbox" id="scopeApproved"${attr} />
                 <label for="scopeApproved">Approved</label>
             </div>
         </div>

@@ -19,6 +19,19 @@ A highlighted message block in four types: `callout-info`, `callout-success`, `c
 
 The icon is an icon pack class inside `.custom-icon`. `Ui::callout()` uses the pack's `callout.info`, `callout.success`, `callout.warning` or `callout.danger` key unless its `icon` argument names another icon, and `icon: false` leaves it out. Its body is captured with `->slot()` up to `Ui::end()`, and `Ui::slot('action')` fills an `.action` element placed before the header.
 
+## Dismissing
+
+A button with `data-dismiss="callout"` inside the callout closes and removes it, fading out when the callout has the `fade` class. Set `data-target` (or `href`) to a selector to close another callout. The callout receives `callout:close` first, which can be cancelled to keep it open, then `callout:closed` just before it is removed.
+
+```html
+<div class="callout fade show callout-info no-subheader">
+    <button type="button" class="btn-close" data-dismiss="callout" aria-label="Close"></button>
+    <div class="header">
+        <h3>Saved</h3>
+    </div>
+</div>
+```
+
 ## Modifiers
 
 | Class | Description |
