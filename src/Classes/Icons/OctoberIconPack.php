@@ -160,7 +160,7 @@ class OctoberIconPack implements IconPack
             'repeater.group.default' => 'icon-square',
 
             'list.reorder' => 'icon-list-reorder',
-            'list.setup' => 'icon-list-ul',
+            'list.setup' => 'icon-text-format-ul',
             'list.structure' => 'icon-sitemap',
             'list.tree.expand' => 'icon-angle-right',
             'list.tree.collapse' => 'icon-angle-down',

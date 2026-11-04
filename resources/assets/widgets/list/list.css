@@ -1028,11 +1028,6 @@ table.table.data {
         border-radius: 0.1875rem;
         cursor: move;
         touch-action: none;
-
-        /* October's icon font draws the reorder glyph small within its box */
-        :is([class^="icon-"], [class*=" icon-"]) {
-            font-size: 1.75rem;
-        }
     }
 
     /* The item being dragged keeps its place with its handle highlighted */

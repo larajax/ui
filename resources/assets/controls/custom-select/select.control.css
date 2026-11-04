@@ -244,7 +244,6 @@ select.is-invalid + .select2-container--default {
     &.select2-container--focus .select2-selection,
     &.select2-container--open .select2-selection {
         border-color: var(--bs-danger-border);
-        outline-color: var(--bs-danger-focus-ring);
     }
 }
 
@@ -256,7 +255,6 @@ select.is-valid + .select2-container--default {
     &.select2-container--focus .select2-selection,
     &.select2-container--open .select2-selection {
         border-color: var(--bs-success-border);
-        outline-color: var(--bs-success-focus-ring);
     }
 }
 

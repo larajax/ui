@@ -44,7 +44,6 @@
     --custom-select-input-padding-vertical: var(--bs-btn-input-padding-y);
     --custom-select-input-padding-horizontal: var(--bs-btn-input-padding-x);
     --custom-select-input-border-focus: var(--oc-border-focus);
-    --custom-select-input-focus-ring: var(--bs-focus-ring);
     --custom-select-input-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
     --custom-select-input-color-placeholder: var(--bs-fg-3);
     --custom-select-input-disabled-bg: var(--oc-form-control-disabled-bg);

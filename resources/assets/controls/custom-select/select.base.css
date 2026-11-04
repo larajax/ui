@@ -149,10 +149,6 @@
         .select2-selection {
             transition: var(--custom-select-input-transition);
             border-color: var(--custom-select-input-border-focus);
-
-            /* The same inset focus ring Bootstrap draws on a focused form control */
-            outline: var(--custom-select-input-focus-ring);
-            outline-offset: -1px;
         }
     }
 

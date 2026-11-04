@@ -64,9 +64,24 @@
         display: block;
     }
 
+    /* Focus shows in the border alone, without Bootstrap's focus ring */
+    &:focus-visible,
+    &:focus-within {
+        outline: 0;
+    }
+
     &:focus,
     &.form-adorn:focus-within {
         border: 1px solid var(--oc-border-focus);
+    }
+
+    /* A validated field keeps its colour in focus, which the ring used to carry */
+    &.is-invalid:is(:focus, :focus-within) {
+        border-color: var(--bs-danger-border);
+    }
+
+    &.is-valid:is(:focus, :focus-within) {
+        border-color: var(--bs-success-border);
     }
 
     &[readonly],

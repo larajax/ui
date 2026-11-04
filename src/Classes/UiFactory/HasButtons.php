@@ -17,6 +17,7 @@ trait HasButtons
      * @param string $icon Icon class
      * @param bool $primary Primary styling
      * @param bool $secondary Secondary styling
+     * @param bool $outline Outline styling, in the secondary theme unless another is set
      */
     public static function button(
         string $label = '',
@@ -25,6 +26,7 @@ trait HasButtons
         bool $primary = false,
         bool $secondary = false,
         bool $danger = false,
+        bool $outline = false,
         string|array $hotkey = '',
         ...$attributes
     ): ViewComponent {
@@ -35,6 +37,7 @@ trait HasButtons
             'primary',
             'secondary',
             'danger',
+            'outline',
             'hotkey'
         ), $attributes);
     }
@@ -47,6 +50,7 @@ trait HasButtons
      * @param string $icon Icon class
      * @param bool $primary Primary styling
      * @param bool $secondary Secondary styling
+     * @param bool $outline Outline styling, in the secondary theme unless another is set
      * @param array $requestData Request data to pass with the AJAX request
      */
     public static function popupButton(
@@ -56,6 +60,7 @@ trait HasButtons
         bool $primary = false,
         bool $secondary = false,
         bool $danger = false,
+        bool $outline = false,
         string|array $hotkey = '',
         array $requestData = [],
         ...$attributes
@@ -67,6 +72,7 @@ trait HasButtons
             'primary',
             'secondary',
             'danger',
+            'outline',
             'hotkey',
             'requestData'
         ), $attributes);
@@ -80,6 +86,7 @@ trait HasButtons
      * @param string $icon Icon class
      * @param bool $primary Primary styling
      * @param bool $secondary Secondary styling
+     * @param bool $outline Outline styling, in the secondary theme unless another is set
      * @param array $requestData Request data to pass with the AJAX request
      */
     public static function ajaxButton(
@@ -89,6 +96,7 @@ trait HasButtons
         bool $primary = false,
         bool $secondary = false,
         bool $danger = false,
+        bool $outline = false,
         string|array $hotkey = '',
         array $requestData = [],
         ...$attributes
@@ -100,6 +108,7 @@ trait HasButtons
             'primary',
             'secondary',
             'danger',
+            'outline',
             'hotkey',
             'requestData'
         ), $attributes);
@@ -142,6 +151,7 @@ trait HasButtons
      * @param string $icon Icon class
      * @param bool $primary Primary styling
      * @param bool $secondary Secondary styling
+     * @param bool $outline Outline styling, in the secondary theme unless another is set
      * @param bool $caret Show dropdown caret arrow
      */
     public static function dropdownButton(
@@ -149,6 +159,7 @@ trait HasButtons
         string $icon = '',
         bool $primary = false,
         bool $secondary = false,
+        bool $outline = false,
         bool $caret = true,
         ...$attributes
     ): ViewComponent {
@@ -157,6 +168,7 @@ trait HasButtons
             'icon',
             'primary',
             'secondary',
+            'outline',
             'caret'
         ), $attributes);
     }

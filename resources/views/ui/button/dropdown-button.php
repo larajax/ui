@@ -2,14 +2,17 @@
 $label ??= '';
 $primary ??= false;
 $secondary ??= false;
+$outline ??= false;
 $caret ??= true;
 $icon ??= null;
 
+$variant = $outline ? 'btn-outline' : 'btn-solid';
+
 if ($primary) {
-    $classes = ['btn-solid', 'theme-primary'];
+    $classes = [$variant, 'theme-primary'];
 }
-elseif ($secondary) {
-    $classes = ['btn-solid', 'theme-secondary'];
+elseif ($secondary || $outline) {
+    $classes = [$variant, 'theme-secondary'];
 }
 else {
     $classes = ['btn'];

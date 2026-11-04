@@ -55,3 +55,6 @@
 @import "./formwidgets/datatable/datatable.css";
 @import "./formwidgets/phone/phone.css";
 @import "./formwidgets/repeater/repeater.css";
+
+/* Icon packs: sizes for packs whose glyphs fill their box differently, after the widgets they adjust */
+@import "./icons/october.css";

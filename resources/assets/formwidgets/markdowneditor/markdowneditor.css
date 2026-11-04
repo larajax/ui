@@ -19,6 +19,27 @@
             .CodeMirror {
                 flex: 1;
             }
+
+            /* Side by side, the editor and preview share the height under the toolbar as two columns.
+               The columns size the editor, so EasyMDE's own half width, set as important, gives way */
+            &.sided--no-fullscreen {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                grid-template-rows: auto minmax(0, 1fr);
+
+                > .editor-toolbar,
+                > .editor-statusbar {
+                    grid-column: 1 / -1;
+                }
+
+                .CodeMirror-sided {
+                    width: auto !important;
+                }
+
+                .editor-preview-side {
+                    width: auto;
+                }
+            }
         }
     }
 
@@ -120,6 +141,23 @@
             z-index: calc(var(--oc-zindex-fullscreen) + 1);
         }
 
+        /* Side by side, the preview takes the frame's bottom right corner from the editor */
+        &.sided--no-fullscreen {
+            .CodeMirror-sided {
+                border-bottom-right-radius: 0;
+            }
+
+            .editor-preview-active-side {
+                border-bottom-right-radius: var(--bs-radius-5);
+            }
+        }
+
+        /* Under the toolbar, its bottom border is the one line between them */
+        .editor-toolbar:not(.fullscreen) ~ .CodeMirror:not(.CodeMirror-fullscreen),
+        .editor-toolbar:not(.fullscreen) ~ .editor-preview-side {
+            border-top: 0;
+        }
+
         .CodeMirror-cursor {
             border-left-color: var(--bs-fg-body);
         }
@@ -133,9 +171,30 @@
         }
     }
 
+    /* An adaptive editor fills its container, which frames it, so it draws no outer frame or focus
+       border, only the line under the toolbar and the side preview's divider */
+    &.size-adaptive {
+        .editor-toolbar:not(.fullscreen) {
+            border-width: 0 0 1px;
+            border-radius: 0;
+        }
+
+        .EasyMDEContainer .CodeMirror:not(.CodeMirror-fullscreen) {
+            border-width: 0;
+            border-radius: 0;
+        }
+
+        .EasyMDEContainer.sided--no-fullscreen .editor-preview-side {
+            border-width: 0 0 0 1px;
+            border-radius: 0;
+        }
+    }
+
+    /* Focus shows in the border alone, as on a form control, around the side preview too */
     &.editor-focus {
         .editor-toolbar,
-        .EasyMDEContainer .CodeMirror {
+        .EasyMDEContainer .CodeMirror,
+        .editor-preview-side {
             border-color: var(--oc-border-focus);
         }
 
@@ -143,20 +202,9 @@
             border-bottom-color: var(--oc-toolbar-border);
         }
 
-        /* The toolbar and editor each draw the Bootstrap focus ring, clipped at their shared edge so it reads as one */
-        .editor-toolbar:not(.fullscreen),
-        .EasyMDEContainer .CodeMirror:not(.CodeMirror-fullscreen) {
-            --bs-focus-ring-offset: -1px;
-            outline: var(--bs-focus-ring);
-            outline-offset: var(--bs-focus-ring-offset);
-        }
-
-        .editor-toolbar:not(.fullscreen) {
-            clip-path: inset(-4px -4px 0 -4px);
-        }
-
-        .EasyMDEContainer .CodeMirror:not(.CodeMirror-fullscreen) {
-            clip-path: inset(0 -4px -4px -4px);
+        /* The side preview's left border divides it from the editor, so it stays an inner line */
+        .editor-preview-side {
+            border-left-color: var(--bs-border-color);
         }
     }
 

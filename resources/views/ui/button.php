@@ -4,17 +4,23 @@ $href ??= '';
 $primary ??= false;
 $secondary ??= false;
 $danger ??= false;
+$outline ??= false;
 $icon ??= null;
 $hotkey ??= '';
 
+$variant = $outline ? 'btn-outline' : 'btn-solid';
+
 if ($primary) {
-    $classes = ['btn-solid', 'theme-primary'];
+    $classes = [$variant, 'theme-primary'];
 }
 elseif ($secondary) {
-    $classes = ['btn-solid', 'theme-secondary'];
+    $classes = [$variant, 'theme-secondary'];
 }
 elseif ($danger) {
-    $classes = ['btn-solid', 'theme-danger'];
+    $classes = [$variant, 'theme-danger'];
+}
+elseif ($outline) {
+    $classes = ['btn-outline', 'theme-secondary'];
 }
 else {
     $classes = ['btn'];
