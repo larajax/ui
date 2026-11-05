@@ -1,7 +1,6 @@
 <?php namespace Larajax\Ui\Widgets;
 
-use Lang;
-use Form as FormHelper;
+use Illuminate\Support\Facades\Lang;
 use Larajax\Ui\Classes\FormTabs;
 use Larajax\Ui\Classes\FormField;
 use Larajax\Ui\Classes\WidgetBase;
@@ -9,9 +8,11 @@ use Larajax\Ui\Element\ElementHolder;
 use Larajax\Ui\Contracts\FormElement;
 use October\Rain\Database\Model;
 use October\Rain\Html\Helper as HtmlHelper;
-use SystemException;
+use October\Rain\Exception\SystemException;
 use BackedEnum;
 use UnitEnum;
+use Larajax\Ui\Helpers\Input;
+use Illuminate\Support\Arr;
 
 /**
  * Form Widget is used for building back end forms and renders a form
@@ -302,10 +303,10 @@ class Form extends WidgetBase implements FormElement
 
         // Render a secondary tab
         if ($options['secondaryTab']) {
-            $extraVars['fields'] = array_get($this->allTabs->secondary->getFields(), $tabName, []);
+            $extraVars['fields'] = Arr::get($this->allTabs->secondary->getFields(), $tabName, []);
         }
         else {
-            $extraVars['fields'] = array_get($this->allTabs->primary->getFields(), $tabName, []);
+            $extraVars['fields'] = Arr::get($this->allTabs->primary->getFields(), $tabName, []);
         }
 
         return $this->makePartial('form_fields', $extraVars);
@@ -499,7 +500,7 @@ class Form extends WidgetBase implements FormElement
         $this->eventRefreshFields($this->allFields);
 
         // If an array of fields is supplied, update specified fields individually.
-        if (($updateFields = post('fields')) && is_array($updateFields)) {
+        if (($updateFields = Input::post('fields')) && is_array($updateFields)) {
             foreach ($updateFields as $field) {
                 if (!isset($this->allFields[$field])) {
                     continue;
@@ -523,15 +524,15 @@ class Form extends WidgetBase implements FormElement
      */
     public function onLazyLoadTab()
     {
-        $target  = post('target');
+        $target  = Input::post('target');
 
-        if (!$tabName = post('name')) {
+        if (!$tabName = Input::post('name')) {
             throw new SystemException(Lang::get('Missing a valid tab definition.'));
         }
 
-        $tab = $this->getTab(post('section', 'primary'));
+        $tab = $this->getTab(Input::post('section', 'primary'));
 
-        $fields = $tab !== null ? array_get($tab->getFields(), $tabName) : [];
+        $fields = $tab !== null ? Arr::get($tab->getFields(), $tabName) : [];
 
         return [
             $target => $this->makePartial('form_fields', ['fields' => $fields]),
@@ -1053,7 +1054,7 @@ class Form extends WidgetBase implements FormElement
      */
     protected function getSaveDataSourceInternal(): array
     {
-        $data = $this->arrayName ? post($this->arrayName) : post();
+        $data = $this->arrayName ? Input::post($this->arrayName) : Input::post();
         if (!$data) {
             $data = [];
         }
@@ -1157,10 +1158,10 @@ class Form extends WidgetBase implements FormElement
             return $this->sessionKey;
         }
 
-        $sessionKey = post('_session_key');
+        $sessionKey = Input::post('_session_key');
 
         if (!$sessionKey) {
-            $sessionKey = FormHelper::getSessionKey();
+            $sessionKey = app('form')->getSessionKey();
         }
 
         return $this->sessionKey = $sessionKey;
@@ -1210,7 +1211,7 @@ class Form extends WidgetBase implements FormElement
     }
 
     /**
-     * Variant to array_get() but preserves dots in key names.
+     * Variant to Arr::get() but preserves dots in key names.
      *
      * @param array $array
      * @param array $parts
@@ -1240,7 +1241,7 @@ class Form extends WidgetBase implements FormElement
     }
 
     /**
-     * Variant to array_set() but preserves dots in key names.
+     * Variant to Arr::set() but preserves dots in key names.
      *
      * @param array $array
      * @param array $parts

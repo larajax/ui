@@ -1,16 +1,14 @@
 <?php namespace Larajax\Ui\Classes;
 
-use Str;
-use Arr;
-use Site;
-use Html;
-use Lang;
+use Larajax\Ui\Helpers\Str;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Lang;
 use October\Rain\Database\Model;
 use October\Rain\Html\Helper as HtmlHelper;
 use Larajax\Ui\Element\Form\FieldDefinition;
 use Larajax\Ui\Helpers\NumberFormat;
 use Illuminate\Support\Collection;
-use SystemException;
+use October\Rain\Exception\SystemException;
 use Exception;
 
 /**
@@ -174,7 +172,7 @@ class FormField extends FieldDefinition
         $result = $this->config[$posKey] ?? [];
         $result = $this->filterAttributes($result, $position);
 
-        return $htmlBuild ? Html::attributes($result) : $result;
+        return $htmlBuild ? app('html')->attributes($result) : $result;
     }
 
     /**
@@ -222,9 +220,9 @@ class FormField extends FieldDefinition
             return $attributes;
         }
 
-        $triggerAction = array_get($this->trigger, 'action');
-        $triggerField = array_get($this->trigger, 'field');
-        $triggerCondition = array_get($this->trigger, 'condition');
+        $triggerAction = Arr::get($this->trigger, 'action');
+        $triggerField = Arr::get($this->trigger, 'field');
+        $triggerCondition = Arr::get($this->trigger, 'condition');
         $triggerForm = $this->arrayName;
         $triggerMulti = '';
 
@@ -312,8 +310,8 @@ class FormField extends FieldDefinition
             $this->preset = ['field' => $this->preset, 'type' => 'slug'];
         }
 
-        $presetField = array_get($this->preset, 'field');
-        $presetType = array_get($this->preset, 'type');
+        $presetField = Arr::get($this->preset, 'field');
+        $presetType = Arr::get($this->preset, 'type');
 
         if ($this->arrayName) {
             $fullPresetField = $this->arrayName.'['.implode('][', HtmlHelper::nameToArray($presetField)).']';
@@ -328,7 +326,7 @@ class FormField extends FieldDefinition
             'data-input-preset-closest-parent' => 'form'
         ];
 
-        if ($prefixInput = array_get($this->preset, 'prefixInput')) {
+        if ($prefixInput = Arr::get($this->preset, 'prefixInput')) {
             $newAttributes['data-input-preset-prefix-input'] = $prefixInput;
         }
 
@@ -393,18 +391,6 @@ class FormField extends FieldDefinition
         }
 
         return e($value);
-    }
-
-    /**
-     * getTranslatableMessage
-     */
-    public function getTranslatableMessage(): string
-    {
-        if ($editSite = Site::getEditSite()) {
-            return e($editSite->name);
-        }
-
-        return '';
     }
 
     /**
@@ -648,7 +634,7 @@ class FormField extends FieldDefinition
             ]));
         }
 
-        $methodName = 'get'.studly_case($attribute).'Options';
+        $methodName = 'get'.Str::studly($attribute).'Options';
         if (
             !$this->objectMethodExists($model, $methodName) &&
             !$this->objectMethodExists($model, 'getDropdownOptions')

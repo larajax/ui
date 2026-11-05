@@ -1,11 +1,11 @@
 <?php namespace Larajax\Ui\Classes;
 
-use Arr;
-use Lang;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Lang;
 use October\Rain\Html\Helper as HtmlHelper;
 use Larajax\Ui\Element\Filter\ScopeDefinition;
 use Illuminate\Support\Collection;
-use SystemException;
+use October\Rain\Exception\SystemException;
 
 /**
  * FilterScope is a translation of the filter scope configuration

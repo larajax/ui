@@ -146,6 +146,22 @@ describe('rich editor control', () => {
         });
     });
 
+    test('leaves the toolbar to the page when asked, and announces the mounted editor', async () => {
+        const ready = [];
+        const onReady = (event) => ready.push(event.detail.richArea);
+        document.addEventListener('richeditor:ready', onReady);
+
+        try {
+            await connect(field('data-external-toolbar="true"'));
+        }
+        finally {
+            document.removeEventListener('richeditor:ready', onReady);
+        }
+
+        expect(mounted[0].options.externalToolbar).toBe(true);
+        expect(ready).toEqual([mounted[0]]);
+    });
+
     test('accepts known editor options and ignores reserved or unknown ones', async () => {
         await connect(field(`data-editor-options='{"paragraphStyles":{"lead":"Lead"},"imageResize":false,"content":"<p>Nope</p>","hooks":{},"unknownThing":1}'`));
 

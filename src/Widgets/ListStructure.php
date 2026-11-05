@@ -1,8 +1,9 @@
 <?php namespace Larajax\Ui\Widgets;
 
 use Illuminate\Support\Facades\Gate;
-use ApplicationException;
-use ForbiddenException;
+use October\Rain\Exception\ApplicationException;
+use October\Rain\Exception\ForbiddenException;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * ListStructure
@@ -197,7 +198,7 @@ class ListStructure extends Lists
      */
     public function onSort()
     {
-        $column = post('sortColumn');
+        $column = Input::post('sortColumn');
         if (!$column) {
             return;
         }
@@ -402,7 +403,7 @@ class ListStructure extends Lists
             throw new ForbiddenException;
         }
 
-        $itemId = post('record_id');
+        $itemId = Input::post('record_id');
         if (!$itemId) {
             return;
         }
@@ -430,27 +431,27 @@ class ListStructure extends Lists
     {
         // Nested Tree
         if ($this->modelIsInstanceOf(\October\Contracts\Database\NestedSetInterface::class)) {
-            if ($prevId = post($multisite ? 'previous_root_id' : 'previous_id')) {
+            if ($prevId = Input::post($multisite ? 'previous_root_id' : 'previous_id')) {
                 $item->moveAfter($prevId);
             }
-            elseif ($nextId = post($multisite ? 'next_root_id' : 'next_id')) {
+            elseif ($nextId = Input::post($multisite ? 'next_root_id' : 'next_id')) {
                 $item->moveBefore($nextId);
             }
-            elseif ($parentId = post($multisite ? 'parent_root_id' : 'parent_id')) {
+            elseif ($parentId = Input::post($multisite ? 'parent_root_id' : 'parent_id')) {
                 $item->makeChildOf($parentId);
             }
         }
         else {
             // Simple Tree
             if (app('model.inspector')->hasRelation($this->model, 'parent')) {
-                $item->parent = post($multisite ? 'parent_root_id' : 'parent_id');
+                $item->parent = Input::post($multisite ? 'parent_root_id' : 'parent_id');
                 $item->save(['force' => true]);
             }
 
             // Sortable
             if ($this->modelIsInstanceOf(\October\Contracts\Database\SortableInterface::class)) {
                 $item->setSortableOrder(
-                    post($multisite ? 'root_sort_orders' : 'sort_orders'),
+                    Input::post($multisite ? 'root_sort_orders' : 'sort_orders'),
                     $this->includeReferencePool ? null : true
                 );
             }
@@ -463,7 +464,7 @@ class ListStructure extends Lists
      */
     public function onToggleTreeNode()
     {
-        $this->putSession('tree_node_status_' . post('node_id'), post('status') ? 0 : 1);
+        $this->putSession('tree_node_status_' . Input::post('node_id'), Input::post('status') ? 0 : 1);
 
         return $this->onRefresh();
     }

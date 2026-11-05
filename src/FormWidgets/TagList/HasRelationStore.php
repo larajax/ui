@@ -1,8 +1,8 @@
 <?php namespace Larajax\Ui\FormWidgets\TagList;
 
 use Illuminate\Support\Collection;
-use October\Rain\Database\Relations\Relation as RelationBase;
-use SystemException;
+use Illuminate\Database\Eloquent\Relations\Relation as RelationBase;
+use October\Rain\Exception\SystemException;
 
 /**
  * HasRelationStore contains logic for related tag items
@@ -122,7 +122,10 @@ trait HasRelationStore
     {
         $query = $this->getRelationModel()->newQuery();
 
-        $this->getRelationObject()->addDefinedConstraintsToQuery($query);
+        $relationObject = $this->getRelationObject();
+        if (method_exists($relationObject, 'addDefinedConstraintsToQuery')) {
+            $relationObject->addDefinedConstraintsToQuery($query);
+        }
 
         return $query;
     }

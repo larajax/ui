@@ -1,11 +1,13 @@
 <?php namespace Larajax\Ui\FormWidgets;
 
-use Lang;
-use Response;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Response;
 use League\Csv\Info as CsvInfo;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Writer as CsvWriter;
 use Larajax\Ui\Classes\FormWidgetBase;
+use Larajax\Ui\Helpers\Input;
+use Illuminate\Support\Str;
 
 /**
  * DataTable renders a table field.
@@ -347,8 +349,8 @@ class DataTable extends FormWidgetBase
      */
     public function onGetDropdownOptions()
     {
-        $column = post('column');
-        $rowData = post('rowData', []);
+        $column = Input::post('column');
+        $rowData = Input::post('rowData', []);
 
         return ['options' => $this->getColumnOptions(is_string($column) ? $column : null, is_array($rowData) ? $rowData : [])];
     }
@@ -358,7 +360,7 @@ class DataTable extends FormWidgetBase
      */
     protected function getColumnOptions(?string $column, array $rowData): mixed
     {
-        $methodName = 'get' . studly_case($this->fieldName) . 'DataTableOptions';
+        $methodName = 'get' . Str::studly($this->fieldName) . 'DataTableOptions';
 
         if ($this->objectMethodExists($this->model, $methodName)) {
             return $this->model->$methodName($column, $rowData);
@@ -433,7 +435,7 @@ class DataTable extends FormWidgetBase
      */
     public function onExportCsv()
     {
-        $rows = json_decode(post('tableData'), true) ?: [];
+        $rows = json_decode(Input::post('tableData'), true) ?: [];
 
         $csv = CsvWriter::createFromString();
         $csv->setOutputBOM(CsvWriter::BOM_UTF8);
@@ -460,7 +462,7 @@ class DataTable extends FormWidgetBase
      */
     public function onImportCsv()
     {
-        $reader = CsvReader::createFromString((string) post('csvData'));
+        $reader = CsvReader::createFromString((string) Input::post('csvData'));
 
         $delimiters = CsvInfo::getDelimiterStats($reader, [',', ';', "\t"], 10);
         arsort($delimiters);

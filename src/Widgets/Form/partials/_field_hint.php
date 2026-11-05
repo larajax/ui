@@ -5,7 +5,7 @@
     if ($field->comment) {
         $hintComment = $field->commentHtml
             ? '<p>'.trans($field->comment).'</p>'
-            : Markdown::parse(e(__($field->comment)));
+            : \Larajax\Ui\Helpers\Markdown::parse(e(__($field->comment)));
     }
 ?>
 <?php Ui::callout(
@@ -28,7 +28,7 @@
             ];
         ?>
         <?= str_contains($field->path, '::')
-            ? View::make($field->path, $hintVars)->render()
+            ? view($field->path, $hintVars)->render()
             : $this->controller->makePartial($field->path, $hintVars) ?>
     <?php endif ?>
 <?php Ui::end() ?>

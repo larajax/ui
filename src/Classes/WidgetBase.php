@@ -1,6 +1,5 @@
 <?php namespace Larajax\Ui\Classes;
 
-use File;
 use October\Rain\Html\Helper as HtmlHelper;
 use October\Rain\Extension\Extendable;
 use Illuminate\Contracts\Support\Htmlable;
@@ -20,7 +19,7 @@ abstract class WidgetBase extends Extendable implements ViewComponentInterface, 
     use \Larajax\Ui\Traits\ErrorMaker;
     use \Larajax\Ui\Traits\ViewMaker;
     use \Larajax\Ui\Traits\AssetMaker;
-    use \October\Rain\Support\Traits\Emitter;
+    use \October\Rain\Extension\Emitter;
     use \Larajax\Traits\ViewComponent;
 
     /**

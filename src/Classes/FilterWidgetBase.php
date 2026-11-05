@@ -1,5 +1,7 @@
 <?php namespace Larajax\Ui\Classes;
 
+use Larajax\Ui\Helpers\Input;
+
 /**
  * FilterWidgetBase class contains widgets used specifically for filters
  *
@@ -138,11 +140,11 @@ abstract class FilterWidgetBase extends WidgetBase
      */
     public function getActiveValue()
     {
-        if (post('clearScope')) {
+        if (Input::post('clearScope')) {
             return null;
         }
 
-        return post($this->getScopeName(), post("Filter"));
+        return Input::post($this->getScopeName(), Input::post("Filter"));
     }
 
     /**
@@ -173,9 +175,9 @@ abstract class FilterWidgetBase extends WidgetBase
      */
     protected function hasPostValue($name): bool
     {
-        $value = post(
+        $value = Input::post(
             $this->getScopeName() . "[{$name}]",
-            post("Filter[{$name}]")
+            Input::post("Filter[{$name}]")
         );
 
         return strlen(trim((string) $value)) > 0;

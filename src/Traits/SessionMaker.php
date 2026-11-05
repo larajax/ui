@@ -1,7 +1,8 @@
 <?php namespace Larajax\Ui\Traits;
 
-use Str;
-use Session;
+use Larajax\Ui\Helpers\Str;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Arr;
 
 /**
  * Session Maker Trait
@@ -47,7 +48,7 @@ trait SessionMaker
             return $currentStore;
         }
 
-        return array_get($currentStore, $key, $default);
+        return Arr::get($currentStore, $key, $default);
     }
 
     /**

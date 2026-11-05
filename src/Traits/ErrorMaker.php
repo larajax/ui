@@ -1,6 +1,6 @@
 <?php namespace Larajax\Ui\Traits;
 
-use Log;
+use Illuminate\Support\Facades\Log;
 use October\Rain\Exception\ErrorHandler;
 use October\Rain\Exception\ApplicationException;
 use Illuminate\Validation\ValidationException;

@@ -1,7 +1,7 @@
 <?php namespace Larajax\Ui\Traits;
 
-use Db;
-use Str;
+use Illuminate\Support\Facades\DB as Db;
+use Illuminate\Support\Str;
 use Larajax\Ui\Classes\FormField;
 use October\Rain\Database\Model as DatabaseModel;
 use October\Rain\Exception\ValidationException;

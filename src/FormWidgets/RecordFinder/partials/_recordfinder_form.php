@@ -1,5 +1,5 @@
 <div id="<?= $this->getId('popup') ?>" class="recordfinder-popup">
-    <?= Form::open([
+    <?= app('form')->open([
         'data-request-parent-form' => "#{$this->getId()}"
     ]) ?>
         <input type="hidden" name="recordfinder_flag" value="1" />
@@ -39,7 +39,7 @@
                 </button>
             <?php endif ?>
         </div>
-    <?= Form::close() ?>
+    <?= app('form')->close() ?>
 </div>
 
 <script>

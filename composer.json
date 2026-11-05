@@ -4,8 +4,16 @@
     "homepage": "https://github.com/larajax/ui",
     "require": {
         "php": "^8.2",
-        "october/rain": "^4.4",
-        "larajax/larajax": "^3.0"
+        "larajax/larajax": "^3.0",
+        "league/csv": "~9.1",
+        "octoberrain/contracts": "5.x-dev",
+        "octoberrain/exception": "5.x-dev",
+        "octoberrain/extension": "5.x-dev",
+        "octoberrain/html": "5.x-dev",
+        "symfony/yaml": "^6.4|^7.0"
+    },
+    "suggest": {
+        "october/rain": "Rain models add file attachments, trees, sorting, deferred bindings and model validation"
     },
     "autoload": {
         "psr-4": {

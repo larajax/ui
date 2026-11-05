@@ -1,11 +1,12 @@
 <?php namespace Larajax\Ui\Widgets\Form;
 
-use Lang;
-use SystemException;
+use Illuminate\Support\Facades\Lang;
+use October\Rain\Exception\SystemException;
 use Larajax\Ui\Classes\FormField;
 use Larajax\Ui\Classes\WidgetManager;
 use Larajax\Ui\Classes\FormWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
+use Illuminate\Support\Str;
 
 /**
  * HasFormWidgets concern
@@ -57,7 +58,7 @@ trait HasFormWidgets
 
         // Create form widget instance
         $widgetConfig = $this->makeConfig($field->config);
-        $widgetConfig->alias = $this->alias . studly_case($this->nameToId($field->fieldName));
+        $widgetConfig->alias = $this->alias . Str::studly($this->nameToId($field->fieldName));
         $widgetConfig->sessionKey = $this->getSessionKey();
         $widgetConfig->sessionKeySuffix = $this->sessionKeySuffix;
         $widgetConfig->previewMode = $this->previewMode;

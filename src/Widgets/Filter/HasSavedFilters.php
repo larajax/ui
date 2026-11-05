@@ -1,5 +1,7 @@
 <?php namespace Larajax\Ui\Widgets\Filter;
 
+use Larajax\Ui\Helpers\Input;
+
 /**
  * HasSavedFilters keeps named sets of scope values in the user preferences, so the filter
  * menu can save the current scopes under a name and apply them again later.
@@ -153,6 +155,6 @@ trait HasSavedFilters
      */
     protected function getPostedSavedFilterName(): string
     {
-        return mb_substr(trim((string) post('savedFilterName')), 0, 100);
+        return mb_substr(trim((string) Input::post('savedFilterName')), 0, 100);
     }
 }

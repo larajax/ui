@@ -1,13 +1,14 @@
 <?php namespace Larajax\Ui\Widgets;
 
-use Lang;
-use DbDongle;
+use Illuminate\Support\Facades\Lang;
+use Larajax\Ui\Helpers\Sql;
 use Larajax\Ui\Classes\WidgetBase;
 use Larajax\Ui\Element\ElementHolder;
 use Larajax\Ui\Contracts\FilterElement;
 use Larajax\Ui\Classes\FilterScope;
-use ApplicationException;
-use SystemException;
+use October\Rain\Exception\ApplicationException;
+use October\Rain\Exception\SystemException;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * Filter Widget renders a container used for filtering things
@@ -463,7 +464,7 @@ class Filter extends WidgetBase implements FilterElement
                 [$scopeConditions] = array_slice($scopeConditions, $conditionNum);
             }
 
-            $query->whereRaw(DbDongle::parse($scopeConditions));
+            $query->whereRaw(Sql::parse($scopeConditions));
             return;
         }
 
@@ -497,7 +498,7 @@ class Filter extends WidgetBase implements FilterElement
             // @deprecated adapt legacy format
             $sqlCondition = str_replace(["':value'", "':filtered'", ':filtered'], ':value', $sqlCondition);
 
-            $query->whereRaw(DbDongle::parse($sqlCondition, [
+            $query->whereRaw(Sql::parse($sqlCondition, [
                 'value' => $scopeValue
             ]));
             return;
@@ -692,7 +693,7 @@ class Filter extends WidgetBase implements FilterElement
     {
         $this->defineFilterScopes();
 
-        if (!$scope = post('scopeName')) {
+        if (!$scope = Input::post('scopeName')) {
             return;
         }
 
@@ -708,7 +709,7 @@ class Filter extends WidgetBase implements FilterElement
         $updateScopePartial = false;
         $this->defineFilterScopes();
 
-        if (!$scope = post('scopeName')) {
+        if (!$scope = Input::post('scopeName')) {
             return;
         }
 
@@ -717,13 +718,13 @@ class Filter extends WidgetBase implements FilterElement
         switch ($scope->type) {
             case 'checkbox':
             case 'switch':
-                $value = post('clearScope') ? 0 : (int) post('value', 0);
+                $value = Input::post('clearScope') ? 0 : (int) Input::post('value', 0);
                 $this->putScopeValue($scope, ['value' => $value]);
                 $updateScopePartial = true;
                 break;
 
             case 'dropdown':
-                $value = post('clearScope') ? null : post('value');
+                $value = Input::post('clearScope') ? null : Input::post('value');
                 $this->putScopeValue($scope, ['value' => $value]);
                 $updateScopePartial = true;
                 break;

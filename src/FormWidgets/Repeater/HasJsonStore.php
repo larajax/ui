@@ -1,5 +1,7 @@
 <?php namespace Larajax\Ui\FormWidgets\Repeater;
 
+use Illuminate\Support\Arr;
+
 /**
  * HasJsonStore contains logic for related repeater items
  */
@@ -68,7 +70,7 @@ trait HasJsonStore
      */
     protected function getGroupCodeFromJson($value)
     {
-        return array_get($value, $this->groupKeyFrom, null);
+        return Arr::get($value, $this->groupKeyFrom, null);
     }
 
     /**

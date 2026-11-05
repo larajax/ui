@@ -1,5 +1,7 @@
 <?php namespace Larajax\Ui\Widgets\Lists;
 
+use Larajax\Ui\Helpers\Input;
+
 /**
  * HasListSetup concern
  */
@@ -21,14 +23,14 @@ trait HasListSetup
      */
     public function onApplySetup()
     {
-        if (($visibleColumns = post('visible_columns')) && is_array($visibleColumns)) {
+        if (($visibleColumns = Input::post('visible_columns')) && is_array($visibleColumns)) {
             $this->columnOverride = $visibleColumns;
             $this->putUserPreference('visible', $this->columnOverride);
         }
 
-        $this->recordsPerPage = post('records_per_page', $this->recordsPerPage);
+        $this->recordsPerPage = Input::post('records_per_page', $this->recordsPerPage);
 
-        $this->putUserPreference('order', post('column_order'));
+        $this->putUserPreference('order', Input::post('column_order'));
 
         $this->putUserPreference('per_page', $this->recordsPerPage);
 

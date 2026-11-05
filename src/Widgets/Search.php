@@ -1,8 +1,9 @@
 <?php namespace Larajax\Ui\Widgets;
 
-use Lang;
+use Illuminate\Support\Facades\Lang;
 use Throwable;
 use Larajax\Ui\Classes\WidgetBase;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * Search Widget
@@ -137,7 +138,7 @@ class Search extends WidgetBase
     public function onSubmit()
     {
         // Save or reset search term in session
-        $this->setActiveTerm(post($this->getName()));
+        $this->setActiveTerm(Input::post($this->getName()));
 
         // Trigger class event, merge results as viewable array
         $params = func_get_args();

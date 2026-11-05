@@ -1,9 +1,10 @@
 <?php namespace Larajax\Ui\FormWidgets;
 
-use Lang;
-use ApplicationException;
+use Illuminate\Support\Facades\Lang;
+use October\Rain\Exception\ApplicationException;
 use Larajax\Ui\Classes\FormWidgetBase;
 use Illuminate\Database\Eloquent\Collection;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * RecordFinder renders a record finder field
@@ -189,7 +190,7 @@ class RecordFinder extends FormWidgetBase
             throw new ApplicationException(Lang::get('The provided model class ":modelClass" for the recordfinder is invalid', ['modelClass' => $this->modelClass]));
         }
 
-        if (!post('recordfinder_flag')) {
+        if (!Input::post('recordfinder_flag')) {
             return;
         }
 
@@ -255,7 +256,7 @@ class RecordFinder extends FormWidgetBase
      */
     public function onRefresh()
     {
-        $value = post($this->getFieldName());
+        $value = Input::post($this->getFieldName());
 
         $this->setKeyValue($value);
 

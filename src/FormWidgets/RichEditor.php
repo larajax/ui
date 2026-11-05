@@ -5,8 +5,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Larajax\Ui\Classes\FormWidgetBase;
 use Larajax\Ui\Facades\Ui;
-use ApplicationException;
-use ForbiddenException;
+use October\Rain\Exception\ApplicationException;
+use October\Rain\Exception\ForbiddenException;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * RichEditor renders a rich content editor field.
@@ -44,6 +45,12 @@ class RichEditor extends FormWidgetBase
      * @var bool useLineBreaks uses line breaks instead of paragraph wrappers for each new line.
      */
     public $useLineBreaks = false;
+
+    /**
+     * @var bool externalToolbar leaves the toolbar to the page, which draws it from the editor's
+     * toolbar API once the field announces richeditor:ready.
+     */
+    public $externalToolbar = false;
 
     /**
      * @var array|null editorOptions passed to the editor. For example:
@@ -99,6 +106,7 @@ class RichEditor extends FormWidgetBase
             'toolbarButtons',
             'toolbar',
             'useLineBreaks',
+            'externalToolbar',
             'editorOptions',
             'uploadDisk',
             'uploadPath',
@@ -128,6 +136,7 @@ class RichEditor extends FormWidgetBase
         $this->vars['field'] = $this->formField;
         $this->vars['editorOptions'] = $this->getValidEditorOptions();
         $this->vars['useLineBreaks'] = $this->useLineBreaks;
+        $this->vars['externalToolbar'] = $this->externalToolbar;
         $this->vars['stretch'] = $this->formField->stretch;
         $this->vars['size'] = $this->formField->size;
         $this->vars['readOnly'] = $this->readOnly;
@@ -149,12 +158,12 @@ class RichEditor extends FormWidgetBase
             throw new ForbiddenException;
         }
 
-        $uploadedFile = files('file_data');
+        $uploadedFile = Input::file('file_data');
         if (!$uploadedFile instanceof UploadedFile) {
             throw new ApplicationException(__('File missing from request'));
         }
 
-        $fileTypes = implode(',', $this->getUploadFileTypes(post('file_type') === 'image'));
+        $fileTypes = implode(',', $this->getUploadFileTypes(Input::post('file_type') === 'image'));
 
         $validation = Validator::make(
             ['file_data' => $uploadedFile],
@@ -246,7 +255,7 @@ class RichEditor extends FormWidgetBase
     /**
      * getEditorIcons returns the icon classes of the editor buttons, menus and placeholders from the richeditor icon pack keys.
      */
-    protected function getEditorIcons(): array
+    public static function getEditorIcons(): array
     {
         $names = [
             'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript',
@@ -280,7 +289,7 @@ class RichEditor extends FormWidgetBase
     /**
      * getEditorLang returns the translated editor strings, keyed like the editor's English defaults.
      */
-    protected function getEditorLang(): array
+    public static function getEditorLang(): array
     {
         $strings = [
             // Toolbar buttons

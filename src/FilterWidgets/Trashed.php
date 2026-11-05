@@ -1,8 +1,9 @@
 <?php namespace Larajax\Ui\FilterWidgets;
 
-use Lang;
+use Illuminate\Support\Facades\Lang;
 use Larajax\Ui\Classes\FilterWidgetBase;
-use SystemException;
+use October\Rain\Exception\SystemException;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * Trashed filter, showing the soft deleted records alongside the others or on their own
@@ -53,11 +54,11 @@ class Trashed extends FilterWidgetBase
      */
     public function getActiveValue()
     {
-        if (post('clearScope')) {
+        if (Input::post('clearScope')) {
             return null;
         }
 
-        $value = post('value');
+        $value = Input::post('value');
 
         return in_array($value, [self::VALUE_WITH, self::VALUE_ONLY], true) ? ['value' => $value] : null;
     }

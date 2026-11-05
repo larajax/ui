@@ -1,12 +1,10 @@
 <?php namespace Larajax\Ui\Widgets;
 
-use Db;
-use Str;
-use Html;
-use Lang;
-use DbDongle;
+use Illuminate\Support\Facades\DB as Db;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Lang;
+use Larajax\Ui\Helpers\Sql;
 use October\Rain\Html\Helper as HtmlHelper;
-use October\Rain\Router\Helper as RouterHelper;
 use Larajax\Ui\Classes\ListColumn;
 use Larajax\Ui\Helpers\Url as UrlHelper;
 use Larajax\Ui\Classes\WidgetBase;
@@ -14,10 +12,12 @@ use Illuminate\Database\Eloquent\Model;
 use Larajax\Ui\Contracts\ListElement;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Pagination\UrlWindow;
-use ApplicationException;
+use October\Rain\Exception\ApplicationException;
 use Exception;
 use BackedEnum;
 use UnitEnum;
+use Larajax\Ui\Helpers\Input;
+use Illuminate\Support\Arr;
 
 /**
  * Lists Widget used for building back end lists, renders a list of model objects
@@ -354,7 +354,7 @@ class Lists extends WidgetBase implements ListElement
      */
     public function onPaginate()
     {
-        $this->currentPageNumber = input($this->customPageName);
+        $this->currentPageNumber = Input::get($this->customPageName);
 
         return $this->onRefresh();
     }
@@ -426,7 +426,7 @@ class Lists extends WidgetBase implements ListElement
                 if ($this->isColumnRelated($column)) {
                     $table = app('model.inspector')->makeRelation($this->model, $column->relation)->getTable();
                     $columnName = $column->sqlSelect
-                        ? DbDongle::raw($this->parseTableName($column->sqlSelect, $table))
+                        ? Sql::raw($this->parseTableName($column->sqlSelect, $table))
                         : $table . '.' . $column->valueFrom;
 
                     $relationSearchable[$column->relation][] = $columnName;
@@ -434,7 +434,7 @@ class Lists extends WidgetBase implements ListElement
                 // Primary
                 else {
                     $columnName = $column->sqlSelect
-                        ? DbDongle::raw($this->parseTableName($column->sqlSelect, $primaryTable))
+                        ? Sql::raw($this->parseTableName($column->sqlSelect, $primaryTable))
                         : $primaryTable . '.' . $column->columnName;
 
                     $primarySearchable[] = $columnName;
@@ -488,7 +488,7 @@ class Lists extends WidgetBase implements ListElement
                 foreach (array_unique($joins) as $join) {
                     // Apply a supplied search term for relation columns and constrain
                     // the query only if there is something to search for
-                    $columnsToSearch = array_get($relationSearchable, $join, []);
+                    $columnsToSearch = Arr::get($relationSearchable, $join, []);
 
                     if (count($columnsToSearch) > 0) {
                         $innerQuery->orWhereHas($join, function ($_query) use ($columnsToSearch) {
@@ -526,15 +526,17 @@ class Lists extends WidgetBase implements ListElement
 
                 // Apply related constraints to the sub query
                 // Possibility: the column could contribute to this via conditions or scope
-                $relationObj->addDefinedConstraintsToQuery($relationQuery);
+                if (method_exists($relationObj, 'addDefinedConstraintsToQuery')) {
+                    $relationObj->addDefinedConstraintsToQuery($relationQuery);
+                }
 
                 $countQuery = $relationObj->getRelationExistenceQuery($relationQuery, $query);
 
                 $isMultiRelation = $this->isColumnRelated($column, true);
 
                 $joinSql = $isMultiRelation
-                    ? DbDongle::raw("group_concat(" . $sqlSelect . " separator ', ')")
-                    : DbDongle::raw($sqlSelect);
+                    ? Sql::raw(Sql::groupConcat($sqlSelect))
+                    : Sql::raw($sqlSelect);
 
                 $countQuery->select($joinSql);
 
@@ -558,7 +560,7 @@ class Lists extends WidgetBase implements ListElement
             // Primary column
             else {
                 $sqlSelect = $this->parseTableName($column->sqlSelect, $primaryTable);
-                $selects[] = DbDongle::raw($sqlSelect . ' as '. $alias);
+                $selects[] = Sql::raw($sqlSelect . ' as '. $alias);
             }
         }
 
@@ -638,7 +640,7 @@ class Lists extends WidgetBase implements ListElement
     {
         $currentPageNumber = $this->currentPageNumber;
         if (empty($currentPageNumber)) {
-            $currentPageNumber = input($this->customPageName);
+            $currentPageNumber = Input::get($this->customPageName);
         }
 
         // Convert empty page number to page 1
@@ -713,7 +715,7 @@ class Lists extends WidgetBase implements ListElement
 
         return [
             $url,
-            $onClick ? Html::attributes(['onclick' => $onClick]) : null
+            $onClick ? app('html')->attributes(['onclick' => $onClick]) : null
         ];
     }
 
@@ -733,10 +735,10 @@ class Lists extends WidgetBase implements ListElement
         }
 
         if ($this->pivotMode) {
-            $url = RouterHelper::replaceParameters($record->pivot, $this->recordUrl);
+            $url = UrlHelper::replaceParameters($record->pivot, $this->recordUrl);
         }
         else {
-            $url = RouterHelper::replaceParameters($record, $this->recordUrl);
+            $url = UrlHelper::replaceParameters($record, $this->recordUrl);
         }
 
         return UrlHelper::to($url);
@@ -767,13 +769,13 @@ class Lists extends WidgetBase implements ListElement
         }
 
         if ($this->pivotMode) {
-            $recordOnClick = RouterHelper::replaceParameters($record->pivot, $recordOnClick);
+            $recordOnClick = UrlHelper::replaceParameters($record->pivot, $recordOnClick);
         }
 
-        $recordOnClick = RouterHelper::replaceParameters($record, $recordOnClick);
+        $recordOnClick = UrlHelper::replaceParameters($record, $recordOnClick);
 
         // @deprecated this method will always return isRaw = true
-        return $isRaw ? $recordOnClick : Html::attributes(['onclick' => $recordOnClick]);
+        return $isRaw ? $recordOnClick : app('html')->attributes(['onclick' => $recordOnClick]);
     }
 
     /**
@@ -808,7 +810,7 @@ class Lists extends WidgetBase implements ListElement
             return true;
         }
 
-        $column = array_get($this->allColumns, $columnName);
+        $column = Arr::get($this->allColumns, $columnName);
         if (!$column) {
             return false;
         }
@@ -949,7 +951,7 @@ class Lists extends WidgetBase implements ListElement
             $label = $config['label'];
         }
         else {
-            $label = studly_case($name);
+            $label = Str::studly($name);
         }
 
         // Auto configure pivot relation
@@ -1072,9 +1074,9 @@ class Lists extends WidgetBase implements ListElement
         else {
             if (
                 app('model.inspector')->hasRelation($record, $columnName) &&
-                array_key_exists($columnName, $record->attributes)
+                array_key_exists($columnName, $record->getAttributes())
             ) {
-                $value = $record->attributes[$columnName];
+                $value = $record->getAttributes()[$columnName];
             }
             elseif ($column->useRelationCount()) {
                 $countColumnName = Str::snake($column->relation) . '_count';
@@ -1128,8 +1130,8 @@ class Lists extends WidgetBase implements ListElement
         }
 
         // Apply filters
-        if (method_exists($this, 'eval'. studly_case($column->type) .'TypeValue')) {
-            $value = $this->{'eval'. studly_case($column->type) .'TypeValue'}($record, $column, $value);
+        if (method_exists($this, 'eval'. Str::studly($column->type) .'TypeValue')) {
+            $value = $this->{'eval'. Str::studly($column->type) .'TypeValue'}($record, $column, $value);
         }
         else {
             $value = $this->evalCustomListType($column->type, $record, $column, $value);
@@ -1152,7 +1154,7 @@ class Lists extends WidgetBase implements ListElement
      */
     protected function getCheckedRows(): array
     {
-        return array_unique((array) post('allChecked'));
+        return array_unique((array) Input::post('allChecked'));
     }
 
     /**
@@ -1182,9 +1184,9 @@ class Lists extends WidgetBase implements ListElement
      */
     public function getAllCheckedIds(): array
     {
-        $checkedIds = (array) post('checked');
+        $checkedIds = (array) Input::post('checked');
 
-        if ($allChecked = post('checked-all')) {
+        if ($allChecked = Input::post('checked-all')) {
             $checkedIds = array_merge((array) json_decode($allChecked, true), $checkedIds);
         }
 

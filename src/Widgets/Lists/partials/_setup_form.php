@@ -1,4 +1,4 @@
-<?= Form::open([
+<?= app('form')->open([
     'data-request-parent-form' => "#{$this->getId()}"
 ]) ?>
     <div class="dialog-header">
@@ -80,4 +80,4 @@
             <?= __("Reset to Default") ?>
         </button>
     </div>
-<?= Form::close() ?>
+<?= app('form')->close() ?>

@@ -1,6 +1,7 @@
 <?php namespace Larajax\Ui\Traits;
 
-use Html;
+use Illuminate\Support\Arr;
+
 
 /**
  * AssetMaker Trait
@@ -150,7 +151,7 @@ trait AssetMaker
             $assets[$type] = [];
             foreach ($collection as $asset) {
                 $path = $this->getAssetEntryBuildPath($asset);
-                $attributes = array_except(array_get($asset, 'attributes', []), $reserved);
+                $attributes = Arr::except(Arr::get($asset, 'attributes', []), $reserved);
                 $assets[$type][$path] = $attributes;
             }
         }
@@ -259,19 +260,19 @@ trait AssetMaker
             foreach ($group as &$collection) {
                 $pathCache = [];
                 foreach ($collection as $key => $asset) {
-                    if (!$path = array_get($asset, 'path')) {
+                    if (!$path = Arr::get($asset, 'path')) {
                         continue;
                     }
 
                     // Asset is global
-                    if ($removeGlobal && array_get($asset, 'attributes.build') === 'global') {
-                        array_forget($collection, $key);
+                    if ($removeGlobal && Arr::get($asset, 'attributes.build') === 'global') {
+                        Arr::forget($collection, $key);
                         continue;
                     }
 
                     // Already seen asset
                     if (isset($pathCache[$path])) {
-                        array_forget($collection, $key);
+                        Arr::forget($collection, $key);
                         continue;
                     }
 
@@ -297,7 +298,7 @@ trait AssetMaker
         // Internal attributes to be purged
         // - build: the unique build code for cache busting
         $reserved = ['build'];
-        $userAttrs = array_except(array_get($asset, 'attributes', []), $reserved);
+        $userAttrs = Arr::except(Arr::get($asset, 'attributes', []), $reserved);
 
         // Determine final attributes
         $attrs = [];
@@ -310,6 +311,6 @@ trait AssetMaker
         }
 
         // Generate HTML attribute string
-        return trim(Html::attributes(array_merge($attrs, $userAttrs)));
+        return trim(app('html')->attributes(array_merge($attrs, $userAttrs)));
     }
 }

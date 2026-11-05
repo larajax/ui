@@ -1,11 +1,12 @@
 <?php namespace Larajax\Ui\FilterWidgets;
 
-use Db;
-use DbDongle;
-use Date as DateFacade;
+use Illuminate\Support\Facades\DB as Db;
+use Larajax\Ui\Helpers\Sql;
+use Illuminate\Support\Facades\Date as DateFacade;
 use Larajax\Ui\Classes\FilterWidgetBase;
 use Larajax\Ui\Helpers\DateTime as DateTimeHelper;
 use Exception;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * Date filter
@@ -150,12 +151,12 @@ class Date extends FilterWidgetBase
      */
     public function getActiveValue()
     {
-        if (post('clearScope')) {
+        if (Input::post('clearScope')) {
             return null;
         }
 
-        $value = post('Filter');
-        $condition = post('Filter[condition]');
+        $value = Input::post('Filter');
+        $condition = Input::post('Filter[condition]');
 
         if ($this->isEmptyCondition($condition)) {
             return ['condition' => $condition];
@@ -163,8 +164,8 @@ class Date extends FilterWidgetBase
 
         // A relative condition keeps its count and unit, so a saved filter moves with the days
         if ($condition === self::CONDITION_IN_LAST || $condition === self::CONDITION_IN_NEXT) {
-            $count = (int) post('Filter[count]');
-            $unit = post('Filter[unit]');
+            $count = (int) Input::post('Filter[count]');
+            $unit = Input::post('Filter[unit]');
 
             if ($count < 1 || !in_array($unit, self::UNITS, true)) {
                 return null;
@@ -179,13 +180,13 @@ class Date extends FilterWidgetBase
             }
 
             if (!$this->hasPostValue('beforeRaw')) {
-                $value['value'] = post('Filter[after]');
-                $value['valueRaw'] = post('Filter[afterRaw]');
+                $value['value'] = Input::post('Filter[after]');
+                $value['valueRaw'] = Input::post('Filter[afterRaw]');
                 $value['condition'] = self::CONDITION_AFTER;
             }
             elseif (!$this->hasPostValue('afterRaw')) {
-                $value['value'] = post('Filter[before]');
-                $value['valueRaw'] = post('Filter[beforeRaw]');
+                $value['value'] = Input::post('Filter[before]');
+                $value['valueRaw'] = Input::post('Filter[beforeRaw]');
                 $value['condition'] = self::CONDITION_BEFORE;
             }
         }
@@ -226,7 +227,7 @@ class Date extends FilterWidgetBase
             // @deprecated adapt legacy format
             $sqlCondition = str_replace(["':filtered'", "':value'", "':valueDate'", "':after'", "':afterDate'", "':before'", "':beforeDate'"], [':value', ':value', ':valueDate', ':after', ':afterDate', ':before', ':beforeDate'], $sqlCondition);
 
-            $query->whereRaw(DbDongle::parse($sqlCondition, [
+            $query->whereRaw(Sql::parse($sqlCondition, [
                 'value' => $this->parseDate($scope->value),
                 'valueDate' => $this->parseDate($scope->value, ['isDateOnly' => true]),
                 'after' => $this->parseDate($after),

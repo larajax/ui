@@ -18,7 +18,7 @@ $isComplex = is_array(array_first($selectedValues));
                 preg_match('/\.(png|jpe?g|gif|svg|webp)$/i', $selectedValueIcon);
         ?>
         <span class="list-selectable">
-            <?php if (Html::isValidColor($selectedValueIcon)): ?>
+            <?php if (app('html')->isValidColor($selectedValueIcon)): ?>
                 <span class="status-indicator" style="background:<?= e($selectedValueIcon) ?>"></span>
             <?php elseif ($selectedValueIsImage): ?>
                 <img src="<?= e($selectedValueIcon) ?>" alt="" />
@@ -30,7 +30,7 @@ $isComplex = is_array(array_first($selectedValues));
     <?php endforeach ?>
 <?php else: ?>
     <?= e(implode(', ', $column->valueTrans
-        ? \October\Rain\Support\Arr::trans($selectedValues)
+        ? array_map(fn ($selectedValue) => is_string($selectedValue) ? __($selectedValue) : $selectedValue, $selectedValues)
         : $selectedValues
     )) ?>
 <?php endif ?>

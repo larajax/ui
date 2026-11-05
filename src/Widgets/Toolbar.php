@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Gate;
 use Larajax\Ui\Classes\ToolbarButton;
 use Larajax\Ui\Classes\WidgetBase;
-use SystemException;
+use October\Rain\Exception\SystemException;
 
 /**
  * Toolbar Widget

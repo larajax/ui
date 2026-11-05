@@ -1,6 +1,6 @@
 <?php namespace Larajax\Ui\Classes;
 
-use File;
+use Larajax\Ui\Helpers\Path;
 
 /**
  * ViewPathGuesser resolves and memoizes the convention-based view directory
@@ -27,7 +27,7 @@ class ViewPathGuesser
             return self::$cache[$class];
         }
 
-        $classFile = realpath(dirname(File::fromClass($class)));
+        $classFile = realpath(dirname(Path::fromClass($class)));
         $classPath = null;
 
         if ($classFile) {

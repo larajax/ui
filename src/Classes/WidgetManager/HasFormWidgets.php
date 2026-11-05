@@ -1,6 +1,6 @@
 <?php namespace Larajax\Ui\Classes\WidgetManager;
 
-use Str;
+use Larajax\Ui\Helpers\Str;
 
 /**
  * HasFormWidgets concern

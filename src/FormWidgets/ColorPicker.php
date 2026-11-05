@@ -1,8 +1,8 @@
 <?php namespace Larajax\Ui\FormWidgets;
 
-use Lang;
+use Illuminate\Support\Facades\Lang;
 use Larajax\Ui\Classes\FormWidgetBase;
-use ApplicationException;
+use October\Rain\Exception\ApplicationException;
 
 /**
  * ColorPicker renders a color picker field.

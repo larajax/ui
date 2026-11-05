@@ -1,9 +1,10 @@
 <?php namespace Larajax\Ui\FilterWidgets;
 
-use Db;
-use DbDongle;
+use Illuminate\Support\Facades\DB as Db;
+use Larajax\Ui\Helpers\Sql;
 use Larajax\Ui\Classes\FilterWidgetBase;
 use Larajax\Ui\Helpers\NumberFormat;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * Number filter
@@ -145,12 +146,12 @@ class Number extends FilterWidgetBase
      */
     public function getActiveValue()
     {
-        if (post('clearScope')) {
+        if (Input::post('clearScope')) {
             return null;
         }
 
-        $value = post('Filter');
-        $condition = post('Filter[condition]');
+        $value = Input::post('Filter');
+        $condition = Input::post('Filter[condition]');
 
         if ($this->isEmptyCondition($condition)) {
             return ['condition' => $condition];
@@ -162,11 +163,11 @@ class Number extends FilterWidgetBase
             }
 
             if (!$this->hasPostValue('min')) {
-                $value['value'] = post('Filter[max]');
+                $value['value'] = Input::post('Filter[max]');
                 $value['condition'] = self::CONDITION_LESSER;
             }
             elseif (!$this->hasPostValue('max')) {
-                $value['value'] = post('Filter[min]');
+                $value['value'] = Input::post('Filter[min]');
                 $value['condition'] = self::CONDITION_GREATER;
             }
         }
@@ -199,7 +200,7 @@ class Number extends FilterWidgetBase
         // Raw SQL query
         $sqlCondition = $scopeConditions[$activeCondition] ?? null;
         if (is_string($sqlCondition)) {
-            $query->whereRaw(DbDongle::parse(strtr($sqlCondition, [
+            $query->whereRaw(Sql::parse(strtr($sqlCondition, [
                 ':filtered' => $this->parseNumber($scope->value),
                 ':value' => $this->parseNumber($scope->value),
                 ':min' => $this->parseNumber($scope->min),

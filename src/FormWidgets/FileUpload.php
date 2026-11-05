@@ -1,15 +1,18 @@
 <?php namespace Larajax\Ui\FormWidgets;
 
-use Input;
-use Response;
-use Validator;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 use Larajax\Ui\Classes\FormField;
 use Larajax\Ui\Classes\FormWidgetBase;
 use October\Rain\Filesystem\Definitions as FileDefinitions;
-use ApplicationException;
-use ValidationException;
-use ForbiddenException;
+use October\Rain\Exception\ApplicationException;
+use October\Rain\Exception\ValidationException;
+use October\Rain\Exception\ForbiddenException;
+use October\Rain\Exception\SystemException;
 use Exception;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * FileUpload renders a form file uploader field.
@@ -86,6 +89,11 @@ class FileUpload extends FormWidgetBase
      */
     public function init()
     {
+        // Uploads are stored as Rain file attachments
+        if (!class_exists(FileDefinitions::class)) {
+            throw new SystemException(__('The fileupload form widget needs the file attachments in october/rain.'));
+        }
+
         $this->maxFilesize = $this->getUploadMaxFilesize();
 
         $this->fillFromConfig([
@@ -163,7 +171,7 @@ class FileUpload extends FormWidgetBase
     {
         $record = false;
 
-        if ($fileId = post('file_id')) {
+        if ($fileId = Input::post('file_id')) {
             $record = $this->getRelationObject()
                 ->withDeferred($this->getSessionKey())
                 ->find($fileId) ?: false;
@@ -204,7 +212,7 @@ class FileUpload extends FormWidgetBase
     protected function getFileListFromRelation()
     {
         // Field name for this widget detected in postback
-        if (post($this->getFieldName()) !== null) {
+        if (Input::post($this->getFieldName()) !== null) {
             return;
         }
 
@@ -322,7 +330,7 @@ class FileUpload extends FormWidgetBase
             throw new ForbiddenException;
         }
 
-        $fileId = post('file_id');
+        $fileId = Input::post('file_id');
         if (!$fileId) {
             return;
         }
@@ -348,7 +356,7 @@ class FileUpload extends FormWidgetBase
             throw new ForbiddenException;
         }
 
-        if ($sortData = post('sortOrder')) {
+        if ($sortData = Input::post('sortOrder')) {
             asort($sortData);
             $ids = array_keys($sortData);
             $orders = array_values($sortData);
@@ -386,12 +394,12 @@ class FileUpload extends FormWidgetBase
         }
 
         try {
-            if (!Input::hasFile('file_data')) {
+            if (!request()->hasFile('file_data')) {
                 throw new ApplicationException('File missing from request');
             }
 
             $fileModel = $this->getRelationModel();
-            $uploadedFile = files('file_data');
+            $uploadedFile = Input::file('file_data');
 
             $validationRules = ['max:'.($this->maxFilesize * 1024)];
             if ($fileTypes = $this->getAcceptedFileTypes()) {
@@ -420,13 +428,13 @@ class FileUpload extends FormWidgetBase
             // Check and clean vector files
             // @deprecated v4 this should be moved to a post processing method on the file model
             $extension = strtolower($uploadedFile->getClientOriginalExtension());
-            if ($extension === 'svg' && \Config::get('media.clean_vectors', true)) {
+            if ($extension === 'svg' && Config::get('media.clean_vectors', true)) {
                 // getRealPath() can be empty for some environments (IIS)
                 $realPath = empty(trim($uploadedFile->getRealPath()))
                     ? $uploadedFile->getPath() . DIRECTORY_SEPARATOR . $uploadedFile->getFileName()
                     : $uploadedFile->getRealPath();
 
-                \File::put($realPath, \Html::cleanVector(\File::get($realPath)));
+                File::put($realPath, app('html')->cleanVector(File::get($realPath)));
             }
 
             $file = $fileModel;

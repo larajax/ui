@@ -1,6 +1,6 @@
 <?php namespace Larajax\Ui\Classes;
 
-use App;
+use Illuminate\Support\Facades\App;
 
 /**
  * WidgetManager

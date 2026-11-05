@@ -1,10 +1,10 @@
 <?php namespace Larajax\Ui\FormWidgets;
 
-use DbDongle;
+use Larajax\Ui\Helpers\Sql;
 use Larajax\Ui\Classes\FormField;
 use Larajax\Ui\Classes\FormWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
-use SystemException;
+use October\Rain\Exception\SystemException;
 
 /**
  * Relation renders a field pre-populated with a belongsTo and belongsToHasMany relation
@@ -164,7 +164,7 @@ class Relation extends FormWidgetBase
         }
 
         if ($sqlConditions = $this->conditions) {
-            $query->whereRaw(DbDongle::parse($sqlConditions, $model->attributes));
+            $query->whereRaw(Sql::parse($sqlConditions, $model->getAttributes()));
         }
         elseif ($scopeMethod = $this->modelScope) {
             if ($callableMethod = $this->formField->getCallableMethodFromValue($scopeMethod)) {
@@ -202,7 +202,7 @@ class Relation extends FormWidgetBase
             $nameFrom = 'selection';
             $selectColumn = $usesTree ? '*' : $relationModel->getKeyName();
             $selectSql = $this->sqlSelect;
-            $result = $query->select($selectColumn, DbDongle::raw($selectSql . ' as ' . $nameFrom));
+            $result = $query->select($selectColumn, Sql::raw($selectSql . ' as ' . $nameFrom));
         }
         else {
             // If the attribute is a getter, load all the models in to memory so it

@@ -36,7 +36,7 @@
     }, $toolbarButtons);
 ?>
 <?php if ($this->previewMode || $readOnly || $disabled): ?>
-    <div class="form-control"><?= $safeMode ? Markdown::parseSafe($value) : Markdown::parse(e($value)) ?></div>
+    <div class="form-control"><?= $safeMode ? \Larajax\Ui\Helpers\Markdown::parseSafe($value) : \Larajax\Ui\Helpers\Markdown::parse(e($value)) ?></div>
     <?php if (!$this->previewMode && $readOnly && !$disabled): ?>
         <textarea name="<?= $name ?>" id="<?= $this->getId('textarea') ?>" hidden><?= e($value) ?></textarea>
     <?php endif ?>

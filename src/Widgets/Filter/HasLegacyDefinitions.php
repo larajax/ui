@@ -1,6 +1,6 @@
 <?php namespace Larajax\Ui\Widgets\Filter;
 
-use Date;
+use Illuminate\Support\Facades\Date;
 use Exception;
 
 /**

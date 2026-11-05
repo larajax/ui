@@ -1,13 +1,14 @@
 <?php namespace Larajax\Ui\FilterWidgets;
 
-use Db;
-use Str;
-use Lang;
-use DbDongle;
+use Illuminate\Support\Facades\DB as Db;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Lang;
+use Larajax\Ui\Helpers\Sql;
 use Larajax\Ui\Classes\FilterWidgetBase;
 use Larajax\Ui\Element\ElementHolder;
 use October\Rain\Html\Helper as HtmlHelper;
-use ApplicationException;
+use October\Rain\Exception\ApplicationException;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * Group filter
@@ -77,11 +78,11 @@ class Group extends FilterWidgetBase
      */
     public function getActiveValue()
     {
-        if (post('clearScope')) {
+        if (Input::post('clearScope')) {
             return null;
         }
 
-        $value = post('Filter');
+        $value = Input::post('Filter');
         if (!$this->hasPostValue('value')) {
             return null;
         }
@@ -119,11 +120,11 @@ class Group extends FilterWidgetBase
         // Raw SQL query
         $sqlCondition = $scope->conditions;
         if (is_string($sqlCondition)) {
-            $filtered = implode(',', array_build($activeValue, function ($key, $_value) {
-                return [$key, Db::getPdo()->quote($_value)];
-            }));
+            $filtered = implode(',', array_map(function ($_value) {
+                return Db::getPdo()->quote($_value);
+            }, $activeValue));
 
-            $query->whereRaw(DbDongle::parse(strtr($sqlCondition, [
+            $query->whereRaw(Sql::parse(strtr($sqlCondition, [
                 ':filtered' => $filtered,
                 ':value' => $filtered,
             ])));
@@ -174,7 +175,7 @@ class Group extends FilterWidgetBase
      */
     public function onGetGroupOptions()
     {
-        return ['options' => $this->getOptionsData(post('search'))];
+        return ['options' => $this->getOptionsData(Input::post('search'))];
     }
 
     /**

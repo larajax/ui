@@ -1,5 +1,5 @@
 <div id="<?= $this->getId('quickCreatePopup') ?>">
-    <?= Form::ajax($this->getEventHandler('onQuickCreateRecord'), [
+    <?= app('form')->ajax($this->getEventHandler('onQuickCreateRecord'), [
         'data-popup-load-indicator' => true,
         'data-request-success' => "this.dispatchEvent(new CustomEvent('popup:close', { bubbles: true }))",
     ]) ?>
@@ -27,5 +27,5 @@
                 </a>
             </span>
         </div>
-    <?= Form::close() ?>
+    <?= app('form')->close() ?>
 </div>

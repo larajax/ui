@@ -1,14 +1,12 @@
 <?php namespace Larajax\Ui\Widgets\Lists;
 
-use Str;
-use Html;
-use Lang;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Lang;
 use Carbon\Carbon;
-use October\Rain\Router\Helper as RouterHelper;
 use Larajax\Ui\Helpers\DateTime as DateTimeHelper;
 use Larajax\Ui\Helpers\Url as UrlHelper;
 use Larajax\Ui\Classes\FormField;
-use ApplicationException;
+use October\Rain\Exception\ApplicationException;
 
 /**
  * HasValueProcessor concern
@@ -209,7 +207,7 @@ trait HasValueProcessor
         $result = str_replace("><", '> <', $result);
 
         // Strip HTML
-        $result = $original = trim(Html::strip($result));
+        $result = $original = trim(app('html')->strip($result));
 
         // Nothing left
         if (!strlen($result)) {
@@ -368,7 +366,7 @@ trait HasValueProcessor
         else {
             // Build link URL - always process linkUrl config with parameter replacement
             if ($column->linkUrl) {
-                $linkUrl = RouterHelper::replaceParameters($record, $column->linkUrl);
+                $linkUrl = UrlHelper::replaceParameters($record, $column->linkUrl);
                 if (
                     !str_starts_with($linkUrl, '//') &&
                     !str_starts_with($linkUrl, 'http://') &&

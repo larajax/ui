@@ -70,7 +70,10 @@ trait HasRelationStore
     {
         $query = $this->getRelationModel()->newQuery();
 
-        $this->getRelationObject()->addDefinedConstraintsToQuery($query);
+        $relationObject = $this->getRelationObject();
+        if (method_exists($relationObject, 'addDefinedConstraintsToQuery')) {
+            $relationObject->addDefinedConstraintsToQuery($query);
+        }
 
         return $query;
     }

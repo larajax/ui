@@ -9,8 +9,8 @@
     ];
 ?>
 <?php if ($column->path && str_contains($column->path, '::')): ?>
-    <?= View::make($column->path, $vars) ?>
-<?php elseif ($column->path && File::isPathSymbol($column->path)): ?>
+    <?= view($column->path, $vars) ?>
+<?php elseif ($column->path && \Larajax\Ui\Helpers\Path::isSymbol($column->path)): ?>
     <?= $this->controller->makePartial($column->path, $vars) ?>
 <?php else: ?>
     <?php

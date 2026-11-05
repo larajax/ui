@@ -1,6 +1,6 @@
 <?php namespace Larajax\Ui\Traits;
 
-use Str;
+use Larajax\Ui\Helpers\Str;
 use Larajax\Ui\Classes\PreferenceStore;
 
 /**

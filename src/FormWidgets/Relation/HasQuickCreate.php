@@ -1,7 +1,8 @@
 <?php namespace Larajax\Ui\FormWidgets\Relation;
 
-use Db;
+use Illuminate\Support\Facades\DB as Db;
 use Larajax\Ui\Widgets\Form as FormWidget;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * HasQuickCreate adds the ability to create new related records from
@@ -74,7 +75,7 @@ trait HasQuickCreate
         ], $config);
 
         // Initialize form widget when processing a quick create request
-        if (post('_relation_quick_create')) {
+        if (Input::post('_relation_quick_create')) {
             $this->quickCreateFormWidget = $this->makeQuickCreateFormWidget();
             $this->quickCreateFormWidget->bindToController();
         }

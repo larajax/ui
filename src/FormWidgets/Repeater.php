@@ -2,7 +2,9 @@
 
 use Larajax\Ui\Classes\FormField;
 use Larajax\Ui\Classes\FormWidgetBase;
-use ForbiddenException;
+use October\Rain\Exception\ForbiddenException;
+use Larajax\Ui\Helpers\Input;
+use Illuminate\Support\Arr;
 
 /**
  * Repeater Form Widget
@@ -239,7 +241,7 @@ class Repeater extends FormWidgetBase
      */
     protected function processLoadedState()
     {
-        if (!post($this->alias . '_loaded')) {
+        if (!Input::post($this->alias . '_loaded')) {
             return;
         }
 
@@ -253,7 +255,7 @@ class Repeater extends FormWidgetBase
      */
     protected function getLoadedValueFromPost()
     {
-        return post($this->formField->getName());
+        return Input::post($this->formField->getName());
     }
 
     /**
@@ -401,7 +403,7 @@ class Repeater extends FormWidgetBase
 
         $this->prepareParentModelData();
 
-        $groupCode = post('_repeater_group');
+        $groupCode = Input::post('_repeater_group');
 
         if ($this->useRelation) {
             $index = $this->createRelationAtIndex($groupCode)->getKey();
@@ -430,8 +432,8 @@ class Repeater extends FormWidgetBase
             throw new ForbiddenException;
         }
 
-        $fromIndex = post('_repeater_index');
-        $groupCode = post('_repeater_group');
+        $fromIndex = Input::post('_repeater_index');
+        $groupCode = Input::post('_repeater_group');
 
         if ($this->useRelation) {
             // Relation must be saved to replicate
@@ -466,7 +468,7 @@ class Repeater extends FormWidgetBase
         }
 
         // Delete related records
-        $deletedItems = (array) post('_repeater_items');
+        $deletedItems = (array) Input::post('_repeater_items');
         foreach ($deletedItems as $item) {
             $index = $item['repeater_index'] ?? null;
             if ($index !== null) {
@@ -482,8 +484,8 @@ class Repeater extends FormWidgetBase
     {
         $this->prepareParentModelData();
 
-        $index = post('_repeater_index');
-        $group = post('_repeater_group');
+        $index = Input::post('_repeater_index');
+        $group = Input::post('_repeater_group');
 
         $widget = $this->makeItemFormWidget($index, $group);
 
@@ -534,7 +536,7 @@ class Repeater extends FormWidgetBase
             return null;
         }
 
-        $config = array_get($this->groupDefinitions, $code);
+        $config = Arr::get($this->groupDefinitions, $code);
 
         if (!isset($config['fields'])) {
             return null;
@@ -585,7 +587,7 @@ class Repeater extends FormWidgetBase
      */
     public function getGroupCodeFromIndex($index): string
     {
-        return (string) array_get($this->indexMeta, $index.'.groupCode');
+        return (string) Arr::get($this->indexMeta, $index.'.groupCode');
     }
 
     /**
@@ -595,6 +597,6 @@ class Repeater extends FormWidgetBase
      */
     public function getGroupItemConfig($groupCode, $name = null, $default = null)
     {
-        return array_get($this->groupDefinitions, $groupCode.'.'.$name, $default);
+        return Arr::get($this->groupDefinitions, $groupCode.'.'.$name, $default);
     }
 }

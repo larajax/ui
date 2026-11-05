@@ -1,8 +1,11 @@
 <?php namespace Larajax\Ui\Traits;
 
-use Yaml;
-use File;
-use Event;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
+use Larajax\Ui\Helpers\Path;
+use Illuminate\Support\Facades\Event;
+use Symfony\Component\Yaml\Parser as YamlParser;
+use Symfony\Component\Yaml\Exception\ParseException;
 use stdClass;
 use Exception;
 use October\Rain\Html\Helper as HtmlHelper;
@@ -56,7 +59,7 @@ trait ConfigMaker
                 ));
             }
 
-            $config = Yaml::parseFileCached($configFile);
+            $config = $this->parseConfigFile($configFile);
 
             /**
              * @event system.extendConfigFile
@@ -72,8 +75,8 @@ trait ConfigMaker
              *     });
              *
              */
-            $publicFile = File::localToPublic($configFile);
-            if ($results = Event::fire('system.extendConfigFile', [$publicFile, $config])) {
+            $publicFile = Path::localToPublic($configFile);
+            if ($results = Event::dispatch('system.extendConfigFile', [$publicFile, $config])) {
                 foreach ($results as $result) {
                     if (!is_array($result)) {
                         continue;
@@ -96,6 +99,36 @@ trait ConfigMaker
         }
 
         return $config;
+    }
+
+    /**
+     * parseConfigFile parses a YAML config file, cached until the file changes.
+     */
+    protected function parseConfigFile(string $fileName)
+    {
+        try {
+            $cacheKey = 'yaml::' . $fileName . '-' . filemtime($fileName);
+
+            return Cache::memo()->remember($cacheKey, 43200, function () use ($fileName) {
+                return $this->parseConfigFileContents($fileName);
+            });
+        }
+        catch (Exception $ex) {
+            return $this->parseConfigFileContents($fileName);
+        }
+    }
+
+    /**
+     * parseConfigFileContents parses a YAML config file, naming the file in a syntax error.
+     */
+    protected function parseConfigFileContents(string $fileName)
+    {
+        try {
+            return (new YamlParser)->parse(file_get_contents($fileName));
+        }
+        catch (Exception $ex) {
+            throw new ParseException("A syntax error was detected in $fileName. " . $ex->getMessage(), __LINE__, __FILE__);
+        }
     }
 
     /**
@@ -138,9 +171,9 @@ trait ConfigMaker
             $configPath = $this->configPath;
         }
 
-        $fileName = File::symbolizePath($fileName);
+        $fileName = Path::symbolize($fileName);
 
-        if (File::checkBaseDir($fileName)) {
+        if (Path::checkBaseDir($fileName)) {
             return $fileName;
         }
 
@@ -178,7 +211,7 @@ trait ConfigMaker
     public function guessConfigPathFrom($class, $suffix = '')
     {
         $classFolder = strtolower(class_basename($class));
-        $classFile = realpath(dirname(File::fromClass($class)));
+        $classFile = realpath(dirname(Path::fromClass($class)));
         return $classFile ? $classFile . '/' . $classFolder . $suffix : null;
     }
 

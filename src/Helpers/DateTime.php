@@ -1,7 +1,7 @@
 <?php namespace Larajax\Ui\Helpers;
 
-use Date;
-use Config;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Config;
 use Carbon\Carbon;
 use DateTime as PhpDateTime;
 use DateTimeZone;

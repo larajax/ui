@@ -1,8 +1,9 @@
 <?php namespace Larajax\Ui\FilterWidgets;
 
-use Db;
-use DbDongle;
+use Illuminate\Support\Facades\DB as Db;
+use Larajax\Ui\Helpers\Sql;
 use Larajax\Ui\Classes\FilterWidgetBase;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * Text filter
@@ -75,11 +76,11 @@ class Text extends FilterWidgetBase
      */
     public function getActiveValue()
     {
-        if (post('clearScope')) {
+        if (Input::post('clearScope')) {
             return null;
         }
 
-        $condition = post('Filter[condition]');
+        $condition = Input::post('Filter[condition]');
         if ($this->isEmptyCondition($condition)) {
             return ['condition' => $condition];
         }
@@ -88,7 +89,7 @@ class Text extends FilterWidgetBase
             return null;
         }
 
-        return post('Filter');
+        return Input::post('Filter');
     }
 
     /**
@@ -112,7 +113,7 @@ class Text extends FilterWidgetBase
         // Raw SQL query
         $sqlCondition = $scopeConditions[$activeCondition] ?? null;
         if (is_string($sqlCondition)) {
-            $query->whereRaw(DbDongle::parse($sqlCondition, [
+            $query->whereRaw(Sql::parse($sqlCondition, [
                 'value' => $activeValue,
             ]));
             return;

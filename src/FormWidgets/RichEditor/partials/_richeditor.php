@@ -1,12 +1,13 @@
 <!-- Rich Editor -->
 <?php if ($this->previewMode): ?>
-    <div class="form-control"><?= $safeMode ? Html::clean((string) $value) : $value ?></div>
+    <div class="form-control"><?= $safeMode ? app('html')->clean((string) $value) : $value ?></div>
 <?php else: ?>
     <div
         id="<?= $this->getId() ?>"
         class="field-richeditor size-<?= $size ?> <?= $stretch ? 'is-stretch' : '' ?>"
         <?php if ($useLineBreaks): ?>data-use-line-breaks="true"<?php endif ?>
         <?php if ($readOnly): ?>data-read-only="true"<?php endif ?>
+        <?php if ($externalToolbar): ?>data-external-toolbar="true"<?php endif ?>
         <?php if ($toolbarButtons): ?>data-toolbar-buttons="<?= e(implode(',', $toolbarButtons)) ?>"<?php endif ?>
         <?php if (isset($editorOptions)): ?>data-editor-options="<?= e(json_encode($editorOptions)) ?>"<?php endif ?>
         <?php if ($uploadHandler): ?>data-upload-handler="<?= e($uploadHandler) ?>"<?php endif ?>

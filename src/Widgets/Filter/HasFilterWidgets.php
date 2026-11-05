@@ -1,11 +1,12 @@
 <?php namespace Larajax\Ui\Widgets\Filter;
 
-use Lang;
+use Illuminate\Support\Facades\Lang;
 use Larajax\Ui\Classes\FilterScope;
 use Larajax\Ui\Classes\WidgetManager;
 use Larajax\Ui\Classes\FilterWidgetBase;
 use October\Rain\Html\Helper as HtmlHelper;
-use SystemException;
+use October\Rain\Exception\SystemException;
+use Illuminate\Support\Str;
 
 /**
  * HasFilterWidgets concern
@@ -44,7 +45,7 @@ trait HasFilterWidgets
         }
 
         $widgetConfig = $this->makeConfig($scope->config);
-        $widgetConfig->alias = $this->alias . studly_case($this->nameToId($scope->scopeName));
+        $widgetConfig->alias = $this->alias . Str::studly($this->nameToId($scope->scopeName));
         $widgetConfig->previewMode = $this->previewMode;
         $widgetConfig->model = $this->scopeModels[$scope->scopeName] ?? null;
         $widgetConfig->isJsonable = method_exists($this->model, 'isJsonable')

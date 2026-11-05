@@ -1,6 +1,7 @@
 <?php namespace Larajax\Ui\Traits;
 
-use File;
+use Illuminate\Support\Facades\File;
+use Larajax\Ui\Helpers\Path;
 use Exception;
 use Throwable;
 use Larajax\Ui\Classes\ViewPathGuesser;
@@ -73,7 +74,7 @@ trait ViewMaker
     public function makePartial($partial, $params = [], $throwException = true)
     {
         $notRealPath = realpath($partial) === false || is_dir($partial) === true;
-        if (!File::isPathSymbol($partial) && $notRealPath) {
+        if (!Path::isSymbol($partial) && $notRealPath) {
             $folder = strpos($partial, '/') !== false ? dirname($partial) . '/' : '';
             $partial = $folder . '_' . strtolower(basename($partial));
         }
@@ -117,12 +118,12 @@ trait ViewMaker
         }
 
         // Remove extension from path
-        $fileName = File::anyname($fileName);
+        $fileName = Path::anyname($fileName);
 
         // Check in view paths
-        if (!File::isPathSymbol($fileName)) {
+        if (!Path::isSymbol($fileName)) {
             foreach ($viewPath as $path) {
-                $fullPath = File::symbolizePath($path);
+                $fullPath = Path::symbolize($path);
 
                 foreach ($viewExtensions as $extension) {
                     $_fileName = $fullPath . '/' . $fileName . '.' . $extension;
@@ -134,11 +135,11 @@ trait ViewMaker
         }
 
         // Check in absolute
-        $fileName = File::symbolizePath($fileName);
+        $fileName = Path::symbolize($fileName);
         if (strpos($fileName, '/') !== false) {
             foreach ($viewExtensions as $extension) {
                 $_fileName = $fileName . '.' . $extension;
-                if (File::checkBaseDir($_fileName)) {
+                if (Path::checkBaseDir($_fileName)) {
                     return $_fileName;
                 }
             }
@@ -155,7 +156,7 @@ trait ViewMaker
      */
     public function makeFileContents($filePath, $extraParams = [])
     {
-        if (!strlen($filePath) || !File::isFile($filePath) || !File::checkBaseDir($filePath)) {
+        if (!strlen($filePath) || !File::isFile($filePath) || !Path::checkBaseDir($filePath)) {
             return '';
         }
 
@@ -233,6 +234,6 @@ trait ViewMaker
             $guessedPath .= $suffix;
         }
 
-        return $isPublic && $guessedPath !== null ? File::localToPublic($guessedPath) : $guessedPath;
+        return $isPublic && $guessedPath !== null ? Path::localToPublic($guessedPath) : $guessedPath;
     }
 }

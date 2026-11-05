@@ -1,6 +1,6 @@
 <?php namespace Larajax\Ui\Database;
 
-use DbDongle;
+use Larajax\Ui\Helpers\Sql;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -69,7 +69,7 @@ class SearchWhereMacros
                     if (!strlen($term)) {
                         continue;
                     }
-                    $rawField = DbDongle::cast($grammar->wrap($field), 'TEXT');
+                    $rawField = Sql::cast($grammar->wrap($field), 'TEXT');
                     $fieldSql = $query->raw(sprintf("lower(%s)", $rawField));
                     $termSql = '%'.trim(mb_strtolower($term)).'%';
                     $inner->orWhere($fieldSql, 'LIKE', $termSql);
@@ -87,7 +87,7 @@ class SearchWhereMacros
                             if (!strlen($word)) {
                                 continue;
                             }
-                            $rawField = DbDongle::cast($grammar->wrap($field), 'TEXT');
+                            $rawField = Sql::cast($grammar->wrap($field), 'TEXT');
                             $fieldSql = $query->raw(sprintf("lower(%s)", $rawField));
                             $wordSql = '%'.trim(mb_strtolower($word)).'%';
                             $subQuery->where($fieldSql, 'LIKE', $wordSql, $wordBoolean);

@@ -1,7 +1,6 @@
 <?php namespace Larajax\Ui\Element;
 
-use Arr;
-use Html;
+use Illuminate\Support\Arr;
 use Larajax\Ui\Element\ElementBase;
 
 /**
@@ -65,7 +64,7 @@ class OptionDefinition extends ElementBase
         $this->label($firstPart);
         $this->comment($secondPart);
 
-        if (Html::isValidColor($secondPart)) {
+        if (app('html')->isValidColor($secondPart)) {
             $this->color($secondPart);
         }
         elseif (strpos($secondPart, '.')) {

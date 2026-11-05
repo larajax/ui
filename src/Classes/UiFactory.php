@@ -1,6 +1,9 @@
 <?php namespace Larajax\Ui\Classes;
 
 use Larajax\Ui\Helpers\DateTime as DateTimeHelper;
+use Larajax\Ui\Helpers\Markdown as MarkdownHelper;
+use Larajax\Ui\Helpers\Path as PathHelper;
+use Larajax\Ui\Helpers\Sql as SqlHelper;
 use Larajax\Ui\Helpers\Url as UrlHelper;
 
 /**
@@ -92,6 +95,38 @@ class UiFactory
     public static function url(string $path): string
     {
         return UrlHelper::to($path);
+    }
+
+    /**
+     * resolveSqlUsing sets the callback that rewrites the raw SQL in widget definitions, written in MySQL syntax, for the database connection.
+     */
+    public static function resolveSqlUsing(?callable $resolver): void
+    {
+        SqlHelper::resolveSqlUsing($resolver);
+    }
+
+    /**
+     * resolveMarkdownUsing sets the callback that renders markdown in field comments and the markdown editor, given the text and whether to escape HTML in it.
+     */
+    public static function resolveMarkdownUsing(?callable $resolver): void
+    {
+        MarkdownHelper::resolveMarkdownUsing($resolver);
+    }
+
+    /**
+     * registerPathSymbol adds a symbol that stands for a folder at the start of a config or view path, beside `~` for the base path, or removes it when the folder is null.
+     */
+    public static function registerPathSymbol(string $symbol, ?string $folder): void
+    {
+        PathHelper::registerSymbol($symbol, $folder);
+    }
+
+    /**
+     * checkBaseDirUsing sets the callback that decides whether a config or view file may be loaded, by default when it is inside the base path or the library.
+     */
+    public static function checkBaseDirUsing(?callable $checker): void
+    {
+        PathHelper::checkBaseDirUsing($checker);
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php namespace Larajax\Ui\Widgets\Lists;
 
+use Larajax\Ui\Helpers\Input;
+
 /**
  * HasSorting concern
  *
@@ -32,7 +34,7 @@ trait HasSorting
      */
     public function onSort()
     {
-        $column = post('sortColumn');
+        $column = Input::post('sortColumn');
         if (!$column) {
             return;
         }
@@ -65,7 +67,7 @@ trait HasSorting
         $this->sortStep = $sortOptions['step'];
 
         // Persist the page number
-        $this->currentPageNumber = post('page');
+        $this->currentPageNumber = Input::post('page');
 
         // Attempt a refresh with the new sortOptions and update the
         // the user session only if the query succeeded.

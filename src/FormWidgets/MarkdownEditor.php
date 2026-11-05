@@ -1,7 +1,8 @@
 <?php namespace Larajax\Ui\FormWidgets;
 
 use Larajax\Ui\Classes\FormWidgetBase;
-use Markdown;
+use Larajax\Ui\Helpers\Markdown;
+use Larajax\Ui\Helpers\Input;
 
 /**
  * MarkdownEditor renders a markdown editor field.
@@ -88,7 +89,7 @@ class MarkdownEditor extends FormWidgetBase
 
     public function onRefresh()
     {
-        $value = (string) post($this->getFieldName());
+        $value = (string) Input::post($this->getFieldName());
         $previewHtml = $this->safeMode
             ? Markdown::parseClean($value)
             : Markdown::parse($value);

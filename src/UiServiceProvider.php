@@ -14,12 +14,7 @@ class UiServiceProvider extends ServiceProvider
     {
         $this->mergeIconConfig();
 
-        $this->app->register(\October\Rain\Foundation\Providers\CoreServiceProvider::class);
-
         $this->app->register(\October\Rain\Html\HtmlServiceProvider::class);
-
-        // Registers the `~` (app base) path symbol used in view and config paths
-        $this->app->register(\October\Rain\Filesystem\FilesystemServiceProvider::class);
 
         $this->app->scoped('system.widgets', \Larajax\Ui\Classes\WidgetManager::class);
 
@@ -35,40 +30,10 @@ class UiServiceProvider extends ServiceProvider
         $this->app->singleton(\Larajax\Ui\Classes\ModelInspector::class);
         $this->app->alias(\Larajax\Ui\Classes\ModelInspector::class, 'model.inspector');
 
-        // Supports the DbDongle facade used for raw SQL parsing in widgets
-        $this->app->singleton('db.dongle', function ($app) {
-            return new \October\Rain\Database\Dongle(
-                $app['db']->connection()->getDriverName(),
-                $app['db']
-            );
-        });
-
         // Gives plain Eloquent models the searchWhere methods used by the widgets
         \Larajax\Ui\Database\SearchWhereMacros::register();
 
-        \Illuminate\Foundation\AliasLoader::getInstance()->alias('Str', \October\Rain\Support\Str::class);
         \Illuminate\Foundation\AliasLoader::getInstance()->alias('Ui', \Larajax\Ui\Facades\Ui::class);
-    }
-
-    /**
-     * swapTranslator replaces Laravel's translator with Rain's, which the trans() helper in Rain's init functions expects
-     */
-    protected function swapTranslator(): void
-    {
-        if ($this->app['translator'] instanceof \October\Rain\Translation\Translator) {
-            return;
-        }
-
-        $current = $this->app['translator'];
-
-        $trans = new \October\Rain\Translation\Translator(
-            $current->getLoader(),
-            $current->getLocale()
-        );
-
-        $trans->setFallback($current->getFallback());
-
-        $this->app->instance('translator', $trans);
     }
 
     /**
@@ -94,8 +59,6 @@ class UiServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->swapTranslator();
-
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'ui');
 
         // Sends the widget assets added during an AJAX request with its response

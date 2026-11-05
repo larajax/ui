@@ -1,7 +1,7 @@
 <?php namespace Larajax\Ui\Traits;
 
-use Lang;
-use ApplicationException;
+use Illuminate\Support\Facades\Lang;
+use October\Rain\Exception\ApplicationException;
 use Exception;
 
 /**

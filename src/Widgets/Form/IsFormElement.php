@@ -4,7 +4,7 @@ use Larajax\Ui\Classes\FormTabs;
 use Larajax\Ui\Classes\FormField;
 use Larajax\Ui\Element\Form\FieldDefinition;
 use Larajax\Ui\Element\Form\FieldsetDefinition;
-use SystemException;
+use October\Rain\Exception\SystemException;
 
 /**
  * IsFormElement defines all methods to satisfy the FormElement contract

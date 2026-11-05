@@ -1,6 +1,6 @@
 <?php namespace Larajax\Ui\Traits;
 
-use Lang;
+use Illuminate\Support\Facades\Lang;
 use Larajax\Ui\Classes\FormField;
 use Exception;
 

@@ -96,4 +96,32 @@ class Url
             . (($fragment = parse_url($fullUrl, PHP_URL_FRAGMENT)) ? '#' . $fragment : '')
             ?: '/';
     }
+
+    /**
+     * replaceParameters fills `:name` parameters in a URL template with the matching values of a record, for example `users/:id` becomes `users/1`.
+     */
+    public static function replaceParameters($object, string $string): string
+    {
+        if (!preg_match_all('/\:([\w]+)/', $string, $matches)) {
+            return $string;
+        }
+
+        if (is_array($object)) {
+            $object = (object) $object;
+        }
+
+        foreach ($matches[1] as $column) {
+            if (
+                !isset($object->{$column}) ||
+                is_array($object->{$column}) ||
+                (is_object($object->{$column}) && !method_exists($object->{$column}, '__toString'))
+            ) {
+                continue;
+            }
+
+            $string = str_replace(':' . $column, urlencode((string) $object->{$column}), $string);
+        }
+
+        return $string;
+    }
 }

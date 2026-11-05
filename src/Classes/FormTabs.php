@@ -1,6 +1,6 @@
 <?php namespace Larajax\Ui\Classes;
 
-use Str;
+use Illuminate\Support\Str;
 use October\Rain\Html\Helper as HtmlHelper;
 use Larajax\Ui\Element\Form\FieldsetDefinition;
 
