@@ -5,10 +5,10 @@
     --callout-color: var(--bs-fg-body);
     --callout-bg: light-dark(#e6e7fc, #12262c);
     --callout-icon-color: #6a6cf7;
-    --callout-radius: 0.3125rem;
+    --callout-radius: 0.25rem;
 
     font-size: var(--bs-body-font-size, 1rem);
-    margin-bottom: 1.4375rem;
+    margin-bottom: 1.375rem;
 
     &.fade {
         opacity: 0;
@@ -23,13 +23,13 @@
 
     > .action {
         float: right;
-        padding: 0.6875rem;
+        padding: 0.75rem;
     }
 
     /* The dismiss button */
     > .btn-close {
         float: right;
-        margin: 1.0625rem 1.0625rem 0;
+        margin: 1.125rem 1.125rem 0;
     }
 
     > .header + .content {
@@ -37,7 +37,7 @@
     }
 
     > .header {
-        padding: 1.0625rem 1.4375rem 0.375rem;
+        padding: 1.125rem 1.375rem 0.375rem;
         border-radius: var(--callout-radius) var(--callout-radius) 0 0;
         color: var(--callout-color);
         background: var(--callout-bg);
@@ -45,7 +45,7 @@
 
         /* The icon comes from the icon pack, as the custom icon or the pack's callout key for the type */
         > .custom-icon {
-            width: 1.9375rem;
+            width: 1.875rem;
             text-align: center;
             font-size: 1.5625rem;
             line-height: 1;
@@ -68,13 +68,13 @@
         p,
         ul,
         ol {
-            margin-left: 2.3125rem;
+            margin-left: 2.25rem;
             margin-bottom: 0.5rem;
         }
 
         ul,
         ol {
-            padding-left: 1.4375rem;
+            padding-left: 1.375rem;
         }
 
         &:last-child {
@@ -86,7 +86,7 @@
     > .content {
         color: var(--callout-color);
         background: var(--callout-bg);
-        padding: 0 1.4375rem 1.0625rem 3.6875rem;
+        padding: 0 1.375rem 1.125rem 3.75rem;
         border-radius: 0 0 var(--callout-radius) var(--callout-radius);
 
         h1,
@@ -97,7 +97,7 @@
         h6 {
             color: var(--callout-color);
             text-transform: none;
-            margin: 1.4375rem 0 0.375rem 0;
+            margin: 1.375rem 0 0.375rem 0;
             line-height: 150%;
             font-weight: 600;
         }
@@ -132,7 +132,7 @@
 
         ul,
         ol {
-            padding-left: 1.4375rem;
+            padding-left: 1.375rem;
 
             li {
                 margin-bottom: 0.375rem;
@@ -140,21 +140,21 @@
         }
 
         .action-panel {
-            padding: 0.6875rem 0 0 0;
+            padding: 0.75rem 0 0 0;
         }
     }
 
     /* Modifiers */
     &.no-title {
         > .content {
-            padding-top: 1.0625rem;
+            padding-top: 1.125rem;
             border-radius: var(--callout-radius);
         }
     }
 
     &.no-subheader {
         > .header {
-            padding-bottom: 0.6875rem;
+            padding-bottom: 0.75rem;
         }
 
         > .header + .content {
@@ -177,7 +177,7 @@
         }
 
         > .content {
-            padding-left: 1.4375rem;
+            padding-left: 1.375rem;
         }
     }
 

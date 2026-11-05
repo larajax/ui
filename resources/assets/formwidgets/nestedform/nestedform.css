@@ -17,14 +17,14 @@
         --tab-surface: var(--oc-nestedform-bg);
         background: var(--oc-nestedform-bg);
         border: 1px solid var(--oc-nestedform-border);
-        border-radius: 0.3125rem;
+        border-radius: 0.25rem;
         box-shadow: none;
         margin-top: 0.375rem;
-        padding: 0.6875rem 1.0625rem 0 1.0625rem !important;
+        padding: 0.75rem 1.125rem 0 1.125rem !important;
 
         .control-tabs.primary-tabs .nav-tabs {
-            margin-left: -1.0625rem !important;
-            margin-right: -1.0625rem !important;
+            margin-left: -1.125rem !important;
+            margin-right: -1.125rem !important;
         }
     }
 }

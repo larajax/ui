@@ -40,8 +40,8 @@ table.table.data {
 
     th.list-reorder,
     td.list-reorder {
-        width: 1.6875rem;
-        min-width: 1.6875rem;
+        width: 1.75rem;
+        min-width: 1.75rem;
         padding-left: 0;
         padding-right: 0;
     }
@@ -56,10 +56,10 @@ table.table.data {
             text-align: center;
             cursor: move;
             touch-action: none;
-            left: -0.4375rem;
+            left: -0.375rem;
 
-            width: 1.6875rem;
-            height: 1.6875rem;
+            width: 1.75rem;
+            height: 1.75rem;
             position: absolute;
             top: calc(50% - 0.875rem);
             border-radius: 0.1875rem;
@@ -83,8 +83,8 @@ table.table.data {
         transition: padding 0.3s ease;
 
         a.tree-expand-collapse {
-            width: 1.6875rem;
-            height: 1.6875rem;
+            width: 1.75rem;
+            height: 1.75rem;
             display: block;
             position: absolute;
             top: calc(50% - 0.875rem);
@@ -93,22 +93,22 @@ table.table.data {
         }
 
         a.tree-expand-collapse {
-            margin-left: -1.8125rem;
+            margin-left: -1.75rem;
 
             > span {
                 position: absolute;
                 display: inline-block;
                 left: 0;
                 top: 0;
-                width: 1.6875rem;
-                height: 1.6875rem;
+                width: 1.75rem;
+                height: 1.75rem;
 
                 > i {
                     position: absolute;
-                    left: calc(100% - 1.0625rem);
+                    left: calc(100% - 1.125rem);
                     top: 0.375rem;
-                    width: 1.6875rem;
-                    height: 1.6875rem;
+                    width: 1.75rem;
+                    height: 1.75rem;
                     font-size: 1.0625rem;
                     color: var(--bs-fg-body);
                     text-indent: 0;
@@ -116,7 +116,7 @@ table.table.data {
             }
 
             &.is-expanded > span > i {
-                left: calc(100% - 1.1875rem);
+                left: calc(100% - 1.25rem);
             }
         }
     }
@@ -125,12 +125,12 @@ table.table.data {
 .control-list.list-checkboxes table.table.data {
     th.list-reorder,
     td.list-reorder {
-        width: 1.3125rem;
+        width: 1.25rem;
     }
 
     td.list-reorder {
         span.list-reorder-handle {
-            left: -0.9375rem;
+            left: -0.875rem;
         }
     }
 }

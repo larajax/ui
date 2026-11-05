@@ -6,7 +6,7 @@
 
 .field-richeditor {
     &.size-tiny .rich-editor {
-        --rich-editor-min-height: 3.5625rem;
+        --rich-editor-min-height: 3.625rem;
     }
 
     &.size-small .rich-editor {
@@ -14,7 +14,7 @@
     }
 
     &.size-large .rich-editor {
-        --rich-editor-min-height: 14.3125rem;
+        --rich-editor-min-height: 14.25rem;
     }
 
     &.size-huge .rich-editor {

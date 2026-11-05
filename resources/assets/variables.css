@@ -27,8 +27,8 @@
     --oc-backdrop-opacity:       0.5;
 
     /* The icon buttons beside a search, such as list setup, the same in a toolbar and a filter */
-    --oc-toolbar-action-size:      1.6875rem;
-    --oc-toolbar-action-icon-size: 1.4375rem;
+    --oc-toolbar-action-size:      1.75rem;
+    --oc-toolbar-action-icon-size: 1.375rem;
 
     /*
     // "Windex" Z-Index Window Manager

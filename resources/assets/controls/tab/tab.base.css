@@ -4,7 +4,7 @@
 
 .control-tabs {
     position: relative;
-    margin-bottom: 1.4375rem;
+    margin-bottom: 1.375rem;
 
     &:last-child {
         margin-bottom: 0;
@@ -15,7 +15,7 @@
     &:before {
         display: none;
         position: absolute;
-        top: 0.6875rem;
+        top: 0.75rem;
         margin-top: 0;
         width: 0;
         height: 0;
@@ -26,12 +26,12 @@
     }
 
     &:before {
-        left: -0.4375rem;
+        left: -0.375rem;
         border-right: 5px solid currentColor;
     }
 
     &:after {
-        right: -0.5625rem;
+        right: -0.625rem;
         border-left: 5px solid currentColor;
     }
 
@@ -55,7 +55,7 @@
 
         > li {
             font-size: 1.0625rem;
-            margin-right: 1.4375rem;
+            margin-right: 1.375rem;
             position: relative;
             z-index: calc(var(--tab-zindex) - 2);
 
@@ -68,7 +68,7 @@
                 border-left: none;
                 border-top: none;
                 border-right: none;
-                padding: 0 0 0.6875rem 0;
+                padding: 0 0 0.75rem 0;
                 color: var(--tab-color);
                 font-weight: 400;
                 overflow: hidden;
@@ -84,25 +84,25 @@
                 }
 
                 > span.title > span {
-                    max-width: 10.6875rem;
+                    max-width: 10.75rem;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     display: inline-block;
 
                     > span:not([class*="oc-icon"]) {
-                        margin-right: 0.5625rem;
+                        margin-right: 0.625rem;
                     }
                 }
 
                 span.badge-colorpicker {
                     text-decoration: none;
                     display: inline-block;
-                    width: 1.4375rem;
-                    height: 1.4375rem;
-                    border-radius: 0.4375rem;
+                    width: 1.375rem;
+                    height: 1.375rem;
+                    border-radius: 0.375rem;
                     background-color: var(--background-color, var(--oc-brand-secondary));
-                    margin-left: 1.0625rem;
-                    margin-right: -1.0625rem;
+                    margin-left: 1.125rem;
+                    margin-right: -1.125rem;
                     opacity: .3;
                 }
             }
@@ -161,7 +161,7 @@
                 padding: 0;
             }
             &.pane-padded {
-                padding: 1.4375rem 1.4375rem 0 1.4375rem;
+                padding: 1.375rem 1.375rem 0 1.375rem;
             }
             &.pane-bordered {
                 border-left: 1px solid var(--tab-border);

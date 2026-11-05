@@ -65,7 +65,7 @@
  */
 .button-separator {
     color: var(--bs-fg-3);
-    margin: 0 0.6875rem;
+    margin: 0 0.75rem;
     font-size: 1rem;
     padding-bottom: 2px;
 
@@ -108,8 +108,8 @@
         }
 
         &.last {
-            border-bottom-right-radius: 0.3125rem !important;
-            border-top-right-radius: 0.3125rem !important;
+            border-bottom-right-radius: 0.25rem !important;
+            border-top-right-radius: 0.25rem !important;
         }
     }
 }
@@ -117,7 +117,7 @@
 :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon),
 .btn-group {
     &.offset-right {
-        margin-right: 0.6875rem;
+        margin-right: 0.75rem;
     }
 }
 
@@ -129,7 +129,7 @@
     background: transparent;
     border: none;
     outline: none;
-    border-radius: 0.3125rem;
+    border-radius: 0.25rem;
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 
     &::before {
@@ -159,7 +159,7 @@
 
     &.small {
         font-size: 1.1875rem;
-        height: 1.1875rem;
+        height: 1.25rem;
         line-height: 1.0625rem;
     }
 
@@ -176,7 +176,7 @@
     color: var(--bs-fg-3);
     vertical-align: middle;
     display: inline-block;
-    padding: 0.5625rem 0;
+    padding: 0.625rem 0;
 
     a,
     .btn-link {
@@ -209,11 +209,11 @@
     }
 
     &.btn-lg {
-        width: 3.5625rem;
-        height: 3.5625rem;
+        width: 3.625rem;
+        height: 3.625rem;
         font-size: 1.3125rem;
         line-height: 1.33;
-        border-radius: 1.8125rem;
+        border-radius: 1.75rem;
     }
 
     &.btn-xl {

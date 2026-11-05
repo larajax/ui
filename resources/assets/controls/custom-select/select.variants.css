@@ -17,7 +17,7 @@
             position: absolute;
             top: 50%;
             height: 0.625rem;
-            width: 0.5625rem;
+            width: 0.625rem;
             right: 0.1875rem;
             margin-top: -0.375rem;
             line-height: 0.625rem;
@@ -50,7 +50,7 @@
     padding-bottom: 0.375rem;
 
     &.select2-selection--clearable {
-        padding-right: 1.8125rem;
+        padding-right: 1.75rem;
     }
 
     .select2-selection__placeholder {
@@ -64,12 +64,12 @@
         color: white;
         background: var(--custom-select-choice-bg);
         border: none;
-        border-radius: 0.4375rem;
+        border-radius: 0.375rem;
         box-sizing: border-box;
 
         display: inline-block;
         margin: calc(var(--custom-select-padding-base-vertical) - 2px) 0 0 calc(var(--custom-select-padding-base-horizontal) / 2);
-        padding: 1px 0.4375rem 2px 0.4375rem;
+        padding: 1px 0.375rem 2px 0.375rem;
 
         position: relative;
         max-width: 100%;
@@ -104,7 +104,7 @@
         display: inline-block;
         font-weight: normal;
         font-size: 0.9375rem;
-        margin: 0 0.4375rem 0 0;
+        margin: 0 0.375rem 0 0;
 
         &:hover {
             color: var(--custom-select-brand-danger);
@@ -129,7 +129,7 @@
     .taglist__item {
         color: white;
         background: var(--custom-select-choice-bg);
-        border-radius: 0.4375rem;
+        border-radius: 0.375rem;
         cursor: default;
         float: left;
         margin: calc(var(--custom-select-padding-base-vertical) - 2px) 0 0 calc(var(--custom-select-padding-base-horizontal) / 2);

@@ -5,7 +5,7 @@
     padding: 0;
 
     .field-repeater-selection-list {
-        width: 21.4375rem;
+        width: 21.375rem;
         overflow-y: auto;
 
         ul {
@@ -17,7 +17,7 @@
         li > a {
             position: relative;
             display: block;
-            padding: 0.5625rem 1.0625rem 0.5625rem 3.125rem;
+            padding: 0.625rem 1.125rem 0.625rem 3.125rem;
             text-decoration: none;
             color: var(--bs-fg-body);
 
@@ -32,7 +32,7 @@
 
         .list-icon {
             position: absolute;
-            left: 1.0625rem;
+            left: 1.125rem;
             top: 0.625rem;
             font-size: 1.4375rem;
             color: var(--oc-toolbar-color);

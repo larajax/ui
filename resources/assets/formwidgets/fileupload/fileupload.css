@@ -8,7 +8,7 @@
 
 .field-fileupload {
     .uploader-control-container {
-        border-radius: 0.3125rem;
+        border-radius: 0.25rem;
         border: 1px solid var(--bs-border-color);
         background: var(--oc-form-control-bg);
 
@@ -73,17 +73,17 @@
     }
 
     &.size-small .upload-files-container {
-        max-height: 14.3125rem;
+        max-height: 14.25rem;
         overflow: auto;
     }
 
     &.size-large .upload-files-container {
-        max-height: 28.5625rem;
+        max-height: 28.625rem;
         overflow: auto;
     }
 
     &.size-huge .upload-files-container {
-        max-height: 35.6875rem;
+        max-height: 35.75rem;
         overflow: auto;
     }
 
@@ -132,10 +132,10 @@
         position: relative;
         outline: none;
         display: block;
-        margin: 0.3125rem 0.3125rem 0 0.3125rem;
+        margin: 0.25rem 0.25rem 0 0.25rem;
 
         &:last-child {
-            margin-bottom: 0.3125rem;
+            margin-bottom: 0.25rem;
         }
 
         h4.filename, p {
@@ -143,7 +143,7 @@
             font-size: 1rem;
             word-break: break-all;
             line-height: 1.4;
-            margin-bottom: 0.5625rem;
+            margin-bottom: 0.625rem;
         }
 
         h4.filename {
@@ -152,7 +152,7 @@
         }
 
         p.description {
-            margin-top: -0.3125rem;
+            margin-top: -0.25rem;
 
             &:empty {
                 display: none;
@@ -166,13 +166,13 @@
 
         &.upload-object-image {
             h4.filename {
-                padding-top: 0.6875rem;
+                padding-top: 0.75rem;
             }
         }
 
         .file-data-container {
             padding: 0.1875rem;
-            border-radius: 0.3125rem;
+            border-radius: 0.25rem;
 
             &:hover {
                 background: var(--oc-toolbar-hover-bg);
@@ -217,7 +217,7 @@
         .upload-checkbox {
             position: absolute;
             left: 0.1875rem;
-            top: 0.3125rem;
+            top: 0.25rem;
             display: flex;
         }
     }
@@ -249,8 +249,8 @@
             left: 50%;
             width: 2.875rem;
             height: 2.875rem;
-            margin-top: -1.4375rem;
-            margin-left: -1.4375rem;
+            margin-top: -1.375rem;
+            margin-left: -1.375rem;
             border: 3px solid var(--oc-primary-border);
             border-top-color: var(--oc-accent);
             border-radius: 50%;
@@ -363,7 +363,7 @@
             flex-wrap: wrap;
 
             .upload-object {
-                width: 21.4375rem;
+                width: 21.375rem;
 
                 h4.filename, p {
                     text-overflow: ellipsis;
@@ -384,7 +384,7 @@
         .file-data-container {
             .file-data-container-inner {
                 padding-left: 7.375rem;
-                min-height: 6.8125rem;
+                min-height: 6.75rem;
             }
         }
 
@@ -392,11 +392,11 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 6.8125rem;
-            height: 6.8125rem;
+            width: 6.75rem;
+            height: 6.75rem;
             overflow: hidden;
             border: 1px solid var(--bs-border-color);
-            border-radius: 0.3125rem;
+            border-radius: 0.25rem;
             background: var(--oc-primary-bg);
             user-select: none;
             display: flex;
@@ -435,7 +435,7 @@
 .field-fileupload.is-file {
     .upload-object.upload-object-file {
         .file-data-container-inner {
-            padding-top: 0.3125rem;
+            padding-top: 0.25rem;
         }
 
         .icon-container, .info, .info h4, .info h4 p {
@@ -445,27 +445,27 @@
 
         .icon-container {
             margin-top: -2px;
-            width: 1.4375rem;
-            height: 1.4375rem;
+            width: 1.375rem;
+            height: 1.375rem;
             position: absolute;
 
             i {
-                margin-top: 0.3125rem;
+                margin-top: 0.25rem;
                 margin-left: 0.1875rem;
                 display: none;
             }
 
             &:after {
-                width: 1.4375rem;
-                height: 1.4375rem;
-                margin-top: -0.6875rem;
-                margin-left: -0.6875rem;
+                width: 1.375rem;
+                height: 1.375rem;
+                margin-top: -0.75rem;
+                margin-left: -0.75rem;
                 border-width: 2px;
             }
         }
 
         .info {
-            padding-left: 1.5625rem;
+            padding-left: 1.625rem;
         }
 
         h4, h4 p, p.description {
@@ -490,12 +490,12 @@
 
         &.mode-multi {
             .file-data-container {
-                margin-left: 3.0625rem;
+                margin-left: 3.125rem;
             }
 
             .drag-handle {
                 display: block;
-                left: 1.6875rem;
+                left: 1.75rem;
                 top: 0;
             }
         }
@@ -538,7 +538,7 @@
             }
 
             div.error-message {
-                margin-left: 1.5625rem;
+                margin-left: 1.625rem;
             }
         }
     }
@@ -585,8 +585,8 @@
         background-image:
             linear-gradient(45deg, var(--oc-fileupload-checkerboard-alt-bg) 25%, transparent 25%, transparent 75%, var(--oc-fileupload-checkerboard-alt-bg) 75%, var(--oc-fileupload-checkerboard-alt-bg)),
             linear-gradient(45deg, var(--oc-fileupload-checkerboard-alt-bg) 25%, transparent 25%, transparent 75%, var(--oc-fileupload-checkerboard-alt-bg) 75%, var(--oc-fileupload-checkerboard-alt-bg));
-        background-size: 1.4375rem 1.4375rem;
-        background-position: 0 0, 0.6875rem 0.6875rem;
+        background-size: 1.375rem 1.375rem;
+        background-position: 0 0, 0.75rem 0.75rem;
 
         &, img {
             border-radius: 2px 2px 0 0;
@@ -595,15 +595,15 @@
         /* The cross is a mask painted in its background color, so it keeps the default fill */
         .btn-close {
             position: absolute;
-            top: 0.6875rem;
-            right: 0.6875rem;
-            height: 1.6875rem;
-            width: 1.5625rem;
+            top: 0.75rem;
+            right: 0.75rem;
+            height: 1.75rem;
+            width: 1.625rem;
         }
     }
 
     .file-upload-modal-image-header + .dialog-body {
-        padding-top: 1.4375rem;
+        padding-top: 1.375rem;
     }
 }
 

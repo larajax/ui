@@ -22,7 +22,7 @@
     [data-vc-week="numbers"] {
         display: flex;
         flex-direction: column;
-        margin-inline-end: 0.3125rem;
+        margin-inline-end: 0.25rem;
     }
 
     [data-vc-week-numbers="title"] {
@@ -30,7 +30,7 @@
         align-items: center;
         justify-content: center;
         height: 1.125rem;
-        margin-bottom: 0.5625rem;
+        margin-bottom: 0.625rem;
         font-size: 0.875rem;
         font-weight: 600;
         line-height: 1.125rem;
@@ -47,7 +47,7 @@
         align-items: center;
         justify-content: center;
         min-width: 2.125rem;
-        min-height: 2.4375rem;
+        min-height: 2.375rem;
         padding: 0;
         font-size: 0.875rem;
         font-weight: 600;

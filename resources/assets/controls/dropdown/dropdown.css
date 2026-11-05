@@ -11,7 +11,7 @@
     --bs-menu-font-size: 1rem;
     --bs-menu-color: var(--bs-fg-body);
     --bs-menu-bg: var(--bs-dialog-bg);
-    --bs-menu-border-radius: 0.3125rem;
+    --bs-menu-border-radius: 0.25rem;
     --bs-menu-box-shadow: -2px 2px 5px rgba(67, 86, 100, 0.12);
     --bs-menu-divider-margin-x: 0;
     --bs-menu-divider-margin-y: 0;
@@ -21,9 +21,9 @@
     --bs-menu-item-active-color: var(--oc-dropdown-hover-color);
     --bs-menu-item-active-bg: var(--oc-dropdown-active-bg);
     --bs-menu-item-disabled-color: #98A0A0;
-    --bs-menu-item-gap: 0.5625rem;
-    --bs-menu-item-padding-x: 1.0625rem;
-    --bs-menu-item-padding-y: 0.6875rem;
+    --bs-menu-item-gap: 0.625rem;
+    --bs-menu-item-padding-x: 1.125rem;
+    --bs-menu-item-padding-y: 0.75rem;
     --bs-menu-item-border-radius: 0;
     border: var(--oc-popup-border);
 
@@ -81,13 +81,13 @@
     /* Rounded to the menu's corners, where a submenu trigger counts as the row its submenu sits on */
     > .menu-item:first-child,
     > .submenu:first-child > .menu-item {
-        border-top-left-radius: 0.3125rem;
-        border-top-right-radius: 0.3125rem;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
     }
 
     > .menu-item:last-child,
     > .submenu:last-child > .menu-item {
-        border-bottom-left-radius: 0.3125rem;
-        border-bottom-right-radius: 0.3125rem;
+        border-bottom-left-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
     }
 }
