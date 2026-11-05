@@ -21,9 +21,145 @@
             padding-right: 3.125rem;
         }
     }
+
+    /* The field keeps Bootstrap's focus ring while its picker holds the focus, as a datepicker field does */
+    &.is-picker-open .form-control {
+        --bs-focus-ring-offset: -1px;
+        outline: var(--bs-focus-ring);
+        outline-offset: var(--bs-focus-ring-offset);
+    }
 }
 
+/*
+ * The picker panel takes Bootstrap's datepicker look: its padding, surface, border, corners,
+ * shadow and small text, with Bootstrap's small controls for the value and buttons
+ */
 .clr-picker {
     z-index: var(--oc-zindex-datepicker);
+    box-sizing: border-box;
+    width: 17.5rem;
+    gap: 0.75rem;
+    padding: 1rem;
     font-family: var(--bs-body-font-family);
+    font-size: var(--bs-font-size-sm);
+    color: var(--bs-fg-body);
+    background-color: var(--bs-bg-body);
+    border: var(--bs-border-width) solid var(--bs-border-color-translucent);
+    border-radius: var(--bs-radius-7);
+    box-shadow: var(--bs-box-shadow);
+
+    /* The panel mounts on the body, so it takes the field's theme from the class Coloris sets */
+    &.clr-light {
+        color-scheme: light;
+    }
+
+    &.clr-dark {
+        color-scheme: dark;
+    }
+
+    .clr-gradient {
+        height: 7.5rem;
+        margin: 0;
+        border-radius: var(--bs-radius-5);
+    }
+
+    /* The sliders leave room for half a thumb at each end */
+    .clr-hue,
+    .clr-alpha {
+        width: calc(100% - 1rem);
+        margin: 0 0.5rem;
+    }
+
+    .clr-hue div,
+    .clr-alpha div {
+        border-color: var(--bs-bg-body);
+        box-shadow: 0 0 0 1px var(--bs-border-color);
+    }
+
+    /* The preview is also the button that confirms the color, drawn over it */
+    .clr-preview {
+        width: var(--bs-btn-input-sm-min-height);
+        height: var(--bs-btn-input-sm-min-height);
+        margin: 0;
+
+        button:focus-visible {
+            outline: var(--bs-focus-ring);
+            outline-offset: calc(var(--bs-focus-ring-width) * -1);
+        }
+    }
+
+    input.clr-color {
+        flex: 1;
+        width: auto;
+        min-width: 0;
+        height: var(--bs-btn-input-sm-min-height);
+        margin: 0;
+        padding: 0 var(--bs-btn-input-sm-padding-x);
+        font: inherit;
+        color: var(--bs-fg-body);
+        background-color: var(--bs-bg-body);
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        border-radius: var(--bs-btn-input-sm-border-radius);
+
+        &:focus {
+            --bs-focus-ring-offset: -1px;
+            border-color: var(--bs-border-color);
+            outline: var(--bs-focus-ring);
+            outline-offset: var(--bs-focus-ring-offset);
+        }
+    }
+
+    .clr-swatches {
+        width: 100%;
+        margin: 0;
+
+        div {
+            gap: 0.5rem;
+            justify-content: flex-start;
+            padding: 0;
+        }
+
+        button {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin: 0;
+
+            &:after {
+                box-shadow: inset 0 0 0 1px var(--bs-border-color-translucent);
+            }
+
+            &:focus-visible {
+                outline: var(--bs-focus-ring);
+                outline-offset: var(--bs-focus-ring-offset);
+            }
+        }
+    }
+
+    .clr-clear {
+        height: var(--bs-btn-input-sm-min-height);
+        margin: 0;
+        padding: 0 var(--bs-btn-input-sm-padding-x);
+        font-size: var(--bs-btn-input-sm-font-size);
+        color: var(--bs-fg-body);
+        background-color: var(--bs-bg-3);
+        border-radius: var(--bs-btn-input-sm-border-radius);
+
+        &:hover {
+            background-color: var(--bs-bg-4);
+        }
+
+        &:focus-visible {
+            outline: var(--bs-focus-ring);
+            outline-offset: var(--bs-focus-ring-offset);
+        }
+    }
+
+    /* Keyboard focus on the marker and the slider thumbs takes Bootstrap's focus color */
+    &.clr-keyboard-nav {
+        .clr-marker:focus,
+        .clr-hue input:focus + div,
+        .clr-alpha input:focus + div {
+            box-shadow: 0 0 0 2px var(--bs-bg-body), 0 0 0 calc(2px + var(--bs-focus-ring-width)) var(--bs-focus-ring-color);
+        }
+    }
 }

@@ -8,6 +8,8 @@
  * - data-control="colorpicker" - enables the plugin on an element
  * - data-colorpicker-input - the text input holding the color value
  *
+ * The field has the is-picker-open class while its picker is open.
+ *
  * Config:
  * - swatches: [] - preset colors shown in the picker
  * - swatchesOnly: false - only the preset colors can be picked
@@ -21,6 +23,9 @@
 
 // Coloris is a single picker shared by every field, loaded on first use
 let colorisPromise = null;
+
+// The field whose picker is open, since moving straight to another field opens it without a close
+let openField = null;
 
 export function registerColorPicker(jax) {
     jax.registerControl('colorpicker', class extends jax.ControlBase {
@@ -52,6 +57,10 @@ export function registerColorPicker(jax) {
             });
 
             this.listen('click', this.onClickField);
+
+            // Coloris moves the focus into the picker and fires these on the input without bubbling
+            this.listen('open', this.input, this.onPickerOpen);
+            this.listen('close', this.input, this.onPickerClose);
         }
 
         disconnect() {
@@ -59,8 +68,27 @@ export function registerColorPicker(jax) {
                 this.coloris.removeInstance(this.selector);
             }
 
+            this.onPickerClose();
             this.coloris = null;
             this.input = null;
+        }
+
+        // The field keeps its focus ring while its picker holds the focus
+        onPickerOpen() {
+            if (openField && openField !== this.element) {
+                openField.classList.remove('is-picker-open');
+            }
+
+            openField = this.element;
+            this.element.classList.add('is-picker-open');
+        }
+
+        onPickerClose() {
+            if (openField === this.element) {
+                openField = null;
+            }
+
+            this.element.classList.remove('is-picker-open');
         }
 
         // Refreshes the options before the picker opens, since the theme can change after connect

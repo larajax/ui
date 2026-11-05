@@ -40,8 +40,13 @@ function makeFakeJax() {
             }
         }
 
-        listen(eventName, handler) {
-            this.element.addEventListener(eventName, handler.bind(this));
+        listen(eventName, targetOrHandler, handler) {
+            if (targetOrHandler instanceof Element) {
+                targetOrHandler.addEventListener(eventName, handler.bind(this));
+            }
+            else {
+                this.element.addEventListener(eventName, targetOrHandler.bind(this));
+            }
         }
     }
 
@@ -156,6 +161,47 @@ describe('color picker', () => {
         await connect(field('', ''));
 
         expect(instanceCalls()).toHaveLength(0);
+    });
+});
+
+describe('color picker open state', () => {
+    const openOn = (element) => element.querySelector('input').dispatchEvent(new Event('open'));
+    const closeOn = (element) => element.querySelector('input').dispatchEvent(new Event('close'));
+
+    test('the field is marked while its picker is open', async () => {
+        const { element } = await connect(field());
+
+        openOn(element);
+        expect(element.classList.contains('is-picker-open')).toBe(true);
+
+        closeOn(element);
+        expect(element.classList.contains('is-picker-open')).toBe(false);
+    });
+
+    test('opening another field moves the mark without a close in between', async () => {
+        document.body.innerHTML = field() + field().replace('Form-color-input', 'Form-other-input');
+        const [first, second] = document.querySelectorAll('[data-control="colorpicker"]');
+        for (const element of [first, second]) {
+            const control = new (jax.controls.get('colorpicker'))(element);
+            control.init();
+            control.connect();
+        }
+        await flush();
+
+        openOn(first);
+        openOn(second);
+
+        expect(first.classList.contains('is-picker-open')).toBe(false);
+        expect(second.classList.contains('is-picker-open')).toBe(true);
+    });
+
+    test('disconnecting an open field clears the mark', async () => {
+        const { element, control } = await connect(field());
+
+        openOn(element);
+        control.disconnect();
+
+        expect(element.classList.contains('is-picker-open')).toBe(false);
     });
 });
 
