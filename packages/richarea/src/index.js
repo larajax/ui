@@ -7,7 +7,7 @@ export { RichArea } from './richarea.js';
 export { RichAreaFacade } from './facade.js';
 export { buttonDefinitions } from './commands/index.js';
 export { defaultOptions } from './options.js';
-export { defaultLang } from './lang.js';
+export { defaultLang, registerLanguage, resolveLanguage } from './lang.js';
 export { defaultIcons } from './icons.js';
 export { normalizeHtml } from './html/normalizer.js';
 export { formatHtml } from './html/formatter.js';

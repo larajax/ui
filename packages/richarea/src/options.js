@@ -24,6 +24,9 @@ export const defaultOptions = {
     lang: {},
     icons: {},
 
+    // Translation from languages/, such as de or pt-br, the page's lang attribute when not set
+    language: null,
+
     // The page draws the toolbar from getToolbarItems() and getButtonState(), so the editor draws none
     externalToolbar: false,
 

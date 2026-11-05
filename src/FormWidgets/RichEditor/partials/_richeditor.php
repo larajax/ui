@@ -12,7 +12,7 @@
         <?php if (isset($editorOptions)): ?>data-editor-options="<?= e(json_encode($editorOptions)) ?>"<?php endif ?>
         <?php if ($uploadHandler): ?>data-upload-handler="<?= e($uploadHandler) ?>"<?php endif ?>
         data-icons="<?= e(json_encode((object) $icons)) ?>"
-        data-lang="<?= e(json_encode((object) $lang)) ?>"
+        <?php if ($language): ?>data-language="<?= e($language) ?>"<?php endif ?>
         data-control="richeditor">
             <textarea
                 data-richeditor-textarea

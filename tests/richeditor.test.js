@@ -1,6 +1,5 @@
 import { afterEach, beforeAll, describe, expect, mock, test } from 'bun:test';
 import { readFileSync } from 'fs';
-import { defaultLang } from '../packages/richarea/src/lang.js';
 import { defaultIcons } from '../packages/richarea/src/icons.js';
 
 const mounted = [];
@@ -242,15 +241,28 @@ describe('rich editor icons and strings', () => {
         expect(mounted[0].options.lang).toEqual({});
     });
 
-    test('lists the same strings and icons as the editor defaults', () => {
+    test('passes the field language, using a translation the page already has', async () => {
+        globalThis.RichAreaLanguages = { de: { bold: 'Fett' } };
+
+        try {
+            await connect(field(`data-language="de"`));
+            expect(mounted[0].options.language).toBe('de');
+        }
+        finally {
+            delete globalThis.RichAreaLanguages;
+        }
+    });
+
+    test('mounts in English when the translation fails to load', async () => {
+        await connect(field(`data-language="zz"`));
+
+        expect(mounted.length).toBe(1);
+        expect(mounted[0].options.language).toBe('zz');
+    });
+
+    test('lists the same icons as the editor defaults', () => {
         const php = readFileSync(new URL('../src/FormWidgets/RichEditor.php', import.meta.url), 'utf8');
         const block = (start) => php.slice(php.indexOf(start), php.indexOf('];', php.indexOf(start)));
-
-        const strings = {};
-        for (const match of block('$strings = [').matchAll(/'(\w+)' => '((?:[^'\\]|\\.)*)'/g)) {
-            strings[match[1]] = match[2].replace(/\\(.)/g, '$1');
-        }
-        expect(strings).toEqual(defaultLang);
 
         const names = Array.from(block('$names = [').matchAll(/'(\w+)'/g), (match) => match[1]);
         expect(names).toEqual(Object.keys(defaultIcons));

@@ -53,7 +53,7 @@ export class RichArea {
     constructor(element, options = {}) {
         this.element = element;
         this.options = makeOptions(options);
-        this.trans = makeTranslator(this.options.lang);
+        this.trans = makeTranslator(this.options.lang, this.options.language || document.documentElement.lang);
         this.options.paragraphFormat = this.options.paragraphFormat || makeParagraphFormats(this.trans);
         this.listeners = {};
         this.savedBookmark = null;

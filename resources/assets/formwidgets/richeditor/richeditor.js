@@ -15,7 +15,9 @@
  * - externalToolbar: false - draws no toolbar, the page draws one from the editor's toolbar API
  * - editorOptions: {} - extra editor options, such as paragraphStyles
  * - icons: {} - icon classes keyed by button or element name
- * - lang: {} - translated strings keyed like the editor's English defaults
+ * - language: null - the editor translation to use, such as de, loaded from vendor/richarea/languages
+ *   unless the page has it already
+ * - lang: {} - strings keyed like the editor's English defaults, over the translation
  * - uploadHandler: null - AJAX handler storing uploads when the page sets no uploadFile hook
  *
  * JavaScript API:
@@ -44,6 +46,7 @@ export function registerRichEditor(jax) {
                 externalToolbar: false,
                 editorOptions: {},
                 icons: {},
+                language: null,
                 lang: {},
                 uploadHandler: null
             }, this.config);
@@ -55,7 +58,7 @@ export function registerRichEditor(jax) {
                 return;
             }
 
-            loadRichArea().then(({ RichArea, defaultOptions }) => {
+            Promise.all([loadRichArea(), loadLanguage(this.config.language)]).then(([{ RichArea, defaultOptions }]) => {
                 // The field may have left the page while the editor loaded
                 if (!this.textarea) {
                     return;
@@ -98,6 +101,7 @@ export function registerRichEditor(jax) {
                 useLineBreaks: !!this.config.useLineBreaks,
                 externalToolbar: !!this.config.externalToolbar,
                 icons: Object.assign({}, plainObject(this.config.icons), plainObject(options.icons)),
+                language: this.config.language || null,
                 lang: Object.assign({}, plainObject(this.config.lang), plainObject(options.lang)),
                 toolbarButtons: richEditor.resolveButtons({ fieldButtons: this.config.toolbarButtons }),
                 buttons: richEditor.buttons,
@@ -147,6 +151,18 @@ export function registerRichEditor(jax) {
         }
 
         return richAreaPromise;
+    }
+
+    // A translation registers itself on the page, so one the page bundles needs no request. The editor
+    // stays in English when it fails to load
+    function loadLanguage(language) {
+        const languages = globalThis.RichAreaLanguages || {};
+
+        if (!language || languages[language] || !/^[a-z]{2,3}(-[a-z0-9]{2,8})?$/.test(language)) {
+            return Promise.resolve();
+        }
+
+        return import(`../../vendor/richarea/languages/${language}.js`).catch(() => {});
     }
 }
 

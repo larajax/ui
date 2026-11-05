@@ -72,7 +72,7 @@ await bundleVirtual(
 // RichArea (rich text editor on TipTap) - built from packages/richarea for the
 // richeditor form widget, with its stylesheet and the website base styles.
 await buildRichArea({ outdir: path.join(vendorDir, 'richarea') });
-console.log('  ✓ richarea/richarea.js, richarea.css and base-styles.css (bundled)');
+console.log('  ✓ richarea/richarea.js, richarea.css, base-styles.css (bundled) and languages/');
 
 // Hotsheet (data grid) - built from packages/hotsheet for the datatable form widget,
 // with its stylesheet.
