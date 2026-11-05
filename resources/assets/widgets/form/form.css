@@ -64,10 +64,10 @@
         display: block;
     }
 
-    /* Focus shows in the border alone, without Bootstrap's focus ring */
+    /* Bootstrap's focus ring, at a width the host can set to 0 */
     &:focus-visible,
     &:focus-within {
-        outline: 0;
+        outline-width: var(--oc-input-focus-ring-width);
     }
 
     &:focus,
@@ -75,7 +75,7 @@
         border: 1px solid var(--oc-border-focus);
     }
 
-    /* A validated field keeps its colour in focus, which the ring used to carry */
+    /* A validated field keeps its colour in focus, so it shows without a ring too */
     &.is-invalid:is(:focus, :focus-within) {
         border-color: var(--bs-danger-border);
     }

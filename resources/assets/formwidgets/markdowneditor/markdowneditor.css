@@ -208,6 +208,35 @@
         }
     }
 
+    /* The toolbar, editor and side preview each draw the focus ring, clipped at their shared edges so
+       it reads as one. An adaptive editor has no frame to ring */
+    &.editor-focus:not(.size-adaptive) {
+        .editor-toolbar:not(.fullscreen),
+        .EasyMDEContainer .CodeMirror:not(.CodeMirror-fullscreen),
+        .EasyMDEContainer.sided--no-fullscreen .editor-preview-active-side {
+            outline: var(--oc-input-focus-ring-width) solid var(--bs-focus-ring-color);
+            outline-offset: -1px;
+        }
+
+        .editor-toolbar:not(.fullscreen) {
+            clip-path: inset(-4px -4px 0 -4px);
+        }
+
+        .EasyMDEContainer .CodeMirror:not(.CodeMirror-fullscreen) {
+            clip-path: inset(0 -4px -4px -4px);
+        }
+
+        .EasyMDEContainer.sided--no-fullscreen {
+            .CodeMirror-sided {
+                clip-path: inset(0 0 -4px -4px);
+            }
+
+            .editor-preview-active-side {
+                clip-path: inset(0 -4px -4px 0);
+            }
+        }
+    }
+
     .cm-s-easymde {
         .cm-comment {
             background: var(--bs-bg-2);

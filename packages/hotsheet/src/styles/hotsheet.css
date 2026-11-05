@@ -288,13 +288,15 @@
 
 /* Fill handle: a square on the selection's bottom right corner, hidden while editing */
 
+/* Centred on the selection's corner by half its own size, which placeFillHandle relies on to keep it inside the grid */
 .hotsheet-fill-handle {
+    --hotsheet-fill-handle-size: 0.625rem;
     position: absolute;
     z-index: 2;
     box-sizing: border-box;
-    width: 0.625rem;
-    height: 0.625rem;
-    margin: -0.25rem 0 0 -0.25rem;
+    width: var(--hotsheet-fill-handle-size);
+    height: var(--hotsheet-fill-handle-size);
+    margin: calc(var(--hotsheet-fill-handle-size) / -2) 0 0 calc(var(--hotsheet-fill-handle-size) / -2);
     border: 1px solid var(--hotsheet-cell-bg);
     background: var(--hotsheet-focus);
     cursor: crosshair;

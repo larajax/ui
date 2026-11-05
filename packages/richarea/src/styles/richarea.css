@@ -31,9 +31,14 @@
     color: var(--rich-editor-color);
     transition: border-color ease-in-out .15s;
 
-    /* Focus shows in the border alone, as on a form control */
+    /* Focus matches a form control: its border, and Bootstrap's focus ring at the width the host sets */
     &.is-focused {
         border-color: var(--rich-editor-focus);
+    }
+
+    &.is-focused:not(.is-fullscreen) {
+        outline: var(--oc-input-focus-ring-width, var(--bs-focus-ring-width, 3px)) solid var(--bs-focus-ring-color, color-mix(in oklch, var(--rich-editor-focus) 50%, transparent));
+        outline-offset: -1px;
     }
 
     /* Kept under popovers and popups, so properties panels and pickers open over it */

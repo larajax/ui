@@ -50,9 +50,11 @@
         }
     }
 
-    /* While people work in the grid, the frame takes a focused input's border */
+    /* While people work in the grid, the frame takes a focused input's border and focus ring */
     &:has(> .hotsheet.is-active) {
         border-color: var(--oc-border-focus);
+        outline: var(--oc-input-focus-ring-width) solid var(--bs-focus-ring-color);
+        outline-offset: -1px;
     }
 
     /* Slim scrollbars that always show, so a table that scrolls says so even where the system hides
@@ -100,5 +102,10 @@
 
     > .toolbar {
         background: transparent;
+    }
+
+    /* Without a frame there is nothing to ring, so focus shows in the grid alone */
+    &:has(> .hotsheet.is-active) {
+        outline: 0;
     }
 }
