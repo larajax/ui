@@ -1,20 +1,15 @@
 <?php namespace Larajax\Ui\FormWidgets;
 
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Larajax\Ui\Classes\FormField;
 use Larajax\Ui\Classes\FormWidgetBase;
-use October\Contracts\Database\AttachmentInterface;
-use October\Contracts\Database\SortableInterface;
 use October\Rain\Filesystem\Definitions as FileDefinitions;
 use October\Rain\Exception\ApplicationException;
 use October\Rain\Exception\ValidationException;
 use October\Rain\Exception\ForbiddenException;
-use October\Rain\Exception\SystemException;
 use Exception;
 use Larajax\Ui\Helpers\Input;
 
@@ -34,6 +29,7 @@ class FileUpload extends FormWidgetBase
 {
     use \Larajax\Ui\Traits\FormModelSaver;
     use \Larajax\Ui\Traits\FormModelWidget;
+    use \Larajax\Ui\FormWidgets\FileUpload\HasAttachmentStore;
 
     //
     // Configurable Properties
@@ -93,12 +89,7 @@ class FileUpload extends FormWidgetBase
      */
     public function init()
     {
-        if (!app('model.inspector')->isInstanceOf($this->getRelationModel(), AttachmentInterface::class)) {
-            throw new SystemException(__('The file model for the :name field must implement :interface.', [
-                'name' => $this->formField->fieldName,
-                'interface' => AttachmentInterface::class,
-            ]));
-        }
+        $this->initAttachmentStore();
 
         $this->maxFilesize = $this->getUploadMaxFilesize();
 
@@ -121,10 +112,6 @@ class FileUpload extends FormWidgetBase
 
         if ($this->formField->disabled) {
             $this->previewMode = true;
-        }
-
-        if (!$this->isAttachmentRelation()) {
-            $this->bindHeldFilesToSave();
         }
     }
 
@@ -347,19 +334,7 @@ class FileUpload extends FormWidgetBase
             return;
         }
 
-        if ($this->isAttachmentRelation()) {
-            $this->getRelationObject()->remove($file, $this->getSessionKey());
-            return;
-        }
-
-        // A held upload is discarded now, an attached file is removed when the record saves
-        if (in_array($file->getKey(), $this->getHeldFiles()['add'])) {
-            $file->delete();
-            $this->forgetHeldFile('add', $file->getKey());
-        }
-        else {
-            $this->holdFile('remove', $file->getKey());
-        }
+        $this->removeFile($file);
     }
 
     /**
@@ -376,15 +351,7 @@ class FileUpload extends FormWidgetBase
             $ids = array_keys($sortData);
             $orders = array_values($sortData);
 
-            // Validate IDs against existing ones
-            $fileModel = $this->getRelationModel();
-            $relationIds = $this->getFileQuery()->pluck($fileModel->getQualifiedKeyName())->all();
-
-            $ids = array_intersect($ids, $relationIds);
-
-            if ($ids && app('model.inspector')->isInstanceOf($fileModel, SortableInterface::class)) {
-                $fileModel->setSortableOrder($ids, $orders);
-            }
+            $this->sortFiles($ids, $orders);
         }
     }
 
@@ -410,7 +377,6 @@ class FileUpload extends FormWidgetBase
                 throw new ApplicationException('File missing from request');
             }
 
-            $fileModel = $this->getRelationModel();
             $uploadedFile = Input::file('file_data');
 
             $validationRules = ['max:'.($this->maxFilesize * 1024)];
@@ -435,8 +401,6 @@ class FileUpload extends FormWidgetBase
                 throw new ApplicationException('File is not valid');
             }
 
-            $fileRelation = $this->getRelationObject();
-
             // Check and clean vector files
             // @deprecated v4 this should be moved to a post processing method on the file model
             $extension = strtolower($uploadedFile->getClientOriginalExtension());
@@ -449,23 +413,7 @@ class FileUpload extends FormWidgetBase
                 File::put($realPath, app('html')->cleanVector(File::get($realPath)));
             }
 
-            if ($this->isAttachmentRelation()) {
-                $file = $fileModel;
-                $file->data = $uploadedFile;
-                $file->is_public = $fileRelation->isPublic();
-                $file->save();
-
-                // Determine the session key and if deferred binding should be used
-                $parent = $fileRelation->getParent();
-                $attachOnUpload = $this->deferredBinding === false && $parent && $parent->exists;
-                $sessionKey = $attachOnUpload ? null : $this->getSessionKey();
-
-                // Attach the file
-                $fileRelation->add($file, $sessionKey);
-            }
-            else {
-                $file = $this->storeUpload($fileRelation, $uploadedFile);
-            }
+            $file = $this->addUploadedFile($uploadedFile);
 
             $file = $this->decorateFileAttributes($file);
 
@@ -523,183 +471,6 @@ class FileUpload extends FormWidgetBase
     protected function getUploadMaxFilesize(): float
     {
         return $this->getRelationModel()::getMaxFilesize() / 1024;
-    }
-
-    /**
-     * isAttachmentRelation returns true when the relation holds uploads until the record saves itself, as Rain's attachment relations do.
-     */
-    protected function isAttachmentRelation(): bool
-    {
-        return method_exists($this->getRelationObject(), 'withDeferred');
-    }
-
-    /**
-     * getFileQuery returns a query for the field's files, with the uploads held until the record saves and without the removals held until then.
-     */
-    protected function getFileQuery()
-    {
-        $relation = $this->getRelationObject();
-
-        if ($this->isAttachmentRelation()) {
-            return $relation->withDeferred($this->getSessionKey());
-        }
-
-        $fileModel = $relation->getRelated();
-        $keyName = $fileModel->getQualifiedKeyName();
-        $held = $this->getHeldFiles();
-
-        $ids = $relation->getParent()->exists
-            ? $relation->getQuery()->pluck($keyName)->all()
-            : [];
-
-        $ids = array_diff(array_merge($ids, $held['add']), $held['remove']);
-
-        return $fileModel->newQuery()->whereIn($keyName, $ids);
-    }
-
-    /**
-     * getFileSortColumn returns the column that orders the files.
-     */
-    protected function getFileSortColumn(): string
-    {
-        $fileModel = $this->getRelationModel();
-
-        if ($this->isAttachmentRelation()) {
-            return 'sort_order';
-        }
-
-        if (app('model.inspector')->isInstanceOf($fileModel, SortableInterface::class) && method_exists($fileModel, 'getSortOrderColumn')) {
-            return $fileModel->getSortOrderColumn();
-        }
-
-        return $fileModel->getKeyName();
-    }
-
-    /**
-     * storeUpload saves an upload to a file model on a plain Eloquent relation, attached now when deferred binding is off and the record exists, otherwise held until the record saves.
-     */
-    protected function storeUpload($relation, $uploadedFile)
-    {
-        if (!$relation instanceof HasOneOrMany) {
-            throw new SystemException(__('The :name field needs a has one, has many, morph one or morph many relation.', [
-                'name' => $this->formField->fieldName,
-            ]));
-        }
-
-        $file = $relation->make();
-        $file->fromPost($uploadedFile);
-
-        if ($this->deferredBinding === false && $relation->getParent()->exists) {
-            $this->attachFile($relation, $file);
-            return $file;
-        }
-
-        $file->setAttribute($relation->getForeignKeyName(), null);
-        $file->save();
-        $this->holdFile('add', $file->getKey());
-
-        return $file;
-    }
-
-    /**
-     * attachFile saves a file to the relation, replacing the current file when the relation holds one.
-     */
-    protected function attachFile($relation, $file): void
-    {
-        if (!$relation instanceof HasOneOrMany) {
-            return;
-        }
-
-        if (!$relation instanceof \Illuminate\Database\Eloquent\Relations\HasMany && !$relation instanceof \Illuminate\Database\Eloquent\Relations\MorphMany) {
-            foreach ($relation->getQuery()->get() as $current) {
-                if ($current->getKey() != $file->getKey()) {
-                    $current->delete();
-                }
-            }
-        }
-
-        $relation->save($file);
-    }
-
-    /**
-     * bindHeldFilesToSave attaches the held uploads and deletes the held removals when the form's record saves.
-     */
-    protected function bindHeldFilesToSave(): void
-    {
-        [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
-
-        if (!$model instanceof \Illuminate\Database\Eloquent\Model) {
-            return;
-        }
-
-        app(\Larajax\Ui\Classes\HeldUploads::class)->add($model, function ($saved) use ($attribute) {
-            $this->commitHeldFiles($saved, $attribute);
-        });
-    }
-
-    /**
-     * commitHeldFiles attaches the held uploads to a saved record and deletes the held removals.
-     */
-    protected function commitHeldFiles($model, string $attribute): void
-    {
-        $held = $this->getHeldFiles();
-        if (!$held['add'] && !$held['remove']) {
-            return;
-        }
-
-        $relation = $model->{$attribute}();
-        $fileModel = $relation->getRelated();
-
-        foreach ($fileModel->newQuery()->whereIn($fileModel->getKeyName(), $held['remove'])->get() as $file) {
-            $file->delete();
-        }
-
-        foreach ($fileModel->newQuery()->whereIn($fileModel->getKeyName(), $held['add'])->get() as $file) {
-            $this->attachFile($relation, $file);
-        }
-
-        $this->putSession($this->getHeldFilesKey(), null);
-    }
-
-    /**
-     * getHeldFiles returns the ids of the uploads and removals held until the record saves.
-     *
-     * @return array{add: array<int, mixed>, remove: array<int, mixed>}
-     */
-    protected function getHeldFiles(): array
-    {
-        return (array) $this->getSession($this->getHeldFilesKey(), []) + ['add' => [], 'remove' => []];
-    }
-
-    /**
-     * holdFile holds an upload or a removal until the record saves.
-     */
-    protected function holdFile(string $type, $fileId): void
-    {
-        $held = $this->getHeldFiles();
-        $held[$type][] = $fileId;
-        $held[$type] = array_values(array_unique($held[$type]));
-
-        $this->putSession($this->getHeldFilesKey(), $held);
-    }
-
-    /**
-     * forgetHeldFile stops holding an upload or a removal.
-     */
-    protected function forgetHeldFile(string $type, $fileId): void
-    {
-        $held = $this->getHeldFiles();
-        $held[$type] = array_values(array_diff($held[$type], [$fileId]));
-
-        $this->putSession($this->getHeldFilesKey(), $held);
-    }
-
-    /**
-     * getHeldFilesKey returns the session key for the files held by this form.
-     */
-    protected function getHeldFilesKey(): string
-    {
-        return 'held-files-' . $this->getSessionKey();
     }
 
     /**
