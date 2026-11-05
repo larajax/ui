@@ -71,8 +71,6 @@
     browse: 'Sfoglia',
     byUrl: 'Da URL',
     embeddingCode: 'Codice di incorporamento',
-    rows: 'righe',
-    columns: 'colonne',
 
     // Popover forms
     url: 'URL',

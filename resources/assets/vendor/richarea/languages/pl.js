@@ -19,8 +19,8 @@
     paragraphStyle: 'Styl akapitu',
     paragraphFormat: 'Format akapitu',
     align: 'Wyrównanie',
-    formatOL: 'Lista uporządkowana',
-    formatUL: 'Lista nieuporządkowana',
+    formatOL: 'Lista numerowana',
+    formatUL: 'Lista punktowana',
     outdent: 'Zmniejsz wcięcie',
     indent: 'Zwiększ wcięcie',
     quote: 'Cytat',
@@ -71,8 +71,6 @@
     browse: 'Przeglądaj',
     byUrl: 'Z adresu URL',
     embeddingCode: 'Kod osadzania',
-    rows: 'wierszy',
-    columns: 'kolumn',
 
     // Popover forms
     url: 'URL',
@@ -131,9 +129,9 @@
 
     // Messages
     uploadFailed: 'Nie udało się przesłać pliku',
-    invalidFileEmptyInsert: 'Prosimy wybrać plik do wstawienia.',
-    invalidFileSingleInsert: 'Prosimy wybrać pojedynczy plik.',
-    invalidImageEmptyInsert: 'Prosimy wybrać obraz do wstawienia.',
+    invalidFileEmptyInsert: 'Wybierz plik do wstawienia.',
+    invalidFileSingleInsert: 'Wybierz pojedynczy plik.',
+    invalidImageEmptyInsert: 'Wybierz obraz do wstawienia.',
     invalidImageInvalidInsert: 'Wybrany plik nie jest obrazem.',
     invalidVideoInvalidInsert: 'Wybrany plik nie jest plikiem wideo.',
     invalidAudioInvalidInsert: 'Wybrany plik nie jest plikiem audio.'

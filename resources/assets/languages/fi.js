@@ -20,7 +20,7 @@
     markdowneditor: {
         bold: 'Lihavointi',
         italic: 'Kursivointi',
-        strikethrough: 'Yliviivattu',
+        strikethrough: 'Yliviivaus',
         heading1: 'Otsikko 1',
         heading2: 'Otsikko 2',
         heading3: 'Otsikko 3',
@@ -32,7 +32,7 @@
         link: 'Linkki',
         image: 'Kuva',
         table: 'Taulukko',
-        horizontalRule: 'Lisää horisontaalinen jakaja',
+        horizontalRule: 'Lisää vaakaviiva',
         preview: 'Esikatselu',
         sideBySide: 'Rinnakkain',
         fullscreen: 'Kokonäyttö'

@@ -71,8 +71,6 @@
     browse: 'เรียกดู',
     byUrl: 'จาก URL',
     embeddingCode: 'โค้ดสำหรับฝัง',
-    rows: 'แถว',
-    columns: 'คอลัมน์',
 
     // Popover forms
     url: 'URL',

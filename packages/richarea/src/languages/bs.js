@@ -71,8 +71,6 @@
     browse: 'Pregledaj',
     byUrl: 'Putem URL-a',
     embeddingCode: 'Kod za ugradnju',
-    rows: 'redova',
-    columns: 'kolona',
 
     // Popover forms
     url: 'URL',
@@ -99,7 +97,7 @@
     editLink: 'Uredi link',
     unlink: 'Ukloni link',
     imageAlign: 'Poravnanje',
-    imageAlignNone: 'U redu s tekstom',
+    imageAlignNone: 'U liniji s tekstom',
     imageAlignLeft: 'Plutajuće lijevo',
     imageAlignCenter: 'Centrirano',
     imageAlignRight: 'Plutajuće desno',

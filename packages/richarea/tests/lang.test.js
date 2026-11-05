@@ -3,11 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import { defaultLang, getLanguages, languageCandidates, makeTranslator, registerLanguage, resolveLanguage } from '../src/lang.js';
 
-// The languages Froala offered, ua served by uk
+// Froala's languages (ua served by uk) and those October offers beyond them
 const LANGUAGES = [
-    'ar', 'bs', 'cs', 'da', 'de', 'el', 'en-ca', 'en-gb', 'es', 'et', 'fa', 'fi', 'fr', 'he', 'hr', 'hu',
-    'id', 'it', 'ja', 'ko', 'ku', 'me', 'nb', 'nl', 'pl', 'pt-br', 'pt-pt', 'ro', 'ru', 'sk', 'sl', 'sr',
-    'sv', 'th', 'tr', 'uk', 'vi', 'zh-cn', 'zh-tw'
+    'ar', 'be', 'bg', 'bs', 'ca', 'cs', 'da', 'de', 'el', 'en-ca', 'en-gb', 'es', 'et', 'fa', 'fi', 'fr',
+    'he', 'hr', 'hu', 'id', 'it', 'ja', 'ko', 'ku', 'lt', 'lv', 'me', 'nb', 'nl', 'nn', 'pl', 'pt-br',
+    'pt-pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'th', 'tr', 'uk', 'vi', 'zh-cn', 'zh-tw'
 ];
 
 const languagesDir = path.join(import.meta.dir, '../src/languages');
@@ -50,7 +50,7 @@ describe('language files', () => {
     const files = fs.readdirSync(languagesDir).filter((file) => file.endsWith('.js')).sort();
     const englishKeys = Object.keys(defaultLang);
 
-    test('cover every language Froala offered', () => {
+    test('cover every supported language', () => {
         expect(files.map((file) => file.replace(/\.js$/, ''))).toEqual(LANGUAGES);
     });
 

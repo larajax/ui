@@ -71,8 +71,6 @@
     browse: '参照',
     byUrl: 'URLで指定',
     embeddingCode: '埋め込みコード',
-    rows: '行',
-    columns: '列',
 
     // Popover forms
     url: 'URL',

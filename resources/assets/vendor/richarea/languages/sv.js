@@ -71,8 +71,6 @@
     browse: 'Bläddra',
     byUrl: 'Via URL',
     embeddingCode: 'Inbäddningskod',
-    rows: 'rader',
-    columns: 'kolumner',
 
     // Popover forms
     url: 'URL',
@@ -97,7 +95,7 @@
     // Contextual toolbars
     openLink: 'Öppna länk',
     editLink: 'Redigera länk',
-    unlink: 'Avlänka',
+    unlink: 'Ta bort länk',
     imageAlign: 'Justera',
     imageAlignNone: 'I nivå med texten',
     imageAlignLeft: 'Flytande vänster',
@@ -109,7 +107,7 @@
     imageReplace: 'Byt ut',
     imageRemove: 'Ta bort bild',
     imageLink: 'Infoga länk',
-    tableHeader: 'Tabellrubrik',
+    tableHeader: 'Rubrikrad',
     tableRows: 'Rad',
     tableRowAbove: 'Infoga rad ovanför',
     tableRowBelow: 'Infoga rad nedanför',

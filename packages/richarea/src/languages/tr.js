@@ -71,8 +71,6 @@
     browse: 'Gözat',
     byUrl: 'URL ile',
     embeddingCode: 'Gömme kodu',
-    rows: 'satır',
-    columns: 'sütun',
 
     // Popover forms
     url: 'URL',

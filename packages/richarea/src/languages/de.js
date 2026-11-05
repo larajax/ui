@@ -71,8 +71,6 @@
     browse: 'Durchsuchen',
     byUrl: 'Per URL',
     embeddingCode: 'Einbettungscode',
-    rows: 'Zeilen',
-    columns: 'Spalten',
 
     // Popover forms
     url: 'URL',
@@ -132,7 +130,7 @@
     // Messages
     uploadFailed: 'Die Datei konnte nicht hochgeladen werden',
     invalidFileEmptyInsert: 'Bitte eine Datei zum Einfügen auswählen.',
-    invalidFileSingleInsert: 'Bitte nur eine Datei wählen.',
+    invalidFileSingleInsert: 'Bitte nur eine Datei auswählen.',
     invalidImageEmptyInsert: 'Bitte ein Bild zum Einfügen auswählen.',
     invalidImageInvalidInsert: 'Die ausgewählte Datei ist kein Bild.',
     invalidVideoInvalidInsert: 'Die ausgewählte Datei ist kein Video.',

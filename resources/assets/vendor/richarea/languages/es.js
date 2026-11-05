@@ -71,8 +71,6 @@
     browse: 'Explorar',
     byUrl: 'Por URL',
     embeddingCode: 'Código de inserción',
-    rows: 'filas',
-    columns: 'columnas',
 
     // Popover forms
     url: 'URL',

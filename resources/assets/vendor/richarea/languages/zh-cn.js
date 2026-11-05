@@ -71,8 +71,6 @@
     browse: '浏览',
     byUrl: '通过 URL',
     embeddingCode: '嵌入代码',
-    rows: '行',
-    columns: '列',
 
     // Popover forms
     url: 'URL',

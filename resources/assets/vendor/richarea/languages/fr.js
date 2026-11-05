@@ -71,8 +71,6 @@
     browse: 'Parcourir',
     byUrl: 'Par URL',
     embeddingCode: 'Code d\'intégration',
-    rows: 'lignes',
-    columns: 'colonnes',
 
     // Popover forms
     url: 'URL',

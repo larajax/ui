@@ -71,8 +71,6 @@
     browse: 'Procurar',
     byUrl: 'Por URL',
     embeddingCode: 'Código de incorporação',
-    rows: 'linhas',
-    columns: 'colunas',
 
     // Popover forms
     url: 'URL',

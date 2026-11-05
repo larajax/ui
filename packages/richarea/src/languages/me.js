@@ -71,8 +71,6 @@
     browse: 'Pregledaj',
     byUrl: 'Preko URL-a',
     embeddingCode: 'Kod za ugrađivanje',
-    rows: 'redova',
-    columns: 'kolona',
 
     // Popover forms
     url: 'URL',

@@ -19,14 +19,14 @@
     // Markdown editor buttons
     markdowneditor: {
         bold: 'Fed',
-        italic: 'Skrå',
+        italic: 'Kursiv',
         strikethrough: 'Gennemstreget',
         heading1: 'Overskrift 1',
         heading2: 'Overskrift 2',
         heading3: 'Overskrift 3',
         code: 'Kode',
         quote: 'Citat',
-        unorderedList: 'Usorteret liste',
+        unorderedList: 'Punktopstilling',
         orderedList: 'Nummereret liste',
         cleanBlock: 'Ryd blokformatering',
         link: 'Link',

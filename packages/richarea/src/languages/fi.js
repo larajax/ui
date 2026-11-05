@@ -8,7 +8,7 @@
     bold: 'Lihavointi',
     italic: 'Kursivointi',
     underline: 'Alleviivaus',
-    strikeThrough: 'Yliviivattu',
+    strikeThrough: 'Yliviivaus',
     subscript: 'Alaindeksi',
     superscript: 'Yläindeksi',
     fontFamily: 'Kirjasin',
@@ -24,7 +24,7 @@
     outdent: 'Pienennä sisennystä',
     indent: 'Suurenna sisennystä',
     quote: 'Lainaus',
-    insertHR: 'Lisää horisontaalinen jakaja',
+    insertHR: 'Lisää vaakaviiva',
     insertLink: 'Lisää linkki',
     insertPageLink: 'Lisää linkki',
     insertImage: 'Lisää kuva',
@@ -71,8 +71,6 @@
     browse: 'Selaa',
     byUrl: 'URL-osoitteesta',
     embeddingCode: 'Upotuskoodi',
-    rows: 'riviä',
-    columns: 'saraketta',
 
     // Popover forms
     url: 'URL',

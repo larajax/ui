@@ -5,11 +5,11 @@ import { getLanguages, getStrings, hasLanguage, makeTranslator, resolveLanguage 
 import { DEFAULT_LANG as MARKDOWN_LANG } from '../resources/assets/formwidgets/markdowneditor/markdowneditor.js';
 import { DEFAULT_MESSAGES } from '../resources/assets/formwidgets/datatable/datatable.validation.js';
 
-// The languages the rich editor and the grid offer, ua served by uk
+// Froala's languages (ua served by uk) and those October offers beyond them
 const LANGUAGES = [
-    'ar', 'bs', 'cs', 'da', 'de', 'el', 'en-ca', 'en-gb', 'es', 'et', 'fa', 'fi', 'fr', 'he', 'hr', 'hu',
-    'id', 'it', 'ja', 'ko', 'ku', 'me', 'nb', 'nl', 'pl', 'pt-br', 'pt-pt', 'ro', 'ru', 'sk', 'sl', 'sr',
-    'sv', 'th', 'tr', 'uk', 'vi', 'zh-cn', 'zh-tw'
+    'ar', 'be', 'bg', 'bs', 'ca', 'cs', 'da', 'de', 'el', 'en-ca', 'en-gb', 'es', 'et', 'fa', 'fi', 'fr',
+    'he', 'hr', 'hu', 'id', 'it', 'ja', 'ko', 'ku', 'lt', 'lv', 'me', 'nb', 'nl', 'nn', 'pl', 'pt-br',
+    'pt-pt', 'ro', 'ru', 'sk', 'sl', 'sr', 'sv', 'th', 'tr', 'uk', 'vi', 'zh-cn', 'zh-tw'
 ];
 
 // The English strings of each widget with client-side strings
@@ -56,7 +56,7 @@ describe('library translations', () => {
 describe('library language files', () => {
     const files = fs.readdirSync(languagesDir).filter((file) => file.endsWith('.js')).sort();
 
-    test('cover every language the rich editor offers', () => {
+    test('cover every supported language', () => {
         expect(files.map((file) => file.replace(/\.js$/, ''))).toEqual(LANGUAGES);
     });
 

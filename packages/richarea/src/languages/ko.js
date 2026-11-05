@@ -46,12 +46,12 @@
 
     // Paragraph formats
     formatNormal: '일반',
-    formatHeading1: '헤더 1',
-    formatHeading2: '헤더 2',
-    formatHeading3: '헤더 3',
-    formatHeading4: '헤더 4',
-    formatHeading5: '헤더 5',
-    formatHeading6: '헤더 6',
+    formatHeading1: '제목 1',
+    formatHeading2: '제목 2',
+    formatHeading3: '제목 3',
+    formatHeading4: '제목 4',
+    formatHeading5: '제목 5',
+    formatHeading6: '제목 6',
     formatCode: '코드',
 
     // Alignment
@@ -71,8 +71,6 @@
     browse: '찾아보기',
     byUrl: 'URL로 삽입',
     embeddingCode: '임베드 코드',
-    rows: '행',
-    columns: '열',
 
     // Popover forms
     url: 'URL',

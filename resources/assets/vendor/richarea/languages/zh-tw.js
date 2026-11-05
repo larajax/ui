@@ -71,8 +71,6 @@
     browse: '瀏覽',
     byUrl: '透過 URL',
     embeddingCode: '嵌入程式碼',
-    rows: '列',
-    columns: '欄',
 
     // Popover forms
     url: 'URL',

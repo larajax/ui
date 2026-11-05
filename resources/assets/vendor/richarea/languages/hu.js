@@ -71,8 +71,6 @@
     browse: 'Böngészés',
     byUrl: 'URL alapján',
     embeddingCode: 'Beágyazási kód',
-    rows: 'sor',
-    columns: 'oszlop',
 
     // Popover forms
     url: 'URL',

@@ -69,10 +69,8 @@
     // Insert menus
     uploadFromComputer: 'Nahrať z počítača',
     browse: 'Prehľadávať médiá',
-    byUrl: 'Podľa URL',
+    byUrl: 'Z adresy URL',
     embeddingCode: 'Kód na vloženie',
-    rows: 'riadkov',
-    columns: 'stĺpcov',
 
     // Popover forms
     url: 'URL',

@@ -71,8 +71,6 @@
     browse: 'Просмотр медиафайлов',
     byUrl: 'По URL',
     embeddingCode: 'Код для встраивания',
-    rows: 'строк',
-    columns: 'столбцов',
 
     // Popover forms
     url: 'URL',
@@ -109,7 +107,7 @@
     imageReplace: 'Заменить',
     imageRemove: 'Удалить изображение',
     imageLink: 'Вставить ссылку',
-    tableHeader: 'Заголовок таблицы',
+    tableHeader: 'Строка заголовка',
     tableRows: 'Строка',
     tableRowAbove: 'Вставить строку выше',
     tableRowBelow: 'Вставить строку ниже',

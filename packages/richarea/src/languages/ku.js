@@ -64,15 +64,13 @@
     textColor: 'دەق',
     backgroundColor: 'پاشبنەما',
     removeColor: 'لابردنی ڕەنگ',
-    defaultFont: 'بنەڕەت',
+    defaultFont: 'بنەڕەتی',
 
     // Insert menus
     uploadFromComputer: 'بارکردن لە کۆمپیوتەرەوە',
     browse: 'گەڕان',
     byUrl: 'بە URL',
     embeddingCode: 'کۆدی جێگیرکردن',
-    rows: 'ڕیز',
-    columns: 'ستوون',
 
     // Popover forms
     url: 'URL',
@@ -109,7 +107,7 @@
     imageReplace: 'گۆڕینەوە',
     imageRemove: 'لابردنی وێنە',
     imageLink: 'دانانی بەستەر',
-    tableHeader: 'سەردێڕی خشتە',
+    tableHeader: 'ڕیزی سەردێڕ',
     tableRows: 'ڕیز',
     tableRowAbove: 'دانانی ڕیز لە سەرەوە',
     tableRowBelow: 'دانانی ڕیز لە خوارەوە',
@@ -130,7 +128,7 @@
     mediaRemove: 'لابردن',
 
     // Messages
-    uploadFailed: 'نەتوانرا پەڕگەکە باربکرێت',
+    uploadFailed: 'نەتوانرا پەڕگەکە بار بکرێت',
     invalidFileEmptyInsert: 'تکایە پەڕگەیەک بۆ دانان دیاری بکە.',
     invalidFileSingleInsert: 'تکایە تەنها یەک پەڕگە دیاری بکە.',
     invalidImageEmptyInsert: 'تکایە وێنەیەک بۆ دانان دیاری بکە.',

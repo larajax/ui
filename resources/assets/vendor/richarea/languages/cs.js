@@ -71,8 +71,6 @@
     browse: 'Procházet',
     byUrl: 'Z adresy URL',
     embeddingCode: 'Kód pro vložení',
-    rows: 'řádků',
-    columns: 'sloupců',
 
     // Popover forms
     url: 'URL',

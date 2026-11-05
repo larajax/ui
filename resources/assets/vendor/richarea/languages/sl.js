@@ -28,7 +28,7 @@
     insertLink: 'Vstavi povezavo',
     insertPageLink: 'Vstavi povezavo',
     insertImage: 'Vstavi sliko',
-    insertVideo: 'Vstavi video posnetek',
+    insertVideo: 'Vstavi videoposnetek',
     insertAudio: 'Vstavi zvočni posnetek',
     insertFile: 'Vstavi datoteko',
     insertTable: 'Vstavi tabelo',
@@ -71,8 +71,6 @@
     browse: 'Prebrskaj',
     byUrl: 'Prek URL-ja',
     embeddingCode: 'Koda za vdelavo',
-    rows: 'vrstic',
-    columns: 'stolpcev',
 
     // Popover forms
     url: 'URL',
@@ -135,6 +133,6 @@
     invalidFileSingleInsert: 'Izberite eno samo datoteko.',
     invalidImageEmptyInsert: 'Izberite sliko za vstavljanje.',
     invalidImageInvalidInsert: 'Izbrana datoteka ni slika.',
-    invalidVideoInvalidInsert: 'Izbrana datoteka ni video posnetek.',
+    invalidVideoInvalidInsert: 'Izbrana datoteka ni videoposnetek.',
     invalidAudioInvalidInsert: 'Izbrana datoteka ni zvočna datoteka.'
 };

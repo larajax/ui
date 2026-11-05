@@ -12,15 +12,15 @@
     subscript: 'Alaindeks',
     superscript: 'Ülaindeks',
     fontFamily: 'Font',
-    fontSize: 'Teksti suurus',
+    fontSize: 'Fondi suurus',
     color: 'Värvid',
     emoticons: 'Emotikonid',
     inlineStyle: 'Tekstistiil',
     paragraphStyle: 'Lõigustiil',
     paragraphFormat: 'Lõigu vorming',
     align: 'Joonda',
-    formatOL: 'Järjestatud nimekiri',
-    formatUL: 'Järjestamata nimekiri',
+    formatOL: 'Nummerdatud loend',
+    formatUL: 'Täpploend',
     outdent: 'Vähenda taanet',
     indent: 'Suurenda taanet',
     quote: 'Tsitaat',
@@ -67,12 +67,10 @@
     defaultFont: 'Vaikimisi',
 
     // Insert menus
-    uploadFromComputer: 'Lae üles arvutist',
+    uploadFromComputer: 'Laadi üles arvutist',
     browse: 'Sirvi',
     byUrl: 'URL-i kaudu',
     embeddingCode: 'Manustamiskood',
-    rows: 'rida',
-    columns: 'veergu',
 
     // Popover forms
     url: 'URL',

@@ -147,6 +147,32 @@ Pick a pack (`october`, `phosphor` or `bootstrap`) in `config/larajax-icons.php`
 
 `Ui::extendIcons([...])` applies the same overrides at runtime.
 
+### Translations
+
+The rich editor, data table and markdown editor show their interface text in the application's locale. Translations for 45 languages ship with the published assets, as plain scripts in three folders:
+
+| Folder | Strings |
+|---|---|
+| `languages/` | The library's widgets: data table messages, markdown editor buttons |
+| `vendor/richarea/languages/` | The rich editor |
+| `vendor/hotsheet/languages/` | The data grid |
+
+Nothing needs including. A field looks up the translation for `app()->getLocale()` (`de-AT` finds `de`, `pt_BR` finds `pt-br`), renders it as `data-language`, and loads the file the first time a widget needs it. A locale without a translation stays in English.
+
+To save that request, include the files in the page; a widget that finds its language already there loads nothing:
+
+```blade
+<script src="{{ asset('vendor/larajax/ui/vendor/richarea/languages/de.js') }}"></script>
+```
+
+`Larajax\Ui\Helpers\Language::paths('de')` lists the files serving a locale, for a build step that bundles them. With Vite, import the files you need, since the widgets can't load them out of a bundle:
+
+```js
+import "../../vendor/larajax/ui/resources/assets/vendor/richarea/languages/de.js";
+```
+
+A widget created in JavaScript without `data-language` follows the page's `<html lang>`, using a translation the page already has. The rich editor and data table also take a `lang` option (`data-lang`) whose strings override single translations.
+
 ## Background
 
 Larajax UI was extracted from the widget engine used in [October CMS](https://github.com/octobercms), where it has rendered admin panel forms and lists in production for many years.

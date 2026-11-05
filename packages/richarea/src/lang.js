@@ -72,8 +72,6 @@ export const defaultLang = {
     browse: 'Browse',
     byUrl: 'By URL',
     embeddingCode: 'Embedding Code',
-    rows: 'rows',
-    columns: 'columns',
 
     // Popover forms
     url: 'URL',

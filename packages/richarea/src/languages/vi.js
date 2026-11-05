@@ -71,8 +71,6 @@
     browse: 'Duyệt',
     byUrl: 'Từ URL',
     embeddingCode: 'Mã nhúng',
-    rows: 'hàng',
-    columns: 'cột',
 
     // Popover forms
     url: 'URL',
@@ -109,7 +107,7 @@
     imageReplace: 'Thay thế',
     imageRemove: 'Xóa hình ảnh',
     imageLink: 'Chèn liên kết',
-    tableHeader: 'Tiêu đề bảng',
+    tableHeader: 'Hàng tiêu đề',
     tableRows: 'Hàng',
     tableRowAbove: 'Chèn hàng phía trên',
     tableRowBelow: 'Chèn hàng phía dưới',

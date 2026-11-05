@@ -71,8 +71,6 @@
     browse: 'Răsfoiți',
     byUrl: 'De la URL',
     embeddingCode: 'Cod de încorporare',
-    rows: 'rânduri',
-    columns: 'coloane',
 
     // Popover forms
     url: 'URL',
@@ -135,6 +133,6 @@
     invalidFileSingleInsert: 'Vă rugăm să selectați un singur fișier.',
     invalidImageEmptyInsert: 'Vă rugăm să selectați o imagine de inserat.',
     invalidImageInvalidInsert: 'Fișierul selectat nu este o imagine.',
-    invalidVideoInvalidInsert: 'Fișierul selectat nu este un videoclip.',
+    invalidVideoInvalidInsert: 'Fișierul selectat nu este un fișier video.',
     invalidAudioInvalidInsert: 'Fișierul selectat nu este un fișier audio.'
 };

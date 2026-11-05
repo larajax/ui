@@ -71,8 +71,6 @@
     browse: 'مرور',
     byUrl: 'از طریق آدرس',
     embeddingCode: 'کد جاسازی',
-    rows: 'ردیف',
-    columns: 'ستون',
 
     // Popover forms
     url: 'آدرس',

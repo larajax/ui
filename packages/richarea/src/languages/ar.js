@@ -71,8 +71,6 @@
     browse: 'استعراض',
     byUrl: 'من عنوان URL',
     embeddingCode: 'كود التضمين',
-    rows: 'صفوف',
-    columns: 'أعمدة',
 
     // Popover forms
     url: 'عنوان URL',

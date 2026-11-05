@@ -16,10 +16,10 @@
     color: 'Kleuren',
     emoticons: 'Emoticons',
     inlineStyle: 'Inline-stijl',
-    paragraphStyle: 'Paragraafstijl',
-    paragraphFormat: 'Paragraafopmaak',
+    paragraphStyle: 'Alineastijl',
+    paragraphFormat: 'Alinea-opmaak',
     align: 'Uitlijnen',
-    formatOL: 'Gerangschikte lijst',
+    formatOL: 'Genummerde lijst',
     formatUL: 'Ongeordende lijst',
     outdent: 'Inspringing verkleinen',
     indent: 'Inspringing vergroten',
@@ -46,12 +46,12 @@
 
     // Paragraph formats
     formatNormal: 'Normaal',
-    formatHeading1: 'Koptekst 1',
-    formatHeading2: 'Koptekst 2',
-    formatHeading3: 'Koptekst 3',
-    formatHeading4: 'Koptekst 4',
-    formatHeading5: 'Koptekst 5',
-    formatHeading6: 'Koptekst 6',
+    formatHeading1: 'Kop 1',
+    formatHeading2: 'Kop 2',
+    formatHeading3: 'Kop 3',
+    formatHeading4: 'Kop 4',
+    formatHeading5: 'Kop 5',
+    formatHeading6: 'Kop 6',
     formatCode: 'Code',
 
     // Alignment
@@ -71,8 +71,6 @@
     browse: 'Bladeren',
     byUrl: 'Via URL',
     embeddingCode: 'Insluitcode',
-    rows: 'rijen',
-    columns: 'kolommen',
 
     // Popover forms
     url: 'URL',
@@ -97,7 +95,7 @@
     // Contextual toolbars
     openLink: 'Link openen',
     editLink: 'Link bewerken',
-    unlink: 'Ontkoppelen',
+    unlink: 'Link verwijderen',
     imageAlign: 'Uitlijnen',
     imageAlignNone: 'Inline',
     imageAlignLeft: 'Links zwevend',

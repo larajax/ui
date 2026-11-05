@@ -71,8 +71,6 @@
     browse: 'Telusuri',
     byUrl: 'Dari URL',
     embeddingCode: 'Kode sematan',
-    rows: 'baris',
-    columns: 'kolom',
 
     // Popover forms
     url: 'URL',

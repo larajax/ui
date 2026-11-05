@@ -71,8 +71,6 @@
     browse: 'Pregledaj',
     byUrl: 'Putem URL-a',
     embeddingCode: 'Kod za ugradnju',
-    rows: 'redaka',
-    columns: 'stupaca',
 
     // Popover forms
     url: 'URL',

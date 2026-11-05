@@ -46,12 +46,12 @@
 
     // Paragraph formats
     formatNormal: 'Normalno',
-    formatHeading1: 'Zaglavlje 1',
-    formatHeading2: 'Zaglavlje 2',
-    formatHeading3: 'Zaglavlje 3',
-    formatHeading4: 'Zaglavlje 4',
-    formatHeading5: 'Zaglavlje 5',
-    formatHeading6: 'Zaglavlje 6',
+    formatHeading1: 'Naslov 1',
+    formatHeading2: 'Naslov 2',
+    formatHeading3: 'Naslov 3',
+    formatHeading4: 'Naslov 4',
+    formatHeading5: 'Naslov 5',
+    formatHeading6: 'Naslov 6',
     formatCode: 'Kod',
 
     // Alignment
@@ -71,8 +71,6 @@
     browse: 'Pregledaj',
     byUrl: 'Preko URL-a',
     embeddingCode: 'Kod za ugrađivanje',
-    rows: 'redova',
-    columns: 'kolona',
 
     // Popover forms
     url: 'URL',

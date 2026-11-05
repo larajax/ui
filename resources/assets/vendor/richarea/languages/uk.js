@@ -71,8 +71,6 @@
     browse: 'Огляд медіафайлів',
     byUrl: 'За URL',
     embeddingCode: 'Код для вбудовування',
-    rows: 'рядків',
-    columns: 'стовпців',
 
     // Popover forms
     url: 'URL',
@@ -109,7 +107,7 @@
     imageReplace: 'Замінити',
     imageRemove: 'Видалити зображення',
     imageLink: 'Вставити посилання',
-    tableHeader: 'Заголовок таблиці',
+    tableHeader: 'Рядок заголовка',
     tableRows: 'Рядок',
     tableRowAbove: 'Вставити рядок вище',
     tableRowBelow: 'Вставити рядок нижче',

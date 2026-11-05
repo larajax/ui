@@ -71,8 +71,6 @@
     browse: 'עיון',
     byUrl: 'מכתובת URL',
     embeddingCode: 'קוד הטמעה',
-    rows: 'שורות',
-    columns: 'עמודות',
 
     // Popover forms
     url: 'כתובת URL',
@@ -135,6 +133,6 @@
     invalidFileSingleInsert: 'יש לבחור קובץ אחד בלבד.',
     invalidImageEmptyInsert: 'יש לבחור תמונה להוספה.',
     invalidImageInvalidInsert: 'הקובץ שנבחר אינו תמונה.',
-    invalidVideoInvalidInsert: 'הקובץ שנבחר אינו סרטון.',
+    invalidVideoInvalidInsert: 'הקובץ שנבחר אינו קובץ וידאו.',
     invalidAudioInvalidInsert: 'הקובץ שנבחר אינו קובץ שמע.'
 };

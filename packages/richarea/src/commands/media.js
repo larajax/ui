@@ -319,7 +319,7 @@ function tablePanel(re, close) {
             cell.type = 'button';
             cell.dataset.row = row;
             cell.dataset.col = col;
-            cell.setAttribute('aria-label', row + ' ' + re.trans('rows') + ', ' + col + ' ' + re.trans('columns'));
+            cell.setAttribute('aria-label', row + ' × ' + col);
             cell.addEventListener('mousedown', (event) => event.preventDefault());
             cell.addEventListener('mouseenter', () => highlight(row, col));
             cell.addEventListener('focus', () => highlight(row, col));

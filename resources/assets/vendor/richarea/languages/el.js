@@ -46,12 +46,12 @@
 
     // Paragraph formats
     formatNormal: 'Κανονικό',
-    formatHeading1: 'Κεφαλίδα 1',
-    formatHeading2: 'Κεφαλίδα 2',
-    formatHeading3: 'Κεφαλίδα 3',
-    formatHeading4: 'Κεφαλίδα 4',
-    formatHeading5: 'Κεφαλίδα 5',
-    formatHeading6: 'Κεφαλίδα 6',
+    formatHeading1: 'Επικεφαλίδα 1',
+    formatHeading2: 'Επικεφαλίδα 2',
+    formatHeading3: 'Επικεφαλίδα 3',
+    formatHeading4: 'Επικεφαλίδα 4',
+    formatHeading5: 'Επικεφαλίδα 5',
+    formatHeading6: 'Επικεφαλίδα 6',
     formatCode: 'Κώδικας',
 
     // Alignment
@@ -71,8 +71,6 @@
     browse: 'Περιήγηση',
     byUrl: 'Μέσω URL',
     embeddingCode: 'Κώδικας ενσωμάτωσης',
-    rows: 'γραμμές',
-    columns: 'στήλες',
 
     // Popover forms
     url: 'URL',
