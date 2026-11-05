@@ -1,6 +1,6 @@
 <?php namespace Larajax\Ui\Classes;
 
-use October\Rain\Element\ElementBase;
+use Larajax\Ui\Element\ElementBase;
 
 /**
  * ToolbarButton definition is a translation of the toolbar button configuration

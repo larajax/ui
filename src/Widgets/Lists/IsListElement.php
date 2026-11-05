@@ -1,12 +1,12 @@
 <?php namespace Larajax\Ui\Widgets\Lists;
 
 use Larajax\Ui\Classes\ListColumn;
-use October\Rain\Element\Lists\ColumnDefinition;
+use Larajax\Ui\Element\Lists\ColumnDefinition;
 
 /**
  * IsListElement defines all methods to satisfy the ListElement contract
  *
- * @see \October\Contracts\Element\ListElement
+ * @see \Larajax\Ui\Contracts\ListElement
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */

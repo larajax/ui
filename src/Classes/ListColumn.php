@@ -2,7 +2,7 @@
 
 use October\Rain\Database\Model;
 use October\Rain\Html\Helper as HtmlHelper;
-use October\Rain\Element\Lists\ColumnDefinition;
+use Larajax\Ui\Element\Lists\ColumnDefinition;
 
 /**
  * ListColumn definition is a translation of the list column configuration

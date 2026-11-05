@@ -1,12 +1,12 @@
 <?php namespace Larajax\Ui\Widgets\Filter;
 
 use Larajax\Ui\Classes\FilterScope;
-use October\Rain\Element\Filter\ScopeDefinition;
+use Larajax\Ui\Element\Filter\ScopeDefinition;
 
 /**
  * IsFilterElement defines all methods to satisfy the FilterElement contract
  *
- * @see \October\Contracts\Element\FilterElement
+ * @see \Larajax\Ui\Contracts\FilterElement
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */

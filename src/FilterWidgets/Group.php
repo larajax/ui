@@ -5,7 +5,7 @@ use Str;
 use Lang;
 use DbDongle;
 use Larajax\Ui\Classes\FilterWidgetBase;
-use October\Rain\Element\ElementHolder;
+use Larajax\Ui\Element\ElementHolder;
 use October\Rain\Html\Helper as HtmlHelper;
 use ApplicationException;
 

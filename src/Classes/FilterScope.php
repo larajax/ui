@@ -3,7 +3,7 @@
 use Arr;
 use Lang;
 use October\Rain\Html\Helper as HtmlHelper;
-use October\Rain\Element\Filter\ScopeDefinition;
+use Larajax\Ui\Element\Filter\ScopeDefinition;
 use Illuminate\Support\Collection;
 use SystemException;
 

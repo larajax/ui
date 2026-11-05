@@ -3,8 +3,8 @@
 use Lang;
 use DbDongle;
 use Larajax\Ui\Classes\WidgetBase;
-use October\Rain\Element\ElementHolder;
-use October\Contracts\Element\FilterElement;
+use Larajax\Ui\Element\ElementHolder;
+use Larajax\Ui\Contracts\FilterElement;
 use Larajax\Ui\Classes\FilterScope;
 use ApplicationException;
 use SystemException;

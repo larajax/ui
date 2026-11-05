@@ -7,7 +7,7 @@ use Html;
 use Lang;
 use October\Rain\Database\Model;
 use October\Rain\Html\Helper as HtmlHelper;
-use October\Rain\Element\Form\FieldDefinition;
+use Larajax\Ui\Element\Form\FieldDefinition;
 use Larajax\Ui\Helpers\NumberFormat;
 use Illuminate\Support\Collection;
 use SystemException;

@@ -11,7 +11,7 @@ use Larajax\Ui\Classes\ListColumn;
 use Larajax\Ui\Helpers\Url as UrlHelper;
 use Larajax\Ui\Classes\WidgetBase;
 use Illuminate\Database\Eloquent\Model;
-use October\Contracts\Element\ListElement;
+use Larajax\Ui\Contracts\ListElement;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Pagination\UrlWindow;
 use ApplicationException;

@@ -2,7 +2,7 @@
 
 use Str;
 use October\Rain\Html\Helper as HtmlHelper;
-use October\Rain\Element\Form\FieldsetDefinition;
+use Larajax\Ui\Element\Form\FieldsetDefinition;
 
 /**
  * FormTabs is a fieldset definition for backend tabs

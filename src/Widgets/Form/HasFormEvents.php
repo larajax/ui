@@ -1,7 +1,7 @@
 <?php namespace Larajax\Ui\Widgets\Form;
 
 use stdClass;
-use October\Rain\Element\ElementHolder;
+use Larajax\Ui\Element\ElementHolder;
 
 /**
  * HasFormEvents declares the form's extension points as methods that a subclass

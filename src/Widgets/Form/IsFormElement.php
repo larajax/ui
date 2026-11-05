@@ -2,14 +2,14 @@
 
 use Larajax\Ui\Classes\FormTabs;
 use Larajax\Ui\Classes\FormField;
-use October\Rain\Element\Form\FieldDefinition;
-use October\Rain\Element\Form\FieldsetDefinition;
+use Larajax\Ui\Element\Form\FieldDefinition;
+use Larajax\Ui\Element\Form\FieldsetDefinition;
 use SystemException;
 
 /**
  * IsFormElement defines all methods to satisfy the FormElement contract
  *
- * @see \October\Contracts\Element\FormElement
+ * @see \Larajax\Ui\Contracts\FormElement
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
  */
