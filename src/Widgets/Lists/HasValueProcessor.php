@@ -82,7 +82,7 @@ trait HasValueProcessor
             $images = $value ? [$value] : [];
         }
         // File models of a plain Eloquent relation
-        elseif ($value instanceof AttachmentInterface || $value instanceof \Illuminate\Support\Collection) {
+        elseif ($this->isAttachmentValue($value) || $value instanceof \Illuminate\Support\Collection) {
             $images = $this->getAttachmentsFromValue($value);
         }
         // Path or URL value
@@ -135,15 +135,23 @@ trait HasValueProcessor
      */
     protected function getAttachmentsFromValue($value): array
     {
-        if ($value instanceof AttachmentInterface) {
+        if ($this->isAttachmentValue($value)) {
             return [$value];
         }
 
-        if ($value instanceof \Illuminate\Support\Collection && $value->every(fn ($item) => $item instanceof AttachmentInterface)) {
+        if ($value instanceof \Illuminate\Support\Collection && $value->every(fn ($item) => $this->isAttachmentValue($item))) {
             return $value->all();
         }
 
         return [];
+    }
+
+    /**
+     * isAttachmentValue returns true when a value is a file model with the methods of the attachment contract.
+     */
+    protected function isAttachmentValue($value): bool
+    {
+        return is_object($value) && app('model.inspector')->isInstanceOf($value, AttachmentInterface::class);
     }
 
     /**
