@@ -822,12 +822,18 @@ table.table.data {
         }
 
         .list-pagination-links {
+            /* Borderless links on the surface behind the list, with a hover fill that shows on a white or tinted surface */
             ul.pagination {
+                --bs-pagination-bg: transparent;
+                --bs-pagination-border-color: transparent;
+                --bs-pagination-hover-bg: var(--bs-bg-3);
+                --bs-pagination-hover-border-color: transparent;
+                --bs-pagination-disabled-bg: transparent;
+                --bs-pagination-disabled-border-color: transparent;
                 margin-bottom: 0;
 
                 .page-link {
                     border-radius: 0.25rem;
-                    border-color: transparent;
                     box-shadow: none;
 
                     &:hover {
@@ -840,11 +846,6 @@ table.table.data {
                     &:hover {
                         color: var(--bs-pagination-active-color);
                     }
-                }
-
-                li.disabled .page-link {
-                    color: #98a7a8;
-                    background-color: transparent;
                 }
             }
         }
