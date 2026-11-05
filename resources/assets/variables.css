@@ -125,7 +125,6 @@
     --oc-zindex-popover:           1070;
 
     /* Always on top */
-    --oc-zindex-inspector:         10000;
     --oc-zindex-datepicker:        10100;
     --oc-zindex-flashmessage:      10300;
     --oc-zindex-select:            10400;
