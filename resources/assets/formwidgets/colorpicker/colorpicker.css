@@ -22,11 +22,11 @@
         }
     }
 
-    /* The field keeps Bootstrap's focus ring while its picker holds the focus, as a datepicker field does */
+    /* The field keeps its focused look while its picker holds the focus, as a datepicker field does */
     &.is-picker-open .form-control {
-        --bs-focus-ring-offset: -1px;
-        outline: var(--bs-focus-ring);
-        outline-offset: var(--bs-focus-ring-offset);
+        border-color: var(--oc-border-focus);
+        outline: var(--oc-input-focus-ring-width) solid var(--bs-focus-ring-color);
+        outline-offset: -1px;
     }
 }
 
@@ -102,10 +102,9 @@
         border-radius: var(--bs-btn-input-sm-border-radius);
 
         &:focus {
-            --bs-focus-ring-offset: -1px;
-            border-color: var(--bs-border-color);
-            outline: var(--bs-focus-ring);
-            outline-offset: var(--bs-focus-ring-offset);
+            border-color: var(--oc-border-focus);
+            outline: var(--oc-input-focus-ring-width) solid var(--bs-focus-ring-color);
+            outline-offset: -1px;
         }
     }
 

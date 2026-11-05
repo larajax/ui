@@ -14,6 +14,10 @@
  * JavaScript API:
  * jax.fetchControl(element, 'fileupload')
  *
+ * Events:
+ * - fileupload:click - on an uploaded file when it is clicked, before it opens. Cancel it to keep
+ *   the file closed and act on the click instead. The detail holds the fileupload control.
+ *
  * Dependencies:
  * - Dropzone.js (vendor/dropzone/dropzone.esm.js)
  * - SortableJS (vendor/sortablejs/sortable.esm.js)
@@ -635,7 +639,13 @@ export function registerFileUpload(jax) {
             if (ev.target.closest('.upload-checkbox')) return;
 
             const target = ev.target.closest('.upload-object');
-            if (target && target.dataset.path) {
+            if (!target) return;
+
+            // Cancelling fileupload:click keeps the file closed, so a page can act on the click instead
+            const event = new CustomEvent('fileupload:click', { bubbles: true, cancelable: true, detail: { fileupload: this } });
+            if (!target.dispatchEvent(event)) return;
+
+            if (target.dataset.path) {
                 window.open(target.dataset.path);
             }
         }

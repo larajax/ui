@@ -399,6 +399,35 @@ describe('file upload', () => {
         }
     });
 
+    test('clicking an uploaded file announces it first, and cancelling keeps it closed', async () => {
+        const { element } = await connect({ files: serverFile(7, 'a.pdf') });
+        const opened = [];
+        const originalOpen = window.open;
+        window.open = (url) => opened.push(url);
+        const clicked = [];
+        const onClick = (ev) => {
+            clicked.push([ev.target.classList.contains('upload-object'), !!ev.detail.fileupload]);
+            ev.preventDefault();
+        };
+        element.addEventListener('fileupload:click', onClick);
+
+        try {
+            element.querySelector('[data-dz-name]').click();
+            element.querySelector('.meta').click();
+            element.querySelector('.upload-checkbox').click();
+            expect(clicked).toEqual([[true, true]]);
+            expect(opened).toEqual([]);
+
+            element.removeEventListener('fileupload:click', onClick);
+            element.querySelector('[data-dz-name]').click();
+            expect(opened).toEqual(['/storage/a.pdf']);
+        }
+        finally {
+            window.open = originalOpen;
+            element.removeEventListener('fileupload:click', onClick);
+        }
+    });
+
     test('clicking a failed upload explains the error and can remove the file', async () => {
         const { element, dropzone } = await connect();
         const file = addUpload(dropzone, 'huge.zip');
