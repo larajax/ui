@@ -149,27 +149,25 @@ Pick a pack (`october`, `phosphor` or `bootstrap`) in `config/larajax-icons.php`
 
 ### Translations
 
-The rich editor, data table and markdown editor show their interface text in the application's locale. Translations for 45 languages ship with the published assets, as plain scripts in three folders:
-
-| Folder | Strings |
-|---|---|
-| `languages/` | The library's widgets: data table messages, markdown editor buttons |
-| `vendor/richarea/languages/` | The rich editor |
-| `vendor/hotsheet/languages/` | The data grid |
+The rich editor, data table and markdown editor show their interface text in the application's locale. Translations for 45 languages ship with the published assets in `languages/`, one plain script per language holding the strings of all three.
 
 Nothing needs including. A field looks up the translation for `app()->getLocale()` (`de-AT` finds `de`, `pt_BR` finds `pt-br`), renders it as `data-language`, and loads the file the first time a widget needs it. A locale without a translation stays in English.
 
-To save that request, include the files in the page; a widget that finds its language already there loads nothing:
+To save that request, include the file in the page; a widget that finds its language already there loads nothing. `Larajax\Ui\Helpers\Language::find()` names the language serving the app locale, or null:
 
 ```blade
-<script src="{{ asset('vendor/larajax/ui/vendor/richarea/languages/de.js') }}"></script>
+@if ($language = \Larajax\Ui\Helpers\Language::find())
+    <script src="{{ asset('vendor/larajax/ui/languages/'.$language.'.js') }}"></script>
+@endif
 ```
 
-`Larajax\Ui\Helpers\Language::paths('de')` lists the files serving a locale, for a build step that bundles them. With Vite, import the files you need, since the widgets can't load them out of a bundle:
+With Vite, import the file for each language you need, since the widgets can't load one out of a bundle:
 
 ```js
-import "../../vendor/larajax/ui/resources/assets/vendor/richarea/languages/de.js";
+import "../../vendor/larajax/ui/resources/assets/languages/de.js";
 ```
+
+The translations to edit live in `resources/languages/` and in each package's `src/languages/`; `build.js` joins them into `languages/`. The rich editor and grid packages also publish their own files in `vendor/richarea/languages/` and `vendor/hotsheet/languages/`, for use without the library.
 
 A widget created in JavaScript without `data-language` follows the page's `<html lang>`, using a translation the page already has. The rich editor and data table also take a `lang` option (`data-lang`) whose strings override single translations.
 

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import fs from 'fs';
 import path from 'path';
-import { getLanguages, getStrings, hasLanguage, makeTranslator, resolveLanguage } from '../resources/assets/lang.js';
+import { getLanguages, getStrings, hasLanguage, loadLanguage, makeTranslator, resolveLanguage } from '../resources/assets/lang.js';
 import { DEFAULT_LANG as MARKDOWN_LANG } from '../resources/assets/formwidgets/markdowneditor/markdowneditor.js';
 import { DEFAULT_MESSAGES } from '../resources/assets/formwidgets/datatable/datatable.validation.js';
 
@@ -18,11 +18,19 @@ const WIDGETS = {
     markdowneditor: MARKDOWN_LANG
 };
 
-const languagesDir = path.join(import.meta.dir, '../resources/assets/languages');
+// The library's translations to edit, and the language files build.js joins from them and the packages'
+const languagesDir = path.join(import.meta.dir, '../resources/languages');
+const builtDir = path.join(import.meta.dir, '../resources/assets/languages');
+const packageDirs = [
+    path.join(import.meta.dir, '../packages/richarea/src/languages'),
+    path.join(import.meta.dir, '../packages/hotsheet/src/languages')
+];
+
+const REGISTRIES = ['LarajaxUiLanguages', 'RichAreaLanguages', 'HotsheetLanguages'];
 
 describe('library translations', () => {
     afterEach(() => {
-        delete globalThis.LarajaxUiLanguages;
+        REGISTRIES.forEach((registry) => delete globalThis[registry]);
         document.documentElement.lang = '';
     });
 
@@ -50,6 +58,17 @@ describe('library translations', () => {
         expect(hasLanguage('de')).toBe(true);
         expect(hasLanguage('de', ['LarajaxUiLanguages', 'HotsheetLanguages'])).toBe(false);
         expect(hasLanguage(null)).toBe(true);
+    });
+
+    test('load one file that fills every registry, and nothing the page already has', async () => {
+        await loadLanguage('fr', ['RichAreaLanguages']);
+
+        REGISTRIES.forEach((registry) => expect([registry, !!getLanguages(registry).fr]).toEqual([registry, true]));
+
+        getLanguages().xx = {};
+        await loadLanguage('xx');
+        await loadLanguage('../de');
+        expect(getLanguages().de).toBeUndefined();
     });
 });
 
@@ -82,6 +101,27 @@ describe('library language files', () => {
             for (const [key, value] of Object.entries(translation.datatable)) {
                 const placeholders = (DEFAULT_MESSAGES[key].match(/:\w+/g) || []).sort();
                 expect([key, (value.match(/:\w+/g) || []).sort()]).toEqual([key, placeholders]);
+            }
+        });
+    }
+});
+
+describe('built language files', () => {
+    afterEach(() => {
+        REGISTRIES.forEach((registry) => delete globalThis[registry]);
+    });
+
+    test('cover every supported language', () => {
+        expect(fs.readdirSync(builtDir).filter((file) => file.endsWith('.js')).map((file) => file.replace(/.js$/, '')).sort()).toEqual(LANGUAGES);
+    });
+
+    for (const code of LANGUAGES) {
+        test(`${code} holds the library, rich editor and grid translations as they are, so build.js has run since they changed`, () => {
+            const built = fs.readFileSync(path.join(builtDir, `${code}.js`), 'utf8');
+
+            for (const dir of [languagesDir, ...packageDirs]) {
+                const source = fs.readFileSync(path.join(dir, `${code}.js`), 'utf8').trim();
+                expect([dir, built.includes(source)]).toEqual([dir, true]);
             }
         });
     }

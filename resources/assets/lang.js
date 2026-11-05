@@ -2,15 +2,17 @@
  * Translations of the library's client-side strings
  *
  * The library's own widgets keep their English strings beside their code and take translations from
- * languages/<code>.js, a plain script per language holding each widget's strings under its name:
+ * the LarajaxUiLanguages registry, each widget's strings under its name:
  *
  *     (globalThis.LarajaxUiLanguages = globalThis.LarajaxUiLanguages || {})['de'] = {
  *         datatable: { ruleRequired: '...' },
  *         markdowneditor: { bold: 'Fett' }
  *     };
  *
- * The editor and grid packages keep their own translations the same way, in RichAreaLanguages and
- * HotsheetLanguages. A page may bundle the files it needs, otherwise a widget loads them.
+ * The editor and grid packages keep theirs the same way, in RichAreaLanguages and HotsheetLanguages.
+ * languages/<code>.js is one plain script per language that fills all three registries, joined by
+ * build.js from resources/languages and the packages' translations. A page may bundle the file,
+ * otherwise a widget loads it.
  */
 'use strict';
 
@@ -25,12 +27,8 @@ const LANGUAGE_ALIASES = {
     zh: 'zh-cn'
 };
 
-// Folders of translations by registry, relative to this file
-const LANGUAGE_FOLDERS = {
-    LarajaxUiLanguages: './languages',
-    RichAreaLanguages: './vendor/richarea/languages',
-    HotsheetLanguages: './vendor/hotsheet/languages'
-};
+// The folder of the language files relative to this file, in a variable so bundlers leave the folder out of a bundle
+const LANGUAGE_FOLDER = './languages';
 
 const LANGUAGE_CODE = /^[a-z]{2,3}(-[a-z0-9]{2,8})?$/;
 
@@ -103,20 +101,14 @@ export function hasLanguage(language, registries = ['LarajaxUiLanguages']) {
 }
 
 /**
- * loadLanguage loads the translations of a language into the given registries, skipping any the page
- * has already. The language is a code with a file, as the field's data-language gives it; the widgets
- * stay in English when a file fails to load.
+ * loadLanguage loads the language file of a language unless the page already has its translations in
+ * all the given registries. The language is a code with a file, as the field's data-language gives it;
+ * the widgets stay in English when the file fails to load, as it does from inside a bundle.
  */
 export function loadLanguage(language, registries = ['LarajaxUiLanguages']) {
-    if (!language || !LANGUAGE_CODE.test(language)) {
+    if (!language || !LANGUAGE_CODE.test(language) || hasLanguage(language, registries)) {
         return Promise.resolve();
     }
 
-    return Promise.all(registries.map((registry) => {
-        if (getLanguages(registry)[language] || !LANGUAGE_FOLDERS[registry]) {
-            return null;
-        }
-
-        return import(`${LANGUAGE_FOLDERS[registry]}/${language}.js`).catch(() => {});
-    }));
+    return import(/* @vite-ignore */ /* webpackIgnore: true */ `${LANGUAGE_FOLDER}/${language}.js`).catch(() => {});
 }

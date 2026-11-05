@@ -1,4 +1,8 @@
 /*
+ * Translations for sr, joined by build.js from resources/languages, packages/richarea/src/languages, packages/hotsheet/src/languages, which hold the strings to edit
+ */
+
+/*
  * Larajax UI translation: Serbian (sr)
  */
 (globalThis.LarajaxUiLanguages = globalThis.LarajaxUiLanguages || {})['sr'] = {
@@ -37,4 +41,167 @@
         sideBySide: 'Uporedni prikaz',
         fullscreen: 'Ceo ekran'
     }
+};
+
+/*
+ * RichArea translation: Serbian (sr)
+ */
+(globalThis.RichAreaLanguages = globalThis.RichAreaLanguages || {})['sr'] = {
+    // Toolbar buttons
+    toolbar: 'Traka sa alatkama editora',
+    fullscreen: 'Ceo ekran',
+    bold: 'Podebljaj',
+    italic: 'Ukosi',
+    underline: 'Podvuci',
+    strikeThrough: 'Precrtaj',
+    subscript: 'Indeks',
+    superscript: 'Eksponent',
+    fontFamily: 'Vrsta fonta',
+    fontSize: 'Veličina fonta',
+    color: 'Boje',
+    emoticons: 'Emotikoni',
+    inlineStyle: 'Stil teksta',
+    paragraphStyle: 'Stil paragrafa',
+    paragraphFormat: 'Format paragrafa',
+    align: 'Poravnanje',
+    formatOL: 'Uređena lista',
+    formatUL: 'Neuređena lista',
+    outdent: 'Smanji uvlačenje',
+    indent: 'Povećaj uvlačenje',
+    quote: 'Citat',
+    insertHR: 'Ubaci horizontalnu liniju',
+    insertLink: 'Ubaci link',
+    insertPageLink: 'Ubaci link',
+    insertImage: 'Ubaci sliku',
+    insertVideo: 'Ubaci video zapis',
+    insertAudio: 'Ubaci zvučni zapis',
+    insertFile: 'Ubaci fajl',
+    insertTable: 'Ubaci tabelu',
+    insertSnippet: 'Ubaci isečak',
+    undo: 'Opozovi',
+    redo: 'Ponovi',
+    clearFormatting: 'Obriši formatiranje',
+    selectAll: 'Izaberi sve',
+    html: 'Prikaz koda',
+
+    // Shortcut keys
+    keyCtrl: 'Ctrl',
+    keyAlt: 'Alt',
+    keyShift: 'Shift',
+
+    // Paragraph formats
+    formatNormal: 'Normalno',
+    formatHeading1: 'Naslov 1',
+    formatHeading2: 'Naslov 2',
+    formatHeading3: 'Naslov 3',
+    formatHeading4: 'Naslov 4',
+    formatHeading5: 'Naslov 5',
+    formatHeading6: 'Naslov 6',
+    formatCode: 'Kod',
+
+    // Alignment
+    alignLeft: 'Poravnaj levo',
+    alignCenter: 'Centriraj',
+    alignRight: 'Poravnaj desno',
+    alignJustify: 'Obostrano poravnaj',
+
+    // Colors
+    textColor: 'Tekst',
+    backgroundColor: 'Pozadina',
+    removeColor: 'Ukloni boju',
+    defaultFont: 'Podrazumevano',
+
+    // Insert menus
+    uploadFromComputer: 'Otpremi sa računara',
+    browse: 'Pregledaj',
+    byUrl: 'Preko URL-a',
+    embeddingCode: 'Kod za ugrađivanje',
+
+    // Popover forms
+    url: 'URL',
+    text: 'Tekst',
+    openInNewTab: 'Otvori u novoj kartici',
+    linkStyle: 'Stil',
+    none: 'Nijedan',
+    insert: 'Ubaci',
+    update: 'Ažuriraj',
+    cancel: 'Otkaži',
+    remove: 'Ukloni',
+    browsePages: 'Pregledaj stranice',
+    alternativeText: 'Alternativni tekst',
+    width: 'Širina',
+    widthPlaceholder: '300 ili 50%',
+    widthInvalid: 'Unesi širinu u pikselima ili procentima',
+    urlRequired: 'Unesi URL',
+    urlInvalid: 'Unesi ispravan URL',
+    embeddingCodeRequired: 'Unesi kod za ugrađivanje',
+    embeddingCodeInvalid: 'Kod za ugrađivanje mora da sadrži iframe',
+
+    // Contextual toolbars
+    openLink: 'Otvori link',
+    editLink: 'Izmeni link',
+    unlink: 'Ukloni link',
+    imageAlign: 'Poravnanje',
+    imageAlignNone: 'U liniji sa tekstom',
+    imageAlignLeft: 'Plutajuće levo',
+    imageAlignCenter: 'Centrirano',
+    imageAlignRight: 'Plutajuće desno',
+    imageStyle: 'Stil slike',
+    imageAlt: 'Alternativni tekst',
+    imageSize: 'Promeni veličinu',
+    imageReplace: 'Zameni',
+    imageRemove: 'Ukloni sliku',
+    imageLink: 'Ubaci link',
+    tableHeader: 'Zaglavlje tabele',
+    tableRows: 'Red',
+    tableRowAbove: 'Ubaci red iznad',
+    tableRowBelow: 'Ubaci red ispod',
+    tableRowDelete: 'Izbriši red',
+    tableColumns: 'Kolona',
+    tableColumnBefore: 'Ubaci kolonu ispred',
+    tableColumnAfter: 'Ubaci kolonu iza',
+    tableColumnDelete: 'Izbriši kolonu',
+    tableCells: 'Ćelija',
+    tableCellsMerge: 'Spoji ćelije',
+    tableCellsSplit: 'Podeli ćeliju',
+    tableStyle: 'Stil tabele',
+    tableCellStyle: 'Stil ćelije',
+    tableRemove: 'Ukloni tabelu',
+    snippet: 'Isečak',
+    snippetProperties: 'Svojstva',
+    snippetRemove: 'Ukloni isečak',
+    mediaRemove: 'Ukloni',
+
+    // Messages
+    uploadFailed: 'Otpremanje fajla nije uspelo',
+    invalidFileEmptyInsert: 'Odaberi fajl za ubacivanje.',
+    invalidFileSingleInsert: 'Odaberi samo jedan fajl.',
+    invalidImageEmptyInsert: 'Odaberi sliku za ubacivanje.',
+    invalidImageInvalidInsert: 'Odabrani fajl nije slika.',
+    invalidVideoInvalidInsert: 'Odabrani fajl nije video zapis.',
+    invalidAudioInvalidInsert: 'Odabrani fajl nije zvučni zapis.'
+};
+
+/*
+ * Hotsheet translation: Serbian (sr)
+ */
+(globalThis.HotsheetLanguages = globalThis.HotsheetLanguages || {})['sr'] = {
+    // The placeholder of an empty grid, with emptyState: true
+    noData: 'Nema podataka',
+
+    // Row and column actions, for a host's context menu
+    insertRowAbove: 'Ubaci red iznad',
+    insertRowBelow: 'Ubaci red ispod',
+    removeRow: 'Ukloni red',
+    undo: 'Opozovi',
+    redo: 'Ponovi',
+    freezeColumn: 'Zamrzni kolonu',
+    unfreezeColumn: 'Odmrzni kolonu',
+
+    // A cell whose value its column does not accept
+    invalidValue: 'Vrednost nije ispravna.',
+
+    // The button that opens the browser's date or time picker on an edited cell
+    chooseDate: 'Izaberi datum',
+    chooseTime: 'Izaberi vreme'
 };

@@ -15,8 +15,8 @@
  * - externalToolbar: false - draws no toolbar, the page draws one from the editor's toolbar API
  * - editorOptions: {} - extra editor options, such as paragraphStyles
  * - icons: {} - icon classes keyed by button or element name
- * - language: null - the editor translation to use, such as de, loaded from vendor/richarea/languages
- *   unless the page has it already
+ * - language: null - the editor translation to use, such as de, loaded from languages/ unless the page
+ *   has it already
  * - lang: {} - strings keyed like the editor's English defaults, over the translation
  * - uploadHandler: null - AJAX handler storing uploads when the page sets no uploadFile hook
  *

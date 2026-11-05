@@ -1,4 +1,8 @@
 /*
+ * Translations for sv, joined by build.js from resources/languages, packages/richarea/src/languages, packages/hotsheet/src/languages, which hold the strings to edit
+ */
+
+/*
  * Larajax UI translation: Swedish (sv)
  */
 (globalThis.LarajaxUiLanguages = globalThis.LarajaxUiLanguages || {})['sv'] = {
@@ -37,4 +41,167 @@
         sideBySide: 'Sida vid sida',
         fullscreen: 'Fullskärm'
     }
+};
+
+/*
+ * RichArea translation: Swedish (sv)
+ */
+(globalThis.RichAreaLanguages = globalThis.RichAreaLanguages || {})['sv'] = {
+    // Toolbar buttons
+    toolbar: 'Redigerarens verktygsfält',
+    fullscreen: 'Fullskärm',
+    bold: 'Fet',
+    italic: 'Kursiv',
+    underline: 'Understruken',
+    strikeThrough: 'Genomstruken',
+    subscript: 'Nedsänkt',
+    superscript: 'Upphöjd',
+    fontFamily: 'Teckensnitt',
+    fontSize: 'Teckenstorlek',
+    color: 'Färger',
+    emoticons: 'Uttryckssymboler',
+    inlineStyle: 'Teckenstil',
+    paragraphStyle: 'Styckestil',
+    paragraphFormat: 'Styckeformat',
+    align: 'Justera',
+    formatOL: 'Ordnad lista',
+    formatUL: 'Oordnad lista',
+    outdent: 'Minska indrag',
+    indent: 'Öka indrag',
+    quote: 'Citat',
+    insertHR: 'Infoga horisontell linje',
+    insertLink: 'Infoga länk',
+    insertPageLink: 'Infoga länk',
+    insertImage: 'Infoga bild',
+    insertVideo: 'Infoga video',
+    insertAudio: 'Infoga ljud',
+    insertFile: 'Infoga fil',
+    insertTable: 'Infoga tabell',
+    insertSnippet: 'Infoga stump',
+    undo: 'Ångra',
+    redo: 'Gör om',
+    clearFormatting: 'Rensa formatering',
+    selectAll: 'Markera allt',
+    html: 'Kodvy',
+
+    // Shortcut keys
+    keyCtrl: 'Ctrl',
+    keyAlt: 'Alt',
+    keyShift: 'Skift',
+
+    // Paragraph formats
+    formatNormal: 'Normal',
+    formatHeading1: 'Rubrik 1',
+    formatHeading2: 'Rubrik 2',
+    formatHeading3: 'Rubrik 3',
+    formatHeading4: 'Rubrik 4',
+    formatHeading5: 'Rubrik 5',
+    formatHeading6: 'Rubrik 6',
+    formatCode: 'Kod',
+
+    // Alignment
+    alignLeft: 'Vänsterjustera',
+    alignCenter: 'Centrera',
+    alignRight: 'Högerjustera',
+    alignJustify: 'Marginaljustera',
+
+    // Colors
+    textColor: 'Text',
+    backgroundColor: 'Bakgrund',
+    removeColor: 'Ta bort färg',
+    defaultFont: 'Standard',
+
+    // Insert menus
+    uploadFromComputer: 'Ladda upp från datorn',
+    browse: 'Bläddra',
+    byUrl: 'Via URL',
+    embeddingCode: 'Inbäddningskod',
+
+    // Popover forms
+    url: 'URL',
+    text: 'Text',
+    openInNewTab: 'Öppna i ny flik',
+    linkStyle: 'Stil',
+    none: 'Ingen',
+    insert: 'Infoga',
+    update: 'Uppdatera',
+    cancel: 'Avbryt',
+    remove: 'Ta bort',
+    browsePages: 'Bläddra bland sidor',
+    alternativeText: 'Alternativ text',
+    width: 'Bredd',
+    widthPlaceholder: '300 eller 50%',
+    widthInvalid: 'Ange en bredd i pixlar eller procent',
+    urlRequired: 'Ange en URL',
+    urlInvalid: 'Ange en giltig URL',
+    embeddingCodeRequired: 'Ange inbäddningskoden',
+    embeddingCodeInvalid: 'Inbäddningskoden måste innehålla en iframe',
+
+    // Contextual toolbars
+    openLink: 'Öppna länk',
+    editLink: 'Redigera länk',
+    unlink: 'Ta bort länk',
+    imageAlign: 'Justera',
+    imageAlignNone: 'I nivå med texten',
+    imageAlignLeft: 'Flytande vänster',
+    imageAlignCenter: 'Centrera',
+    imageAlignRight: 'Flytande höger',
+    imageStyle: 'Bildstil',
+    imageAlt: 'Alternativ text',
+    imageSize: 'Ändra storlek',
+    imageReplace: 'Byt ut',
+    imageRemove: 'Ta bort bild',
+    imageLink: 'Infoga länk',
+    tableHeader: 'Rubrikrad',
+    tableRows: 'Rad',
+    tableRowAbove: 'Infoga rad ovanför',
+    tableRowBelow: 'Infoga rad nedanför',
+    tableRowDelete: 'Ta bort rad',
+    tableColumns: 'Kolumn',
+    tableColumnBefore: 'Infoga kolumn före',
+    tableColumnAfter: 'Infoga kolumn efter',
+    tableColumnDelete: 'Ta bort kolumn',
+    tableCells: 'Cell',
+    tableCellsMerge: 'Sammanfoga celler',
+    tableCellsSplit: 'Dela cell',
+    tableStyle: 'Tabellstil',
+    tableCellStyle: 'Cellstil',
+    tableRemove: 'Ta bort tabell',
+    snippet: 'Stump',
+    snippetProperties: 'Egenskaper',
+    snippetRemove: 'Ta bort stump',
+    mediaRemove: 'Ta bort',
+
+    // Messages
+    uploadFailed: 'Filen kunde inte laddas upp',
+    invalidFileEmptyInsert: 'Välj en fil att infoga.',
+    invalidFileSingleInsert: 'Välj en enskild fil.',
+    invalidImageEmptyInsert: 'Välj en bild att infoga.',
+    invalidImageInvalidInsert: 'Den valda filen är inte en bild.',
+    invalidVideoInvalidInsert: 'Den valda filen är inte en video.',
+    invalidAudioInvalidInsert: 'Den valda filen är inte en ljudfil.'
+};
+
+/*
+ * Hotsheet translation: Swedish (sv)
+ */
+(globalThis.HotsheetLanguages = globalThis.HotsheetLanguages || {})['sv'] = {
+    // The placeholder of an empty grid, with emptyState: true
+    noData: 'Inga data',
+
+    // Row and column actions, for a host's context menu
+    insertRowAbove: 'Infoga rad ovanför',
+    insertRowBelow: 'Infoga rad nedanför',
+    removeRow: 'Ta bort rad',
+    undo: 'Ångra',
+    redo: 'Gör om',
+    freezeColumn: 'Lås kolumn',
+    unfreezeColumn: 'Lås upp kolumn',
+
+    // A cell whose value its column does not accept
+    invalidValue: 'Värdet är ogiltigt.',
+
+    // The button that opens the browser's date or time picker on an edited cell
+    chooseDate: 'Välj datum',
+    chooseTime: 'Välj tid'
 };

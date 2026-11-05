@@ -146,7 +146,7 @@ class RichEditor extends FormWidgetBase
         $this->vars['value'] = $this->getLoadValue();
         $this->vars['toolbarButtons'] = $this->evalToolbarButtons();
         $this->vars['icons'] = $this->getEditorIcons();
-        $this->vars['language'] = Language::find('richarea');
+        $this->vars['language'] = Language::find();
         $this->vars['uploadHandler'] = $this->canUpload() ? $this->getEventHandler('onUploadFile') : null;
     }
 

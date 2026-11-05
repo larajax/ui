@@ -67,4 +67,39 @@ export async function bundle(entry, outfile, options = {}) {
     console.log(`  ✓ ${outfile} (bundled)`);
 }
 
+/**
+ * Writes languages/ in the asset root, one plain script per language that joins its translations from
+ * each source folder, so a page loads or bundles a single file per language.
+ */
+export function combineLanguages(sourceDirs, outdir = 'languages') {
+    const targetDir = path.join(assetsDir, outdir);
+    const codes = new Set();
+
+    for (const dir of sourceDirs) {
+        fs.readdirSync(path.join(__dirname, dir))
+            .filter((file) => file.endsWith('.js'))
+            .forEach((file) => codes.add(file.slice(0, -3)));
+    }
+
+    fs.rmSync(targetDir, { recursive: true, force: true });
+    fs.mkdirSync(targetDir, { recursive: true });
+
+    for (const code of [...codes].sort()) {
+        const parts = sourceDirs
+            .map((dir) => path.join(__dirname, dir, `${code}.js`))
+            .filter((file) => fs.existsSync(file))
+            .map((file) => fs.readFileSync(file, 'utf8').trim());
+
+        const header = [
+            '/*',
+            ` * Translations for ${code}, joined by build.js from ${sourceDirs.join(', ')}, which hold the strings to edit`,
+            ' */'
+        ].join('\n');
+
+        fs.writeFileSync(path.join(targetDir, `${code}.js`), header + '\n\n' + parts.join('\n\n') + '\n');
+    }
+
+    console.log(`  ✓ ${outdir}/ (${codes.size} languages)`);
+}
+
 export { nodeModules, assetsDir, vendorDir };

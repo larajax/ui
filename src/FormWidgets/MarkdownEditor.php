@@ -90,7 +90,7 @@ class MarkdownEditor extends FormWidgetBase
         $this->vars['sideBySide'] = $this->sideBySide;
         $this->vars['externalToolbar'] = $this->externalToolbar;
         $this->vars['toolbarButtons'] = static::getToolbarButtons();
-        $this->vars['language'] = Language::find('ui');
+        $this->vars['language'] = Language::find();
         $this->vars['stretch'] = $this->formField->stretch;
         $this->vars['size'] = $this->formField->size;
         $this->vars['name'] = $this->getFieldName();

@@ -83,7 +83,7 @@ class DataTable extends FormWidgetBase
         $this->vars['csvExport'] = $this->getFieldConfig('csvExport', false);
         $this->vars['csvImport'] = !$readOnly && $this->getFieldConfig('csvImport', false);
         $this->vars['requireValid'] = !$readOnly && $this->getFieldConfig('requireValid', false);
-        $this->vars['language'] = Language::find('ui');
+        $this->vars['language'] = Language::find();
 
         // The toolbar shows only when it holds a button or the search box
         $this->vars['toolbar'] = $this->getFieldConfig('toolbar', true) && (

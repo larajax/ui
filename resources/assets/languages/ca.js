@@ -1,4 +1,8 @@
 /*
+ * Translations for ca, joined by build.js from resources/languages, packages/richarea/src/languages, packages/hotsheet/src/languages, which hold the strings to edit
+ */
+
+/*
  * Larajax UI translation: Catalan (ca)
  */
 (globalThis.LarajaxUiLanguages = globalThis.LarajaxUiLanguages || {})['ca'] = {
@@ -37,4 +41,167 @@
         sideBySide: 'En paral·lel',
         fullscreen: 'Pantalla completa'
     }
+};
+
+/*
+ * RichArea translation: Catalan (ca)
+ */
+(globalThis.RichAreaLanguages = globalThis.RichAreaLanguages || {})['ca'] = {
+    // Toolbar buttons
+    toolbar: 'Barra d\'eines de l\'editor',
+    fullscreen: 'Pantalla completa',
+    bold: 'Negreta',
+    italic: 'Cursiva',
+    underline: 'Subratllat',
+    strikeThrough: 'Ratllat',
+    subscript: 'Subíndex',
+    superscript: 'Superíndex',
+    fontFamily: 'Tipus de lletra',
+    fontSize: 'Mida de la font',
+    color: 'Colors',
+    emoticons: 'Emoticones',
+    inlineStyle: 'Estil de text',
+    paragraphStyle: 'Estil de paràgraf',
+    paragraphFormat: 'Format de paràgraf',
+    align: 'Alinear',
+    formatOL: 'Llista ordenada',
+    formatUL: 'Llista desordenada',
+    outdent: 'Reduir sagnat',
+    indent: 'Augmentar sagnat',
+    quote: 'Cita',
+    insertHR: 'Inserir línia horitzontal',
+    insertLink: 'Inserir enllaç',
+    insertPageLink: 'Inserir enllaç',
+    insertImage: 'Inserir imatge',
+    insertVideo: 'Inserir vídeo',
+    insertAudio: 'Inserir àudio',
+    insertFile: 'Inserir arxiu',
+    insertTable: 'Inserir taula',
+    insertSnippet: 'Inserir fragment',
+    undo: 'Desfer',
+    redo: 'Refer',
+    clearFormatting: 'Esborrar format',
+    selectAll: 'Seleccionar-ho tot',
+    html: 'Vista de codi',
+
+    // Shortcut keys
+    keyCtrl: 'Ctrl',
+    keyAlt: 'Alt',
+    keyShift: 'Maj',
+
+    // Paragraph formats
+    formatNormal: 'Normal',
+    formatHeading1: 'Títol 1',
+    formatHeading2: 'Títol 2',
+    formatHeading3: 'Títol 3',
+    formatHeading4: 'Títol 4',
+    formatHeading5: 'Títol 5',
+    formatHeading6: 'Títol 6',
+    formatCode: 'Codi',
+
+    // Alignment
+    alignLeft: 'Alinear a l\'esquerra',
+    alignCenter: 'Centrar',
+    alignRight: 'Alinear a la dreta',
+    alignJustify: 'Justificar',
+
+    // Colors
+    textColor: 'Text',
+    backgroundColor: 'Fons',
+    removeColor: 'Eliminar color',
+    defaultFont: 'Per defecte',
+
+    // Insert menus
+    uploadFromComputer: 'Pujar des de l\'ordinador',
+    browse: 'Explorar',
+    byUrl: 'Per URL',
+    embeddingCode: 'Codi d\'inserció',
+
+    // Popover forms
+    url: 'URL',
+    text: 'Text',
+    openInNewTab: 'Obrir en una pestanya nova',
+    linkStyle: 'Estil',
+    none: 'Cap',
+    insert: 'Inserir',
+    update: 'Actualitzar',
+    cancel: 'Cancel·lar',
+    remove: 'Eliminar',
+    browsePages: 'Explorar pàgines',
+    alternativeText: 'Text alternatiu',
+    width: 'Amplada',
+    widthPlaceholder: '300 o 50%',
+    widthInvalid: 'Introduïu una amplada en píxels o en percentatge',
+    urlRequired: 'Introduïu un URL',
+    urlInvalid: 'Introduïu un URL vàlid',
+    embeddingCodeRequired: 'Introduïu el codi d\'inserció',
+    embeddingCodeInvalid: 'El codi d\'inserció ha de contenir un iframe',
+
+    // Contextual toolbars
+    openLink: 'Obrir enllaç',
+    editLink: 'Editar enllaç',
+    unlink: 'Eliminar enllaç',
+    imageAlign: 'Alinear',
+    imageAlignNone: 'En línia',
+    imageAlignLeft: 'Flotant a l\'esquerra',
+    imageAlignCenter: 'Centrat',
+    imageAlignRight: 'Flotant a la dreta',
+    imageStyle: 'Estil d\'imatge',
+    imageAlt: 'Text alternatiu',
+    imageSize: 'Canviar la mida',
+    imageReplace: 'Substituir',
+    imageRemove: 'Eliminar imatge',
+    imageLink: 'Inserir enllaç',
+    tableHeader: 'Capçalera de taula',
+    tableRows: 'Fila',
+    tableRowAbove: 'Inserir fila a sobre',
+    tableRowBelow: 'Inserir fila a sota',
+    tableRowDelete: 'Eliminar fila',
+    tableColumns: 'Columna',
+    tableColumnBefore: 'Inserir columna abans',
+    tableColumnAfter: 'Inserir columna després',
+    tableColumnDelete: 'Eliminar columna',
+    tableCells: 'Cel·la',
+    tableCellsMerge: 'Combinar cel·les',
+    tableCellsSplit: 'Dividir cel·la',
+    tableStyle: 'Estil de taula',
+    tableCellStyle: 'Estil de cel·la',
+    tableRemove: 'Eliminar taula',
+    snippet: 'Fragment',
+    snippetProperties: 'Propietats',
+    snippetRemove: 'Eliminar fragment',
+    mediaRemove: 'Eliminar',
+
+    // Messages
+    uploadFailed: 'No s\'ha pogut pujar l\'arxiu',
+    invalidFileEmptyInsert: 'Seleccioneu un arxiu per inserir.',
+    invalidFileSingleInsert: 'Seleccioneu un sol arxiu.',
+    invalidImageEmptyInsert: 'Seleccioneu una imatge per inserir.',
+    invalidImageInvalidInsert: 'L\'arxiu seleccionat no és una imatge.',
+    invalidVideoInvalidInsert: 'L\'arxiu seleccionat no és un vídeo.',
+    invalidAudioInvalidInsert: 'L\'arxiu seleccionat no és un arxiu d\'àudio.'
+};
+
+/*
+ * Hotsheet translation: Catalan (ca)
+ */
+(globalThis.HotsheetLanguages = globalThis.HotsheetLanguages || {})['ca'] = {
+    // The placeholder of an empty grid, with emptyState: true
+    noData: 'Sense dades',
+
+    // Row and column actions, for a host's context menu
+    insertRowAbove: 'Inserir fila a sobre',
+    insertRowBelow: 'Inserir fila a sota',
+    removeRow: 'Eliminar fila',
+    undo: 'Desfer',
+    redo: 'Refer',
+    freezeColumn: 'Fixar columna',
+    unfreezeColumn: 'Alliberar columna',
+
+    // A cell whose value its column does not accept
+    invalidValue: 'El valor no és vàlid.',
+
+    // The button that opens the browser's date or time picker on an edited cell
+    chooseDate: 'Seleccionar una data',
+    chooseTime: 'Seleccionar una hora'
 };

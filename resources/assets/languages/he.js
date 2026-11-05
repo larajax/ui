@@ -1,4 +1,8 @@
 /*
+ * Translations for he, joined by build.js from resources/languages, packages/richarea/src/languages, packages/hotsheet/src/languages, which hold the strings to edit
+ */
+
+/*
  * Larajax UI translation: Hebrew (he)
  */
 (globalThis.LarajaxUiLanguages = globalThis.LarajaxUiLanguages || {})['he'] = {
@@ -37,4 +41,167 @@
         sideBySide: 'תצוגה זה לצד זה',
         fullscreen: 'מסך מלא'
     }
+};
+
+/*
+ * RichArea translation: Hebrew (he)
+ */
+(globalThis.RichAreaLanguages = globalThis.RichAreaLanguages || {})['he'] = {
+    // Toolbar buttons
+    toolbar: 'סרגל הכלים של העורך',
+    fullscreen: 'מסך מלא',
+    bold: 'מודגש',
+    italic: 'נטוי',
+    underline: 'קו תחתון',
+    strikeThrough: 'קו חוצה',
+    subscript: 'כתב תחתי',
+    superscript: 'כתב עילי',
+    fontFamily: 'גופן',
+    fontSize: 'גודל גופן',
+    color: 'צבעים',
+    emoticons: 'סמלי הבעה',
+    inlineStyle: 'סגנון טקסט',
+    paragraphStyle: 'סגנון פסקה',
+    paragraphFormat: 'עיצוב פסקה',
+    align: 'יישור',
+    formatOL: 'רשימה ממוספרת',
+    formatUL: 'רשימת תבליטים',
+    outdent: 'הקטנת הזחה',
+    indent: 'הגדלת הזחה',
+    quote: 'ציטוט',
+    insertHR: 'הוספת קו אופקי',
+    insertLink: 'הוספת קישור',
+    insertPageLink: 'הוספת קישור',
+    insertImage: 'הוספת תמונה',
+    insertVideo: 'הוספת וידאו',
+    insertAudio: 'הוספת שמע',
+    insertFile: 'הוספת קובץ',
+    insertTable: 'הוספת טבלה',
+    insertSnippet: 'הוספת קטע',
+    undo: 'ביטול פעולה',
+    redo: 'ביצוע חוזר',
+    clearFormatting: 'ניקוי עיצוב',
+    selectAll: 'בחירת הכל',
+    html: 'תצוגת קוד',
+
+    // Shortcut keys
+    keyCtrl: 'Ctrl',
+    keyAlt: 'Alt',
+    keyShift: 'Shift',
+
+    // Paragraph formats
+    formatNormal: 'רגיל',
+    formatHeading1: 'כותרת 1',
+    formatHeading2: 'כותרת 2',
+    formatHeading3: 'כותרת 3',
+    formatHeading4: 'כותרת 4',
+    formatHeading5: 'כותרת 5',
+    formatHeading6: 'כותרת 6',
+    formatCode: 'קוד',
+
+    // Alignment
+    alignLeft: 'יישור לשמאל',
+    alignCenter: 'מרכוז',
+    alignRight: 'יישור לימין',
+    alignJustify: 'יישור לשני הצדדים',
+
+    // Colors
+    textColor: 'טקסט',
+    backgroundColor: 'רקע',
+    removeColor: 'הסרת צבע',
+    defaultFont: 'ברירת מחדל',
+
+    // Insert menus
+    uploadFromComputer: 'העלאה מהמחשב',
+    browse: 'עיון',
+    byUrl: 'מכתובת URL',
+    embeddingCode: 'קוד הטמעה',
+
+    // Popover forms
+    url: 'כתובת URL',
+    text: 'טקסט',
+    openInNewTab: 'פתיחה בכרטיסייה חדשה',
+    linkStyle: 'סגנון',
+    none: 'ללא',
+    insert: 'הוספה',
+    update: 'עדכון',
+    cancel: 'ביטול',
+    remove: 'הסרה',
+    browsePages: 'עיון בדפים',
+    alternativeText: 'טקסט חלופי',
+    width: 'רוחב',
+    widthPlaceholder: '300 או 50%',
+    widthInvalid: 'יש להזין רוחב בפיקסלים או באחוזים',
+    urlRequired: 'יש להזין כתובת URL',
+    urlInvalid: 'יש להזין כתובת URL תקינה',
+    embeddingCodeRequired: 'יש להזין את קוד ההטמעה',
+    embeddingCodeInvalid: 'קוד ההטמעה חייב לכלול iframe',
+
+    // Contextual toolbars
+    openLink: 'פתיחת קישור',
+    editLink: 'עריכת קישור',
+    unlink: 'הסרת קישור',
+    imageAlign: 'יישור',
+    imageAlignNone: 'בתוך השורה',
+    imageAlignLeft: 'הצמדה לשמאל',
+    imageAlignCenter: 'מרכוז',
+    imageAlignRight: 'הצמדה לימין',
+    imageStyle: 'סגנון תמונה',
+    imageAlt: 'טקסט חלופי',
+    imageSize: 'שינוי גודל',
+    imageReplace: 'החלפה',
+    imageRemove: 'הסרת תמונה',
+    imageLink: 'הוספת קישור',
+    tableHeader: 'שורת כותרת',
+    tableRows: 'שורה',
+    tableRowAbove: 'הוספת שורה מעל',
+    tableRowBelow: 'הוספת שורה מתחת',
+    tableRowDelete: 'מחיקת שורה',
+    tableColumns: 'עמודה',
+    tableColumnBefore: 'הוספת עמודה לפני',
+    tableColumnAfter: 'הוספת עמודה אחרי',
+    tableColumnDelete: 'מחיקת עמודה',
+    tableCells: 'תא',
+    tableCellsMerge: 'מיזוג תאים',
+    tableCellsSplit: 'פיצול תא',
+    tableStyle: 'סגנון טבלה',
+    tableCellStyle: 'סגנון תא',
+    tableRemove: 'הסרת טבלה',
+    snippet: 'קטע',
+    snippetProperties: 'מאפיינים',
+    snippetRemove: 'הסרת קטע',
+    mediaRemove: 'הסרה',
+
+    // Messages
+    uploadFailed: 'לא ניתן היה להעלות את הקובץ',
+    invalidFileEmptyInsert: 'יש לבחור קובץ להוספה.',
+    invalidFileSingleInsert: 'יש לבחור קובץ אחד בלבד.',
+    invalidImageEmptyInsert: 'יש לבחור תמונה להוספה.',
+    invalidImageInvalidInsert: 'הקובץ שנבחר אינו תמונה.',
+    invalidVideoInvalidInsert: 'הקובץ שנבחר אינו קובץ וידאו.',
+    invalidAudioInvalidInsert: 'הקובץ שנבחר אינו קובץ שמע.'
+};
+
+/*
+ * Hotsheet translation: Hebrew (he)
+ */
+(globalThis.HotsheetLanguages = globalThis.HotsheetLanguages || {})['he'] = {
+    // The placeholder of an empty grid, with emptyState: true
+    noData: 'אין נתונים',
+
+    // Row and column actions, for a host's context menu
+    insertRowAbove: 'הוספת שורה מעל',
+    insertRowBelow: 'הוספת שורה מתחת',
+    removeRow: 'הסרת שורה',
+    undo: 'ביטול פעולה',
+    redo: 'ביצוע חוזר',
+    freezeColumn: 'הקפאת עמודה',
+    unfreezeColumn: 'ביטול הקפאת עמודה',
+
+    // A cell whose value its column does not accept
+    invalidValue: 'הערך אינו תקין.',
+
+    // The button that opens the browser's date or time picker on an edited cell
+    chooseDate: 'בחירת תאריך',
+    chooseTime: 'בחירת שעה'
 };

@@ -7,7 +7,7 @@
  * build only prepares vendored files ahead of publishing.
  */
 import path from 'path';
-import { bundle, bundleVirtual, copy, vendorDir } from './build-util.js';
+import { bundle, bundleVirtual, combineLanguages, copy, vendorDir } from './build-util.js';
 import { buildRichArea } from './packages/richarea/build.js';
 import { buildHotsheet } from './packages/hotsheet/build.js';
 
@@ -78,5 +78,9 @@ console.log('  ✓ richarea/richarea.js, richarea.css, base-styles.css (bundled)
 // with its stylesheet.
 await buildHotsheet({ outdir: path.join(vendorDir, 'hotsheet') });
 console.log('  ✓ hotsheet/hotsheet.js, hotsheet.css (bundled) and languages/');
+
+// Translations, one script per language with the library's widget strings and the rich editor's and
+// grid's, which the packages keep in their own languages/ for use on their own.
+combineLanguages(['resources/languages', 'packages/richarea/src/languages', 'packages/hotsheet/src/languages']);
 
 console.log('\n  Done.\n');
