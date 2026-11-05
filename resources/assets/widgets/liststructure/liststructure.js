@@ -226,6 +226,10 @@ export function registerListStructureWidget(jax) {
 
             if (this.toBool(this.config.includeSortOrders)) {
                 postData.sort_orders = this.getRecordSortData();
+
+                if (this.tableBody.querySelector('tr[data-tree-root-id]')) {
+                    postData.root_sort_orders = this.getRecordSortData(true);
+                }
             }
 
             jax.request(this.element, this.config.reorderHandler, {
@@ -266,6 +270,8 @@ export function registerListStructureWidget(jax) {
         // Move data
         //
 
+        // Each neighbour is sent by its id and by its root id, the record it was copied from on
+        // other sites, so a multisite reorder can be repeated on every site
         getMovePostData(row, proposedLevel) {
             const data = {
                 record_id: row.dataset.treeId
@@ -277,6 +283,7 @@ export function registerListStructureWidget(jax) {
                 const level = this.getTreeLevel(next);
                 if (level === proposedLevel) {
                     data.next_id = next.dataset.treeId;
+                    data.next_root_id = next.dataset.treeRootId;
                     break;
                 }
                 if (level < proposedLevel) {
@@ -291,6 +298,7 @@ export function registerListStructureWidget(jax) {
                 const level = this.getTreeLevel(prev);
                 if (level === proposedLevel) {
                     data.previous_id = prev.dataset.treeId;
+                    data.previous_root_id = prev.dataset.treeRootId;
                     break;
                 }
                 if (level < proposedLevel) {
@@ -305,17 +313,22 @@ export function registerListStructureWidget(jax) {
                 const level = this.getTreeLevel(prev);
                 if (level < proposedLevel) {
                     data.parent_id = prev.dataset.treeId;
+                    data.parent_root_id = prev.dataset.treeRootId;
                     break;
                 }
                 prev = prev.previousElementSibling;
             }
 
+            // Rows without a root id leave those fields out
+            Object.keys(data).forEach((key) => data[key] === undefined && delete data[key]);
+
             return data;
         }
 
-        getRecordSortData() {
+        // The rows in order, by id or by root id
+        getRecordSortData(rootId = false) {
             return [...this.tableBody.querySelectorAll('tr[data-tree-id]')]
-                .map((row) => row.dataset.treeId);
+                .map((row) => rootId ? row.dataset.treeRootId : row.dataset.treeId);
         }
 
         //

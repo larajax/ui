@@ -91,8 +91,8 @@ trait HasFilterWidgets
         }
 
         if (is_array($scopeConfig)) {
-            if (isset($fieldConfig['name'])) {
-                $fieldConfig['scopeName'] = $fieldConfig['name'];
+            if (isset($scopeConfig['name'])) {
+                $scopeConfig['scopeName'] = $scopeConfig['name'];
             }
 
             $filterScope = new FilterScope($scopeConfig);

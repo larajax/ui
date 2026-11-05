@@ -82,7 +82,7 @@ function makeList(rowSpecs, attributes = {}) {
         const expanded = spec.collapsed ? 'false' : (hasRenderedChildren ? 'true' : 'false');
 
         return `
-            <tr class="${spec.className || ''}" data-tree-id="${spec.id}" data-tree-level="${spec.level}" data-tree-expanded="${expanded}" data-tree-children="${childCount}">
+            <tr class="${spec.className || ''}" data-tree-id="${spec.id}" ${spec.rootId ? `data-tree-root-id="${spec.rootId}"` : ''} data-tree-level="${spec.level}" data-tree-expanded="${expanded}" data-tree-children="${childCount}">
                 <td class="list-reorder nolink"><span class="list-reorder-handle"></span></td>
                 <td class="list-cell-tree" style="padding-left:${spec.level * 18 + 15}px"><a href="/users/${spec.id}">Row ${spec.id}</a></td>
                 <td class="list-cell-name-email">row${spec.id}@example.com</td>
@@ -426,6 +426,23 @@ describe('drag reorder', () => {
             record_id: '1',
             previous_id: '3',
             sort_orders: ['3', '1', '2']
+        });
+    });
+
+    test('multisite rows also post their root ids, so other sites can follow the move', async () => {
+        const rows = [{ id: 1, level: 0, rootId: 11 }, { id: 2, level: 1, rootId: 12 }, { id: 3, level: 0, rootId: 13 }];
+        const { jax, sortable } = await mount(makeList(rows, { 'data-include-sort-orders': '1' }));
+
+        dragStart(sortable, 1, 10);
+        dragOver(sortable, 1, 3, true);
+        drop(sortable, 1);
+
+        expect(jax.requests[0].data).toEqual({
+            record_id: '1',
+            previous_id: '3',
+            previous_root_id: '13',
+            sort_orders: ['3', '1', '2'],
+            root_sort_orders: ['13', '11', '12']
         });
     });
 
