@@ -7,7 +7,7 @@ export class Toolbar {
     constructor(richArea, element) {
         this.richArea = richArea;
         this.element = element;
-        this.group = new ButtonGroup(richArea, element, richArea.options.toolbarButtons);
+        this.group = new ButtonGroup(richArea, element, richArea.options.externalToolbar ? [] : richArea.options.toolbarButtons);
         this.focusIndex = 0;
 
         this.onKeyDown = this.onKeyDown.bind(this);

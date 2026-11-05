@@ -602,6 +602,11 @@ export class Sheet extends Emitter {
 
         const applied = ops.map((op) => this.store.apply(op));
 
+        // Spare rows are topped up in the same change, so undo takes them back with it
+        for (const op of this.spareRowOps(source)) {
+            applied.push(this.store.apply(op));
+        }
+
         for (const op of applied) {
             if (op.type === 'set') {
                 this.validate(op.row, op.key);
@@ -658,6 +663,78 @@ export class Sheet extends Emitter {
         while (this.store.length < this.options.minRows) {
             this.store.apply({ type: 'insert', index: this.store.length, rows: [this.store.createRow()] });
         }
+
+        for (const op of this.spareRowOps('spare')) {
+            this.store.apply(op);
+        }
+    }
+
+    /**
+     * spareRowOps returns an insert operation that brings the empty rows at the end up to the spareRows
+     * option, or nothing when there are enough.
+     */
+    spareRowOps(source) {
+        const wanted = this.options.spareRows;
+        let empty = 0;
+
+        while (empty < wanted && empty < this.store.length && this.isEmptyRow(this.store.at(this.store.length - 1 - empty))) {
+            empty++;
+        }
+
+        const count = wanted - empty;
+        if (count <= 0) {
+            return [];
+        }
+
+        return [{ type: 'insert', index: this.store.length, rows: this.createRows(count, this.viewRows ? this.viewRows.length : this.store.length, source) }];
+    }
+
+    isEmptyRow(rowData) {
+        return this.columns.every((column) => isEmptyValue(this.store.get(rowData, column.key)));
+    }
+
+    //
+    // Replacing
+    //
+
+    /**
+     * setRows starts over with new rows, edited in place like the rows option, without undo history,
+     * selection, sort or validation marks. It announces no change.
+     */
+    setRows(rows) {
+        this.cancelEditor();
+        this.options.rows = rows;
+        this.store = new RowStore(rows);
+        this.history = new History();
+        this.invalid = new WeakMap();
+        this.rowHeights = new WeakMap();
+        this.sortState = null;
+        this.sortedRows = null;
+        this.selection = null;
+
+        this.fillMinRows();
+        this.refreshView();
+        this.elements.scroller.scrollTop = 0;
+        this.render();
+    }
+
+    /**
+     * setReadOnly turns editing off or on. Text being typed into a cell is saved first.
+     */
+    setReadOnly(readOnly) {
+        this.commitEditor();
+        this.options.readOnly = !!readOnly;
+        applyLayout(this);
+        this.render();
+    }
+
+    /**
+     * setHeight changes the height option: pixels to scroll inside the grid, or 'auto' to grow with the rows.
+     */
+    setHeight(height) {
+        this.options.height = height;
+        applyLayout(this);
+        this.render();
     }
 
     //

@@ -12,6 +12,7 @@
  * - toolbarButtons: null - comma separated toolbar buttons, the default list when omitted
  * - readOnly: false - shows the content without editing
  * - useLineBreaks: false - new lines insert line breaks instead of paragraphs
+ * - externalToolbar: false - draws no toolbar, the page draws one from the editor's toolbar API
  * - editorOptions: {} - extra editor options, such as paragraphStyles
  * - icons: {} - icon classes keyed by button or element name
  * - lang: {} - translated strings keyed like the editor's English defaults
@@ -19,6 +20,9 @@
  *
  * JavaScript API:
  * jax.fetchControl(element, 'richeditor').richArea
+ *
+ * Events:
+ * - richeditor:ready - on the field once its editor is mounted, with detail.richArea
  */
 'use strict';
 
@@ -37,6 +41,7 @@ export function registerRichEditor(jax) {
                 toolbarButtons: null,
                 readOnly: false,
                 useLineBreaks: false,
+                externalToolbar: false,
                 editorOptions: {},
                 icons: {},
                 lang: {},
@@ -58,6 +63,7 @@ export function registerRichEditor(jax) {
 
                 this.richArea = new RichArea(this.element, this.getEditorOptions(defaultOptions));
                 this.richArea.on('change', this.proxy(this.onChange));
+                this.element.dispatchEvent(new CustomEvent('richeditor:ready', { bubbles: true, detail: { richArea: this.richArea } }));
             });
         }
 
@@ -90,6 +96,7 @@ export function registerRichEditor(jax) {
                 placeholder: this.textarea.getAttribute('placeholder') || '',
                 readOnly: !!this.config.readOnly,
                 useLineBreaks: !!this.config.useLineBreaks,
+                externalToolbar: !!this.config.externalToolbar,
                 icons: Object.assign({}, plainObject(this.config.icons), plainObject(options.icons)),
                 lang: Object.assign({}, plainObject(this.config.lang), plainObject(options.lang)),
                 toolbarButtons: richEditor.resolveButtons({ fieldButtons: this.config.toolbarButtons }),

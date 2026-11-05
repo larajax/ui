@@ -24,6 +24,9 @@ export const defaultOptions = {
     lang: {},
     icons: {},
 
+    // The page draws the toolbar from getToolbarItems() and getButtonState(), so the editor draws none
+    externalToolbar: false,
+
     toolbarButtons: [
         'paragraphFormat',
         'align',

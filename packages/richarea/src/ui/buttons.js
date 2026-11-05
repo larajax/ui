@@ -1,5 +1,4 @@
 import { h, icon } from './dom.js';
-import { createMenu, focusFirstItem } from './menu.js';
 import { formatShortcut, tooltipAttributes } from './tooltip.js';
 
 const warnedCodes = new Set();
@@ -104,7 +103,7 @@ export class ButtonGroup {
         const shortcut = definition.shortcut ? formatShortcut(definition.shortcut, re.trans) : null;
         const hasTextLabel = !!definition.getLabel;
 
-        const iconValue = hasTextLabel ? null : this.resolveIcon(code, definition);
+        const iconValue = hasTextLabel ? null : re.resolveButtonIcon(code, definition);
         const iconElement = iconValue ? icon(iconValue) : null;
         const labelElement = hasTextLabel ? h('span', { className: 'rich-editor-button-label' }) : null;
 
@@ -141,67 +140,12 @@ export class ButtonGroup {
         return item;
     }
 
-    /**
-     * resolveIcon returns a button icon from its definition, then the icons option by button
-     * code, falling back to the custom button icon.
-     */
-    resolveIcon(code, definition) {
-        const icons = this.richArea.options.icons;
-
-        if (definition.getIcon) {
-            return definition.getIcon(this.richArea);
-        }
-
-        return definition.icon || icons[code] || icons.customButton;
-    }
-
     activate(item, { focusMenu = false } = {}) {
-        const re = this.richArea;
-
         if (item.button.disabled) {
             return;
         }
 
-        if (!item.isDropdown) {
-            re.floating.close();
-            item.definition.run(re, { anchor: item.button });
-            re.refreshUi();
-            return;
-        }
-
-        if (re.floating.isOpen(item.button)) {
-            re.floating.close();
-            return;
-        }
-
-        this.openDropdown(item, focusMenu);
-    }
-
-    openDropdown(item, focusMenu) {
-        const re = this.richArea;
-        const context = { anchor: item.button };
-        let panel;
-
-        if (item.definition.panel) {
-            panel = item.definition.panel(re, () => re.floating.close(), context);
-        }
-        else {
-            panel = createMenu(item.definition.menu(re), {
-                checkable: !!item.definition.checkable,
-                checkIcon: re.options.icons.check,
-                onSelect: (menuItem) => {
-                    re.floating.close();
-                    menuItem.run(context);
-                    re.refreshUi();
-                }
-            });
-        }
-
-        re.floating.open(panel, item.button, { owner: item.button });
-
-        if (focusMenu) {
-            focusFirstItem(panel);
-        }
+        this.richArea.activateButton(item.code, { anchor: item.button, focusMenu });
     }
 
     refresh() {

@@ -14,6 +14,8 @@ export const defaultOptions = {
     wrapNavigation: true,
     decimalSeparator: '.',
     minRows: 0,
+    // Empty rows kept at the end, so there is always a row to type into
+    spareRows: 0,
     undo: true,
     // Nothing can be edited, filled or moved, only selected, sorted, searched and copied
     readOnly: false,

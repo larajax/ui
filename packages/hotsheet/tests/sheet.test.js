@@ -362,3 +362,74 @@ describe('row windowing', () => {
         expect(sheet.getRows()[4999].sku).toBe('Last');
     });
 });
+
+describe('replacing rows and options', () => {
+    test('starts over with new rows, without undo history or a change', () => {
+        const sheet = makeSheet(threeRows());
+        sheet.setCells([{ row: 0, col: 0, value: 'Z-9' }]);
+        sheet.select(1, 0);
+        const changes = [];
+        sheet.on('change', (event) => changes.push(event));
+
+        const rows = [{ sku: 'N-1', qty: 1, taxable: 0, note: '' }];
+        sheet.setRows(rows);
+
+        expect(sheet.getRows()).toEqual(rows);
+        expect(sheet.getRows()[0]).toBe(rows[0]);
+        expect(sheet.getSelection()).toBeNull();
+        expect(sheet.canUndo()).toBe(false);
+        expect(changes).toEqual([]);
+
+        sheet.setCells([{ row: 0, col: 0, value: 'N-2' }]);
+        expect(rows[0].sku).toBe('N-2');
+    });
+
+    test('turns editing off and on, saving text still being typed', () => {
+        const sheet = makeSheet(threeRows());
+        sheet.select(0, 0);
+        sheet.openEditor('full');
+        sheet.editor.textarea.value = 'TYPED';
+
+        sheet.setReadOnly(true);
+
+        expect(sheet.getRows()[0].sku).toBe('TYPED');
+        expect(sheet.isCellEditable(0, 0)).toBe(false);
+        expect(sheet.element.classList.contains('is-read-only')).toBe(true);
+
+        sheet.setReadOnly(false);
+
+        expect(sheet.isCellEditable(0, 0)).toBe(true);
+        expect(sheet.element.classList.contains('is-read-only')).toBe(false);
+    });
+
+    test('changes the height between scrolling inside and growing with the rows', () => {
+        const sheet = makeSheet(threeRows());
+        const scroller = sheet.elements.scroller;
+
+        sheet.setHeight(240);
+        expect(scroller.classList.contains('has-height')).toBe(true);
+        expect(scroller.style.height).toBe('240px');
+
+        sheet.setHeight('auto');
+        expect(scroller.classList.contains('has-height')).toBe(false);
+    });
+
+    test('keeps spare empty rows at the end, added and undone with the change that fills them', () => {
+        const sheet = makeSheet(threeRows(), { spareRows: 1 });
+        expect(sheet.getRowCount()).toBe(4);
+
+        sheet.setCells([{ row: 3, col: 0, value: 'D-4' }]);
+        expect(sheet.getRowCount()).toBe(5);
+        expect(sheet.getRows()[4].sku).toBeNull();
+
+        sheet.undo();
+        expect(sheet.getRowCount()).toBe(4);
+        expect(sheet.getRows()[3].sku).toBeNull();
+
+        sheet.removeRows(3, 1);
+        expect(sheet.getRowCount()).toBe(4);
+
+        sheet.setRows([]);
+        expect(sheet.getRowCount()).toBe(1);
+    });
+});

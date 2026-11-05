@@ -391,3 +391,81 @@ describe('popover forms', () => {
         expect(form.controls.href.className).toBe('');
     });
 });
+
+describe('a toolbar drawn by the page', () => {
+    test('draws no toolbar of its own, and lists the buttons, separators and sets in order', () => {
+        const richArea = mount({ externalToolbar: true, toolbarButtons: ['bold', 'italic', '|', 'align', '|', 'paragraphFormat', 'missing'] });
+
+        expect(richArea.root.querySelector('.rich-editor-toolbar [data-cmd]')).toBeNull();
+        expect(richArea.toolbarElement.hidden).toBe(true);
+
+        const items = richArea.getToolbarItems();
+        expect(items.map((item) => item.type === 'separator' ? '|' : item.code)).toEqual(['bold', 'italic', '|', 'align', '|', 'paragraphFormat']);
+        expect(items[3].type).toBe('group');
+        expect(items[3].buttons).toContain('alignLeft');
+    });
+
+    test('describes a button and runs it, with its state following the selection', () => {
+        const richArea = mount({ externalToolbar: true, content: '<p>Hello</p>' });
+        richArea.editor.commands.setTextSelection({ from: 1, to: 6 });
+
+        expect(richArea.getButtonState('bold')).toMatchObject({ code: 'bold', type: 'button', active: false, disabled: false });
+        expect(richArea.getButtonState('bold').icon).toBeTruthy();
+
+        richArea.activateButton('bold');
+
+        expect(richArea.getContent()).toBe('<p><strong>Hello</strong></p>');
+        expect(richArea.getButtonState('bold').active).toBe(true);
+        expect(richArea.getButtonState('missing')).toBeNull();
+    });
+
+    test('lists a menu as it stands and runs its items by position', () => {
+        const richArea = mount({ externalToolbar: true, content: '<p>Hello</p>' });
+        richArea.editor.commands.setTextSelection(2);
+
+        const state = richArea.getButtonState('paragraphFormat');
+        expect(state.type).toBe('menu');
+        expect(state.text).toBeTruthy();
+
+        const menu = richArea.getButtonMenu('paragraphFormat');
+        expect(menu.every((item) => item.run === undefined)).toBe(true);
+        const heading = menu.findIndex((item) => /1/.test(item.label));
+        expect(heading).toBeGreaterThan(-1);
+
+        richArea.runMenuItem('paragraphFormat', heading);
+
+        expect(richArea.getContent()).toBe('<h1>Hello</h1>');
+    });
+
+    test('opens a panel under the page\'s button and closes it on a second press', () => {
+        const richArea = mount({ externalToolbar: true, content: '<p>Hello</p>' });
+        const anchor = document.createElement('button');
+        document.body.appendChild(anchor);
+
+        richArea.activateButton('insertTable', { anchor });
+        expect(richArea.floating.isOpen(anchor)).toBe(true);
+
+        richArea.activateButton('insertTable', { anchor });
+        expect(richArea.floating.isOpen()).toBe(false);
+    });
+
+    test('announces updates and counts the page\'s toolbar as part of the editor for focus', async () => {
+        const richArea = mount({ externalToolbar: true, content: '<p>Hello</p>' });
+        let updates = 0;
+        richArea.on('update', () => updates++);
+
+        richArea.refreshUi();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        expect(updates).toBeGreaterThan(0);
+
+        const toolbar = document.createElement('div');
+        const button = document.createElement('button');
+        toolbar.appendChild(button);
+        document.body.appendChild(toolbar);
+        button.focus();
+        expect(richArea.hasFocus()).toBe(false);
+
+        richArea.addFocusElement(toolbar);
+        expect(richArea.hasFocus()).toBe(true);
+    });
+});

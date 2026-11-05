@@ -16,6 +16,8 @@ import { BubbleManager } from './ui/bubbles.js';
 import { ImageResizer } from './ui/resizer.js';
 import { SourceView } from './ui/sourceview.js';
 import { createForm } from './ui/form.js';
+import { createMenu, focusFirstItem } from './ui/menu.js';
+import { formatShortcut } from './ui/tooltip.js';
 import { h } from './ui/dom.js';
 
 /**
@@ -44,7 +46,8 @@ function scrollPositions(element) {
  * RichArea is a rich text editor built on TipTap, with its own toolbar, contextual toolbars and
  * source view, mounted inside a host element and connected to the page through its hooks.
  *
- * Events, subscribed with on(): init, change, focus, blur, sourceToggle.
+ * Events, subscribed with on(): init, change, focus, blur, sourceToggle, and update after the button
+ * states may have changed, for a page drawing its own toolbar.
  */
 export class RichArea {
     constructor(element, options = {}) {
@@ -57,6 +60,7 @@ export class RichArea {
         this.isFullscreen = false;
         this.fullscreenScroll = null;
         this.refreshFrame = null;
+        this.focusElements = [];
 
         this.buildDom();
         this.floating = new Floating(this);
@@ -192,7 +196,18 @@ export class RichArea {
 
         return this.editor.view.hasFocus()
             || this.floating.isOpen()
-            || (!!active && active !== document.body && (this.root.contains(active) || this.bubbles.contains(active)));
+            || (!!active && active !== document.body && (this.root.contains(active) || this.bubbles.contains(active)
+                || this.focusElements.some((element) => element.contains(active))));
+    }
+
+    /**
+     * addFocusElement counts an element outside the editor, such as a toolbar the page draws, as part
+     * of the editor for focus, so the contextual toolbars stay while it is used.
+     */
+    addFocusElement(element) {
+        if (element && !this.focusElements.includes(element)) {
+            this.focusElements.push(element);
+        }
     }
 
     //
@@ -224,6 +239,168 @@ export class RichArea {
         }
 
         return definition.isDisabled ? !!definition.isDisabled(this) : false;
+    }
+
+    /**
+     * resolveButtonIcon returns a button icon from its definition, then the icons option by button
+     * code, falling back to the custom button icon.
+     */
+    resolveButtonIcon(code, definition) {
+        if (definition.getIcon) {
+            return definition.getIcon(this);
+        }
+
+        return definition.icon || this.options.icons[code] || this.options.icons.customButton;
+    }
+
+    //
+    // Toolbar drawn by the page
+    //
+
+    /**
+     * getToolbarItems lists the toolbar in order: { type: 'separator' }, { type: 'button', code } and
+     * { type: 'group', code, label, buttons: [code] } for sets such as the alignment buttons.
+     */
+    getToolbarItems() {
+        const items = [];
+        const addSeparator = () => {
+            if (items.length && items[items.length - 1].type !== 'separator') {
+                items.push({ type: 'separator' });
+            }
+        };
+
+        this.options.toolbarButtons.forEach((code) => {
+            if (code === '|' || code === '-') {
+                addSeparator();
+                return;
+            }
+
+            const definition = this.getButtonDefinition(code);
+            if (!definition) {
+                return;
+            }
+
+            if (definition.buttons) {
+                const buttons = definition.buttons.filter((buttonCode) => {
+                    const buttonDefinition = this.getButtonDefinition(buttonCode);
+                    return buttonDefinition && !buttonDefinition.buttons;
+                });
+
+                if (buttons.length) {
+                    addSeparator();
+                    items.push({ type: 'group', code, label: this.trans(definition.label || code, definition.label || code), buttons });
+                    addSeparator();
+                }
+                return;
+            }
+
+            items.push({ type: 'button', code });
+        });
+
+        if (items.length && items[items.length - 1].type === 'separator') {
+            items.pop();
+        }
+
+        return items;
+    }
+
+    /**
+     * getButtonState describes a button as it stands: its label, icon or text, shortcut, whether it runs,
+     * opens a menu or opens a panel, and whether it is active or disabled.
+     */
+    getButtonState(code) {
+        const definition = this.getButtonDefinition(code);
+        if (!definition) {
+            return null;
+        }
+
+        const label = this.trans(definition.label || code, definition.label || code);
+        const disabled = this.isButtonDisabled(definition);
+
+        return {
+            code,
+            label,
+            icon: definition.getLabel ? null : this.resolveButtonIcon(code, definition),
+            text: definition.getLabel ? (definition.getLabel(this) || label) : null,
+            shortcut: definition.shortcut ? formatShortcut(definition.shortcut, this.trans) : null,
+            type: definition.panel ? 'panel' : (definition.menu ? 'menu' : 'button'),
+            checkable: !!definition.checkable,
+            active: !disabled && definition.isActive ? !!definition.isActive(this) : false,
+            disabled
+        };
+    }
+
+    /**
+     * getButtonMenu returns the items of a menu button as they stand, { type, label, icon, active,
+     * disabled, style, className, title }. Read them again before each showing, since they follow
+     * the selection.
+     */
+    getButtonMenu(code) {
+        const definition = this.getButtonDefinition(code);
+        if (!definition || !definition.menu) {
+            return [];
+        }
+
+        return definition.menu(this).map(({ run, ...item }) => item);
+    }
+
+    /**
+     * activateButton runs a button, or opens its menu or panel under an anchor element, such as a
+     * button of a toolbar the page draws, closing it when it is already open there.
+     */
+    activateButton(code, { anchor = null, focusMenu = false } = {}) {
+        const definition = this.getButtonDefinition(code);
+        if (!definition || this.isButtonDisabled(definition)) {
+            return;
+        }
+
+        const context = { anchor };
+
+        if (!definition.menu && !definition.panel) {
+            this.floating.close();
+            definition.run(this, context);
+            this.refreshUi();
+            return;
+        }
+
+        if (anchor && this.floating.isOpen(anchor)) {
+            this.floating.close();
+            return;
+        }
+
+        const panel = definition.panel
+            ? definition.panel(this, () => this.floating.close(), context)
+            : createMenu(definition.menu(this), {
+                checkable: !!definition.checkable,
+                checkIcon: this.options.icons.check,
+                onSelect: (menuItem) => {
+                    this.floating.close();
+                    menuItem.run(context);
+                    this.refreshUi();
+                }
+            });
+
+        const isElement = anchor && anchor.getBoundingClientRect;
+        this.floating.open(panel, isElement && anchor.isConnected ? anchor : () => selectionRect(this.editor), { owner: isElement ? anchor : null });
+
+        if (focusMenu) {
+            focusFirstItem(panel);
+        }
+    }
+
+    /**
+     * runMenuItem runs an item of a menu button by its position in getButtonMenu().
+     */
+    runMenuItem(code, index, { anchor = null } = {}) {
+        const definition = this.getButtonDefinition(code);
+        const item = definition && definition.menu && !this.isButtonDisabled(definition) ? definition.menu(this)[index] : null;
+        if (!item || !item.run || item.disabled) {
+            return;
+        }
+
+        this.floating.close();
+        item.run({ anchor });
+        this.refreshUi();
     }
 
     /**
@@ -295,6 +472,7 @@ export class RichArea {
             this.toolbar.refresh();
             this.bubbles.update();
             this.resizer.update();
+            this.emit('update');
         });
     }
 
