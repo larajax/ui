@@ -161,7 +161,7 @@ export function renderBody(sheet, range = sheet.neededRows(WINDOW_MARGIN), reuse
     }
 
     if (!count && sheet.options.emptyState) {
-        fragment.append(renderEmptyState(sheet.options.emptyState));
+        fragment.append(renderEmptyState(sheet.options.emptyState === true ? { title: sheet.lang('noData') } : sheet.options.emptyState));
     }
 
     sheet.rowWindow = { first, last };

@@ -252,6 +252,26 @@ describe('datatable control', () => {
         expect(labels).toContain('Undo');
     });
 
+    test('translates its menu and rule messages for data-language', () => {
+        globalThis.HotsheetLanguages = { de: { ...Hotsheet.defaultLang, removeRow: 'Zeile entfernen' } };
+        globalThis.LarajaxUiLanguages = { de: { datatable: { ...DEFAULT_MESSAGES, ruleMax: 'Höchstens :max' } } };
+
+        try {
+            const columns = COLUMNS.map((col) => (col.data === 'qty' ? { ...col, _validation: { integer: { max: { value: 10 } } } } : col));
+            const { control, sheet } = connect(field({ columns, attributes: `data-language="de"` }));
+
+            sheet.select(0, 0);
+            expect(control.buildContextMenu(sheet, { row: 0, col: 0 }).map((item) => item.label)).toContain('Zeile entfernen');
+
+            sheet.setCells([{ row: 0, col: 2, value: 50 }]);
+            expect(sheet.getInvalidMessage(0, 2)).toBe('Höchstens 10');
+        }
+        finally {
+            delete globalThis.HotsheetLanguages;
+            delete globalThis.LarajaxUiLanguages;
+        }
+    });
+
     test('fires datatable:new-row for rows a paste adds', () => {
         const { element, sheet } = connect(field());
         const added = [];
@@ -380,23 +400,23 @@ describe('datatable validation rules', () => {
     });
 
     test('checks positive integers unless negatives are allowed, with min and max messages', () => {
-        expect(validateValue({ integer: {} }, '-5')).toBe('The value should be a positive integer');
+        expect(validateValue({ integer: {} }, '-5')).toBe('The value should be a positive integer.');
         expect(validateValue({ integer: { allowNegative: true } }, '-5')).toBe(null);
-        expect(validateValue({ integer: {} }, '1.5')).toBe('The value should be a positive integer');
+        expect(validateValue({ integer: {} }, '1.5')).toBe('The value should be a positive integer.');
         expect(validateValue({ integer: { min: { value: 1, message: 'Order at least 1' } } }, '0')).toBe('Order at least 1');
-        expect(validateValue({ integer: { max: { value: 100 } } }, '500')).toBe('The value should not be more than 100');
+        expect(validateValue({ integer: { max: { value: 100 } } }, '500')).toBe('The value should not be more than 100.');
         expect(validateValue({ integer: {} }, 42)).toBe(null);
     });
 
     test('checks plain decimal numbers', () => {
         expect(validateValue({ float: {} }, '3.14')).toBe(null);
-        expect(validateValue({ float: {} }, '1.')).toBe('The value should be a positive floating point number');
+        expect(validateValue({ float: {} }, '1.')).toBe('The value should be a positive floating point number.');
         expect(validateValue({ float: { allowNegative: true } }, '-2.5')).toBe(null);
         expect(validateValue({ float: { message: 'Price must be a number' } }, 'abc')).toBe('Price must be a number');
     });
 
     test('checks text length and patterns with modifiers', () => {
-        expect(validateValue({ length: { min: { value: 3 } } }, 'ab')).toBe('The string should not be shorter than 3');
+        expect(validateValue({ length: { min: { value: 3 } } }, 'ab')).toBe('The string should not be shorter than 3.');
         expect(validateValue({ length: { max: { value: 6, message: 'Too long' } } }, 'abcdefgh')).toBe('Too long');
         expect(validateValue({ regex: { pattern: '^[a-z-]+$' } }, 'ABC')).toBe('Invalid value format.');
         expect(validateValue({ regex: { pattern: '^[a-z-]+$', modifiers: 'i' } }, 'ABC')).toBe(null);
@@ -412,7 +432,7 @@ describe('datatable validation rules', () => {
 
         expect(validateValue({ required: {} }, '', {}, messages)).toBe('Darf nicht leer sein.');
         expect(validateValue({ length: { max: { value: 3 } } }, 'abcd', {}, messages)).toBe('Höchstens 3 Zeichen');
-        expect(validateValue({ length: { min: { value: 3 } } }, 'ab', {}, messages)).toBe('The string should not be shorter than 3');
+        expect(validateValue({ length: { min: { value: 3 } } }, 'ab', {}, messages)).toBe('The string should not be shorter than 3.');
         expect(validateValue({ required: { message: 'Enter a SKU' } }, '', {}, messages)).toBe('Enter a SKU');
     });
 
@@ -425,24 +445,6 @@ describe('datatable validation rules', () => {
 
 describe('datatable form widget', () => {
     const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
-
-    test('lists the same strings as the control, validation and grid defaults', () => {
-        const php = read('../src/FormWidgets/DataTable.php');
-        const phpBlock = php.slice(php.indexOf('$strings = ['), php.indexOf('];', php.indexOf('$strings = [')));
-        const strings = {};
-        for (const match of phpBlock.matchAll(/'(\w+)' => '((?:[^'\\]|\\.)*)'/g)) {
-            strings[match[1]] = match[2].replace(/\\(.)/g, '$1');
-        }
-
-        const js = read('../resources/assets/formwidgets/datatable/datatable.js');
-        const jsBlock = js.slice(js.indexOf('const DEFAULT_LANG = {'), js.indexOf('};', js.indexOf('const DEFAULT_LANG = {')));
-        const defaults = {};
-        for (const match of jsBlock.matchAll(/(\w+): '((?:[^'\\]|\\.)*)'/g)) {
-            defaults[match[1]] = match[2].replace(/\\(.)/g, '$1');
-        }
-
-        expect(strings).toEqual({ ...defaults, ...DEFAULT_MESSAGES, ...Hotsheet.defaultLang });
-    });
 
     test('renders toolbar icons that every icon pack defines', () => {
         const partial = read('../src/FormWidgets/DataTable/partials/_datatable.php');

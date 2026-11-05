@@ -17,13 +17,13 @@
 export const DEFAULT_MESSAGES = {
     ruleRequired: 'The value should not be empty.',
     ruleInteger: 'The value should be an integer.',
-    rulePositiveInteger: 'The value should be a positive integer',
+    rulePositiveInteger: 'The value should be a positive integer.',
     ruleFloat: 'The value should be a floating point number.',
-    rulePositiveFloat: 'The value should be a positive floating point number',
-    ruleMin: 'The value should not be less than :min',
-    ruleMax: 'The value should not be more than :max',
-    ruleMinLength: 'The string should not be shorter than :min',
-    ruleMaxLength: 'The string should not be longer than :max',
+    rulePositiveFloat: 'The value should be a positive floating point number.',
+    ruleMin: 'The value should not be less than :min.',
+    ruleMax: 'The value should not be more than :max.',
+    ruleMinLength: 'The string should not be shorter than :min.',
+    ruleMaxLength: 'The string should not be longer than :max.',
     ruleRegex: 'Invalid value format.'
 };
 

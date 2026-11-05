@@ -29,6 +29,7 @@
 'use strict';
 
 import { richEditor } from './richeditor-api.js';
+import { loadLanguage } from '../../lang.js';
 
 // Options a field may not set through editorOptions, since the control or the page owns them
 const RESERVED_OPTIONS = ['content', 'readOnly', 'useLineBreaks', 'toolbarButtons', 'buttons', 'hooks', 'extensions', 'sourceEditor'];
@@ -58,7 +59,7 @@ export function registerRichEditor(jax) {
                 return;
             }
 
-            Promise.all([loadRichArea(), loadLanguage(this.config.language)]).then(([{ RichArea, defaultOptions }]) => {
+            Promise.all([loadRichArea(), loadLanguage(this.config.language, ['RichAreaLanguages'])]).then(([{ RichArea, defaultOptions }]) => {
                 // The field may have left the page while the editor loaded
                 if (!this.textarea) {
                     return;
@@ -151,18 +152,6 @@ export function registerRichEditor(jax) {
         }
 
         return richAreaPromise;
-    }
-
-    // A translation registers itself on the page, so one the page bundles needs no request. The editor
-    // stays in English when it fails to load
-    function loadLanguage(language) {
-        const languages = globalThis.RichAreaLanguages || {};
-
-        if (!language || languages[language] || !/^[a-z]{2,3}(-[a-z0-9]{2,8})?$/.test(language)) {
-            return Promise.resolve();
-        }
-
-        return import(`../../vendor/richarea/languages/${language}.js`).catch(() => {});
     }
 }
 

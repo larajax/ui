@@ -4,7 +4,7 @@
  */
 export { Sheet } from './sheet.js';
 export { defaultOptions } from './options.js';
-export { defaultLang } from './lang.js';
+export { defaultLang, registerLanguage, resolveLanguage } from './lang.js';
 export { parseNumericText } from './values/numeric.js';
 export { parseTsv, stringifyTsv } from './values/tsv.js';
 export { checkboxState, registerCellType } from './cells/types.js';

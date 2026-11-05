@@ -27,7 +27,7 @@ export const defaultOptions = {
     trimWhitespace: true,
     // Tables with more rows than this draw only the rows in view
     windowThreshold: 200,
-    // { title, description } shown in place of rows while there are none
+    // { title, description } shown in place of rows while there are none, or true for the translated "No data"
     emptyState: null,
     // (sheet, cell) => [{ label, disabled, action }] for a right click or long press, or null for no menu
     contextMenu: null,
@@ -45,7 +45,9 @@ export const defaultOptions = {
     checkboxClass: null,
     // (event, sheet) => true when a key is handled before the grid's own keys, while not editing
     keyHandler: null,
-    // Translated strings, see defaultLang in lang.js
+    // Translation from languages/, such as de or pt-br, the page's lang attribute when not set
+    language: null,
+    // Strings over the translation, see defaultLang in lang.js
     lang: {}
 };
 

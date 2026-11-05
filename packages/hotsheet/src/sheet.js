@@ -85,7 +85,7 @@ export class Sheet extends Emitter {
 
         this.element = element;
         this.options = makeOptions(options);
-        this.lang = makeTranslator(this.options.lang);
+        this.lang = makeTranslator(this.options.lang, this.options.language || document.documentElement.lang);
         this.columns = this.options.columns.map((column) => normalizeColumn({ checkboxClass: this.options.checkboxClass, ...column }));
         this.store = new RowStore(this.options.rows);
         this.history = new History();

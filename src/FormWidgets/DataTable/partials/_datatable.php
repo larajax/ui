@@ -13,7 +13,7 @@
     data-adding="<?= $adding ? 'true' : 'false' ?>"
     data-deleting="<?= $deleting ? 'true' : 'false' ?>"
     data-require-valid="<?= $requireValid ? 'true' : 'false' ?>"
-    data-lang='<?= e(json_encode((object) $lang)) ?>'
+    <?php if ($language): ?>data-language="<?= e($language) ?>"<?php endif ?>
 >
     <?php if ($toolbar): ?>
     <div class="toolbar" data-table-toolbar>

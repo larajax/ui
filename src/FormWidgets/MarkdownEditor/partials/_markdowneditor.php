@@ -12,6 +12,7 @@
         data-safe-mode="<?= $safeMode ? 'true' : 'false' ?>"
         data-size="<?= e($size) ?>"
         <?php if ($externalToolbar): ?>data-external-toolbar="true"<?php endif ?>
+        <?php if ($language): ?>data-language="<?= e($language) ?>"<?php endif ?>
         data-toolbar-buttons="<?= e(json_encode($toolbarButtons)) ?>">
         <textarea
             name="<?= $name ?>"

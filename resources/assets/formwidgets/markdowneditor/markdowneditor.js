@@ -6,8 +6,9 @@
  * - data-view-mode="tab" - split opens the preview beside the editor
  * - data-safe-mode="true" - runs the preview HTML through DOMPurify
  * - data-size="large" - the field size, which sets the editor height
- * - data-toolbar-buttons="[...]" - the toolbar, EasyMDE button names with their title, icon markup
- *   and icon class, and "|" between groups
+ * - data-toolbar-buttons="[...]" - the toolbar, EasyMDE button names with their icon markup and icon
+ *   class, and "|" between groups; a title labels a button with no label of its own
+ * - data-language="de" - the translation of the button labels, see lang.js
  * - data-external-toolbar="true" - draws no toolbar or status bar, the page draws the toolbar from
  *   getToolbarItems() and getButtonState(), and handles fullscreen itself
  *
@@ -30,6 +31,32 @@
  * - EasyMDE (vendor/easymde/easymde.esm.js)
  */
 'use strict';
+
+import { makeTranslator, loadLanguage } from '../../lang.js';
+
+/**
+ * DEFAULT_LANG are the button labels, keyed by the camel cased button name.
+ */
+export const DEFAULT_LANG = {
+    bold: 'Bold',
+    italic: 'Italic',
+    strikethrough: 'Strikethrough',
+    heading1: 'Heading 1',
+    heading2: 'Heading 2',
+    heading3: 'Heading 3',
+    code: 'Code',
+    quote: 'Quote',
+    unorderedList: 'Unordered List',
+    orderedList: 'Ordered List',
+    cleanBlock: 'Clear Block Formatting',
+    link: 'Link',
+    image: 'Image',
+    table: 'Table',
+    horizontalRule: 'Insert Horizontal Line',
+    preview: 'Preview',
+    sideBySide: 'Side by Side',
+    fullscreen: 'Fullscreen'
+};
 
 // EasyMDE actions by toolbar button name
 const BUTTON_ACTIONS = {
@@ -89,9 +116,11 @@ export function registerMarkdownEditor(jax) {
                 safeMode: true,
                 size: 'large',
                 toolbarButtons: null,
-                externalToolbar: false
+                externalToolbar: false,
+                language: null
             }, this.config);
 
+            this.trans = this.makeTranslator();
             this.listeners = {};
             this.onTextareaChangeHandler = () => this.onTextareaChange();
         }
@@ -102,13 +131,14 @@ export function registerMarkdownEditor(jax) {
                 return;
             }
 
-            loadEasyMde().then(({ EasyMDE, DOMPurify }) => {
+            Promise.all([loadEasyMde(), loadLanguage(this.config.language)]).then(([{ EasyMDE, DOMPurify }]) => {
                 // The field may have left the page while EasyMDE loaded
                 if (!this.textarea) {
                     return;
                 }
 
                 this.EasyMDE = EasyMDE;
+                this.trans = this.makeTranslator();
                 this.initEditor(EasyMDE, DOMPurify);
             });
         }
@@ -189,7 +219,7 @@ export function registerMarkdownEditor(jax) {
 
                     return {
                         name: button.name,
-                        title: button.title,
+                        title: this.buttonLabel(button),
                         icon: button.icon,
                         action: action,
                         noDisable: VIEW_BUTTONS.includes(button.name),
@@ -201,6 +231,17 @@ export function registerMarkdownEditor(jax) {
 
         toolbarButtons() {
             return Array.isArray(this.config.toolbarButtons) ? this.config.toolbarButtons : [];
+        }
+
+        makeTranslator() {
+            return makeTranslator('markdowneditor', DEFAULT_LANG, { language: this.config.language });
+        }
+
+        // heading-1 is labelled by heading1, a button with no label of its own by its title
+        buttonLabel(button) {
+            const key = button.name.replace(/-([a-z0-9])/g, (match, letter) => letter.toUpperCase());
+
+            return this.trans(key, button.title || button.name);
         }
 
         onEditorChange() {
@@ -342,7 +383,7 @@ export function registerMarkdownEditor(jax) {
 
             return {
                 code,
-                label: button.title,
+                label: this.buttonLabel(button),
                 icon: button.iconClass || null,
                 type: 'button',
                 active,

@@ -77,6 +77,6 @@ console.log('  ✓ richarea/richarea.js, richarea.css, base-styles.css (bundled)
 // Hotsheet (data grid) - built from packages/hotsheet for the datatable form widget,
 // with its stylesheet.
 await buildHotsheet({ outdir: path.join(vendorDir, 'hotsheet') });
-console.log('  ✓ hotsheet/hotsheet.js and hotsheet.css (bundled)');
+console.log('  ✓ hotsheet/hotsheet.js, hotsheet.css (bundled) and languages/');
 
 console.log('\n  Done.\n');

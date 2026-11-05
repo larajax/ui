@@ -4,6 +4,7 @@ use Larajax\Ui\Classes\FormWidgetBase;
 use Larajax\Ui\Helpers\Markdown;
 use Larajax\Ui\Helpers\Input;
 use Larajax\Ui\Facades\Ui;
+use Larajax\Ui\Helpers\Language;
 
 /**
  * MarkdownEditor renders a markdown editor field.
@@ -89,6 +90,7 @@ class MarkdownEditor extends FormWidgetBase
         $this->vars['sideBySide'] = $this->sideBySide;
         $this->vars['externalToolbar'] = $this->externalToolbar;
         $this->vars['toolbarButtons'] = static::getToolbarButtons();
+        $this->vars['language'] = Language::find('ui');
         $this->vars['stretch'] = $this->formField->stretch;
         $this->vars['size'] = $this->formField->size;
         $this->vars['name'] = $this->getFieldName();
@@ -98,33 +100,33 @@ class MarkdownEditor extends FormWidgetBase
     }
 
     /**
-     * getToolbarButtons returns the toolbar, each button with its EasyMDE name, title, icon markup and
-     * icon class, and "|" between groups
+     * getToolbarButtons returns the toolbar, each button with its EasyMDE name, icon markup and icon
+     * class, and "|" between groups. The control labels the buttons in the page's language.
      */
     public static function getToolbarButtons(): array
     {
         $buttons = [
-            ['name' => 'bold', 'icon' => 'bold', 'title' => __('Bold')],
-            ['name' => 'italic', 'icon' => 'italic', 'title' => __('Italic')],
-            ['name' => 'strikethrough', 'icon' => 'strikethrough', 'title' => __('Strikethrough')],
-            ['name' => 'heading-1', 'icon' => 'heading1', 'title' => __('Header 1')],
-            ['name' => 'heading-2', 'icon' => 'heading2', 'title' => __('Header 2')],
-            ['name' => 'heading-3', 'icon' => 'heading3', 'title' => __('Header 3')],
+            ['name' => 'bold', 'icon' => 'bold'],
+            ['name' => 'italic', 'icon' => 'italic'],
+            ['name' => 'strikethrough', 'icon' => 'strikethrough'],
+            ['name' => 'heading-1', 'icon' => 'heading1'],
+            ['name' => 'heading-2', 'icon' => 'heading2'],
+            ['name' => 'heading-3', 'icon' => 'heading3'],
             '|',
-            ['name' => 'code', 'icon' => 'codeBlock', 'title' => __('Code')],
-            ['name' => 'quote', 'icon' => 'quote', 'title' => __('Quote')],
-            ['name' => 'unordered-list', 'icon' => 'unorderedList', 'title' => __('Unordered List')],
-            ['name' => 'ordered-list', 'icon' => 'orderedList', 'title' => __('Ordered List')],
-            ['name' => 'clean-block', 'icon' => 'cleanBlock', 'title' => __('Clean Block')],
+            ['name' => 'code', 'icon' => 'codeBlock'],
+            ['name' => 'quote', 'icon' => 'quote'],
+            ['name' => 'unordered-list', 'icon' => 'unorderedList'],
+            ['name' => 'ordered-list', 'icon' => 'orderedList'],
+            ['name' => 'clean-block', 'icon' => 'cleanBlock'],
             '|',
-            ['name' => 'link', 'icon' => 'link', 'title' => __('Link')],
-            ['name' => 'image', 'icon' => 'image', 'title' => __('Image')],
-            ['name' => 'table', 'icon' => 'table', 'title' => __('Table')],
-            ['name' => 'horizontal-rule', 'icon' => 'horizontalRule', 'title' => __('Insert Horizontal Rule')],
+            ['name' => 'link', 'icon' => 'link'],
+            ['name' => 'image', 'icon' => 'image'],
+            ['name' => 'table', 'icon' => 'table'],
+            ['name' => 'horizontal-rule', 'icon' => 'horizontalRule'],
             '|',
-            ['name' => 'preview', 'icon' => 'preview', 'title' => __('Preview')],
-            ['name' => 'side-by-side', 'icon' => 'sideBySide', 'title' => __('Side by Side')],
-            ['name' => 'fullscreen', 'icon' => 'fullscreen', 'title' => __('Full Screen')],
+            ['name' => 'preview', 'icon' => 'preview'],
+            ['name' => 'side-by-side', 'icon' => 'sideBySide'],
+            ['name' => 'fullscreen', 'icon' => 'fullscreen'],
         ];
 
         return array_map(function ($button) {
@@ -136,7 +138,6 @@ class MarkdownEditor extends FormWidgetBase
 
             return [
                 'name' => $button['name'],
-                'title' => $button['title'],
                 'icon' => (string) Ui::icon($key),
                 'iconClass' => Ui::iconClass($key)
             ];

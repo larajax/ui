@@ -8,6 +8,7 @@ use League\Csv\Writer as CsvWriter;
 use Larajax\Ui\Classes\FormWidgetBase;
 use Larajax\Ui\Helpers\Input;
 use Illuminate\Support\Str;
+use Larajax\Ui\Helpers\Language;
 
 /**
  * DataTable renders a table field.
@@ -82,7 +83,7 @@ class DataTable extends FormWidgetBase
         $this->vars['csvExport'] = $this->getFieldConfig('csvExport', false);
         $this->vars['csvImport'] = !$readOnly && $this->getFieldConfig('csvImport', false);
         $this->vars['requireValid'] = !$readOnly && $this->getFieldConfig('requireValid', false);
-        $this->vars['lang'] = $this->getTableLang();
+        $this->vars['language'] = Language::find('ui');
 
         // The toolbar shows only when it holds a button or the search box
         $this->vars['toolbar'] = $this->getFieldConfig('toolbar', true) && (
@@ -111,41 +112,6 @@ class DataTable extends FormWidgetBase
         }
 
         return $value;
-    }
-
-    /**
-     * getTableLang returns the translated table strings, keyed like the control's English defaults.
-     */
-    protected function getTableLang(): array
-    {
-        $strings = [
-            'noData' => 'No data',
-            'insertRowAbove' => 'Insert row above',
-            'insertRowBelow' => 'Insert row below',
-            'removeRow' => 'Remove row',
-            'undo' => 'Undo',
-            'redo' => 'Redo',
-            'freezeColumn' => 'Freeze column',
-            'unfreezeColumn' => 'Unfreeze column',
-            'invalidValue' => 'The value is not valid.',
-            'ruleRequired' => 'The value should not be empty.',
-            'ruleInteger' => 'The value should be an integer.',
-            'rulePositiveInteger' => 'The value should be a positive integer',
-            'ruleFloat' => 'The value should be a floating point number.',
-            'rulePositiveFloat' => 'The value should be a positive floating point number',
-            'ruleMin' => 'The value should not be less than :min',
-            'ruleMax' => 'The value should not be more than :max',
-            'ruleMinLength' => 'The string should not be shorter than :min',
-            'ruleMaxLength' => 'The string should not be longer than :max',
-            'ruleRegex' => 'Invalid value format.',
-            'chooseDate' => 'Choose a date',
-            'chooseTime' => 'Choose a time',
-        ];
-
-        return array_map(function ($text) {
-            $translated = __($text);
-            return is_string($translated) ? $translated : $text;
-        }, $strings);
     }
 
     //

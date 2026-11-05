@@ -18,7 +18,9 @@
  * - data-read-only - shows the rows without editing, for preview, read-only and disabled fields
  * - data-adding, data-deleting - whether rows may be added and removed
  * - data-require-valid - blocks saving while a filled row has an invalid cell
- * - data-lang - translated labels and rule messages, as JSON, see DEFAULT_LANG and the validation DEFAULT_MESSAGES
+ * - data-language="de" - the translation of the grid labels and rule messages, see lang.js
+ * - data-lang - labels and rule messages over the translation, as JSON, see Hotsheet's defaultLang and the
+ *   validation DEFAULT_MESSAGES
  *
  * Child elements:
  * - [data-hot-container] - holds the grid
@@ -42,21 +44,12 @@
 
 import { Sheet } from '../../vendor/hotsheet/hotsheet.js';
 import { validateValue, hasRequiredRule, DEFAULT_MESSAGES } from './datatable.validation.js';
+import { getStrings, hasLanguage, loadLanguage } from '../../lang.js';
+
+// The grid labels are Hotsheet's, the rule messages the library's
+const LANGUAGE_REGISTRIES = ['LarajaxUiLanguages', 'HotsheetLanguages'];
 
 const COLUMN_TYPES = ['text', 'numeric', 'checkbox', 'dropdown', 'autocomplete', 'date', 'time'];
-
-// English labels, replaced by any given in data-lang; the grid's own strings pass through to it
-const DEFAULT_LANG = {
-    noData: 'No data',
-    insertRowAbove: 'Insert row above',
-    insertRowBelow: 'Insert row below',
-    removeRow: 'Remove row',
-    undo: 'Undo',
-    redo: 'Redo',
-    freezeColumn: 'Freeze column',
-    unfreezeColumn: 'Unfreeze column',
-    invalidValue: 'The value is not valid.'
-};
 
 // Options arrive as a list of labels or as labels by key
 function toOptionItems(options) {
@@ -80,10 +73,10 @@ export function registerDataTable(jax) {
                 readOnly: false,
                 alias: '',
                 dataLocker: null,
+                language: null,
                 lang: {}
             }, this.config);
 
-            this.lang = Object.assign({}, DEFAULT_LANG, DEFAULT_MESSAGES, this.config.lang);
             this.hot = null;
             this.optionCache = {};
             this.preloadedOptions = this.indexPreloadedOptions(this.config.preloadedOptions);
@@ -92,6 +85,22 @@ export function registerDataTable(jax) {
         connect() {
             this.containerEl = this.element.querySelector('[data-hot-container]');
             this.dataInputEl = this.element.querySelector(this.config.dataLocker);
+
+            // A translation the page has not bundled loads first
+            if (!hasLanguage(this.config.language, LANGUAGE_REGISTRIES)) {
+                loadLanguage(this.config.language, LANGUAGE_REGISTRIES).then(() => {
+                    if (this.containerEl) {
+                        this.start();
+                    }
+                });
+                return;
+            }
+
+            this.start();
+        }
+
+        start() {
+            this.messages = getStrings('datatable', DEFAULT_MESSAGES, { language: this.config.language, overrides: this.config.lang });
 
             this.initSheet();
             this.bindToolbar();
@@ -143,6 +152,7 @@ export function registerDataTable(jax) {
                 },
                 checkboxClass: 'check',
                 striped: true,
+                language: this.config.language,
                 lang: this.config.lang
             });
 
@@ -214,7 +224,7 @@ export function registerDataTable(jax) {
 
                 if (col._validation) {
                     column.validator = function(value, column, rowData) {
-                        var message = validateValue(col._validation, value, rowData, self.lang);
+                        var message = validateValue(col._validation, value, rowData, self.messages);
                         return message === null ? true : message;
                     };
 
@@ -342,13 +352,14 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * getEmptyState reads the placeholder message, given as true, { message: {...} } or the message itself.
+         * getEmptyState reads the placeholder message, given as true, { message: {...} } or the message itself,
+         * true leaving the grid its translated "No data".
          */
         getEmptyState(setting) {
             var message = setting && setting.message ? setting.message : setting;
 
             if (!message || message === true) {
-                return { title: this.lang.noData };
+                return true;
             }
 
             return { title: message.title, description: message.description };
@@ -377,25 +388,25 @@ export function registerDataTable(jax) {
             var items = [];
 
             if (this.canAddRows()) {
-                items.push({ label: this.lang.insertRowAbove, action: function() { sheet.insertRows(top, 1); } });
-                items.push({ label: this.lang.insertRowBelow, action: function() { sheet.insertRows(bottom + 1, 1); } });
+                items.push({ label: sheet.lang('insertRowAbove'), action: function() { sheet.insertRows(top, 1); } });
+                items.push({ label: sheet.lang('insertRowBelow'), action: function() { sheet.insertRows(bottom + 1, 1); } });
             }
 
             if (this.canDeleteRows()) {
-                items.push({ label: this.lang.removeRow, action: function() { sheet.removeRows(top, bottom - top + 1); } });
+                items.push({ label: sheet.lang('removeRow'), action: function() { sheet.removeRows(top, bottom - top + 1); } });
             }
 
             if (this.config.readOnly !== true) {
-                items.push({ label: this.lang.undo, disabled: !sheet.canUndo(), action: function() { sheet.undo(); } });
-                items.push({ label: this.lang.redo, disabled: !sheet.canRedo(), action: function() { sheet.redo(); } });
+                items.push({ label: sheet.lang('undo'), disabled: !sheet.canUndo(), action: function() { sheet.undo(); } });
+                items.push({ label: sheet.lang('redo'), disabled: !sheet.canRedo(), action: function() { sheet.redo(); } });
             }
 
             if (options.manualColumnFreeze) {
                 if (sheet.isColumnFrozen(cell.col)) {
-                    items.push({ label: this.lang.unfreezeColumn, action: function() { sheet.unfreezeColumn(cell.col); } });
+                    items.push({ label: sheet.lang('unfreezeColumn'), action: function() { sheet.unfreezeColumn(cell.col); } });
                 }
                 else {
-                    items.push({ label: this.lang.freezeColumn, action: function() { sheet.freezeColumn(cell.col); } });
+                    items.push({ label: sheet.lang('freezeColumn'), action: function() { sheet.freezeColumn(cell.col); } });
                 }
             }
 
@@ -458,10 +469,10 @@ export function registerDataTable(jax) {
 
                 for (var col = 0; col < columns.length; col++) {
                     var config = this.getColumnConfig(columns[col].key);
-                    var message = config && config._validation ? validateValue(config._validation, rowData[config.data], rowData, this.lang) : null;
+                    var message = config && config._validation ? validateValue(config._validation, rowData[config.data], rowData, this.messages) : null;
 
                     if (message === null && sheet.isInvalid(row, col)) {
-                        message = sheet.getInvalidMessage(row, col) || this.lang.invalidValue;
+                        message = sheet.getInvalidMessage(row, col) || sheet.lang('invalidValue');
                     }
 
                     if (message !== null) {

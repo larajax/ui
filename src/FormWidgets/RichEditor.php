@@ -8,6 +8,7 @@ use Larajax\Ui\Facades\Ui;
 use October\Rain\Exception\ApplicationException;
 use October\Rain\Exception\ForbiddenException;
 use Larajax\Ui\Helpers\Input;
+use Larajax\Ui\Helpers\Language;
 
 /**
  * RichEditor renders a rich content editor field.
@@ -145,7 +146,7 @@ class RichEditor extends FormWidgetBase
         $this->vars['value'] = $this->getLoadValue();
         $this->vars['toolbarButtons'] = $this->evalToolbarButtons();
         $this->vars['icons'] = $this->getEditorIcons();
-        $this->vars['language'] = static::getEditorLanguage();
+        $this->vars['language'] = Language::find('richarea');
         $this->vars['uploadHandler'] = $this->canUpload() ? $this->getEventHandler('onUploadFile') : null;
     }
 
@@ -284,34 +285,5 @@ class RichEditor extends FormWidgetBase
         }
 
         return $icons;
-    }
-
-    /**
-     * getEditorLanguage returns the editor translation serving a locale, the application locale by
-     * default, or null when the editor has none and stays in English. Like the editor, it looks for
-     * the locale, a common alias of it, then its base language: de-AT finds de, pt_BR finds pt-br.
-     */
-    public static function getEditorLanguage(?string $locale = null): ?string
-    {
-        $aliases = ['kr' => 'ko', 'no' => 'nb', 'pt' => 'pt-pt', 'rs' => 'sr', 'ua' => 'uk', 'vn' => 'vi', 'zh' => 'zh-cn'];
-
-        $code = strtolower(str_replace('_', '-', trim($locale ?? app()->getLocale())));
-        $base = explode('-', $code)[0];
-
-        foreach (array_unique(array_filter([$code, $aliases[$code] ?? null, $base, $aliases[$base] ?? null])) as $candidate) {
-            if (preg_match('/^[a-z]{2,3}(-[a-z0-9]{2,8})?$/', $candidate) && is_file(static::getEditorLanguagePath($candidate))) {
-                return $candidate;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * getEditorLanguagePath returns the file of an editor translation, a plain script a page loads or bundles.
-     */
-    public static function getEditorLanguagePath(string $language): string
-    {
-        return dirname(__DIR__, 2).'/resources/assets/vendor/richarea/languages/'.$language.'.js';
     }
 }
