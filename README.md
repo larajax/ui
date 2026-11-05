@@ -149,7 +149,7 @@ Pick a pack (`october`, `phosphor` or `bootstrap`) in `config/larajax-icons.php`
 
 ### Translations
 
-The rich editor, data table and markdown editor show their interface text in the application's locale. Translations for 45 languages ship with the published assets in `languages/`, one plain script per language holding the strings of all three.
+The rich editor, data table, markdown editor and dropdowns show their interface text in the application's locale. Translations for 45 languages ship with the published assets in `languages/`, one plain script per language holding the strings of all four.
 
 Nothing needs including. A field looks up the translation for `app()->getLocale()` (`de-AT` finds `de`, `pt_BR` finds `pt-br`), renders it as `data-language`, and loads the file the first time a widget needs it. A locale without a translation stays in English.
 
@@ -167,7 +167,7 @@ With Vite, import the file for each language you need, since the widgets can't l
 import "../../vendor/larajax/ui/resources/assets/languages/de.js";
 ```
 
-The translations to edit live in `resources/languages/` and in each package's `src/languages/`; `build.js` joins them into `languages/`. The rich editor and grid packages also publish their own files in `vendor/richarea/languages/` and `vendor/hotsheet/languages/`, for use without the library.
+The translations to edit live in `resources/languages/` and in each package's `src/languages/`; `build.js` joins them into `languages/`, along with Select2's own translations of the dropdown messages, where Select2 has the language. The rich editor and grid packages also publish their own files in `vendor/richarea/languages/` and `vendor/hotsheet/languages/`, for use without the library.
 
 A widget created in JavaScript without `data-language` follows the page's `<html lang>`, using a translation the page already has. The rich editor and data table also take a `lang` option (`data-lang`) whose strings override single translations.
 

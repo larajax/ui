@@ -69,10 +69,12 @@ export async function bundle(entry, outfile, options = {}) {
 
 /**
  * Writes languages/ in the asset root, one plain script per language that joins its translations from
- * each source folder, so a page loads or bundles a single file per language.
+ * each source folder, so a page loads or bundles a single file per language. A source may also be a
+ * function returning a language's script, or null, for translations kept elsewhere, such as Select2's.
  */
-export function combineLanguages(sourceDirs, outdir = 'languages') {
+export function combineLanguages(sources, outdir = 'languages') {
     const targetDir = path.join(assetsDir, outdir);
+    const sourceDirs = sources.filter((source) => typeof source === 'string');
     const codes = new Set();
 
     for (const dir of sourceDirs) {
@@ -85,10 +87,16 @@ export function combineLanguages(sourceDirs, outdir = 'languages') {
     fs.mkdirSync(targetDir, { recursive: true });
 
     for (const code of [...codes].sort()) {
-        const parts = sourceDirs
-            .map((dir) => path.join(__dirname, dir, `${code}.js`))
-            .filter((file) => fs.existsSync(file))
-            .map((file) => fs.readFileSync(file, 'utf8').trim());
+        const parts = sources
+            .map((source) => {
+                if (typeof source === 'function') {
+                    return source(code);
+                }
+
+                const file = path.join(__dirname, source, `${code}.js`);
+                return fs.existsSync(file) ? fs.readFileSync(file, 'utf8').trim() : null;
+            })
+            .filter(Boolean);
 
         const header = [
             '/*',
@@ -100,6 +108,40 @@ export function combineLanguages(sourceDirs, outdir = 'languages') {
     }
 
     console.log(`  ✓ ${outdir}/ (${codes.size} languages)`);
+}
+
+// Select2's i18n file names, where they differ from the language code; null for English
+const SELECT2_LANGUAGES = {
+    'en-ca': null,
+    'en-gb': null,
+    'pt-br': 'pt-BR',
+    'pt-pt': 'pt',
+    'zh-cn': 'zh-CN',
+    'zh-tw': 'zh-TW'
+};
+
+/**
+ * select2Language returns Select2's own translation of a language as a script that fills the
+ * Select2Languages registry, or null when Select2 has none. Select2's i18n files define themselves with
+ * the AMD loader of a global jQuery, which the custom-select control's private Select2 never reads, so
+ * each runs against a stand-in for that loader which keeps the dictionary instead.
+ */
+export function select2Language(code) {
+    const name = code in SELECT2_LANGUAGES ? SELECT2_LANGUAGES[code] : code;
+    const file = path.join(nodeModules, 'select2/dist/js/i18n', `${name}.js`);
+
+    if (!name || !fs.existsSync(file)) {
+        return null;
+    }
+
+    return [
+        `// Select2's own translation, kept for the custom-select control`,
+        '(function (jQuery) {',
+        fs.readFileSync(file, 'utf8').trim(),
+        '})({ fn: { select2: { amd: { define: function (name, deps, factory) {',
+        `    (globalThis.Select2Languages = globalThis.Select2Languages || {})['${code}'] = factory();`,
+        '} } } } });'
+    ].join('\n');
 }
 
 export { nodeModules, assetsDir, vendorDir };

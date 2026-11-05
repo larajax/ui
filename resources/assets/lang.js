@@ -9,10 +9,10 @@
  *         markdowneditor: { bold: 'Fett' }
  *     };
  *
- * The editor and grid packages keep theirs the same way, in RichAreaLanguages and HotsheetLanguages.
- * languages/<code>.js is one plain script per language that fills all three registries, joined by
- * build.js from resources/languages and the packages' translations. A page may bundle the file,
- * otherwise a widget loads it.
+ * The editor and grid packages keep theirs the same way, in RichAreaLanguages and HotsheetLanguages,
+ * and Select2's own translations for the custom-select control sit in Select2Languages. languages/<code>.js
+ * is one plain script per language that fills every registry, joined by build.js from resources/languages,
+ * the packages' translations and Select2's. A page may bundle the file, otherwise a widget loads it.
  */
 'use strict';
 

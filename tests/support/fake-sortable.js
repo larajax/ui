@@ -5,16 +5,30 @@
 
 export const sortables = [];
 export const selected = [];
-export const mountedPlugins = [];
 
 export function resetFakeSortable() {
     sortables.length = 0;
     selected.length = 0;
 }
 
-// Records each instance so tests can play its callbacks the way a native drag fires them
+// Records each instance so tests can play its callbacks the way a native drag fires them. The bundle
+// comes with MultiDrag mounted, so its selection utils exist from the start and there is no mount():
+// a control that mounted the plugin again would throw here, as it would on the real module
 export const FakeSortable = {
-    utils: {},
+    utils: {
+        select(el) {
+            if (!selected.includes(el)) {
+                el.classList.add('sortable-selected');
+                selected.push(el);
+            }
+        },
+        deselect(el) {
+            if (selected.includes(el)) {
+                el.classList.remove('sortable-selected');
+                selected.splice(selected.indexOf(el), 1);
+            }
+        }
+    },
     create(element, options) {
         const sortable = {
             element,
@@ -29,23 +43,6 @@ export const FakeSortable = {
         };
         sortables.push(sortable);
         return sortable;
-    },
-    mount(plugin) {
-        mountedPlugins.push(plugin);
-
-        // The MultiDrag selection utils exist only once the plugin is mounted
-        this.utils.select = (el) => {
-            if (!selected.includes(el)) {
-                el.classList.add('sortable-selected');
-                selected.push(el);
-            }
-        };
-        this.utils.deselect = (el) => {
-            if (selected.includes(el)) {
-                el.classList.remove('sortable-selected');
-                selected.splice(selected.indexOf(el), 1);
-            }
-        };
     }
 };
 

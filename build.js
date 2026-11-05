@@ -7,7 +7,7 @@
  * build only prepares vendored files ahead of publishing.
  */
 import path from 'path';
-import { bundle, bundleVirtual, combineLanguages, copy, vendorDir } from './build-util.js';
+import { bundle, bundleVirtual, combineLanguages, copy, select2Language, vendorDir } from './build-util.js';
 import { buildRichArea } from './packages/richarea/build.js';
 import { buildHotsheet } from './packages/hotsheet/build.js';
 
@@ -42,9 +42,21 @@ await bundleVirtual(
 );
 copy('easymde/dist/easymde.min.css', 'easymde/easymde.css');
 
-// Dropzone (file uploads) and SortableJS (drag reordering) - bundled as ESM for the fileupload form widget.
+// Dropzone (file uploads) - bundled as ESM for the fileupload form widget.
 await bundle('dropzone', 'dropzone/dropzone.esm.js');
-await bundle('sortablejs', 'sortablejs/sortable.esm.js');
+
+// SortableJS (drag reordering) with its MultiDrag plugin mounted, bundled as ESM for the fileupload,
+// repeater, list and list structure widgets. Mounting here means one module serves every control and
+// a host that exposes it, such as October's window.Sortable, since a plugin can only mount once.
+await bundleVirtual(
+    [
+        "import Sortable, { MultiDrag, Swap } from 'sortablejs';",
+        "Sortable.mount(new MultiDrag());",
+        "export { Sortable, MultiDrag, Swap };",
+        "export default Sortable;"
+    ].join('\n'),
+    'sortablejs/sortable.esm.js'
+);
 
 // libphonenumber-js (Google's libphonenumber rules with the compact metadata, which checks a number's
 // length for its country) - bundled as ESM for the phone form widget, which loads it on first use.
@@ -58,11 +70,17 @@ await bundleVirtual(
 // touched, so jQuery stays an implementation detail of this one control.
 // The UMD wrappers inside would register with a page's AMD loader, such as
 // Monaco's, instead of returning their exports, so define reads as undefined.
+// Select2 normalises AJAX results and option groups by passing _normalizeItem
+// to map() unbound, which a script tolerates, this being window, but a strict
+// module throws on, so an unbound call gets an empty this, as in a script.
 await bundleVirtual(
     [
         "import $ from 'jquery';",
         "import select2 from 'select2/dist/js/select2.full.js';",
         "select2(window, $);",
+        "const SelectAdapter = $.fn.select2.amd.require('select2/data/select');",
+        "const normalizeItem = SelectAdapter.prototype._normalizeItem;",
+        "SelectAdapter.prototype._normalizeItem = function (item) { return normalizeItem.call(this || {}, item); };",
         "export default $;"
     ].join('\n'),
     'select2/select2.esm.js',
@@ -79,8 +97,9 @@ console.log('  ✓ richarea/richarea.js, richarea.css, base-styles.css (bundled)
 await buildHotsheet({ outdir: path.join(vendorDir, 'hotsheet') });
 console.log('  ✓ hotsheet/hotsheet.js, hotsheet.css (bundled) and languages/');
 
-// Translations, one script per language with the library's widget strings and the rich editor's and
-// grid's, which the packages keep in their own languages/ for use on their own.
-combineLanguages(['resources/languages', 'packages/richarea/src/languages', 'packages/hotsheet/src/languages']);
+// Translations, one script per language with the library's widget strings, the rich editor's and
+// grid's, which the packages keep in their own languages/ for use on their own, and Select2's own
+// translation for the custom-select control.
+combineLanguages(['resources/languages', 'packages/richarea/src/languages', 'packages/hotsheet/src/languages', select2Language]);
 
 console.log('\n  Done.\n');

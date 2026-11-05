@@ -576,15 +576,10 @@ export function createRepeaterFormWidgetBase(jax) {
     return RepeaterFormWidgetBase;
 }
 
-// loadSortable imports SortableJS once and mounts its MultiDrag plugin for checked items
+// loadSortable imports SortableJS once, which comes with its MultiDrag plugin mounted for checked items
 function loadSortable() {
     if (!sortablePromise) {
         sortablePromise = import('../../vendor/sortablejs/sortable.esm.js').then((sortable) => {
-            // Mounting twice throws, and another control may share this module
-            if (!sortable.Sortable.utils.select) {
-                sortable.Sortable.mount(new sortable.MultiDrag());
-            }
-
             Sortable = sortable.Sortable;
 
             return Sortable;

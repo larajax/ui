@@ -1,9 +1,7 @@
 import { afterEach, beforeAll, describe, expect, mock, test } from 'bun:test';
 import {
-    FakeMultiDrag,
     FakeSortable,
     fakeSortableModule,
-    mountedPlugins,
     resetFakeSortable,
     selected,
     sortables
@@ -327,13 +325,9 @@ describe('repeater sorting', () => {
             scrollSpeed: 20
         });
 
-        // The MultiDrag plugin mounts once and brings the selection utils
-        expect(mountedPlugins).toHaveLength(1);
-        expect(mountedPlugins[0]).toBeInstanceOf(FakeMultiDrag);
-        expect(typeof FakeSortable.utils.select).toBe('function');
-
-        await connectWith('repeateraccordion', accordionMarkup());
-        expect(mountedPlugins).toHaveLength(1);
+        // The bundle comes with MultiDrag mounted, so a second accordion sorts without mounting it again
+        const second = await connectWith('repeateraccordion', accordionMarkup());
+        expect(second.sortable.options.multiDrag).toBe(true);
     });
 
     test('the builder sorts its group sidebar', async () => {

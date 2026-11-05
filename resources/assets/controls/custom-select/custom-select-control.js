@@ -8,11 +8,17 @@
  * - animation: true
  * - autohide: true
  * - delay: 5000
+ * - language: null - the translation of Select2's messages, such as de, loaded from languages/ unless
+ *   the page has it already; the page's lang attribute when not given
+ *
+ * JavaScript API:
+ * jax.fetchControl(select, 'custom-select').focus()
  */
 'use strict';
 
 import $ from '../../vendor/select2/select2.esm.js';
 import { mountOrigin } from '../popup/dialog-mount.js';
+import { getLanguages, hasLanguage, loadLanguage, resolveLanguage } from '../../lang.js';
 
 /**
  * alignDropdownInParent keeps Select2's dropdown on its field inside a scrolled or bordered parent such as a dialog.
@@ -110,8 +116,41 @@ export function registerCustomSelect(jax) {
             this.$el.one('change', this.proxy(this.triggerNativeChange));
             this.$el.on('disable', this.proxy(this.disableSelect));
 
+            // A translation the page has not bundled loads first
+            const language = this.element.dataset.language;
+            if (!hasLanguage(language)) {
+                loadLanguage(language).then(() => {
+                    if (this.element.isConnected && this.$el.data('select2') == null) {
+                        this.start();
+                    }
+                });
+                return;
+            }
+
+            this.start();
+        }
+
+        start() {
             this.bindCustomSelect();
             this.bindCustomSelectWorkaround();
+        }
+
+        // focus moves the keyboard focus to the dropdown, as tabbing to it would, without opening it
+        focus() {
+            if (this.element.disabled) {
+                return;
+            }
+
+            const select2 = this.$el.data('select2');
+            if (!select2) {
+                this.element.focus();
+                return;
+            }
+
+            // A multiple select with search takes focus in its search field, which Select2 gives the tabindex
+            const selection = select2.$selection[0];
+            const target = selection.querySelector('.select2-search--inline .select2-search__field') || selection;
+            target.focus();
         }
 
         disconnect() {
@@ -120,7 +159,9 @@ export function registerCustomSelect(jax) {
             this.$el.off('change', this.proxy(this.triggerNativeChange));
             this.$el.off('disable', this.proxy(this.disableSelect));
 
-            this.$el.off('select2:open', this.select2OpenWorkaround);
+            if (this.select2OpenWorkaround) {
+                this.$el.off('select2:open', this.select2OpenWorkaround);
+            }
 
             if (this.$el.data('select2') != null) {
                 this.$el.select2('destroy');
@@ -292,17 +333,10 @@ export function registerCustomSelect(jax) {
                 selectOptions.dropdownCssClass += ' select-dropdown-lg';
             }
 
-            // Language
-            var language = this.element.dataset.language;
-            if (!language) {
-                var meta = document.querySelector('meta[name="backend-locale"]');
-                if (meta) {
-                    language = meta.getAttribute('content');
-                }
-            }
-
+            // Language, Select2's own translation from the language files, English without one
+            var language = resolveLanguage(this.element.dataset.language || document.documentElement.lang, 'Select2Languages');
             if (language) {
-                selectOptions.language = language;
+                selectOptions.language = getLanguages('Select2Languages')[language];
             }
 
             // Placeholder

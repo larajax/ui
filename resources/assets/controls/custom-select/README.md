@@ -43,6 +43,16 @@ Add the `select-no-search` CSS class to disable searching.
         </select>
     </div>
 
+## JavaScript API
+
+```js
+const control = jax.fetchControl(select, 'custom-select');
+
+control.focus();
+```
+
+`focus()` moves the keyboard focus to the dropdown without opening it, as tabbing to it would. The select's own jQuery `select2()` methods don't reach it, since its Select2 is private to the control.
+
 ## Option groups
 
 Use the `optgroup` element to create option groups.

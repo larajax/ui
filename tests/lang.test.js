@@ -26,7 +26,10 @@ const packageDirs = [
     path.join(import.meta.dir, '../packages/hotsheet/src/languages')
 ];
 
-const REGISTRIES = ['LarajaxUiLanguages', 'RichAreaLanguages', 'HotsheetLanguages'];
+const REGISTRIES = ['LarajaxUiLanguages', 'RichAreaLanguages', 'HotsheetLanguages', 'Select2Languages'];
+
+// Languages Select2 has no translation for, whose dropdowns keep its English messages
+const WITHOUT_SELECT2 = ['be', 'en-ca', 'en-gb', 'ku', 'me', 'nn'];
 
 describe('library translations', () => {
     afterEach(() => {
@@ -123,6 +126,20 @@ describe('built language files', () => {
                 const source = fs.readFileSync(path.join(dir, `${code}.js`), 'utf8').trim();
                 expect([dir, built.includes(source)]).toEqual([dir, true]);
             }
+
+            // Select2's own translation, where it has one
+            const select2 = built.includes(`(globalThis.Select2Languages = globalThis.Select2Languages || {})['${code}']`);
+            expect(['Select2', select2]).toEqual(['Select2', !WITHOUT_SELECT2.includes(code)]);
         });
     }
+
+    test('give the custom-select control Select2\'s dictionary, plural rules included', () => {
+        // Run as the plain script a page loads, since an import of the file may have run already
+        new Function(fs.readFileSync(path.join(builtDir, 'ru.js'), 'utf8'))();
+        const russian = getLanguages('Select2Languages').ru;
+
+        expect(russian.noResults()).toBe('Совпадений не найдено');
+        expect(russian.maximumSelected({ maximum: 1 })).toBe('Вы можете выбрать не более 1 элемент');
+        expect(russian.maximumSelected({ maximum: 5 })).toBe('Вы можете выбрать не более 5 элементов');
+    });
 });

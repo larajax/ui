@@ -205,3 +205,12 @@
     chooseDate: 'Pilih tanggal',
     chooseTime: 'Pilih waktu'
 };
+
+// Select2's own translation, kept for the custom-select control
+(function (jQuery) {
+/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
+
+!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/id",[],function(){return{errorLoading:function(){return"Data tidak boleh diambil."},inputTooLong:function(n){return"Hapuskan "+(n.input.length-n.maximum)+" huruf"},inputTooShort:function(n){return"Masukkan "+(n.minimum-n.input.length)+" huruf lagi"},loadingMore:function(){return"Mengambil data…"},maximumSelected:function(n){return"Anda hanya dapat memilih "+n.maximum+" pilihan"},noResults:function(){return"Tidak ada data yang sesuai"},searching:function(){return"Sedang mencari…"},removeAllItems:function(){return"Hapus semua item"},removeItem:function(){return"Hapus item"},search:function(){return"Cari"}}}),n.define,n.require}();
+})({ fn: { select2: { amd: { define: function (name, deps, factory) {
+    (globalThis.Select2Languages = globalThis.Select2Languages || {})['id'] = factory();
+} } } } });
