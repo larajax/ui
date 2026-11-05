@@ -25,7 +25,12 @@ class FakeEasyMDE {
         this.handlers.change();
     }
 
-    togglePreview() { this.calls.push('togglePreview'); }
+    markdown(text) { return `<p>${text}</p>`; }
+    getState() { return this.state || {}; }
+    isPreviewActive() { return !!this.previewActive; }
+    isSideBySideActive() { return false; }
+    isFullscreenActive() { return false; }
+    togglePreview() { this.calls.push('togglePreview'); this.previewActive = !this.previewActive; }
     toggleSideBySide() { this.calls.push('toggleSideBySide'); }
     toggleFullScreen() { this.calls.push('toggleFullScreen'); }
     toTextArea() { this.calls.push('toTextArea'); }
@@ -36,7 +41,14 @@ class FakeEasyMDE {
     'toggleCodeBlock', 'toggleBlockquote', 'toggleUnorderedList', 'toggleOrderedList', 'cleanBlock', 'drawLink',
     'drawImage', 'drawTable', 'drawHorizontalRule', 'togglePreview', 'toggleSideBySide', 'toggleFullScreen'
 ].forEach((name) => {
-    FakeEasyMDE[name] = () => {};
+    FakeEasyMDE[name] = (editor) => {
+        if (name === 'togglePreview') {
+            editor.togglePreview();
+            return;
+        }
+
+        editor.calls.push(name);
+    };
 });
 
 const FakeDOMPurify = {
@@ -48,7 +60,7 @@ const FakeDOMPurify = {
 
 mock.module('../resources/assets/vendor/easymde/easymde.esm.js', () => ({ EasyMDE: FakeEasyMDE, DOMPurify: FakeDOMPurify }));
 
-const { registerMarkdownEditor } = await import('../resources/assets/formwidgets/markdowneditor/markdowneditor.js');
+const { registerMarkdownEditor, markdownEditor } = await import('../resources/assets/formwidgets/markdowneditor/markdowneditor.js');
 
 function parseValue(value) {
     if (value === 'true') return true;
@@ -232,5 +244,96 @@ describe('markdown editor', () => {
         await flush();
 
         expect(editors.length).toBe(0);
+    });
+});
+
+describe('markdown editor with a toolbar drawn by the page', () => {
+    test('draws no toolbar or status bar and announces the mounted editor', async () => {
+        const ready = [];
+        const onReady = (event) => ready.push(event.detail.markdownEditor);
+        document.addEventListener('markdowneditor:ready', onReady);
+
+        try {
+            const { control, editor } = await connect('data-external-toolbar="true"');
+
+            expect(editor.options.toolbar).toBe(false);
+            expect(editor.options.status).toBe(false);
+            expect(ready).toEqual([control]);
+        }
+        finally {
+            document.removeEventListener('markdowneditor:ready', onReady);
+        }
+    });
+
+    test('lists the known buttons in order, leaving fullscreen to the page', async () => {
+        const { control } = await connect('data-external-toolbar="true"');
+
+        expect(control.getToolbarItems()).toEqual([
+            { type: 'button', code: 'bold' },
+            { type: 'button', code: 'heading-1' },
+            { type: 'separator' },
+            { type: 'button', code: 'preview' }
+        ]);
+    });
+
+    test('describes buttons from the editor state, disabling all but the view buttons in the preview', async () => {
+        const { control, editor } = await connect('data-external-toolbar="true"');
+        editor.state = { bold: true };
+
+        expect(control.getButtonState('bold')).toMatchObject({ code: 'bold', label: 'Bold', active: true, disabled: false });
+        expect(control.getButtonState('mystery')).toBeNull();
+
+        control.activateButton('preview');
+
+        expect(control.getButtonState('preview')).toMatchObject({ active: true, disabled: false });
+        expect(control.getButtonState('bold').disabled).toBe(true);
+    });
+
+    test('runs a button\'s action and announces an update', async () => {
+        const { control, editor } = await connect('data-external-toolbar="true"');
+        let updates = 0;
+        control.on('update', () => updates++);
+
+        control.activateButton('bold');
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        expect(editor.calls).toContain('toggleBold');
+        expect(updates).toBeGreaterThan(0);
+    });
+
+    test('takes a value set on the textarea from outside', async () => {
+        const { element, editor } = await connect('data-external-toolbar="true"');
+        const textarea = element.querySelector('textarea');
+
+        textarea.value = 'From outside';
+        textarea.dispatchEvent(new Event('change', { bubbles: true }));
+
+        expect(editor.value()).toBe('From outside');
+    });
+});
+
+describe('markdown editor preview', () => {
+    afterEach(() => {
+        delete markdownEditor.hooks.preparePreview;
+    });
+
+    test('renders the markdown as it is without a hook', async () => {
+        const { editor } = await connect();
+
+        expect(editor.options.previewRender('Hello')).toBe('<p>Hello</p>');
+    });
+
+    test('renders the markdown the page prepares, or leaves the preview when it returns null', async () => {
+        const { control, editor } = await connect();
+        const seen = [];
+
+        markdownEditor.hooks.preparePreview = (markdown, owner) => {
+            seen.push(owner);
+            return markdown === 'skip' ? null : markdown.replace('october://page', '/page');
+        };
+
+        expect(editor.options.previewRender('[Page](october://page)')).toBe('<p>[Page](/page)</p>');
+        expect(editor.options.previewRender('skip')).toBeNull();
+        expect(seen).toEqual([control, control]);
     });
 });
