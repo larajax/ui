@@ -22,6 +22,9 @@ class UiServiceProvider extends ServiceProvider
         $this->app->scoped(\Larajax\Ui\Classes\AssetCollector::class);
         $this->app->alias(\Larajax\Ui\Classes\AssetCollector::class, 'larajax.ui.assets');
 
+        // Collects the file upload fields whose held files commit when their record saves
+        $this->app->scoped(\Larajax\Ui\Classes\HeldUploads::class);
+
         $this->app->singleton('system.preset', \Larajax\Ui\Classes\PresetManager::class);
 
         $this->app->singleton(IconManager::class);
@@ -65,6 +68,13 @@ class UiServiceProvider extends ServiceProvider
         $this->app['events']->listen(\Illuminate\Routing\Events\PreparingResponse::class, function ($event) {
             if ($event->response instanceof \Larajax\Classes\AjaxResponse && $this->app->resolved(\Larajax\Ui\Classes\AssetCollector::class)) {
                 $this->app->make(\Larajax\Ui\Classes\AssetCollector::class)->addToAjaxResponse($event->response);
+            }
+        });
+
+        // Commits the files a file upload field held until its record saved
+        $this->app['events']->listen('eloquent.saved: *', function ($event, $payload) {
+            if ($this->app->resolved(\Larajax\Ui\Classes\HeldUploads::class) && isset($payload[0])) {
+                $this->app->make(\Larajax\Ui\Classes\HeldUploads::class)->commitFor($payload[0]);
             }
         });
 

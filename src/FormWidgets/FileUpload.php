@@ -632,10 +632,8 @@ class FileUpload extends FormWidgetBase
             return;
         }
 
-        $model::saved(function ($saved) use ($model, $attribute) {
-            if ($saved === $model || ($model->exists && $saved->is($model))) {
-                $this->commitHeldFiles($saved, $attribute);
-            }
+        app(\Larajax\Ui\Classes\HeldUploads::class)->add($model, function ($saved) use ($attribute) {
+            $this->commitHeldFiles($saved, $attribute);
         });
     }
 
