@@ -11,6 +11,7 @@ import { TextStyle } from './textstyle.js';
 import { MediaFigure, Iframe } from './media.js';
 import { SnippetBlock, SnippetInline } from './snippet.js';
 import { Table, TableRow, TableCell, TableHeader } from './table.js';
+import { passthroughExtensions } from './passthrough.js';
 
 /**
  * buildExtensions assembles the schema and behavior extensions for an editor instance.
@@ -70,6 +71,8 @@ export function buildExtensions(options, richArea) {
     if (options.useLineBreaks) {
         extensions.push(LineBreaks);
     }
+
+    extensions.push(...passthroughExtensions(options));
 
     return extensions.concat(options.extensions || []);
 }

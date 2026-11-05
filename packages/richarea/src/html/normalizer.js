@@ -1,4 +1,4 @@
-import { cleanClassName, splitClasses, titleFromUrl } from './utils.js';
+import { cleanClassName, splitClasses, titleFromUrl, parseList } from './utils.js';
 
 /**
  * Attributes that editors add at runtime, never part of saved content.
@@ -35,9 +35,10 @@ const LEGACY_CLASSES = new Map([
 
 /**
  * normalizeHtml repairs incoming markup before the schema parses it, covering Froala era
- * wrappers and editor artifacts that would otherwise be dropped or misread.
+ * wrappers and editor artifacts that would otherwise be dropped or misread. The removeTags
+ * option lists tags taken out with what they hold.
  */
-export function normalizeHtml(html) {
+export function normalizeHtml(html, options = {}) {
     if (typeof html !== 'string' || !html.trim()) {
         return '';
     }
@@ -45,6 +46,11 @@ export function normalizeHtml(html) {
     const template = document.createElement('template');
     template.innerHTML = html;
     const root = template.content;
+
+    const removeTags = parseList(options.removeTags);
+    if (removeTags.length) {
+        removeElements(root, removeTags.join(','));
+    }
 
     removeElements(root, 'span.fr-marker');
     unwrapElements(root, 'span.fr-video, span.fr-emoticon');

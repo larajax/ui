@@ -112,7 +112,7 @@ export class SourceView {
      */
     getCleanContent() {
         const re = this.richArea;
-        const doc = createDocument(normalizeHtml(this.adapter.getValue()), re.editor.schema);
+        const doc = createDocument(normalizeHtml(this.adapter.getValue(), re.options), re.editor.schema);
 
         return serializeDocument(doc, re.editor.schema, re.options);
     }

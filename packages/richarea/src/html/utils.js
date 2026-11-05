@@ -130,3 +130,16 @@ export function titleFromUrl(url) {
 
     return String(url);
 }
+
+/**
+ * parseList reads a list option given as an array or as comma separated text.
+ */
+export function parseList(value) {
+    if (!value) {
+        return [];
+    }
+
+    const items = Array.isArray(value) ? value : String(value).split(',');
+
+    return items.map((item) => String(item).trim().toLowerCase()).filter(Boolean);
+}

@@ -68,7 +68,7 @@ export class RichArea {
         this.editor = new Editor({
             element: this.documentElement,
             extensions: buildExtensions(this.options, this).concat(createShortcuts(this)),
-            content: normalizeHtml(this.options.content),
+            content: normalizeHtml(this.options.content, this.options),
             editable: !this.options.readOnly,
             editorProps: {
                 attributes: {
@@ -127,7 +127,7 @@ export class RichArea {
      * records it in the undo history, both off for content loaded by the host.
      */
     setContent(html, { emitChange = false, undoable = false } = {}) {
-        const content = normalizeHtml(html || '');
+        const content = normalizeHtml(html || '', this.options);
 
         if (this.sourceView && this.sourceView.isActive()) {
             this.sourceView.setValue(html || '');

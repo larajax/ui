@@ -123,7 +123,16 @@ export const defaultOptions = {
     linkProtocols: [],
     hooks: {},
     sourceEditor: null,
-    extensions: []
+    extensions: [],
+
+    // HTML kept without the editor's tools, for content written by hand, see extensions/passthrough.js.
+    // Lists are arrays or comma separated text, and allowTags turns it on
+    allowTags: null,
+    allowAttrs: null,
+    allowEmptyTags: null,
+    noWrapTags: null,
+    // Tags removed with what they hold before the content is read
+    removeTags: null
 };
 
 /**
