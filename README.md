@@ -2,7 +2,7 @@
 
 Larajax UI builds data-driven interfaces from configuration. Describe a form's fields or a list's columns in YAML, bind a model, and the widget renders working markup with AJAX behavior (sorting, pagination, searching, validation) wired up automatically.
 
-It is designed for developers who want admin-quality forms and lists in a regular Laravel application, without hand-writing markup, adopting a frontend framework, or running a build step.
+It is for admin-quality forms and lists in a regular Laravel application, without hand-written markup, a frontend framework or a build step.
 
 ## About Larajax UI
 
@@ -47,7 +47,7 @@ Widgets render as safe HTML, so Blade's escaped output works directly:
 
 That renders a sortable, searchable, paginated table of users. Forms work the same way from a `fields.yaml`, and filters from a `scopes.yaml`.
 
-Each widget is a [Larajax](https://larajax.org) view component, so its AJAX handlers (sorting, uploads, validation, partial updates) are wired in automatically and behave like any other Larajax component on the page.
+Each widget is a [Larajax](https://larajax.org) view component, so its AJAX handlers need no extra wiring.
 
 ## Key ideas
 
@@ -70,9 +70,7 @@ Each widget is a [Larajax](https://larajax.org) view component, so its AJAX hand
 
 - PHP 8.2 or higher
 - Laravel 12 or later
-- [larajax/larajax](https://larajax.org) (provides the view component interface and the `window.jax` browser API)
-- [october/rain](https://github.com/octobercms/library) (database, validation and HTML helpers)
-- [Bootstrap 6](https://getbootstrap.com) `6.0.0-alpha.1` (styling foundation; menus use its `data-bs-toggle="menu"` data API, while popups are the library's own native `<dialog>`). Bootstrap 6 is an alpha release, ships its JavaScript as ES modules only, and supports Chrome and Edge 130, Firefox 132 and Safari 18 or newer.
+- [Bootstrap 6](https://getbootstrap.com) (`6.0.0-alpha.1`)
 
 ## Installation
 
@@ -80,19 +78,15 @@ Each widget is a [Larajax](https://larajax.org) view component, so its AJAX hand
 composer require larajax/ui
 ```
 
-The package registers a `UiServiceProvider` automatically via Laravel's package discovery.
+### Assets
 
-### Publishing assets (no build step)
-
-The widgets ship a small CSS + JS bundle that the browser loads at runtime. Publish it once after installing (and again after upgrading):
+Publish the CSS and JavaScript after installing, and again after upgrading:
 
 ```bash
 php artisan vendor:publish --tag=larajax-ui-assets
 ```
 
-Files are copied verbatim into `public/vendor/larajax/ui/`. There is no build step; the JS is plain ES modules and the CSS is plain CSS with `@import`.
-
-Include them in your layout, after Bootstrap and the larajax framework bundle:
+Include them in your layout after Bootstrap and the Larajax framework bundle:
 
 ```blade
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css">
@@ -102,15 +96,11 @@ Include them in your layout, after Bootstrap and the larajax framework bundle:
 <script type="module" src="{{ asset('vendor/larajax/ui/ui.js') }}"></script>
 ```
 
-The library's light and dark palettes follow the `data-bs-theme` attribute, while Bootstrap 6 follows the operating system when the attribute is missing, so set `data-bs-theme="light"` or `"dark"` on `<html>` before the page paints.
+Use `framework-bundle.js`, not `framework.js`. Set `data-bs-theme="light"` or `"dark"` on `<html>` so the widgets and Bootstrap share a theme.
 
-`ui.js` is the **auto-registering browser entry**: on load it registers every control against `window.jax` and throws if the framework is missing, so the framework bundle must load first. Use the bundle build: the plain `framework.js` build does not include the control API (`jax.registerControl`) that Larajax UI requires. Startup stays with the framework bundle; `ui.js` only registers.
+### Using Vite
 
-### Using a bundler (Vite)
-
-Larajax UI is Composer-only. Vite applications import the package source straight from the vendor directory.
-
-`index.js` is the **explicit registration entry**: importing it has no side effects and needs no global. It exports `registerUi(jax)`, which registers every control against the framework instance you pass, so registration happens before you start observation:
+Import the source from `vendor` and register the controls before starting the framework:
 
 ```js
 // resources/js/app.js
@@ -122,11 +112,9 @@ registerUi(jax);
 jax.start();
 ```
 
-The application owns startup: `registerUi()` never starts or stops the framework. Repeated calls for the same instance are ignored, and an instance without the control API produces a clear error. One framework instance per page is assumed.
+Keep the `larajax` npm package on the same version as `larajax/larajax`. Load Bootstrap 6's CSS before `ui.css`, and its JavaScript (`import "bootstrap"`) for menus.
 
-The framework comes from the [larajax npm package](https://www.npmjs.com/package/larajax); keep its version aligned with the Composer `larajax/larajax` package. Importing it from the Composer source also works: `vendor/larajax/larajax/resources/src/index.js`.
-
-Optionally, shorten the paths with aliases in `vite.config.js`. The `larajax-ui` alias must be exact so it does not intercept the CSS subpath:
+Optional aliases for `vite.config.js`:
 
 ```js
 import path from "node:path";
@@ -139,84 +127,33 @@ resolve: {
 },
 ```
 
-Vite consumers import the package source (`resources/assets`) directly, so publishing is not required for this path. The stylesheet is imported separately so the application controls ordering: load Bootstrap 6 CSS before `ui.css`. Menus also need Bootstrap 6's JavaScript for its `data-bs-toggle="menu"` data API, so import it in your entry (`import "bootstrap"`) or load its bundle with `<script type="module">`. The library needs no `window.bootstrap` global, and popups use no Bootstrap JavaScript.
-
 ### Icon packs
 
-Larajax UI resolves widget icons through `Ui::icon()` and `Ui::iconClass()`. Publish the icon config when you want to switch packs or override individual icons:
+To switch icon packs or override the library's icons, publish the config:
 
 ```bash
 php artisan vendor:publish --tag=larajax-ui-config
 ```
 
-Then select a default pack in `config/larajax-icons.php` or with `LARAJAX_ICONS`:
+Pick a pack (`october`, `phosphor` or `bootstrap`) in `config/larajax-icons.php` or with `LARAJAX_ICONS`, and override single icons under `overrides`:
 
 ```php
 'default' => env('LARAJAX_ICONS', 'phosphor'),
-```
 
-The package ships `october`, `phosphor`, and `bootstrap` packs. Unknown icon names fall back to the provided value as a raw CSS class, so existing code can still pass `icon-pencil`, `ph ph-pencil`, or a project-specific class. To customize icons, add flat global overrides. At runtime, `Ui::extendIcons([...])` can apply the same kind of overlay from a service provider:
-
-```php
 'overrides' => [
     'tooltip.info' => 'my-icon my-info',
-    'pagination.next' => 'my-icon my-next',
 ],
 ```
 
-### List search and setup placement
-
-`Toolbar` and `Filter` both accept `search` and `setupHandler`, and both connect search to a list through `bindToListWidget()`:
-
-```php
-$filter = Filter::make(
-    model: $model,
-    scopes: $scopes,
-    search: ['prompt' => 'Search projects...', 'mode' => 'all'],
-    setupHandler: $list->getEventHandler('onLoadSetup'),
-);
-$filter->bindToListWidget($list);
-```
-
-Filter displays these optional controls on the right of its scopes. The same options work on `Toolbar::make()`. `search` accepts a configuration array, a controller partial name, or an existing `Search` widget; `getSearchWidget()` returns the configured instance. Search keeps its saved term and resets list pagination on submit in either location.
-
-Filter also accepts an optional `primary` placement. The default (`null`) keeps everything in one row. Set `primary: 'search'` to move search and list setup into a full-width row above the scopes:
-
-```php
-$filter = Filter::make(
-    model: $model,
-    scopes: $scopes,
-    search: ['prompt' => 'Search projects...'],
-    setupHandler: $list->getEventHandler('onLoadSetup'),
-    primary: 'search',
-);
-$filter->bindToListWidget($list);
-```
-
-Alternatively, set `primary` to the name of a `dropdown` scope, such as `primary: 'status'`. That scope renders once as a row of equal-width tabs in the primary row, which drag scrolls when the tabs no longer fit; search and list setup stay with the remaining scopes in the secondary row. Its definition remains a normal dropdown:
-
-```yaml
-scopes:
-    status:
-        label: Status
-        type: dropdown
-        emptyOption: All statuses
-        options:
-            open: Open
-            closed: Closed
-```
-
-The tabs use the scope's existing values, defaults, saved state and query logic. The first tab clears only that scope, using `emptyOption` as its label (or `All`). Clear Filters resets scopes in both rows to their configured defaults and leaves search independent. Primary tabs keep their configured order; active scopes come first only within the secondary row. A primary scope must be a dropdown, and primary search requires a configured search widget.
+`Ui::extendIcons([...])` applies the same overrides at runtime.
 
 ## Background
 
 Larajax UI was extracted from the widget engine used in [October CMS](https://github.com/octobercms), where it has rendered admin panel forms and lists in production for many years.
 
-It is now packaged as a standalone Laravel library.
-
 ## Resources
 
-- Documentation and examples: https://larajax.org
+- Documentation and examples: https://ui.larajax.org
 - Source code: https://github.com/larajax/ui
 
 ## License
