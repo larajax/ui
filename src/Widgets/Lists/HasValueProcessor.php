@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Larajax\Ui\Helpers\DateTime as DateTimeHelper;
 use Larajax\Ui\Helpers\Url as UrlHelper;
 use Larajax\Ui\Classes\FormField;
+use October\Contracts\Database\AttachmentInterface;
 use October\Rain\Exception\ApplicationException;
 
 /**
@@ -80,6 +81,10 @@ trait HasValueProcessor
         elseif (isset($record->attachOne[$colName])) {
             $images = $value ? [$value] : [];
         }
+        // File models of a plain Eloquent relation
+        elseif ($value instanceof AttachmentInterface || $value instanceof \Illuminate\Support\Collection) {
+            $images = $this->getAttachmentsFromValue($value);
+        }
         // Path or URL value
         else {
             foreach ((array) $value as $val) {
@@ -126,6 +131,22 @@ trait HasValueProcessor
     }
 
     /**
+     * getAttachmentsFromValue returns the file models of a column value holding one file model or a collection of them.
+     */
+    protected function getAttachmentsFromValue($value): array
+    {
+        if ($value instanceof AttachmentInterface) {
+            return [$value];
+        }
+
+        if ($value instanceof \Illuminate\Support\Collection && $value->every(fn ($item) => $item instanceof AttachmentInterface)) {
+            return $value->all();
+        }
+
+        return [];
+    }
+
+    /**
      * evalFileTypeValue will process a file attachment value
      * @return string
      */
@@ -144,6 +165,10 @@ trait HasValueProcessor
         elseif (isset($record->attachOne[$colName])) {
             $files = $value ? [$value] : [];
         }
+        // File models of a plain Eloquent relation
+        else {
+            $files = $this->getAttachmentsFromValue($value);
+        }
 
         if (!$files) {
             return '';
@@ -157,7 +182,7 @@ trait HasValueProcessor
             $fileItems[] = [
                 'url' => $file->getPath(),
                 'name' => $file->file_name,
-                'icon' => $this->getFileTypeIcon($file->getExtension()),
+                'icon' => $this->getFileTypeIcon(method_exists($file, 'getExtension') ? $file->getExtension() : pathinfo($file->file_name, PATHINFO_EXTENSION)),
             ];
         }
 

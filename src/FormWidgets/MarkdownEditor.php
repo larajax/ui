@@ -3,6 +3,7 @@
 use Larajax\Ui\Classes\FormWidgetBase;
 use Larajax\Ui\Helpers\Markdown;
 use Larajax\Ui\Helpers\Input;
+use Larajax\Ui\Facades\Ui;
 
 /**
  * MarkdownEditor renders a markdown editor field.
@@ -36,6 +37,12 @@ class MarkdownEditor extends FormWidgetBase
      */
     public $sideBySide = false;
 
+    /**
+     * @var bool externalToolbar leaves the toolbar to the page, which draws it from the editor's
+     * toolbar API once the field announces markdowneditor:ready.
+     */
+    public $externalToolbar = false;
+
     //
     // Object Properties
     //
@@ -53,7 +60,8 @@ class MarkdownEditor extends FormWidgetBase
         $this->fillFromConfig([
             'mode',
             'safeMode',
-            'sideBySide'
+            'sideBySide',
+            'externalToolbar'
         ]);
 
         // @deprecated API
@@ -79,12 +87,60 @@ class MarkdownEditor extends FormWidgetBase
         $this->vars['mode'] = $this->sideBySide ? 'split' : $this->mode;
         $this->vars['safeMode'] = $this->safeMode;
         $this->vars['sideBySide'] = $this->sideBySide;
+        $this->vars['externalToolbar'] = $this->externalToolbar;
+        $this->vars['toolbarButtons'] = static::getToolbarButtons();
         $this->vars['stretch'] = $this->formField->stretch;
         $this->vars['size'] = $this->formField->size;
         $this->vars['name'] = $this->getFieldName();
         $this->vars['value'] = $this->getLoadValue();
         $this->vars['readOnly'] = $this->formField->readOnly;
         $this->vars['disabled'] = $this->formField->disabled;
+    }
+
+    /**
+     * getToolbarButtons returns the toolbar, each button with its EasyMDE name, title, icon markup and
+     * icon class, and "|" between groups
+     */
+    public static function getToolbarButtons(): array
+    {
+        $buttons = [
+            ['name' => 'bold', 'icon' => 'bold', 'title' => __('Bold')],
+            ['name' => 'italic', 'icon' => 'italic', 'title' => __('Italic')],
+            ['name' => 'strikethrough', 'icon' => 'strikethrough', 'title' => __('Strikethrough')],
+            ['name' => 'heading-1', 'icon' => 'heading1', 'title' => __('Header 1')],
+            ['name' => 'heading-2', 'icon' => 'heading2', 'title' => __('Header 2')],
+            ['name' => 'heading-3', 'icon' => 'heading3', 'title' => __('Header 3')],
+            '|',
+            ['name' => 'code', 'icon' => 'codeBlock', 'title' => __('Code')],
+            ['name' => 'quote', 'icon' => 'quote', 'title' => __('Quote')],
+            ['name' => 'unordered-list', 'icon' => 'unorderedList', 'title' => __('Unordered List')],
+            ['name' => 'ordered-list', 'icon' => 'orderedList', 'title' => __('Ordered List')],
+            ['name' => 'clean-block', 'icon' => 'cleanBlock', 'title' => __('Clean Block')],
+            '|',
+            ['name' => 'link', 'icon' => 'link', 'title' => __('Link')],
+            ['name' => 'image', 'icon' => 'image', 'title' => __('Image')],
+            ['name' => 'table', 'icon' => 'table', 'title' => __('Table')],
+            ['name' => 'horizontal-rule', 'icon' => 'horizontalRule', 'title' => __('Insert Horizontal Rule')],
+            '|',
+            ['name' => 'preview', 'icon' => 'preview', 'title' => __('Preview')],
+            ['name' => 'side-by-side', 'icon' => 'sideBySide', 'title' => __('Side by Side')],
+            ['name' => 'fullscreen', 'icon' => 'fullscreen', 'title' => __('Full Screen')],
+        ];
+
+        return array_map(function ($button) {
+            if (!is_array($button)) {
+                return $button;
+            }
+
+            $key = 'markdowneditor.'.$button['icon'];
+
+            return [
+                'name' => $button['name'],
+                'title' => $button['title'],
+                'icon' => (string) Ui::icon($key),
+                'iconClass' => Ui::iconClass($key)
+            ];
+        }, $buttons);
     }
 
     public function onRefresh()

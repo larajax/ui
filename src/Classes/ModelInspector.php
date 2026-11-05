@@ -134,14 +134,24 @@ class ModelInspector
         }
 
         if ($relation instanceof BelongsTo) {
-            $relation->associate($value);
+            $relation->associate($value !== '' ? $value : null);
             return;
         }
 
-        // Other relations hold the matching related record in memory
-        $related = $value !== null && $value !== ''
-            ? $relation->getRelated()->newQuery()->find($value)
-            : null;
+        // Other relations hold the matching related record, or records, in memory
+        $relatedModel = $relation->getRelated();
+
+        if ($this->isRelationTypeSingular($model, $name)) {
+            $related = $value !== null && $value !== ''
+                ? $relatedModel->newQuery()->find($value)
+                : null;
+        }
+        else {
+            $keys = array_filter((array) $value, fn ($key) => $key !== null && $key !== '');
+            $related = $keys
+                ? $relatedModel->newQuery()->findMany($keys)
+                : $relatedModel->newCollection();
+        }
 
         $model->setRelation($name, $related);
     }

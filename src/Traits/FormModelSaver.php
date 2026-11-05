@@ -88,9 +88,7 @@ trait FormModelSaver
         $this->modelsToSave[$attrName] = $model;
 
         if (!$model instanceof DatabaseModel) {
-            if (method_exists($model, 'fill')) {
-                $model->fill($saveData);
-            }
+            $this->setEloquentModelAttributes($model, $saveData, $attrName);
             return;
         }
 
@@ -111,6 +109,43 @@ trait FormModelSaver
 
         if ($attributesToPurge) {
             $this->deferPurgedSaveAttributes($model, $attributesToPurge);
+        }
+    }
+
+    /**
+     * setEloquentModelAttributes fills a plain Eloquent model, where a value posted under a relation name
+     * sets the relation through the model inspector, so a belongsTo is associated and other relations
+     * hold the related records in memory, while every other value fills an attribute.
+     *
+     * @param \Illuminate\Database\Eloquent\Model $model Model to fill.
+     * @param array $saveData Attribute values to fill model.
+     * @return void
+     */
+    protected function setEloquentModelAttributes($model, $saveData, $attrName = '')
+    {
+        $attributes = [];
+
+        foreach ($saveData as $attribute => $value) {
+            if ($value === FormField::NO_SAVE_DATA) {
+                continue;
+            }
+
+            if (!is_string($attribute) || !app('model.inspector')->hasRelation($model, $attribute)) {
+                $attributes[$attribute] = $value;
+                continue;
+            }
+
+            if (is_array($value) && app('model.inspector')->isRelationTypeSingular($model, $attribute)) {
+                $attrChain = $attrName !== '' ? $attrName . '.' . $attribute : $attribute;
+                $this->setModelAttributes($model->{$attribute}, $value, $attrChain);
+                continue;
+            }
+
+            app('model.inspector')->setRelationValue($model, $attribute, $value);
+        }
+
+        if (method_exists($model, 'fill')) {
+            $model->fill($attributes);
         }
     }
 

@@ -442,9 +442,9 @@ class ListStructure extends Lists
             }
         }
         else {
-            // Simple Tree
+            // Simple Tree, where a plain Eloquent model associates its parent relation
             if (app('model.inspector')->hasRelation($this->model, 'parent')) {
-                $item->parent = Input::post($multisite ? 'parent_root_id' : 'parent_id');
+                app('model.inspector')->setRelationValue($item, 'parent', Input::post($multisite ? 'parent_root_id' : 'parent_id') ?: null);
                 $item->save(['force' => true]);
             }
 

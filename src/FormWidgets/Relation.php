@@ -263,7 +263,10 @@ class Relation extends FormWidgetBase
             $items = $items->toNested($removeOrphans);
         }
         elseif (!$items instanceof \Illuminate\Database\Eloquent\Collection) {
-            $items = $items->get()->toNested($removeOrphans);
+            // A Rain tree collection nests itself, other tree models nest through their getNested scope
+            $items = method_exists($items->getModel()->newCollection(), 'toNested')
+                ? $items->get()->toNested($removeOrphans)
+                : $items->getNested();
         }
 
         $options = [];
