@@ -118,6 +118,14 @@ class Relation extends FormWidgetBase
     }
 
     /**
+     * renderRelationElement renders the field made by makeRenderFormField inside the widget
+     */
+    protected function renderRelationElement($field)
+    {
+        return $this->parentForm->renderFieldElement($field);
+    }
+
+    /**
      * makeRenderFormField for rendering a simple field type
      */
     protected function makeRenderFormField()

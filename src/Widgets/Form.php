@@ -966,6 +966,15 @@ class Form extends WidgetBase implements FormElement
     }
 
     /**
+     * renderFieldLabelExtras returns markup placed after a field's label, such as a button
+     * that acts on the field. Empty by default.
+     */
+    protected function renderFieldLabelExtras(FormField $field): string
+    {
+        return '';
+    }
+
+    /**
      * getFieldTooltipValue looks up the field tooltip value
      * @param \Larajax\Ui\Classes\FormField $field
      * @return string

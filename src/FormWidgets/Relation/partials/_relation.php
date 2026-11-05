@@ -11,9 +11,9 @@
                 data-quick-created="true"
             <?php endif ?>
         >
-            <?= $this->parentForm->renderFieldElement($field) ?>
+            <?= $this->renderRelationElement($field) ?>
         </div>
     <?php else: ?>
-        <?= $this->parentForm->renderFieldElement($field) ?>
+        <?= $this->renderRelationElement($field) ?>
     <?php endif ?>
 </div>

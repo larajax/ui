@@ -15,6 +15,8 @@
             </label>
         <?php endif ?>
 
+        <?= $this->renderFieldLabelExtras($field) ?>
+
         <?php if ($fieldComment = $field->commentAbove): ?>
             <p class="form-text before-field"><?= $field->commentHtml ? trans($fieldComment) : e(__($fieldComment)) ?></p>
         <?php endif ?>

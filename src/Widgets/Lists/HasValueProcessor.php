@@ -103,9 +103,7 @@ trait HasValueProcessor
 
         $imageUrls = [];
         foreach ($images as $image) {
-            $imageUrls[] = is_object($image) && method_exists($image, 'getThumb')
-                ? $image->getThumb($width, $height, $options)
-                : $image;
+            $imageUrls[] = $this->getImageThumbUrl($image, $width, $height, $options);
         }
 
         return $this->makePartial('column_image', [
@@ -115,6 +113,18 @@ trait HasValueProcessor
             'width' => $width,
             'height' => $height
         ]);
+    }
+
+    /**
+     * getImageThumbUrl returns the thumbnail URL for an image column value, a file model
+     * or a stored path or URL, which is used as it is
+     * @return string
+     */
+    protected function getImageThumbUrl($image, $width, $height, $options)
+    {
+        return is_object($image) && method_exists($image, 'getThumb')
+            ? $image->getThumb($width, $height, $options)
+            : $image;
     }
 
     /**
