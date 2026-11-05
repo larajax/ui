@@ -10,7 +10,7 @@
     --bs-menu-padding-y: 0;
     --bs-menu-font-size: 1rem;
     --bs-menu-color: var(--bs-fg-body);
-    --bs-menu-bg: var(--bs-dialog-bg);
+    --bs-menu-bg: var(--oc-popup-bg);
     --bs-menu-border-radius: 0.25rem;
     --bs-menu-box-shadow: -2px 2px 5px rgba(67, 86, 100, 0.12);
     --bs-menu-divider-margin-x: 0;

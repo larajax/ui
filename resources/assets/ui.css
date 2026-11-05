@@ -1,17 +1,15 @@
 /*
  * Larajax UI - entry stylesheet
  *
- * Aggregates per-widget CSS via native @import, layered: variables and brand
- * theming first, then elements, then generic controls, then widgets that
- * build on them. The consumer includes only this file; the browser fetches
- * the imports on first paint.
+ * Aggregates per-widget CSS via native @import, layered: variables first,
+ * then elements, then generic controls, then widgets that build on them.
+ * The consumer includes only this file; the browser fetches the imports on
+ * first paint.
  */
 
-/* Variables: base bridges to Bootstrap 6 custom properties; light and dark
-   themes follow the data-bs-theme attribute */
+/* Variables: bridges to Bootstrap 6 custom properties, which follow the
+   data-bs-theme attribute for light and dark mode */
 @import "./variables.css";
-@import "./variables-light.css";
-@import "./variables-dark.css";
 
 /* Elements */
 @import "./elements/scoreboard/scoreboard.css";

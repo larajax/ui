@@ -1,10 +1,13 @@
 /*
- * Variables - base (theme independent)
+ * Variables
+ * --------------------------------------------------
+ *
+ * The library's colors are Bootstrap 6's, so the controls follow whatever
+ * Bootstrap theme the page has, in light and dark mode. Theming belongs to
+ * the host, which overrides these. October sets them in its backend _brand.css.
  * --------------------------------------------------*/
 
 :root {
-    --bs-body-font-family:      -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-
     --oc-brand-primary:          var(--bs-primary-base);
     --oc-brand-secondary:        var(--bs-gray-600);
     --oc-brand-success:          var(--bs-success-base);
@@ -22,9 +25,60 @@
     --oc-heading-color:          var(--bs-heading-color);
     --oc-emphasis-color:         var(--bs-fg-body);
     --oc-border-color:           var(--bs-border-color);
-    --oc-popup-bg:               var(--bs-dialog-bg);
-    --oc-popup-border:           1px solid rgba(149, 165, 166, 0.2);
+    --oc-border-focus:           var(--bs-focus-ring-color);
+    /* Inputs, and the editors framed like them, draw Bootstrap's focus ring this wide. 0 leaves focus to the border */
+    --oc-input-focus-ring-width: var(--bs-focus-ring-width);
+    --oc-popup-bg:               var(--bs-bg-body);
+    --oc-popup-border:           var(--bs-border-width) solid var(--bs-border-color-translucent);
     --oc-backdrop-opacity:       0.5;
+
+    --oc-accent:                 var(--bs-primary-base);
+    --oc-selection:              var(--bs-primary-base);
+    --oc-color-neutral:          var(--bs-warning-base);
+    --oc-color-positive:         var(--bs-success-base);
+    --oc-color-negative:         var(--bs-danger-base);
+
+    /* Surfaces drawn on the page, such as the popover head and the upload list */
+    --oc-primary-bg:             var(--bs-bg-body);
+    --oc-primary-color:          var(--bs-fg-2);
+    --oc-primary-border:         var(--bs-border-color);
+
+    /* The secondary button fill */
+    --oc-secondary-bg:           var(--bs-bg-3);
+    --oc-secondary-hover-bg:     var(--bs-bg-4);
+    --oc-secondary-active-bg:    color-mix(in oklch, var(--bs-bg-4), var(--bs-fg-body) 10%);
+
+    /* Forms */
+    --oc-form-control-bg:              var(--bs-bg-body);
+    --oc-form-control-readonly-bg:     var(--bs-bg-1);
+    --oc-form-control-readonly-border: var(--bs-border-color);
+    --oc-form-control-readonly-color:  var(--bs-fg-2);
+    --oc-form-control-disabled-bg:     var(--bs-bg-3);
+    --oc-form-control-disabled-color:  var(--bs-fg-3);
+    --oc-input-translatable-color:     var(--bs-fg-3);
+    --oc-input-translatable-bg:        var(--bs-bg-2);
+
+    /* Toolbars, tabs and dropdowns */
+    --oc-toolbar-color:          var(--bs-fg-2);
+    --oc-toolbar-bg:             var(--bs-bg-body);
+    --oc-toolbar-border:         var(--bs-border-color);
+    --oc-toolbar-hover-color:    var(--bs-fg-body);
+    --oc-toolbar-hover-bg:       var(--bs-bg-3);
+
+    --oc-tab-color:              var(--bs-fg-3);
+    --oc-tab-active-color:       var(--bs-fg-body);
+    --oc-tab-border:             var(--bs-border-color);
+    --oc-tab-hover-bg:           var(--bs-bg-2);
+
+    --oc-dropdown-trigger-border: var(--bs-border-color);
+    --oc-dropdown-trigger-color:  var(--bs-fg-body);
+    --oc-dropdown-trigger-bg:     var(--bs-bg-body);
+    --oc-dropdown-hover-bg:       var(--bs-primary-base);
+    --oc-dropdown-hover-color:    var(--bs-primary-contrast);
+    --oc-dropdown-active-bg:      color-mix(in oklch, var(--bs-primary-base) 95%, transparent);
+
+    /* The selected list row */
+    --oc-table-active-bg:        var(--bs-primary-bg-subtle);
 
     /* The icon buttons beside a search, such as list setup, the same in a toolbar and a filter */
     --oc-toolbar-action-size:      1.75rem;
