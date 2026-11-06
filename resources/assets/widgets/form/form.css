@@ -28,6 +28,16 @@
     }
 }
 
+.form-survey > * > .card > .card-body {
+    > .form-group:nth-last-child(1 of :not(:empty, .oc-hide, .d-none, [hidden])) {
+        padding-bottom: 0;
+
+        &:is(.checkbox-field, .radio-field) > .form-field:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
 /*
  * Nice forms
  */
