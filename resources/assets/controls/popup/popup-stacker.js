@@ -29,6 +29,15 @@ export class PopupStacker
     onPopupHidden(ev) {
         this.redrawStack();
         this.pullForward();
+        this.restoreBottomBackdrop();
+    }
+
+    // The popup left at the bottom of the stack dims the page again, should the one under it close first
+    restoreBottomBackdrop() {
+        const bottom = this.getAllPopups().at(-1);
+        if (bottom) {
+            bottom.classList.remove('popup-stacked');
+        }
     }
 
     onPopupShowing(ev) {

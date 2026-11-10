@@ -17,6 +17,17 @@
         outline: none;
     }
 
+    /* The backdrop inherits the dialog's visibility, which the fade-in holds hidden for its first frame, so it keeps its own to take over from the loading backdrop without the page flashing between them */
+    &[open]::backdrop {
+        visibility: visible;
+    }
+
+    /* Over another popup, only the first popup dims and blurs the page, and this one adds a light tint so the popups under it recede without fading into grey */
+    &.popup-stacked {
+        --bs-dialog-backdrop-bg: rgba(0, 0, 0, var(--oc-backdrop-stacked-opacity));
+        --bs-dialog-backdrop-blur: 0px;
+    }
+
     /* Scales in from its closed state, and out while hidden behind the loading indicator */
     &:not(.show) {
         opacity: 0;
@@ -151,6 +162,12 @@
     background-color: rgba(0, 0, 0, var(--oc-backdrop-opacity));
     backdrop-filter: blur(var(--bs-dialog-backdrop-blur, 8px));
     opacity: 1;
+
+    /* Loading a popup over another, it carries the stacked popup's light tint, which that popup's backdrop then takes over */
+    &.popup-backdrop-stacked {
+        background-color: rgba(0, 0, 0, var(--oc-backdrop-stacked-opacity));
+        backdrop-filter: none;
+    }
 
     /* Over its own open popup, whose dialog backdrop already dims the page */
     &.popup-backdrop-clear {

@@ -388,6 +388,9 @@ export class Popup
         this.isOpen = true;
         this.isConcealed = false;
 
+        // Over another popup, its backdrop only tints the page that popup already dims
+        dialog.classList.toggle('popup-stacked', hasOtherOpenPopup(dialog));
+
         // The loading backdrop already dims the page, so the dialog backdrop starts dimmed
         if (this.backdrop) {
             dialog.classList.add('dialog-swap-in');
@@ -552,9 +555,12 @@ export class Popup
             this.backdrop = document.createElement('div');
             this.backdrop.className = 'popup-backdrop fade';
 
-            // Over its own open popup the dialog backdrop already dims the page
+            // Over its own open popup the dialog backdrop already dims the page, and over another it only tints it
             if (isOverPopup) {
                 this.backdrop.classList.add('popup-backdrop-clear');
+            }
+            else if (hasOtherOpenPopup(this.container)) {
+                this.backdrop.classList.add('popup-backdrop-stacked');
             }
 
             var indicator = document.createElement('div');
@@ -907,6 +913,11 @@ function isOutside(dialog, ev) {
 }
 
 // Shows an element as a manual popover so it renders in the top layer, above open dialogs
+// Checks whether a popup other than the given dialog is open
+function hasOtherOpenPopup(dialog) {
+    return Array.from(document.querySelectorAll('dialog.control-popup[open]')).some((open) => open !== dialog);
+}
+
 function showInTopLayer(element) {
     if (typeof element.showPopover !== 'function') {
         return;

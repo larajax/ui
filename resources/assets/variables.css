@@ -31,6 +31,8 @@
     --oc-popup-bg:               var(--bs-bg-body);
     --oc-popup-border:           var(--bs-border-width) solid var(--bs-border-color-translucent);
     --oc-backdrop-opacity:       0.5;
+    /* A popup stacked on another adds only this tint, without blur, so the page does not darken with each one */
+    --oc-backdrop-stacked-opacity: 0.15;
 
     --oc-accent:                 var(--bs-primary-base);
     --oc-selection:              var(--bs-primary-base);

@@ -343,6 +343,43 @@ describe('popup stacker', () => {
         expect(first.content.style.transform).toBe('');
         expect(jax.popupStacker.getFirstPopup()).toBe(first.container);
     });
+
+    test('only the first popup dims the page, and a popup over it only tints it', () => {
+        const first = Popup.open({ content: '<div>First</div>' });
+        const second = Popup.open({ content: '<div>Second</div>' });
+        const third = Popup.open({ content: '<div>Third</div>' });
+
+        expect(first.container.classList.contains('popup-stacked')).toBe(false);
+        expect(second.container.classList.contains('popup-stacked')).toBe(true);
+        expect(third.container.classList.contains('popup-stacked')).toBe(true);
+    });
+
+    test('a popup loading over another carries the light tint on its loading backdrop', () => {
+        Popup.open({ content: '<div><a id="inner-trigger" data-handler="onLoadInner"></a></div>' });
+
+        Popup.fromElement(document.getElementById('inner-trigger'));
+
+        const backdrop = document.querySelector('.popup-backdrop');
+        expect(backdrop.classList.contains('popup-backdrop-stacked')).toBe(true);
+        expect(backdrop.classList.contains('popup-backdrop-clear')).toBe(false);
+    });
+
+    test('the first popup loading keeps the full loading backdrop', () => {
+        document.body.innerHTML = '<a id="link" data-handler="onLoadForm"></a>';
+
+        Popup.fromElement(document.getElementById('link'));
+
+        expect(document.querySelector('.popup-backdrop').classList.contains('popup-backdrop-stacked')).toBe(false);
+    });
+
+    test('the popup left when the one under it closes dims the page again', () => {
+        const first = Popup.open({ content: '<div>First</div>' });
+        const second = Popup.open({ content: '<div>Second</div>' });
+
+        first.hide();
+
+        expect(second.container.classList.contains('popup-stacked')).toBe(false);
+    });
 });
 
 describe('popup bindToPopups', () => {
