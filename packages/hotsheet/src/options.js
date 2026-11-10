@@ -39,8 +39,6 @@ export const defaultOptions = {
     columnResize: true,
     // Dragging a selected column header moves the column, for viewing only
     columnMove: false,
-    // Alternate rows are tinted
-    striped: false,
     // Extra class for checkbox inputs, such as a framework's form-check-input
     checkboxClass: null,
     // (event, sheet) => true when a key is handled before the grid's own keys, while not editing

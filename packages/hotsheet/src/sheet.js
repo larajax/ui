@@ -1550,6 +1550,6 @@ export class Sheet extends Emitter {
         this.editor.destroy();
         this.clearListeners();
         this.element.replaceChildren();
-        this.element.classList.remove('hotsheet', 'is-active', 'is-striped', 'is-resizing', 'is-read-only');
+        this.element.classList.remove('hotsheet', 'is-active', 'is-resizing', 'is-read-only');
     }
 }

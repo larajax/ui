@@ -151,7 +151,6 @@ export function registerDataTable(jax) {
                     return self.onShortcut(event, sheet);
                 },
                 checkboxClass: 'check',
-                striped: true,
                 language: this.config.language,
                 lang: this.config.lang
             });

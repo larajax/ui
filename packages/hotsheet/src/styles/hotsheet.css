@@ -12,7 +12,6 @@
     --hotsheet-accent: var(--oc-brand-primary, var(--bs-primary-base, #0d6efd));
     --hotsheet-range-bg: color-mix(in srgb, var(--hotsheet-accent) 12%, transparent);
     --hotsheet-focus: var(--oc-border-focus, var(--hotsheet-accent));
-    --hotsheet-striped-bg: color-mix(in srgb, var(--hotsheet-cell-color) 2.5%, transparent);
     --hotsheet-invalid-ring: var(--oc-brand-danger, var(--bs-danger-base, #dc3545));
     --hotsheet-invalid-bg: color-mix(in srgb, var(--hotsheet-invalid-ring) 15%, var(--hotsheet-cell-bg));
     --hotsheet-invalid-row-bg: color-mix(in srgb, var(--hotsheet-invalid-ring) 6%, var(--hotsheet-cell-bg));
@@ -82,11 +81,6 @@
 /* Spacers keep the place of rows a large table hasn't drawn */
 .hotsheet-spacer {
     pointer-events: none;
-}
-
-/* Striped rows keep an opaque background, so frozen cells still cover what scrolls under them */
-:where(.hotsheet.is-striped .hotsheet-body .hotsheet-row.is-even) > .hotsheet-cell {
-    background: linear-gradient(var(--hotsheet-striped-bg), var(--hotsheet-striped-bg)), var(--hotsheet-cell-bg);
 }
 
 .hotsheet-cell {

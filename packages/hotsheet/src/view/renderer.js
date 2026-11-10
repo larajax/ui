@@ -206,8 +206,7 @@ function renderEmptyState({ title, description }) {
 function renderRow(sheet, row, rowIndex) {
     const rowEl = element('div', 'hotsheet-row', { role: 'row', 'aria-rowindex': rowIndex + 2 });
 
-    // Striping and the last row's edge go by row number, since a large table draws only some rows
-    rowEl.classList.toggle('is-even', rowIndex % 2 === 1);
+    // The last row's edge goes by row number, since a large table draws only some rows
     rowEl.classList.toggle('is-last', rowIndex === sheet.viewRows.length - 1);
 
     // After a save found errors, rows with invalid cells stand out until fixed
@@ -276,7 +275,6 @@ export function applyLayout(sheet) {
     const { scroller, table } = sheet.elements;
     const { template, minWidth } = columnTemplate(sheet.viewColumns, sheet.options.rowHeaders);
 
-    sheet.element.classList.toggle('is-striped', !!sheet.options.striped);
     sheet.element.classList.toggle('is-read-only', !!sheet.options.readOnly);
     table.setAttribute('aria-multiselectable', String(sheet.options.multiSelect));
     table.setAttribute('aria-readonly', String(!!sheet.options.readOnly));
