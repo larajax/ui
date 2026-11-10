@@ -5,6 +5,11 @@
  * doesn't use absolute positioning and relies on the scrollLeft/scrollTop DHTML properties.
  * The element width should be fixed with the CSS or JavaScript.
  *
+ * An element that scrolls natively, with an overflow of auto or scroll along its direction, leaves
+ * touch and the wheel along that direction to the browser, which keeps momentum, smooth scrolling
+ * and overscroll, while the mouse drags it and the wheel across it scrolls it. The scroll classes
+ * follow changes in the size of the element and its content, as well as the window.
+ *
  * Events dispatched on the element:
  * - drag-scroll:start
  * - drag-scroll:drag
@@ -32,7 +37,7 @@
  * - isStart - determines if the scrollable area is in its start (left or top)
  * - isEnd - determines if the scrollable area is in its end (right or bottom)
  * - goToStart - moves the scrollable area to the start (left or top)
- * - goToElement - moves the scrollable area to an element
+ * - goToElement - moves the scrollable area to an element, at once with a duration of 0
  * - pause - pauses drag and scroll
  * - resume - resumes drag and scroll
  */
@@ -70,6 +75,8 @@ export default class DragScroll {
         this.touchDragStarted = false;
         this.eventCoordName = this.options.vertical ? 'pageY' : 'pageX';
         this.isNative = this.options.useNative && document.documentElement.classList.contains('mobile');
+        this.isNativeTouch = this.isNative || this.scrollsNatively();
+        this.resizeObserver = null;
         this.fixScrollClassesIntervalId = null;
         this.wheelUpdateTimer = null;
         this.markers = [];
@@ -111,7 +118,8 @@ export default class DragScroll {
             this.listen(element, 'mousedown', this.onMouseDown);
         }
 
-        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+        // A native scroll container leaves touch to the browser
+        if (!this.isNativeTouch && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
             this.listen(element, 'touchstart', this.onTouchStart);
         }
 
@@ -119,8 +127,8 @@ export default class DragScroll {
         this.listen(element, 'click', this.onClickCapture, true);
 
         if (!this.options.noScrollClasses) {
-            this.listen(window, 'resize', this.onResize);
             this.listen(element, 'scroll', this.onScroll);
+            this.observeSize();
         }
 
         this.fixScrollClasses();
@@ -129,6 +137,11 @@ export default class DragScroll {
     dispose() {
         clearTimeout(this.fixScrollClassesIntervalId);
         clearTimeout(this.wheelUpdateTimer);
+
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+            this.resizeObserver = null;
+        }
 
         this.stopWindowListeners();
 
@@ -159,6 +172,39 @@ export default class DragScroll {
         return typeof value === 'string' ? document.querySelector(value) : value;
     }
 
+    // Whether the element is a native scroll container along its direction
+    scrollsNatively() {
+        const overflow = getComputedStyle(this.el)[this.options.vertical ? 'overflowY' : 'overflowX'];
+
+        return overflow === 'auto' || overflow === 'scroll';
+    }
+
+    // The scroll classes follow the size of the element and its content, falling back to the window
+    observeSize() {
+        if (typeof ResizeObserver === 'undefined') {
+            this.listen(window, 'resize', this.onResize);
+            return;
+        }
+
+        this.resizeObserver = new ResizeObserver(this.onResize);
+        this.resizeObserver.observe(this.el);
+        Array.from(this.el.children).forEach((child) => this.resizeObserver.observe(child));
+    }
+
+    // Where an element sits along the scroll direction, in the scrolled content, whatever its offset parent
+    itemBounds(target) {
+        const itemRect = target.getBoundingClientRect(),
+            elRect = this.el.getBoundingClientRect();
+
+        if (this.options.vertical) {
+            const start = itemRect.top - elRect.top - this.el.clientTop + this.el.scrollTop;
+            return { start, end: start + itemRect.height };
+        }
+
+        const start = itemRect.left - elRect.left - this.el.clientLeft + this.el.scrollLeft;
+        return { start, end: start + itemRect.width };
+    }
+
     matchesDragSelector(target) {
         if (!this.options.dragSelector) {
             return true;
@@ -170,29 +216,37 @@ export default class DragScroll {
         this.el.dispatchEvent(new CustomEvent(name, { bubbles: true }));
     }
 
+    // The wheel delta in pixels, positive towards the end (right or bottom)
     getWheelDelta(delta, event) {
         const deltaFactor = event.deltaMode === 1 ? 40 : (event.deltaMode === 2 ? this.el.clientHeight : 1);
 
-        return -(delta || 0) * deltaFactor;
+        return (delta || 0) * deltaFactor;
     }
 
     onWheel(event) {
-        if (!this.options.useScroll || this.paused) {
+        // Pinch and the browser's zoom send the wheel with a modifier
+        if (!this.options.useScroll || this.paused || event.ctrlKey || event.metaKey) {
             return;
         }
 
         const offsetX = this.getWheelDelta(event.deltaX, event),
-            offsetY = this.getWheelDelta(event.deltaY, event);
+            offsetY = this.getWheelDelta(event.deltaY, event),
+            along = this.options.vertical ? offsetY : offsetX,
+            across = this.options.vertical ? offsetX : offsetY;
 
-        let offset;
-        if (!offsetX && this.options.useComboScroll) {
-            offset = offsetY * -1;
+        // A native scroll container takes the wheel along its direction itself, scrolling it here as well
+        // would move it twice, so only the wheel across it is turned
+        if (along && this.scrollsNatively()) {
+            if (this.options.noOverScroll && (along < 0 ? this.isStart() : this.isEnd())) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            return;
         }
-        else if (!offsetY && this.options.useComboScroll) {
-            offset = offsetX;
-        }
-        else {
-            offset = this.options.vertical ? offsetY * -1 : offsetX;
+
+        const offset = along || (this.options.useComboScroll ? across : 0);
+        if (!offset) {
+            return;
         }
 
         const scrolled = this.scrollWheel(offset);
@@ -432,9 +486,9 @@ export default class DragScroll {
         const offset = 1;
 
         if (!this.options.vertical) {
-            return this.el.scrollWidth - (this.el.scrollLeft + this.el.offsetWidth) - offset <= 0;
+            return this.el.scrollWidth - (this.el.scrollLeft + this.el.clientWidth) - offset <= 0;
         }
-        return this.el.scrollHeight - (this.el.scrollTop + this.el.offsetHeight) - offset <= 0;
+        return this.el.scrollHeight - (this.el.scrollTop + this.el.clientHeight) - offset <= 0;
     }
 
     goToStart() {
@@ -456,10 +510,11 @@ export default class DragScroll {
             return false;
         }
 
+        const { start } = this.itemBounds(activeElement);
         if (!this.options.vertical) {
-            return activeElement.offsetLeft > this.el.scrollLeft + this.el.clientWidth;
+            return start > this.el.scrollLeft + this.el.clientWidth;
         }
-        return activeElement.offsetTop > this.el.scrollTop + this.el.clientHeight;
+        return start > this.el.scrollTop + this.el.clientHeight;
     }
 
     /*
@@ -472,10 +527,8 @@ export default class DragScroll {
             return false;
         }
 
-        if (!this.options.vertical) {
-            return activeElement.offsetLeft + activeElement.offsetWidth < this.el.scrollLeft;
-        }
-        return activeElement.offsetTop + activeElement.offsetHeight < this.el.scrollTop;
+        const { end } = this.itemBounds(activeElement);
+        return end < (this.options.vertical ? this.el.scrollTop : this.el.scrollLeft);
     }
 
     goToElement(element, callback, options) {
@@ -489,28 +542,33 @@ export default class DragScroll {
             alignBottom: false
         }, options || {});
 
+        const vertical = this.options.vertical,
+            prop = vertical ? 'scrollTop' : 'scrollLeft',
+            current = this.el[prop],
+            size = vertical ? this.el.clientHeight : this.el.clientWidth,
+            { start, end } = this.itemBounds(target),
+            // Aligning to the bottom leaves an item's height of room after a vertical target
+            room = vertical && params.alignBottom ? end - start : 0;
+
         let destination = null;
 
-        if (!this.options.vertical) {
-            if (target.offsetLeft - this.el.scrollLeft < 0) {
-                destination = { scrollLeft: target.offsetLeft };
-            }
-            else if (target.offsetLeft + target.offsetWidth - (this.el.scrollLeft + this.el.clientWidth) > 0) {
-                destination = { scrollLeft: target.offsetLeft + target.offsetWidth - this.el.clientWidth };
-            }
+        if (start < current) {
+            destination = { [prop]: start };
         }
-        else {
-            const heightOffset = params.alignBottom ? target.offsetHeight : 0;
-
-            if (target.offsetTop - this.el.scrollTop < 0) {
-                destination = { scrollTop: target.offsetTop };
-            }
-            else if (target.offsetTop + heightOffset - (this.el.scrollTop + this.el.clientHeight) > 0) {
-                destination = { scrollTop: target.offsetTop + target.offsetHeight - this.el.clientHeight + heightOffset };
-            }
+        else if (end + room > current + size) {
+            destination = { [prop]: end + room - size };
         }
 
         if (!destination) {
+            if (callback !== undefined) {
+                callback();
+            }
+            return;
+        }
+
+        if (params.duration <= 0) {
+            this.el[prop] = destination[prop];
+            this.fixScrollClasses();
             if (callback !== undefined) {
                 callback();
             }

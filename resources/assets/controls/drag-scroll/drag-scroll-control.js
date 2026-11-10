@@ -10,6 +10,7 @@
  * - noDragSupport - disables drag support, leaving only mouse wheel support
  * - useNativeDrag - if native CSS is enabled via "mobile" on the HTML tag
  * - vertical - enables vertical scrolling mode
+ * - scrollToActive - brings the element with the active class into view when the control connects
  */
 'use strict';
 
@@ -36,6 +37,13 @@ export function registerDragScroll(jax) {
                 vertical: this.config.vertical,
                 noOverScroll: this.config.vertical
             });
+
+            if (this.config.scrollToActive) {
+                const active = this.element.querySelector('.active');
+                if (active) {
+                    this.instance.goToElement(active, undefined, { duration: 0 });
+                }
+            }
         }
 
         disconnect() {
