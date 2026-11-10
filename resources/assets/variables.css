@@ -46,9 +46,10 @@
     --oc-primary-border:         var(--bs-border-color);
 
     /* The secondary button fill */
-    --oc-secondary-bg:           var(--bs-bg-3);
-    --oc-secondary-hover-bg:     var(--bs-bg-4);
-    --oc-secondary-active-bg:    color-mix(in oklch, var(--bs-bg-4), var(--bs-fg-body) 10%);
+    /* Secondary buttons tint whatever surface they sit on with the text colour */
+    --oc-secondary-bg:           color-mix(in oklch, var(--bs-fg-body) 7%, transparent);
+    --oc-secondary-hover-bg:     color-mix(in oklch, var(--bs-fg-body) 11%, transparent);
+    --oc-secondary-active-bg:    color-mix(in oklch, var(--bs-fg-body) 15%, transparent);
 
     /* Forms */
     --oc-form-control-bg:              var(--bs-bg-body);

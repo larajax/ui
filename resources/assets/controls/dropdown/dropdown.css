@@ -3,28 +3,22 @@
  *
  * Gives Bootstrap menus (data-bs-toggle="menu") that carry the .control-dropdown class the library look.
  */
+/* Rows sit a little in from the menu's edges with rounded corners, sized like form controls, as the filter's dropdown options are, under Bootstrap's own menu corners and shadow */
 .menu.control-dropdown {
     --bs-menu-zindex: var(--oc-zindex-dropdown);
-    --bs-menu-gap: 0;
-    --bs-menu-padding-x: 0;
-    --bs-menu-padding-y: 0;
     --bs-menu-font-size: 1rem;
     --bs-menu-color: var(--bs-fg-body);
     --bs-menu-bg: var(--oc-popup-bg);
-    --bs-menu-border-radius: 0.25rem;
-    --bs-menu-box-shadow: -2px 2px 5px rgba(67, 86, 100, 0.12);
-    --bs-menu-divider-margin-x: 0;
-    --bs-menu-divider-margin-y: 0;
     --bs-menu-item-color: var(--bs-fg-body);
     --bs-menu-item-hover-color: var(--oc-dropdown-hover-color);
     --bs-menu-item-hover-bg: var(--oc-dropdown-hover-bg);
     --bs-menu-item-active-color: var(--oc-dropdown-hover-color);
     --bs-menu-item-active-bg: var(--oc-dropdown-active-bg);
-    --bs-menu-item-disabled-color: #98A0A0;
+    --bs-menu-item-disabled-color: var(--bs-fg-3);
     --bs-menu-item-gap: 0.625rem;
-    --bs-menu-item-padding-x: 1.125rem;
-    --bs-menu-item-padding-y: 0.75rem;
-    --bs-menu-item-border-radius: 0;
+    --bs-menu-item-padding-x: var(--bs-btn-input-padding-x);
+    --bs-menu-item-padding-y: var(--bs-btn-input-padding-y);
+    --bs-menu-item-border-radius: 0.25rem;
     border: var(--oc-popup-border);
 
     /* Unlayered item states so link rules from the surrounding widget never win, submenu triggers included */
@@ -76,18 +70,5 @@
         > i {
             color: inherit;
         }
-    }
-
-    /* Rounded to the menu's corners, where a submenu trigger counts as the row its submenu sits on */
-    > .menu-item:first-child,
-    > .submenu:first-child > .menu-item {
-        border-top-left-radius: 0.25rem;
-        border-top-right-radius: 0.25rem;
-    }
-
-    > .menu-item:last-child,
-    > .submenu:last-child > .menu-item {
-        border-bottom-left-radius: 0.25rem;
-        border-bottom-right-radius: 0.25rem;
     }
 }

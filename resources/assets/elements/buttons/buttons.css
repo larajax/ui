@@ -2,21 +2,37 @@
  * Buttons
  */
 
-/* The bare base class gets the state colors Bootstrap leaves unset, so its active and disabled states draw no border */
+/* The bare base class is the neutral default, a surface a step above the page inside a light border, apart from the tinted secondary and the outline */
 :where(.btn:not(.btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link)) {
+    --bs-btn-bg: light-dark(var(--bs-bg-body), var(--bs-bg-2));
+    --bs-btn-border-color: var(--bs-border-color);
     --bs-btn-hover-color: var(--bs-btn-color);
+    --bs-btn-hover-bg: light-dark(var(--bs-bg-1), var(--bs-bg-3));
+    --bs-btn-hover-border-color: var(--bs-border-color);
     --bs-btn-active-color: var(--bs-btn-color);
-    --bs-btn-active-border-color: transparent;
+    --bs-btn-active-bg: light-dark(var(--bs-bg-2), var(--bs-bg-4));
+    --bs-btn-active-border-color: var(--bs-border-color);
     --bs-btn-disabled-color: var(--bs-btn-color);
-    --bs-btn-disabled-border-color: transparent;
+    --bs-btn-disabled-bg: light-dark(var(--bs-bg-body), var(--bs-bg-2));
+    --bs-btn-disabled-border-color: var(--bs-border-color);
+    --oc-btn-box-shadow: var(--bs-box-shadow-xs);
+    --oc-btn-active-box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.06);
 }
 
-/* Solid buttons carry a soft drop shadow, unless the styled modifier draws its own */
+/* Solid buttons keep a light lift, a soft shadow under a faint top highlight, so they read as buttons without the old raised look */
 .btn-solid {
-    --oc-btn-box-shadow: rgba(20, 19, 78, 0.32) 0 1px 1px 0, rgba(64, 68, 82, 0.08) 0 2px 5px 0;
+    --oc-btn-box-shadow: var(--bs-box-shadow-sm), inset 0 1px 0 rgb(255 255 255 / 0.16);
+    --oc-btn-active-box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.16);
+}
 
-    &:not(.btn-styled) {
-        box-shadow: var(--oc-btn-box-shadow);
+/* A press sinks the button without changing its shape, its lift giving way to a soft inner shadow, as Bootstrap's styled button does but lighter, and so does an open menu's toggle */
+:is(.btn, .btn-solid) {
+    box-shadow: var(--oc-btn-box-shadow, none);
+
+    &:active,
+    &.active,
+    &.show {
+        box-shadow: var(--oc-btn-active-box-shadow, none);
     }
 }
 
@@ -25,25 +41,27 @@
     --bs-btn-font-weight: 600;
 }
 
-/* Secondary keeps the light slate fill */
+/* Secondary is a tint of the text colour, edged by a hairline of it and a slight shadow, so it sits on any surface in either theme */
 .btn-solid.theme-secondary {
-    --oc-secondary-outline: rgba(64, 68, 82, 0.16);
+    --oc-btn-box-shadow: var(--bs-box-shadow-xs), inset 0 0 0 1px color-mix(in oklch, var(--bs-fg-body) 7%, transparent);
+    --oc-btn-active-box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--bs-fg-body) 7%, transparent), inset 0 1px 2px rgb(0 0 0 / 0.1);
     --bs-btn-color: var(--bs-fg-body);
     --bs-btn-bg: var(--oc-secondary-bg);
-    --bs-btn-border-color: var(--oc-secondary-outline);
+    --bs-btn-border-color: transparent;
     --bs-btn-hover-color: var(--bs-fg-body);
     --bs-btn-hover-bg: var(--oc-secondary-hover-bg);
-    --bs-btn-hover-border-color: var(--oc-secondary-outline);
+    --bs-btn-hover-border-color: transparent;
     --bs-btn-active-color: var(--bs-fg-body);
     --bs-btn-active-bg: var(--oc-secondary-active-bg);
-    --bs-btn-active-border-color: var(--oc-secondary-outline);
+    --bs-btn-active-border-color: transparent;
     --bs-btn-disabled-color: var(--bs-fg-body);
     --bs-btn-disabled-bg: var(--oc-secondary-bg);
-    --bs-btn-disabled-border-color: var(--oc-secondary-outline);
-    --oc-btn-box-shadow: rgba(0, 0, 0, 0.12) 0 1px 1px 0, rgba(64, 68, 82, 0.08) 0 2px 5px 0;
+    --bs-btn-disabled-border-color: transparent;
+}
 
-    /* The faint outline is the border, drawn over the page inside the button's box, so it matches the other buttons' size */
-    background-clip: padding-box;
+/* Joined to a field, a button sits flush with it */
+.input-group :is(.btn, .btn-solid) {
+    --oc-btn-box-shadow: none;
 }
 
 /* A muted link button keeps its underline and darkens on hover */
@@ -54,10 +72,6 @@
     &:focus-visible {
         color: #124364;
     }
-}
-
-.input-group .btn-solid {
-    --oc-btn-box-shadow: none;
 }
 
 /*
