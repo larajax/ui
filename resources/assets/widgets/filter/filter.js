@@ -118,16 +118,8 @@ export function registerFilterWidget(jax) {
             const scrollable = this.primaryScrollable,
                 tab = scrollable ? scrollable.querySelector('.scope-tabs .active') : null;
 
-            if (tab) {
-                const left = tab.offsetLeft,
-                    right = left + tab.offsetWidth;
-
-                if (left < scrollable.scrollLeft) {
-                    scrollable.scrollLeft = left;
-                }
-                else if (right > scrollable.scrollLeft + scrollable.clientWidth) {
-                    scrollable.scrollLeft = right - scrollable.clientWidth;
-                }
+            if (tab && this.primaryDragScroll) {
+                this.primaryDragScroll.goToElement(tab, undefined, { duration: 0 });
             }
 
             this.primaryDragScroll?.fixScrollClasses();

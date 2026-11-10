@@ -722,10 +722,8 @@ describe('primary scope tabs', () => {
         });
 
         group.innerHTML = tabsMarkup('0');
-        Object.defineProperties(group.querySelector('[data-filter-tab-value="0"]'), {
-            offsetLeft: { configurable: true, value: 800 },
-            offsetWidth: { configurable: true, value: 120 }
-        });
+        group.getBoundingClientRect = () => ({ left: 0, top: 0, width: 300, height: 40 });
+        group.querySelector('[data-filter-tab-value="0"]').getBoundingClientRect = () => ({ left: 800, top: 0, width: 120, height: 40 });
         jax.Events.dispatch('ajax:update', { target: group });
         await sleep(50);
 

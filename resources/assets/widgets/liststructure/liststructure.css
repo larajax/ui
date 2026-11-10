@@ -12,29 +12,29 @@ table.table.data {
      * Trees
      */
 
-    tr:hover .list-reorder {
-        span.list-reorder-handle {
-            display: block;
-        }
+    /* The grip shows on the row under the pointer */
+    tr:hover .list-reorder span.list-reorder-handle,
+    span.list-reorder-handle:focus-visible {
+        opacity: 1;
     }
 
     tbody.tree-drag-mode {
         &, * {
-            cursor: move!important;
+            cursor: grabbing !important;
         }
 
         td.list-reorder span.list-reorder-handle {
-            display: none;
+            opacity: 0;
         }
 
         tr.sortable-chosen td.list-reorder span.list-reorder-handle {
-            display: block;
+            opacity: 1;
         }
     }
 
     tbody.tree-drag-updated {
         td.list-reorder span.list-reorder-handle {
-            display: none !important;
+            opacity: 0 !important;
         }
     }
 
@@ -51,86 +51,112 @@ table.table.data {
         position: relative;
 
         span.list-reorder-handle {
-            display: none;
-            background: var(--oc-toolbar-bg);
-            text-align: center;
-            cursor: move;
+            display: grid;
+            place-items: center;
+            opacity: 0;
+            color: var(--bs-fg-3);
+            cursor: grab;
             touch-action: none;
-            left: -0.375rem;
+            left: 0.125rem;
 
-            width: 1.75rem;
+            width: 1.25rem;
             height: 1.75rem;
             position: absolute;
             top: calc(50% - 0.875rem);
-            border-radius: 0.1875rem;
+            border-radius: var(--bs-radius-4);
             text-decoration: none;
+            transition: opacity 0.15s, background-color 0.15s;
 
+            /* The glyph draws a touch high in its box, so it drops to meet the row's text */
             i {
+                font-size: 1.125rem;
                 position: relative;
-                font-size: 1.6875rem;
-                top: 2px;
+                top: 0.0625rem;
+            }
+
+            &:hover {
+                color: var(--bs-fg-body);
+                background: var(--oc-toolbar-hover-bg);
             }
 
             &:active {
-                background: var(--oc-toolbar-hover-bg);
+                cursor: grabbing;
             }
         }
     }
 
+    /* The tree cell indents by level, with a guide under each ancestor's toggle running down its children */
     td.list-cell-tree {
+        --tree-indent: 18px;
+        --tree-toggle-size: 1.25rem;
+        --tree-guide-color: var(--bs-border-color);
+        --tree-toggle-left: calc(var(--tree-pad, 0px) - var(--tree-toggle-size) - 0.125rem);
+
         vertical-align: middle;
         position: relative;
         transition: padding 0.3s ease;
+        /* Each guide sits mid-tile on a whole pixel, so no tile edge bleeds a faint line into the row's own toggle */
+        background-image: repeating-linear-gradient(to right, transparent 0 calc(var(--tree-indent) / 2), var(--tree-guide-color) 0 calc(var(--tree-indent) / 2 + 1px), transparent 0 var(--tree-indent));
+        background-repeat: no-repeat;
+        background-size: calc(var(--tree-level, 0) * var(--tree-indent)) 100%;
+        background-position: round(calc(var(--tree-toggle-left) + var(--tree-toggle-size) / 2 - (var(--tree-level, 0) + 0.5) * var(--tree-indent) - 0.5px), 1px) 0;
 
         a.tree-expand-collapse {
-            width: 1.75rem;
-            height: 1.75rem;
-            display: block;
             position: absolute;
-            top: calc(50% - 0.875rem);
-            border-radius: 0.1875rem;
+            top: 50%;
+            left: var(--tree-toggle-left);
+            display: grid;
+            place-items: center;
+            width: var(--tree-toggle-size);
+            height: var(--tree-toggle-size);
+            margin-top: calc(var(--tree-toggle-size) / -2);
+            border-radius: var(--bs-radius-4);
+            color: var(--bs-fg-3);
             text-decoration: none;
-        }
-
-        a.tree-expand-collapse {
-            margin-left: -1.75rem;
+            transition: background-color 0.15s, color 0.15s;
 
             > span {
-                position: absolute;
-                display: inline-block;
-                left: 0;
-                top: 0;
-                width: 1.75rem;
-                height: 1.75rem;
-
-                > i {
-                    position: absolute;
-                    left: calc(100% - 1.125rem);
-                    top: 0.375rem;
-                    width: 1.75rem;
-                    height: 1.75rem;
-                    font-size: 1.0625rem;
-                    color: var(--bs-fg-body);
-                    text-indent: 0;
-                }
+                display: contents;
             }
 
-            &.is-expanded > span > i {
-                left: calc(100% - 1.25rem);
+            i {
+                font-size: 0.875rem;
+                line-height: 1;
+            }
+
+            &:hover {
+                color: var(--bs-fg-body);
+                background: var(--oc-toolbar-hover-bg);
             }
         }
     }
 }
 
+/* After a checkbox, the grip column opens with a small gap so the grip keeps clear of it */
 .control-list.list-checkboxes table.table.data {
     th.list-reorder,
     td.list-reorder {
-        width: 1.25rem;
+        width: 2rem;
+        min-width: 2rem;
     }
 
     td.list-reorder {
         span.list-reorder-handle {
-            left: -0.875rem;
+            left: 0.375rem;
         }
     }
+}
+
+/* With no row dragging, the grip is the only way to reorder, so it stays faintly in view */
+.control-list[data-drag-row=""] table.table.data td.list-reorder span.list-reorder-handle {
+    opacity: 0.45;
+}
+
+.control-list[data-drag-row=""] table.table.data tr:hover td.list-reorder span.list-reorder-handle {
+    opacity: 1;
+}
+
+/* A row that drags shows it is under the pointer, whether or not it opens a record */
+.control-list[data-control~="liststructurewidget"] table.table.data tbody:not(.tree-drag-mode) tr:not(.no-data):not(.active):not(.selected):hover td {
+    background-color: var(--oc-list-row-hover-bg);
 }

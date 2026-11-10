@@ -10,7 +10,7 @@
 ?>
 <div
     class="control-list <?= implode(' ', $classes) ?>"
-    data-control="liststructurewidget"
+    data-control="listwidget liststructurewidget"
     data-reorder-handler="<?= $this->getEventHandler('onReorder') ?>"
     data-toggle-handler="<?= $this->getEventHandler('onToggleTreeNode') ?>"
     data-use-reorder="<?= $showReorder ?>"

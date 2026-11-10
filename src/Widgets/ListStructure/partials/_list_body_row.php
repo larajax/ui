@@ -39,7 +39,8 @@
             $isTreeCell = $index === 1 && $useStructure;
             if ($isTreeCell) {
                 $classes[] = 'list-cell-tree';
-                $styles = 'padding-left:'.$this->getIndentStartSize($treeLevel).'px';
+                $indent = $this->getIndentStartSize($treeLevel);
+                $styles = '--tree-level:'.$treeLevel.';--tree-pad:'.$indent.'px;padding-left:'.$indent.'px';
             }
         ?>
         <td class="<?= implode(' ', $classes) ?>" style="<?= $styles ?>" <?= $isLastWithoutStructure ? 'colspan="2"' : '' ?>>

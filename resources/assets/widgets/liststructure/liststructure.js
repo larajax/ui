@@ -2,7 +2,7 @@
  * List structure widget control
  *
  * Data attributes:
- * - data-control="liststructurewidget" - enables the control
+ * - data-control="listwidget liststructurewidget" - enables the control, beside the list widget control that handles its checkboxes
  * - data-reorder-handler - AJAX handler for reorder postbacks
  * - data-toggle-handler - AJAX handler for tree node toggling
  * - data-use-reorder / data-use-tree / data-drag-row
@@ -453,7 +453,12 @@ export function registerListStructureWidget(jax) {
 
             const treeCell = [...item.children].find((cell) => cell.classList.contains('list-cell-tree'));
             if (treeCell) {
-                treeCell.style.paddingLeft = this.getIndentStartSize(indentLevel) + 'px';
+                const indent = this.getIndentStartSize(indentLevel) + 'px';
+
+                // The guides and the toggle are placed from the level and indent
+                treeCell.style.paddingLeft = indent;
+                treeCell.style.setProperty('--tree-pad', indent);
+                treeCell.style.setProperty('--tree-level', String(indentLevel));
             }
         }
 
