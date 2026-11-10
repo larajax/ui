@@ -406,20 +406,23 @@ export function registerFilterWidget(jax) {
             let availableOptions = [],
                 selectedOptions = [];
 
+            // A selected option is a chip with a dismiss button, and an available one a row that adds it
             const renderItem = (list, option, isActive) => {
                 const li = document.createElement('li');
                 li.dataset.itemId = option.id;
                 li.className = isActive ? 'is-active' : '';
-                li.innerHTML = '<button type="button" class="filter-item"><span class="filter-item-label"></span></button>';
-                const button = li.firstChild;
-                button.querySelector('.filter-item-label').textContent = option.name;
+                li.innerHTML = isActive
+                    ? '<span class="chip"><span class="chip-label"></span><button type="button" class="chip-dismiss"></button></span>'
+                    : '<button type="button" class="filter-item"><span class="filter-item-label"></span></button>';
+                const button = li.querySelector('button');
+                li.querySelector(isActive ? '.chip-label' : '.filter-item-label').textContent = option.name;
                 button.setAttribute('aria-label', (isActive
                     ? group.dataset.removeLabel || 'Remove :name'
                     : group.dataset.addLabel || 'Add :name').replace(':name', option.name));
                 const iconClass = isActive ? group.dataset.removeIcon : group.dataset.addIcon;
                 if (iconClass) {
                     const icon = document.createElement('i');
-                    icon.className = iconClass + ' filter-item-icon';
+                    icon.className = iconClass + (isActive ? '' : ' filter-item-icon');
                     icon.setAttribute('aria-hidden', 'true');
                     button.appendChild(icon);
                 }

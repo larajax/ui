@@ -264,6 +264,23 @@ describe('group options', () => {
         expect(jax.requests.length).toBe(0);
     });
 
+    test('a selected option is a Bootstrap chip with a dismiss button, and an available one a row with an add mark', () => {
+        renderFilter(`<div class="filter-group"><a href="javascript:;" class="filter-scope" data-scope-name="tags">Tags</a><template data-scope-form>${groupForm({
+            active: [{ id: '2', name: 'Lamps' }],
+            available: [{ id: '1', name: 'Desks' }, { id: '2', name: 'Lamps' }]
+        }).replace('data-control="groupfilter"', 'data-control="groupfilter" data-add-icon="ph ph-plus" data-remove-icon="ph ph-x"')}</template></div>`);
+        openScope('tags');
+
+        const chip = document.querySelector('[data-groupfilter-active] li > .chip');
+        expect(chip.querySelector('.chip-label').textContent).toBe('Lamps');
+        expect(chip.querySelector('button.chip-dismiss').getAttribute('aria-label')).toBe('Remove Lamps');
+        expect(chip.querySelector('.chip-dismiss > i').className).toBe('ph ph-x');
+
+        const row = document.querySelector('[data-groupfilter-available] li > button.filter-item');
+        expect(row.querySelector('.filter-item-label').textContent).toBe('Desks');
+        expect(row.querySelector('i').className).toBe('ph ph-plus filter-item-icon');
+    });
+
     test('search keeps selected chips visible and does not restore a locally removed selection', () => {
         renderFilter(`<div class="filter-group"><a href="javascript:;" class="filter-scope" data-scope-name="tags">Tags</a><template data-scope-form>${groupForm({
             active: [{ id: '2', name: 'Lamps' }],
