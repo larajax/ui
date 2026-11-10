@@ -24,9 +24,14 @@ class Search extends WidgetBase
     public $prompt;
 
     /**
-     * @var bool growable when selected.
+     * @var bool growable shows a short prompt until focused, then widens to fit the full prompt.
      */
     public $growable = true;
+
+    /**
+     * @var string|null shortPrompt is the text a growable box shows until it is focused, "Search..." by default.
+     */
+    public $shortPrompt;
 
     /**
      * @var string partial custom partial file definition, in context of the controller.
@@ -72,6 +77,7 @@ class Search extends WidgetBase
      * @param string|null $scope custom model query scope method
      * @param bool|null $searchOnEnter
      * @param bool|null $growable
+     * @param string|null $shortPrompt text a growable box shows until focused
      * @param string|null $partial custom partial to render instead
      * @param string|null $alias
      */
@@ -81,6 +87,7 @@ class Search extends WidgetBase
         $scope = null,
         $searchOnEnter = null,
         $growable = null,
+        $shortPrompt = null,
         $partial = null,
         $alias = null,
         ...$config
@@ -97,6 +104,7 @@ class Search extends WidgetBase
             'prompt',
             'partial',
             'growable',
+            'shortPrompt',
             'scope',
             'mode',
             'searchOnEnter',
@@ -127,8 +135,15 @@ class Search extends WidgetBase
     public function prepareVars()
     {
         $this->vars['cssClasses'] = implode(' ', $this->cssClasses);
+        $this->vars['growable'] = $this->growable;
+        $this->vars['shortPrompt'] = $this->shortPrompt !== null ? Lang::get($this->shortPrompt) : __('Search...');
         $this->vars['placeholder'] = Lang::get($this->prompt);
         $this->vars['value'] = $this->getActiveTerm();
+
+        // A growable box opens on a shown placeholder, so it always has one
+        if ($this->growable && !$this->vars['placeholder']) {
+            $this->vars['placeholder'] = $this->vars['shortPrompt'];
+        }
         $this->vars['searchOnEnter'] = $this->searchOnEnter;
     }
 

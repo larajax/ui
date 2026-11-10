@@ -22,6 +22,7 @@ export function registerSearchInput(jax) {
             this.listen('ajax:always', this.onSearchRequestEnd);
             this.listen('ajax:request-complete', this.$triggerEl, this.toggleClearButton);
             this.listen('input', this.$input, this.toggleClearButton);
+            this.listen('keydown', this.$input, this.onInputKeydown);
             this.listen('click', this.$clearBtn, this.clearInput);
             this.toggleClearButton();
         }
@@ -43,6 +44,13 @@ export function registerSearchInput(jax) {
             }
             else {
                 this.$input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+
+        // Escape in a growable box takes the focus from it, which closes the box again.
+        onInputKeydown(ev) {
+            if (ev.key === 'Escape' && this.$input.closest('.is-growable')) {
+                this.$input.blur();
             }
         }
 

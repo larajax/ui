@@ -125,29 +125,6 @@
     &.form-adorn > .form-ghost:disabled {
         color: inherit;
     }
-
-    &.growable, /* @deprecated */
-    &.is-growable {
-        width: 7.875rem;
-        &:focus,
-        &:focus-within,
-        &:active {
-            width: 14.25rem !important;
-        }
-
-        @media (max-width: 36em) {
-            width: 2.875rem;
-            text-indent: -71.375rem;
-
-            &:focus,
-            &:focus-within,
-            &:active {
-                text-indent: 0;
-                width: 7.125rem !important;
-            }
-        }
-    }
-
 }
 
 /* Font icons in an adornment take the size Bootstrap gives an SVG one */

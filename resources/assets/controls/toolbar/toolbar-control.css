@@ -1,6 +1,12 @@
 /*
  * Toolbar
  */
+
+/* The toolbar widget is a size container, so a growable search in it closes by the toolbar's width */
+.toolbar-widget {
+    container: toolbar / inline-size;
+}
+
 .control-toolbar {
     font-size: 0;
     padding: 0 0 0.75rem 0;

@@ -3,10 +3,15 @@
         id="<?= $this->getId() ?>"
         data-control="search-input"
     >
-        <label class="form-control form-adorn is-searchable <?= $cssClasses ?>">
+        <label class="form-control form-adorn is-searchable <?= $cssClasses ?>"<?php if ($growable): ?> style="--search-prompt-length: <?= mb_strlen($placeholder) ?>"<?php endif ?>>
             <span class="form-adorn-icon" aria-hidden="true">
                 <?= \Larajax\Ui\Facades\Ui::icon('search.icon') ?>
             </span>
+            <?php if ($growable): ?>
+                <span class="search-short-prompt" aria-hidden="true">
+                    <?= e($shortPrompt) ?>
+                </span>
+            <?php endif ?>
             <input
                 placeholder="<?= e($placeholder) ?>"
                 type="text"

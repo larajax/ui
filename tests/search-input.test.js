@@ -215,6 +215,37 @@ describe('linked list', () => {
     });
 });
 
+describe('growable search', () => {
+    test('Escape takes the focus from a growable box, which closes it', () => {
+        const { element, input } = connectSearch();
+        element.querySelector('label').classList.add('is-growable');
+        input.focus();
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+        expect(document.activeElement).not.toBe(input);
+    });
+
+    test('Escape leaves the focus in a box that does not grow', () => {
+        const { input } = connectSearch();
+        input.focus();
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+        expect(document.activeElement).toBe(input);
+    });
+
+    test('other keys leave the focus in a growable box', () => {
+        const { element, input } = connectSearch();
+        element.querySelector('label').classList.add('is-growable');
+        input.focus();
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+        expect(document.activeElement).toBe(input);
+    });
+});
+
 describe('search input markup', () => {
     const read = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
 
