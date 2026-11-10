@@ -36,5 +36,23 @@
         preview: 'Previsualitzar',
         sideBySide: 'En paral·lel',
         fullscreen: 'Pantalla completa'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'No s\'han trobat resultats',
+        searching: 'Cercant…',
+        loadingMore: 'Carregant més resultats…',
+        errorLoading: 'La càrrega ha fallat',
+        inputTooShort: {
+            one: 'Si us plau, introdueix :count caràcter',
+            other: 'Si us plau, introdueix :count caràcters'
+        },
+        maximumSelected: {
+            one: 'Només es pot seleccionar :count element',
+            other: 'Només es pot seleccionar :count elements'
+        },
+        removeItem: 'Elimina l\'element',
+        removeAllItems: 'Treu tots els elements'
     }
 };

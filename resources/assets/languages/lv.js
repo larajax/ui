@@ -40,6 +40,26 @@
         preview: 'Priekšskatījums',
         sideBySide: 'Blakus skats',
         fullscreen: 'Pilnekrāna režīms'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Sakritību nav',
+        searching: 'Meklēšana…',
+        loadingMore: 'Datu ielāde…',
+        errorLoading: 'Neizdevās ielādēt rezultātus.',
+        inputTooShort: {
+            zero: 'Lūdzu ievadiet vēl :count simbolus',
+            one: 'Lūdzu ievadiet vēl :count simbolu',
+            other: 'Lūdzu ievadiet vēl :count simbolus'
+        },
+        maximumSelected: {
+            zero: 'Jūs varat izvēlēties ne vairāk kā :count elementus',
+            one: 'Jūs varat izvēlēties ne vairāk kā :count elementu',
+            other: 'Jūs varat izvēlēties ne vairāk kā :count elementus'
+        },
+        removeItem: 'Noņemt vienumu',
+        removeAllItems: 'Noņemt visus vienumus'
     }
 };
 
@@ -205,12 +225,3 @@
     chooseDate: 'Izvēlēties datumu',
     chooseTime: 'Izvēlēties laiku'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var e=jQuery.fn.select2.amd;e.define("select2/i18n/lv",[],function(){function e(e,n,u,i){return 11===e?n:e%10==1?u:i}return{inputTooLong:function(n){var u=n.input.length-n.maximum,i="Lūdzu ievadiet par  "+u;return(i+=" simbol"+e(u,"iem","u","iem"))+" mazāk"},inputTooShort:function(n){var u=n.minimum-n.input.length,i="Lūdzu ievadiet vēl "+u;return i+=" simbol"+e(u,"us","u","us")},loadingMore:function(){return"Datu ielāde…"},maximumSelected:function(n){var u="Jūs varat izvēlēties ne vairāk kā "+n.maximum;return u+=" element"+e(n.maximum,"us","u","us")},noResults:function(){return"Sakritību nav"},searching:function(){return"Meklēšana…"},removeAllItems:function(){return"Noņemt visus vienumus"}}}),e.define,e.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['lv'] = factory();
-} } } } });

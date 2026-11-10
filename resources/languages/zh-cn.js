@@ -36,5 +36,17 @@
         preview: '预览',
         sideBySide: '并排显示',
         fullscreen: '全屏'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: '未找到结果',
+        searching: '搜索中…',
+        loadingMore: '载入更多结果…',
+        errorLoading: '无法载入结果。',
+        inputTooShort: '请再输入至少:count个字符',
+        maximumSelected: '最多只能选择:count个项目',
+        removeItem: '删除项目',
+        removeAllItems: '删除所有项目'
     }
 };

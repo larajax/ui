@@ -36,5 +36,20 @@
         preview: 'Προεπισκόπηση',
         sideBySide: 'Παράλληλη προβολή',
         fullscreen: 'Πλήρης οθόνη'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Δεν βρέθηκαν αποτελέσματα',
+        searching: 'Αναζήτηση…',
+        loadingMore: 'Φόρτωση περισσότερων αποτελεσμάτων…',
+        errorLoading: 'Τα αποτελέσματα δεν μπόρεσαν να φορτώσουν.',
+        inputTooShort: 'Παρακαλώ συμπληρώστε :count ή περισσότερους χαρακτήρες',
+        maximumSelected: {
+            one: 'Μπορείτε να επιλέξετε μόνο :count επιλογή',
+            other: 'Μπορείτε να επιλέξετε μόνο :count επιλογές'
+        },
+        removeItem: 'Αφαίρεση στοιχείου',
+        removeAllItems: 'Καταργήστε όλα τα στοιχεία'
     }
 };

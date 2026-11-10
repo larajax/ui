@@ -1,126 +1,171 @@
 /*
  * Custom Select
  *
- * Wraps select2 using the private jQuery instance bundled with it; no global
- * jQuery is required on the page.
+ * Turns a select into a searchable dropdown, or a multiple select into a tag input, built on Tom Select.
+ * The select keeps its name and value and dispatches change, so forms read it as a plain select.
  *
- * Config:
- * - animation: true
- * - autohide: true
- * - delay: 5000
- * - language: null - the translation of Select2's messages, such as de, loaded from languages/ unless
- *   the page has it already; the page's lang attribute when not given
+ * Classes on the select:
+ * - custom-select - enables the control
+ * - select-no-search - a single select without the search box
+ * - select-hide-selected - the dropdown leaves out the options already picked
+ * - select-dropdown-auto-width - the dropdown sizes to its options, at least as wide as the field
+ * - select-no-dropdown - a tag input without a dropdown, where typed text becomes a tag
+ * - form-control-sm, form-control-lg - a smaller or larger select, with its dropdown to match
+ *
+ * Data attributes on the select:
+ * - data-placeholder - a hint while nothing is picked, with a button that clears the choice
+ * - data-allow-clear - the clear button without a placeholder
+ * - data-handler - an AJAX handler that returns the options, see buildLoadSettings()
+ * - data-minimum-input-length - how many characters to type before the handler runs
+ * - data-ajax--delay - how long to wait after the last key press before asking, in milliseconds
+ * - data-request-data - extra values sent with each request
+ * - data-tags - the select accepts values of its own
+ * - data-token-separators - characters, separated by |, that turn the typed text into a tag
+ * - data-maximum-selection-length - the most options a multiple select takes
+ * - data-close-on-select - false keeps the dropdown open after each pick of a multiple select
+ * - data-dropdown-auto-width - as the select-dropdown-auto-width class
+ * - data-minimum-results-for-search - fewer options than this hide the search box, Infinity for never
+ * - data-sortable - tags reorder by dragging
+ * - data-checkboxes - the options of a multiple select show checkboxes
+ * - data-dropdown-header - a title row with a close button atop the dropdown
+ * - data-optgroup-columns - option groups sit side by side as columns
+ * - data-create-filter - a regular expression that typed tags must match
+ * - data-create-on-blur - typed text becomes a tag when the field loses focus
+ * - data-duplicates - the same tag can be picked more than once
+ * - data-preload - the handler's options load when the field takes focus, before anything is typed
+ * - data-search-fields - the option fields the search matches, comma separated
+ * - data-select-on-tab - Tab picks the highlighted option
+ * - data-language - the translation of the messages, such as de, loaded from languages/ unless the page
+ *   has it already; the page's lang attribute when not given
+ *
+ * Data attributes on an option:
+ * - data-status - a color, shown as a dot before the text
+ * - data-icon - icon classes shown before the text
+ * - data-image - an image address shown before the text
  *
  * JavaScript API:
  * jax.fetchControl(select, 'custom-select').focus()
+ * jax.fetchControl(select, 'custom-select').refresh()
+ * jax.fetchControl(select, 'custom-select').tomSelect
  */
 'use strict';
 
-import $ from '../../vendor/select2/select2.esm.js';
-import { mountOrigin } from '../popup/dialog-mount.js';
-import { getLanguages, hasLanguage, loadLanguage, resolveLanguage } from '../../lang.js';
+import TomSelect from '../../vendor/tom-select/tom-select.esm.js';
+import { createPopper } from '../../vendor/popperjs/popper.esm.js';
+import { hasLanguage, loadLanguage, makeTranslator, pluralize, resolveLanguage } from '../../lang.js';
 
 /**
- * alignDropdownInParent keeps Select2's dropdown on its field inside a scrolled or bordered parent such as a dialog.
+ * DEFAULT_LANG are the messages, a count's forms keyed by plural category, see pluralize().
  */
-export function alignDropdownInParent(dropdown) {
-    const positionDropdown = dropdown._positionDropdown;
+export const DEFAULT_LANG = {
+    noResults: 'No results found',
+    searching: 'Searching…',
+    loadingMore: 'Loading more results…',
+    errorLoading: 'The results could not be loaded.',
+    inputTooShort: 'Please enter :count or more characters',
+    maximumSelected: {
+        one: 'You can only select :count item',
+        other: 'You can only select :count items'
+    },
+    removeItem: 'Remove item',
+    removeAllItems: 'Remove all items'
+};
 
-    dropdown._positionDropdown = function() {
-        positionDropdown.apply(this, arguments);
+/**
+ * CustomTomSelect marks the change events Tom Select dispatches itself, so the control only follows
+ * changes made to the select from outside.
+ */
+class CustomTomSelect extends TomSelect {
+    onChange() {
+        this.isDispatchingChange = true;
 
-        const parent = this.$dropdownParent && this.$dropdownParent[0];
-        if (!parent || parent === document.body || getComputedStyle(parent).position === 'static') {
-            return;
+        try {
+            super.onChange();
+        }
+        finally {
+            this.isDispatchingChange = false;
+        }
+    }
+}
+
+// A cross drawn inline, so the remove and clear buttons don't depend on the icon pack
+const CROSS_ICON ='<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>';
+
+/**
+ * optionMark returns the dot, icon or image shown before an option's text, from its status, icon or image.
+ */
+export function optionMark(data, escape, isChip = false) {
+    if (data.status) {
+        const dot = `<span class="select-status status-indicator" style="background:${escape(data.status)}"></span>`;
+        return isChip ? `<span class="chip-icon">${dot}</span>` : dot;
+    }
+
+    if (data.icon) {
+        const icon = `<i class="select-icon ${escape(data.icon)}" aria-hidden="true"></i>`;
+        return isChip ? `<span class="chip-icon">${icon}</span>` : icon;
+    }
+
+    if (data.image) {
+        return `<img class="${isChip ? 'chip-img' : 'select-image'}" src="${escape(data.image)}" alt="">`;
+    }
+
+    return '';
+}
+
+/**
+ * normalizeResults turns a handler's response into options and option groups: a results (or result)
+ * list of id and text items, where an item with children is a group, or a map of values to labels.
+ */
+export function normalizeResults(data) {
+    const results = (data && (data.result || data.results)) || [];
+    const options = [];
+    const optgroups = [];
+
+    const addOption = (item, group) => {
+        const option = Object.assign({}, item, { value: String(item.id), text: String(item.text ?? '') });
+        delete option.id;
+        delete option.selected;
+
+        if (group !== undefined) {
+            option.optgroup = group;
         }
 
-        // Select2 measured from the parent's border box, while the dropdown sits in its scrolled padding box
-        const offset = this.$dropdownParent.offset();
-        const origin = mountOrigin(parent);
-        const style = this.$dropdownContainer[0].style;
-
-        style.top = (parseFloat(style.top) + offset.top - origin.top) + 'px';
-        style.left = (parseFloat(style.left) + offset.left - origin.left) + 'px';
+        options.push(option);
     };
+
+    if (Array.isArray(results) && results[0] && typeof results[0] === 'object') {
+        results.forEach((item, index) => {
+            if (Array.isArray(item.children)) {
+                const group = 'group-' + index;
+                optgroups.push({ value: group, label: String(item.text ?? ''), disabled: !!item.disabled });
+                item.children.forEach((child) => addOption(child, group));
+                return;
+            }
+
+            addOption(item);
+        });
+    }
+    else {
+        Object.keys(results).forEach((key) => addOption({ id: key, text: results[key] }));
+    }
+
+    return { options, optgroups, more: !!(data && data.pagination && data.pagination.more) };
 }
 
 export function registerCustomSelect(jax) {
     jax.registerControl('custom-select', class extends jax.ControlBase {
-        init() {
-            this.$el = $(this.element);
-            this.initDefaults();
-        }
-
-        initDefaults() {
-            const defaults = {
-                animation: true,
-                autohide: true,
-                delay: 5000
-            };
-
-            for (const key in defaults) {
-                if (this.element.dataset[key] === undefined) {
-                    this.element.dataset[key] = defaults[key];
-                }
-            }
-        }
-
         connect() {
-            // Internal Events
-            this.formatSelectOption = function(state) {
-                // Escape HTML
-                var text = $('<span>').text(state.text).html();
+            this.tomSelect = null;
+            this.popper = null;
 
-                // Element is optgroup
-                if (state.id === undefined) {
-                    return text;
-                }
-
-                var $option = $(state.element),
-                    statusColor = state.status ? state.status : $option.data('status'),
-                    iconClass = state.icon ? state.icon : $option.data('icon'),
-                    imageSrc = state.image ? state.image : $option.data('image');
-
-                if (statusColor) {
-                    return '<span class="select-status status-indicator" style="background:'+statusColor+'"></span> ' + text;
-                }
-
-                if (iconClass) {
-                    return '<i class="select-icon '+iconClass+'"></i> ' + text;
-                }
-
-                if (imageSrc) {
-                    return '<img class="select-image" src="'+imageSrc+'" alt="" /> ' + text;
-                }
-
-                return text;
-            }
-
-            this.disableSelect = function(event, status) {
-                if ($(this).data('select2') != null) {
-                    $(this).select2('enable', !status);
-                }
-            };
-
-            // Adds support for vanilla JS and jQuery change event
-            // Bind to native and prevent recursion with event once
-            this.triggerNativeChange = (event) => {
-                jax.Events.dispatch('change', { target: event.currentTarget });
-                $(event.currentTarget).one('change', this.triggerNativeChange);
-            };
-
-            // Destroy placeholder if it is still there
+            // Remove the copy of the control left by a previous disconnect
             this.destroyPlaceholder();
-
-            // Init
-            this.$el.one('change', this.proxy(this.triggerNativeChange));
-            this.$el.on('disable', this.proxy(this.disableSelect));
 
             // A translation the page has not bundled loads first
             const language = this.element.dataset.language;
             if (!hasLanguage(language)) {
                 loadLanguage(language).then(() => {
-                    if (this.element.isConnected && this.$el.data('select2') == null) {
+                    if (this.element.isConnected && !this.tomSelect) {
                         this.start();
                     }
                 });
@@ -130,232 +175,592 @@ export function registerCustomSelect(jax) {
             this.start();
         }
 
-        start() {
-            this.bindCustomSelect();
-            this.bindCustomSelectWorkaround();
+        disconnect() {
+            this.clonePlaceholder();
+
+            if (this.observer) {
+                this.observer.disconnect();
+                this.observer = null;
+            }
+
+            this.element.removeEventListener('change', this.proxy(this.onSelectChange));
+            this.element.removeEventListener('focus', this.proxy(this.onSelectFocus));
+
+            this.destroyPopper();
+
+            if (this.tomSelect) {
+                this.tomSelect.destroy();
+                this.tomSelect = null;
+            }
         }
 
-        // focus moves the keyboard focus to the dropdown, as tabbing to it would, without opening it
+        start() {
+            const language = this.element.dataset.language || document.documentElement.lang;
+            this.translate = makeTranslator('customselect', DEFAULT_LANG, { language });
+            this.pluralLanguage = resolveLanguage(language) || 'en';
+
+            this.settings = this.buildSettings();
+            this.tomSelect = new CustomTomSelect(this.element, this.settings);
+
+            this.bindTomSelect();
+        }
+
+        // focus moves the keyboard focus to the field without opening its dropdown, as tabbing to it would
         focus() {
             if (this.element.disabled) {
                 return;
             }
 
-            const select2 = this.$el.data('select2');
-            if (!select2) {
+            if (!this.tomSelect) {
                 this.element.focus();
                 return;
             }
 
-            // A multiple select with search takes focus in its search field, which Select2 gives the tabindex
-            const selection = select2.$selection[0];
-            const target = selection.querySelector('.select2-search--inline .select2-search__field') || selection;
-            target.focus();
+            this.tomSelect.focus();
         }
 
-        disconnect() {
-            this.clonePlaceholder();
-
-            this.$el.off('change', this.proxy(this.triggerNativeChange));
-            this.$el.off('disable', this.proxy(this.disableSelect));
-
-            if (this.select2OpenWorkaround) {
-                this.$el.off('select2:open', this.select2OpenWorkaround);
-            }
-
-            if (this.$el.data('select2') != null) {
-                this.$el.select2('destroy');
+        // refresh reads the options and value from the select again, without a change event
+        refresh() {
+            if (this.tomSelect) {
+                this.tomSelect.sync();
             }
         }
 
-        bindCustomSelectWorkaround() {
-            // Hack to reintroduce containerCssClass
-            this.$el.data('select2').$container.addClass(this.options.containerCssClass);
+        buildSettings() {
+            const select = this.element;
+            const data = select.dataset;
+            const classes = select.classList;
+            const isMultiple = select.multiple;
+            const separators = this.tokenSeparators = data.tokenSeparators ? data.tokenSeparators.split('|').filter((separator) => separator !== '') : [];
+            const isTags = separators.length > 0 || isTrue(data.tags);
+            const noDropdown = classes.contains('select-no-dropdown');
+            const placeholder = data.placeholder || null;
+            const plugins = {};
 
-            // Workaround for search not auto focusing (https://github.com/select2/select2/issues/5993)
-            this.select2OpenWorkaround = function() {
-                setTimeout(function() {
-                    var searchField = document.querySelector('.select2-container--open .select2-search__field');
-                    if (searchField) {
-                        searchField.focus();
-                    }
-                }, 100);
+            const settings = {
+                plugins,
+                maxOptions: null,
+                maxItems: isMultiple ? (toNumber(data.maximumSelectionLength) || null) : 1,
+                hideSelected: isMultiple && classes.contains('select-hide-selected'),
+                closeAfterSelect: data.closeOnSelect !== 'false' && data.closeAfterSelect !== 'false',
+                openOnFocus: false,
+                allowEmptyOption: !placeholder,
+                placeholder,
+                hidePlaceholder: true,
+                persist: false,
+                // Typing the first separator makes a tag, and without separators typed text only becomes one on Enter
+                delimiter: separators.length ? separators[0] : '',
+                duplicates: isTrue(data.duplicates),
+                selectOnTab: isTrue(data.selectOnTab),
+                searchField: data.searchFields ? data.searchFields.split(',').map((field) => field.trim()) : ['text'],
+                // Inside a dialog the dropdown joins it, since the page outside an open modal dialog is inert
+                dropdownParent: select.closest('dialog') || 'body',
+                render: this.buildRender()
             };
 
-            this.$el.on('select2:open', this.select2OpenWorkaround);
+            // The search box sits in the dropdown of a single select, as the field shows the picked option
+            if (!isMultiple) {
+                if (this.hasSearch()) {
+                    plugins.dropdown_input = {};
+                }
+                else {
+                    settings.controlInput = null;
+                }
+            }
+
+            if (placeholder || isTrue(data.allowClear)) {
+                if (!isTags || !isMultiple) {
+                    plugins.clear_button = {
+                        title: this.translate('removeAllItems'),
+                        html: (options) => `<div class="${options.className}" title="${escapeHtml(options.title)}">${CROSS_ICON}</div>`
+                    };
+                }
+            }
+
+            if (isMultiple) {
+                plugins.remove_button = {
+                    title: this.translate('removeItem'),
+                    className: 'chip-dismiss',
+                    html: (options) => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = options.className;
+                        button.title = options.title;
+                        button.tabIndex = -1;
+                        button.setAttribute('aria-label', options.title);
+                        button.innerHTML = CROSS_ICON;
+                        return button;
+                    }
+                };
+            }
+
+            if (isTrue(data.sortable) && isMultiple) {
+                plugins.drag_drop = {};
+            }
+
+            if (isTrue(data.checkboxes) && isMultiple) {
+                plugins.checkbox_options = {};
+            }
+
+            if (data.dropdownHeader) {
+                plugins.dropdown_header = {
+                    title: data.dropdownHeader,
+                    html: (options) => `<div class="${options.headerClass}"><div class="${options.titleRowClass}"><span class="${options.labelClass}">${escapeHtml(options.title)}</span><a class="${options.closeClass}" href="javascript:void(0)">${CROSS_ICON}</a></div></div>`
+                };
+            }
+
+            if (isTrue(data.optgroupColumns)) {
+                plugins.optgroup_columns = {};
+            }
+
+            if (isTags) {
+                settings.create = true;
+                settings.createOnBlur = noDropdown || isTrue(data.createOnBlur);
+
+                if (data.createFilter) {
+                    settings.createFilter = data.createFilter;
+                }
+
+                if (separators.length) {
+                    settings.splitOn = new RegExp('[' + separators.map(escapeRegExp).join('') + ']');
+                }
+            }
+
+            if (data.handler) {
+                this.buildLoadSettings(settings, data.handler);
+            }
+
+            return settings;
+        }
+
+        // hasSearch tells whether a single select shows its search box
+        hasSearch() {
+            const select = this.element;
+
+            if (select.classList.contains('select-no-search')) {
+                return false;
+            }
+
+            const minimum = select.dataset.minimumResultsForSearch;
+            if (minimum === 'Infinity') {
+                return false;
+            }
+
+            if (minimum !== undefined && !select.dataset.handler) {
+                return select.querySelectorAll('option').length >= toNumber(minimum);
+            }
+
+            return true;
+        }
+
+        buildRender() {
+            const t = (key) => escapeHtml(this.translate(key));
+            const isMultiple = this.element.multiple;
+
+            return {
+                option: (data, escape) => `<div>${optionMark(data, escape)}<span class="select-text">${escape(data.text)}</span></div>`,
+
+                item: (data, escape) => isMultiple
+                    ? `<div class="chip">${optionMark(data, escape, true)}<span class="chip-label">${escape(data.text)}</span></div>`
+                    : `<div>${optionMark(data, escape)}<span class="select-text">${escape(data.text)}</span></div>`,
+
+                optgroup_header: (data, escape) => `<div class="optgroup-header">${escape(data.label)}</div>`,
+
+                // A new tag reads as the text typed, as the other options read
+                option_create: (data, escape) => `<div class="create">${escape(data.input)}</div>`,
+
+                no_results: () => `<div class="no-results">${this.loadFailed ? t('errorLoading') : t('noResults')}</div>`,
+
+                loading: () => `<div class="loading">${t('searching')}</div>`,
+
+                not_loading: (data) => {
+                    const remaining = this.minimumInputLength - (data.input || '').length;
+                    if (!this.element.dataset.handler || remaining <= 0) {
+                        return null;
+                    }
+
+                    return `<div class="no-results">${escapeHtml(pluralize(this.translate('inputTooShort'), remaining, this.pluralLanguage))}</div>`;
+                },
+
+                loading_more: () => `<div class="loading-more-results">${t('loadingMore')}</div>`,
+
+                no_more_results: () => null
+            };
+        }
+
+        /**
+         * buildLoadSettings loads the options from the AJAX handler as the visitor types. The request sends
+         * the search text as term (and q), _type as query or query:append, and page from the second page.
+         * The handler returns a results list of id and text items, where an item with children is a group,
+         * or a map of values to labels, plus pagination.more to offer the next page.
+         */
+        buildLoadSettings(settings, handler) {
+            const select = this.element;
+            const delay = toNumber(select.getAttribute('data-ajax--delay'));
+
+            this.minimumInputLength = toNumber(select.dataset.minimumInputLength) || 0;
+
+            Object.assign(settings, {
+                loadThrottle: delay || 0,
+                // The handler searched already, so every option it returns matches
+                score: () => () => 1,
+                shouldLoad: (query) => query.length >= this.minimumInputLength,
+                preload: isTrue(select.dataset.preload) || this.minimumInputLength === 0 ? 'focus' : false,
+                firstUrl: () => 1,
+                load: (query, callback) => this.loadOptions(handler, query, callback)
+            });
+
+            settings.plugins.virtual_scroll = {};
+        }
+
+        loadOptions(handler, query, callback) {
+            const page = this.tomSelect.getUrl(query);
+            const params = { term: query, q: query, _type: page > 1 ? 'query:append' : 'query' };
+
+            if (page > 1) {
+                params.page = page;
+            }
+
+            this.loadFailed = false;
+
+            const request = jax.request(this.element, handler, { data: params });
+
+            request.done((data) => {
+                const { options, optgroups, more } = normalizeResults(data);
+
+                if (more) {
+                    this.tomSelect.setNextUrl(query, page + 1);
+                }
+
+                callback(options, optgroups);
+            });
+
+            request.fail(() => {
+                this.loadFailed = true;
+                callback();
+            });
+        }
+
+        bindTomSelect() {
+            const ts = this.tomSelect;
+            const select = this.element;
+
+            ts.wrapper.classList.remove('form-control', 'custom-select');
+            ts.control.classList.add(select.multiple ? 'chip-input' : 'form-control');
+
+            if (!select.multiple) {
+                ts.control.classList.add('form-control-caret');
+            }
+
+            // The size comes from the select's own class or a small or large group around it, and the dropdown follows
+            const size = ['sm', 'lg'].find((name) => select.classList.contains('form-control-' + name) || select.closest(`.form-group-${name}, .input-group-${name}`));
+            if (size) {
+                ts.control.classList.add('form-control-' + size);
+                ts.dropdown.classList.add('select-dropdown-' + size);
+            }
+
+            if (select.multiple) {
+                ts.control_input.classList.add('form-ghost');
+            }
+
+            // Without a search box there is no input to hold the placeholder, so the field shows it
+            if (!select.multiple && ts.settings.controlInput === null && ts.settings.placeholder) {
+                ts.control.dataset.placeholder = ts.settings.placeholder;
+            }
+
+            ['select-hide-selected', 'select-no-dropdown', 'select-dropdown-auto-width'].forEach((name) => {
+                if (select.classList.contains(name)) {
+                    ts.dropdown.classList.add(name);
+                }
+            });
+
+            if (isTrue(select.dataset.dropdownAutoWidth)) {
+                ts.dropdown.classList.add('select-dropdown-auto-width');
+            }
+
+            // The dropdown belongs to the field, so pressing in it is no press outside an enclosing popover, and
+            // as Tom Select's own page listener would, the press keeps the focus in the field unless it is the search box
+            ts.dropdown.addEventListener('mousedown', (ev) => {
+                ev.stopPropagation();
+
+                if (ev.target !== ts.control_input) {
+                    ev.preventDefault();
+                }
+            });
+
+            // Popper places the dropdown below the field, or above it when there is no room below
+            ts.positionDropdown = () => this.positionDropdown();
+            ts.on('dropdown_close', () => this.destroyPopper());
+
+            // A click opens the dropdown, a second click closes it, while focus from the keyboard leaves it closed
+            const onClick = ts.onClick;
+            ts.hook('instead', 'onClick', () => {
+                const wasOpen = ts.isOpen;
+                onClick.call(ts);
+
+                if (!wasOpen && !ts.isOpen && !ts.isLocked) {
+                    ts.open();
+                }
+            });
+
+            if (!select.multiple && ts.settings.controlInput !== null) {
+                this.bindTypeToSearch();
+            }
+
+            if (select.multiple && !ts.settings.hideSelected && !ts.settings.duplicates) {
+                this.bindToggleOnSelect();
+            }
+
+            if (ts.settings.maxItems && select.multiple) {
+                this.bindMaximumNotice();
+            }
+
+            if (ts.settings.create && this.tokenSeparators.length > 1) {
+                this.bindExtraSeparators();
+            }
+
+            this.element.addEventListener('change', this.proxy(this.onSelectChange));
+            this.element.addEventListener('focus', this.proxy(this.onSelectFocus));
+
+            // The field follows the select's disabled state, as input triggers toggle it
+            this.observer = new MutationObserver(() => {
+                if (select.disabled) {
+                    ts.disable();
+                }
+                else {
+                    ts.enable();
+                }
+            });
+            this.observer.observe(select, { attributes: true, attributeFilter: ['disabled'] });
+        }
+
+        // A key typed on a closed single select opens it and starts the search, as in a native select
+        bindTypeToSearch() {
+            const ts = this.tomSelect;
+
+            ts.control.addEventListener('keydown', (ev) => {
+                if (ts.isOpen || ts.isLocked || ev.ctrlKey || ev.metaKey || ev.altKey) {
+                    return;
+                }
+
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                    ev.preventDefault();
+                    ts.open();
+                    return;
+                }
+
+                if (ev.key.length === 1) {
+                    ev.preventDefault();
+                    ts.open();
+                    ts.control_input.value = ev.key;
+                    ts.control_input.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            });
+        }
+
+        // Picking an option already picked in a multiple select that shows them takes it out again
+        bindToggleOnSelect() {
+            const ts = this.tomSelect;
+            const onOptionSelect = ts.onOptionSelect;
+
+            ts.hook('instead', 'onOptionSelect', (ev, option) => {
+                const value = option && option.dataset.value;
+
+                if (value !== undefined && ts.items.includes(value)) {
+                    ts.removeItem(value);
+                    ts.refreshOptions(false);
+
+                    if (ts.settings.closeAfterSelect) {
+                        ts.close();
+                    }
+
+                    return;
+                }
+
+                return onOptionSelect.call(ts, ev, option);
+            });
+        }
+
+        // A full multiple select explains its limit in place of the dropdown
+        bindMaximumNotice() {
+            const ts = this.tomSelect;
+            const open = ts.open;
+
+            ts.hook('instead', 'open', () => {
+                if (ts.isFull() && !ts.isLocked) {
+                    this.showNotice(pluralize(this.translate('maximumSelected'), ts.settings.maxItems, this.pluralLanguage));
+                    return;
+                }
+
+                return open.call(ts);
+            });
+
+            ts.on('item_remove', () => this.hideNotice());
+            ts.on('blur', () => this.hideNotice());
+        }
+
+        // The notice stands apart from the options, which Tom Select renders again as the field takes focus
+        showNotice(message) {
+            const ts = this.tomSelect;
+
+            if (!this.notice) {
+                this.notice = document.createElement('div');
+                this.notice.className = 'no-results select-notice';
+                ts.dropdown.prepend(this.notice);
+            }
+
+            this.notice.textContent = message;
+            ts.dropdown.classList.add('is-notice');
+            ts.dropdown.style.display = 'block';
+            ts.dropdown.style.visibility = 'visible';
+            this.positionDropdown();
+        }
+
+        hideNotice() {
+            if (!this.notice) {
+                return;
+            }
+
+            this.notice.remove();
+            this.notice = null;
+            this.tomSelect.dropdown.classList.remove('is-notice');
+            this.tomSelect.dropdown.style.display = 'none';
+            this.destroyPopper();
+        }
+
+        // Each separator after the first turns the typed text into a tag, as the first does
+        bindExtraSeparators() {
+            const ts = this.tomSelect;
+            const separators = this.tokenSeparators.slice(1);
+
+            ts.control_input.addEventListener('keydown', (ev) => {
+                if (separators.includes(ev.key) && ts.control_input.value.trim() !== '') {
+                    ev.preventDefault();
+                    ts.createItem();
+                }
+            });
+        }
+
+        // A change made to the select from outside, such as setting its value, reaches the field
+        onSelectChange() {
+            const ts = this.tomSelect;
+            if (!ts || ts.isDispatchingChange) {
+                return;
+            }
+
+            const selected = Array.from(this.element.selectedOptions).map((option) => option.value);
+            const current = [].concat(ts.getValue()).filter((value) => value !== '');
+
+            if (selected.filter((value) => value !== '').join('\u0000') !== current.join('\u0000')) {
+                ts.sync();
+            }
+        }
+
+        // Code that focuses the hidden select, such as a popup's autofocus, focuses the field
+        onSelectFocus() {
+            this.focus();
+        }
+
+        positionDropdown() {
+            const ts = this.tomSelect;
+            if (!ts) {
+                return;
+            }
+
+            if (this.popper) {
+                this.popper.update();
+                return;
+            }
+
+            const autoWidth = ts.dropdown.classList.contains('select-dropdown-auto-width');
+
+            // The dropdown sits a small gap from its field, 0.375rem in the page's root font size
+            const gap = parseFloat(getComputedStyle(document.documentElement).fontSize) * 0.375 || 6;
+
+            this.popper = createPopper(ts.control, ts.dropdown, {
+                placement: 'bottom-start',
+                modifiers: [
+                    { name: 'offset', options: { offset: [0, gap] } },
+                    { name: 'flip', options: { fallbackPlacements: ['top-start'] } },
+                    {
+                        name: 'matchFieldWidth',
+                        enabled: true,
+                        phase: 'beforeWrite',
+                        requires: ['computeStyles'],
+                        fn: ({ state }) => {
+                            state.styles.popper[autoWidth ? 'minWidth' : 'width'] = state.rects.reference.width + 'px';
+                        }
+                    },
+                    {
+                        name: 'placementClass',
+                        enabled: true,
+                        phase: 'write',
+                        fn: ({ state }) => {
+                            const above = state.placement.startsWith('top');
+                            ts.wrapper.classList.toggle('dropdown-above', above);
+                            ts.wrapper.classList.toggle('dropdown-below', !above);
+                        }
+                    }
+                ]
+            });
+
+            this.popper.forceUpdate();
+        }
+
+        destroyPopper() {
+            if (this.popper) {
+                this.popper.destroy();
+                this.popper = null;
+            }
+
+            if (this.tomSelect) {
+                this.tomSelect.wrapper.classList.remove('dropdown-above', 'dropdown-below');
+            }
         }
 
         destroyPlaceholder() {
-            var artefact = this.element && this.element.nextElementSibling;
-            if (artefact && artefact.matches('.select2')) {
+            const artefact = this.element && this.element.nextElementSibling;
+            if (artefact && artefact.matches('.ts-wrapper.is-placeholder')) {
                 artefact.remove();
             }
         }
 
+        // A copy of the field stands in while the page swaps the markup, so the form does not jump
         clonePlaceholder() {
-            var artefact = this.element && this.element.nextElementSibling;
-            if (artefact && artefact.matches('.select2')) {
-                var newNode = artefact.cloneNode(true);
-                artefact.parentNode.insertBefore(newNode, artefact.nextSibling);
-                newNode.innerHtml = artefact.innerHtml;
-                this.element.style.display = 'none';
-            }
-        }
-
-        bindCustomSelect() {
-            var options = this.options = this.buildSelectOptions();
-
-            if (this.element.dataset.handler) {
-                options = this.buildAjaxHandlerOption(options, this.element.dataset.handler);
+            const wrapper = this.tomSelect && this.tomSelect.wrapper;
+            if (!wrapper || !wrapper.isConnected) {
+                return;
             }
 
-            if (this.element.dataset.tokenSeparators) {
-                options = this.buildTokenSeparatorOptions(options, this.element.dataset.tokenSeparators);
-            }
-
-            this.$el.select2(options);
-
-            if (options.dropdownParent) {
-                alignDropdownInParent(this.$el.data('select2').dropdown);
-            }
-        }
-
-        buildTokenSeparatorOptions(selectOptions, separators) {
-            selectOptions.tags = true;
-            selectOptions.allowClear = false;
-            selectOptions.tokenSeparators = separators.split('|');
-
-            // When the dropdown is hidden, force the first option to be selected always.
-            if (this.element.classList.contains('select-no-dropdown')) {
-                selectOptions.selectOnClose = true;
-                selectOptions.minimumInputLength = 1;
-
-                this.$el.on('select2:closing', function() {
-                    var highlightedEls = $('.select2-dropdown.select-no-dropdown:first .select2-results__option--highlighted');
-                    if (highlightedEls.length > 0) {
-                        highlightedEls.removeClass('select2-results__option--highlighted');
-                        $('.select2-dropdown.select-no-dropdown:first .select2-results__option:first').addClass('select2-results__option--highlighted');
-                    }
-                });
-            }
-
-            return selectOptions;
-        }
-
-        buildAjaxHandlerOption(selectOptions, handler) {
-            var self = this;
-
-            selectOptions.ajax = {
-                transport: function(params, success, failure) {
-                    var request = jax.request(self.$el.get(0), handler, {
-                        data: params.data
-                    });
-
-                    request.done(success);
-                    request.fail(failure);
-
-                    return request;
-                },
-                processResults: function (data, params) {
-                    var results = data.result || data.results,
-                        options = [];
-
-                    delete(data.result);
-
-                    // Select2 format
-                    if (results[0] && typeof(results[0]) === 'object') {
-                        options = results;
-                    }
-                    // Build key-value map
-                    else {
-                        for (var i in results) {
-                            if (results.hasOwnProperty(i)) {
-                                options.push({
-                                    id: i,
-                                    text: results[i]
-                                });
-                            }
-                        }
-                    }
-
-                    data.results = options;
-                    return data;
-                },
-                dataType: 'json'
-            };
-
-            return selectOptions;
-        }
-
-        buildSelectOptions() {
-            var selectOptions = {
-                templateResult: this.formatSelectOption,
-                templateSelection: this.formatSelectOption,
-                escapeMarkup: function(m) { return m },
-                width: 'style',
-                containerCssClass: '',
-                dropdownCssClass: '',
-                selectionCssClass: ''
-            }
-
-            // Inside a dialog the dropdown joins it, since the page outside an open modal dialog is inert
-            var dialog = this.element.closest('dialog');
-            if (dialog) {
-                selectOptions.dropdownParent = $(dialog);
-            }
-
-            if (this.element.classList.contains('select-no-search')) {
-                selectOptions.minimumResultsForSearch = Infinity;
-            }
-
-            if (this.element.classList.contains('select-no-dropdown')) {
-                selectOptions.dropdownCssClass += ' select-no-dropdown';
-                selectOptions.selectionCssClass += ' select-no-dropdown';
-            }
-
-            if (this.element.classList.contains('select-hide-selected')) {
-                selectOptions.dropdownCssClass += ' select-hide-selected';
-            }
-
-            if (this.element.classList.contains('select-dropdown-auto-width')) {
-                selectOptions.dropdownAutoWidth = true;
-                selectOptions.dropdownCssClass += ' select-dropdown-auto-width';
-            }
-
-            // Sizing, where the dropdown takes a size class of its own so its options match the selected value
-            if (this.element.classList.contains('form-control-sm')) {
-                selectOptions.containerCssClass += ' form-control-sm';
-                selectOptions.dropdownCssClass += ' select-dropdown-sm';
-            }
-
-            if (this.element.classList.contains('form-control-lg')) {
-                selectOptions.containerCssClass += ' form-control-lg';
-                selectOptions.dropdownCssClass += ' select-dropdown-lg';
-            }
-
-            // Language, Select2's own translation from the language files, English without one
-            var language = resolveLanguage(this.element.dataset.language || document.documentElement.lang, 'Select2Languages');
-            if (language) {
-                selectOptions.language = getLanguages('Select2Languages')[language];
-            }
-
-            // Placeholder
-            var placeholder = this.element.dataset.placeholder;
-            if (placeholder) {
-                selectOptions.placeholder = placeholder;
-                selectOptions.allowClear = true;
-            }
-
-            return selectOptions;
+            const copy = wrapper.cloneNode(true);
+            copy.classList.add('is-placeholder');
+            copy.removeAttribute('id');
+            wrapper.after(copy);
+            this.element.style.display = 'none';
         }
     });
 
-    // CUSTOM RENDERER
-    // ============================
-
+    // A select with the custom-select class becomes the control when the page renders
     addEventListener('render', function() {
         document.querySelectorAll('select.custom-select:not([data-control~="custom-select"])').forEach(function(element) {
             element.dataset.control = ((element.dataset.control || '') + ' custom-select').trim();
         });
     });
+}
+
+function isTrue(value) {
+    return value !== undefined && value !== 'false' && value !== '0';
+}
+
+function toNumber(value) {
+    const number = parseFloat(value);
+    return Number.isFinite(number) ? number : 0;
+}
+
+function escapeHtml(text) {
+    return String(text ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' })[char]);
+}
+
+function escapeRegExp(text) {
+    return text.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&');
 }

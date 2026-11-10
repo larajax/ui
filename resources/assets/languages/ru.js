@@ -40,6 +40,28 @@
         preview: 'Предпросмотр',
         sideBySide: 'Предпросмотр рядом с редактором',
         fullscreen: 'Полный экран'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Совпадений не найдено',
+        searching: 'Поиск…',
+        loadingMore: 'Загрузка данных…',
+        errorLoading: 'Невозможно загрузить результаты',
+        inputTooShort: {
+            one: 'Пожалуйста, введите ещё хотя бы :count символ',
+            few: 'Пожалуйста, введите ещё хотя бы :count символа',
+            many: 'Пожалуйста, введите ещё хотя бы :count символов',
+            other: 'Пожалуйста, введите ещё хотя бы :count символов'
+        },
+        maximumSelected: {
+            one: 'Вы можете выбрать не более :count элемент',
+            few: 'Вы можете выбрать не более :count элемента',
+            many: 'Вы можете выбрать не более :count элементов',
+            other: 'Вы можете выбрать не более :count элементов'
+        },
+        removeItem: 'Удалить элемент',
+        removeAllItems: 'Удалить все элементы'
     }
 };
 
@@ -205,12 +227,3 @@
     chooseDate: 'Выбрать дату',
     chooseTime: 'Выбрать время'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/ru",[],function(){function n(n,e,r,u){return n%10<5&&n%10>0&&n%100<5||n%100>20?n%10>1?r:e:u}return{errorLoading:function(){return"Невозможно загрузить результаты"},inputTooLong:function(e){var r=e.input.length-e.maximum,u="Пожалуйста, введите на "+r+" символ";return u+=n(r,"","a","ов"),u+=" меньше"},inputTooShort:function(e){var r=e.minimum-e.input.length,u="Пожалуйста, введите ещё хотя бы "+r+" символ";return u+=n(r,"","a","ов")},loadingMore:function(){return"Загрузка данных…"},maximumSelected:function(e){var r="Вы можете выбрать не более "+e.maximum+" элемент";return r+=n(e.maximum,"","a","ов")},noResults:function(){return"Совпадений не найдено"},searching:function(){return"Поиск…"},removeAllItems:function(){return"Удалить все элементы"},removeItem:function(){return"Удалить элемент"},search:function(){return"Поиск"}}}),n.define,n.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['ru'] = factory();
-} } } } });

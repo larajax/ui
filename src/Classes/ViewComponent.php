@@ -112,6 +112,24 @@ class ViewComponent implements Htmlable
         echo $instance->render();
     }
     /**
+     * current returns the component whose slot is capturing, so a component rendered inside it can adapt to its container.
+     */
+    public static function current(): ?ViewComponent
+    {
+        $instance = end(static::$stack);
+
+        return $instance === false ? null : $instance;
+    }
+
+    /**
+     * getName returns the name of the component's view
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
      * __call supports fluent API for setting props
      */
     public function __call(string $method, array $args): static

@@ -9,10 +9,12 @@
  *         markdowneditor: { bold: 'Fett' }
  *     };
  *
- * The editor and grid packages keep theirs the same way, in RichAreaLanguages and HotsheetLanguages,
- * and Select2's own translations for the custom-select control sit in Select2Languages. languages/<code>.js
- * is one plain script per language that fills every registry, joined by build.js from resources/languages,
- * the packages' translations and Select2's. A page may bundle the file, otherwise a widget loads it.
+ * A string that changes with a count is an object of forms keyed by plural category, see pluralize().
+ *
+ * The editor and grid packages keep theirs the same way, in RichAreaLanguages and HotsheetLanguages.
+ * languages/<code>.js is one plain script per language that fills every registry, joined by build.js
+ * from resources/languages and the packages' translations. A page may bundle the file, otherwise a
+ * widget loads it.
  */
 'use strict';
 
@@ -91,6 +93,27 @@ export function makeTranslator(widget, defaults, options = {}) {
 
         return fallback !== undefined ? fallback : key;
     };
+}
+
+/**
+ * pluralize returns a string for a count with :count filled in, picking from an object of forms by
+ * the language's plural category, such as one, few and many for ru, and falling back to other.
+ */
+export function pluralize(value, count, language = null) {
+    let text = value;
+
+    if (value && typeof value === 'object') {
+        let category = 'other';
+
+        try {
+            category = new Intl.PluralRules(language || 'en').select(count);
+        }
+        catch (error) {}
+
+        text = value[category] !== undefined ? value[category] : value.other;
+    }
+
+    return String(text ?? '').replace(/:count/g, count);
 }
 
 /**

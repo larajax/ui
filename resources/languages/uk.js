@@ -36,5 +36,22 @@
         preview: 'Попередній перегляд',
         sideBySide: 'Попередній перегляд поруч із редактором',
         fullscreen: 'Повний екран'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Нічого не знайдено',
+        searching: 'Пошук…',
+        loadingMore: 'Завантаження інших результатів…',
+        errorLoading: 'Неможливо завантажити результати',
+        inputTooShort: 'Будь ласка, введіть :count або більше літер',
+        maximumSelected: {
+            one: 'Ви можете вибрати лише :count пункт',
+            few: 'Ви можете вибрати лише :count пункти',
+            many: 'Ви можете вибрати лише :count пунктів',
+            other: 'Ви можете вибрати лише :count пунктів'
+        },
+        removeItem: 'Видалити елемент',
+        removeAllItems: 'Видалити всі елементи'
     }
 };

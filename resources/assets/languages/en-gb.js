@@ -40,6 +40,21 @@
         preview: 'Preview',
         sideBySide: 'Side by Side',
         fullscreen: 'Fullscreen'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'No results found',
+        searching: 'Searching…',
+        loadingMore: 'Loading more results…',
+        errorLoading: 'The results could not be loaded.',
+        inputTooShort: 'Please enter :count or more characters',
+        maximumSelected: {
+            one: 'You can only select :count item',
+            other: 'You can only select :count items'
+        },
+        removeItem: 'Remove item',
+        removeAllItems: 'Remove all items'
     }
 };
 

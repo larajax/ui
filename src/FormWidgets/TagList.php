@@ -59,6 +59,21 @@ class TagList extends FormWidgetBase
      */
     public $maxItems;
 
+    /**
+     * @var bool sortable lets the tags be reordered by dragging, and saves them in that order.
+     */
+    public $sortable = false;
+
+    /**
+     * @var string|null tagPattern is a regular expression that custom tags must match, such as ^[a-z0-9-]+$
+     */
+    public $tagPattern;
+
+    /**
+     * @var bool createOnBlur turns the typed text into a tag when the field loses focus.
+     */
+    public $createOnBlur = false;
+
     //
     // Object Properties
     //
@@ -86,7 +101,10 @@ class TagList extends FormWidgetBase
             'nameFrom',
             'maxItems',
             'useKey',
-            'placeholder'
+            'placeholder',
+            'sortable',
+            'tagPattern',
+            'createOnBlur'
         ]);
 
         // Keys cannot be used with custom tags
@@ -145,6 +163,9 @@ class TagList extends FormWidgetBase
         $this->vars['field'] = $this->formField;
         $this->vars['selectedValues'] = $this->getLoadValue();
         $this->vars['customSeparators'] = $this->getCustomSeparators();
+        $this->vars['sortable'] = $this->sortable;
+        $this->vars['tagPattern'] = $this->customTags ? $this->tagPattern : null;
+        $this->vars['createOnBlur'] = $this->customTags && $this->createOnBlur;
     }
 
     /**

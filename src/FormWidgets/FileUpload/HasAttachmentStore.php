@@ -4,7 +4,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Larajax\Ui\Classes\HeldUploads;
 use October\Contracts\Database\AttachmentInterface;
 use October\Contracts\Database\SortableInterface;
 use October\Rain\Exception\SystemException;
@@ -199,7 +198,7 @@ trait HasAttachmentStore
             return;
         }
 
-        app(HeldUploads::class)->add($model, function ($saved) use ($attribute) {
+        app('larajax.ui.uploads')->add($model, function ($saved) use ($attribute) {
             $this->commitHeldFiles($saved, $attribute);
         });
     }

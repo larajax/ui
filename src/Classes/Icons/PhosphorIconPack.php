@@ -34,6 +34,9 @@ class PhosphorIconPack implements IconPack
             'callout.warning' => 'ph ph-warning',
             'callout.danger' => 'ph ph-warning-octagon',
 
+            'scoreboard.up' => 'ph ph-arrow-up-right',
+            'scoreboard.down' => 'ph ph-arrow-down-right',
+
             'fileupload.upload' => 'ph ph-upload-simple',
             'fileupload.remove' => 'ph ph-trash',
             'fileupload.reorder' => 'ph ph-dots-six-vertical',

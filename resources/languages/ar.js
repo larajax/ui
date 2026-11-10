@@ -36,5 +36,17 @@
         preview: 'معاينة',
         sideBySide: 'عرض جنبًا إلى جنب',
         fullscreen: 'ملء الشاشة'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'لم يتم العثور على أي نتائج',
+        searching: 'جاري البحث…',
+        loadingMore: 'جاري تحميل نتائج إضافية...',
+        errorLoading: 'لا يمكن تحميل النتائج',
+        inputTooShort: 'الرجاء إضافة :count عناصر',
+        maximumSelected: 'تستطيع إختيار :count بنود فقط',
+        removeItem: 'قم بإزالة العنصر',
+        removeAllItems: 'قم بإزالة كل العناصر'
     }
 };

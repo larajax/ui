@@ -36,5 +36,17 @@
         preview: '미리 보기',
         sideBySide: '나란히 보기',
         fullscreen: '전체화면'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: '결과가 없습니다.',
+        searching: '검색 중…',
+        loadingMore: '불러오는 중…',
+        errorLoading: '결과를 불러올 수 없습니다.',
+        inputTooShort: '너무 짧습니다. :count 글자 더 입력해주세요.',
+        maximumSelected: '최대 :count개까지만 선택 가능합니다.',
+        removeItem: '항목 삭제',
+        removeAllItems: '모든 항목 삭제'
     }
 };

@@ -45,6 +45,10 @@ import { registerCheckbox } from './controls/checkbox/checkbox-control.js';
 import { registerCheckboxRange } from './controls/checkbox/checkbox-range.js';
 import { registerSelector } from './controls/selector/selector.js';
 import { registerTooltip } from './controls/tooltip/tooltip.js';
+import { registerChartPie } from './controls/chart/chart-pie.js';
+import { registerChartBar } from './controls/chart/chart-bar.js';
+import { registerChartLine } from './controls/chart/chart-line.js';
+import { registerGoalMeter } from './controls/chart/goal-meter.js';
 
 // Elements
 import { registerCallout } from './elements/callout/callout.js';
@@ -129,6 +133,10 @@ export function registerUi(jax) {
     registerCheckboxRange(jax);
     registerSelector(jax);
     registerTooltip(jax);
+    registerChartPie(jax);
+    registerChartBar(jax);
+    registerChartLine(jax);
+    registerGoalMeter(jax);
 
     // Elements
     registerCallout(jax);

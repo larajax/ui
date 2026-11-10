@@ -40,6 +40,21 @@
         preview: 'Pré-visualizar',
         sideBySide: 'Lado a lado',
         fullscreen: 'Ecrã inteiro'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Sem resultados',
+        searching: 'A procurar…',
+        loadingMore: 'A carregar mais resultados…',
+        errorLoading: 'Os resultados não puderam ser carregados.',
+        inputTooShort: 'Introduza :count ou mais caracteres',
+        maximumSelected: {
+            one: 'Apenas pode seleccionar :count item',
+            other: 'Apenas pode seleccionar :count itens'
+        },
+        removeItem: 'Remover iten',
+        removeAllItems: 'Remover todos os itens'
     }
 };
 
@@ -205,12 +220,3 @@
     chooseDate: 'Escolher uma data',
     chooseTime: 'Escolher uma hora'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var e=jQuery.fn.select2.amd;e.define("select2/i18n/pt",[],function(){return{errorLoading:function(){return"Os resultados não puderam ser carregados."},inputTooLong:function(e){var r=e.input.length-e.maximum,n="Por favor apague "+r+" ";return n+=1!=r?"caracteres":"caractere"},inputTooShort:function(e){return"Introduza "+(e.minimum-e.input.length)+" ou mais caracteres"},loadingMore:function(){return"A carregar mais resultados…"},maximumSelected:function(e){var r="Apenas pode seleccionar "+e.maximum+" ";return r+=1!=e.maximum?"itens":"item"},noResults:function(){return"Sem resultados"},searching:function(){return"A procurar…"},removeAllItems:function(){return"Remover todos os itens"},removeItem:function(){return"Remover iten"},search:function(){return"Procurar"}}}),e.define,e.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['pt-pt'] = factory();
-} } } } });

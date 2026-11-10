@@ -43,7 +43,25 @@
             --bs-menu-item-gap: 0.375rem;
             --bs-menu-item-border-radius: 0.25rem;
 
-            > .menu-item {
+            /* The options scroll on their own, so they never pass under the search box above them */
+            --bs-menu-overflow-y: hidden;
+
+            > .combobox-search {
+                position: static;
+                flex: none;
+                padding: 0.25rem 0.25rem 0.375rem;
+            }
+
+            > .combobox-options {
+                display: flex;
+                flex-direction: column;
+                gap: var(--bs-menu-gap);
+                min-height: 0;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+            }
+
+            .menu-item {
                 border-radius: var(--bs-menu-item-border-radius);
 
                 > i {

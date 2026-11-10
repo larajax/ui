@@ -40,6 +40,18 @@
         preview: 'معاينة',
         sideBySide: 'عرض جنبًا إلى جنب',
         fullscreen: 'ملء الشاشة'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'لم يتم العثور على أي نتائج',
+        searching: 'جاري البحث…',
+        loadingMore: 'جاري تحميل نتائج إضافية...',
+        errorLoading: 'لا يمكن تحميل النتائج',
+        inputTooShort: 'الرجاء إضافة :count عناصر',
+        maximumSelected: 'تستطيع إختيار :count بنود فقط',
+        removeItem: 'قم بإزالة العنصر',
+        removeAllItems: 'قم بإزالة كل العناصر'
     }
 };
 
@@ -205,12 +217,3 @@
     chooseDate: 'اختيار تاريخ',
     chooseTime: 'اختيار وقت'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/ar",[],function(){return{errorLoading:function(){return"لا يمكن تحميل النتائج"},inputTooLong:function(n){return"الرجاء حذف "+(n.input.length-n.maximum)+" عناصر"},inputTooShort:function(n){return"الرجاء إضافة "+(n.minimum-n.input.length)+" عناصر"},loadingMore:function(){return"جاري تحميل نتائج إضافية..."},maximumSelected:function(n){return"تستطيع إختيار "+n.maximum+" بنود فقط"},noResults:function(){return"لم يتم العثور على أي نتائج"},searching:function(){return"جاري البحث…"},removeItem:function(){return"قم بإزالة العنصر"},removeAllItems:function(){return"قم بإزالة كل العناصر"}}}),n.define,n.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['ar'] = factory();
-} } } } });

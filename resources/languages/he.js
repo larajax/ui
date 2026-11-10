@@ -36,5 +36,25 @@
         preview: 'תצוגה מקדימה',
         sideBySide: 'תצוגה זה לצד זה',
         fullscreen: 'מסך מלא'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'לא נמצאו תוצאות',
+        searching: 'מחפש…',
+        loadingMore: 'טוען תוצאות נוספות…',
+        errorLoading: 'שגיאה בטעינת התוצאות',
+        inputTooShort: {
+            one: 'נא להכניס תו אחד או יותר',
+            two: 'נא להכניס :count תווים או יותר',
+            other: 'נא להכניס :count תווים או יותר'
+        },
+        maximumSelected: {
+            one: 'באפשרותך לבחור עד פריט אחד',
+            two: 'באפשרותך לבחור עד :count פריטים',
+            other: 'באפשרותך לבחור עד :count פריטים'
+        },
+        removeItem: 'הסר פריט',
+        removeAllItems: 'הסר את כל הפריטים'
     }
 };

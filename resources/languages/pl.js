@@ -36,5 +36,27 @@
         preview: 'Podgląd',
         sideBySide: 'Podgląd obok edytora',
         fullscreen: 'Pełny ekran'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Brak wyników',
+        searching: 'Trwa wyszukiwanie...',
+        loadingMore: 'Trwa ładowanie...',
+        errorLoading: 'Wystąpił błąd podczas ładowania wyników.',
+        inputTooShort: {
+            one: 'Wpisz co najmniej :count znak',
+            few: 'Wpisz co najmniej :count znaki',
+            many: 'Wpisz co najmniej :count undefined',
+            other: 'Wpisz co najmniej :count undefined'
+        },
+        maximumSelected: {
+            one: 'Możesz zaznaczyć maksymalnie :count element',
+            few: 'Możesz zaznaczyć maksymalnie :count elementy',
+            many: 'Możesz zaznaczyć maksymalnie :count undefined',
+            other: 'Możesz zaznaczyć maksymalnie :count undefined'
+        },
+        removeItem: 'Usuń element',
+        removeAllItems: 'Usuń wszystkie elementy'
     }
 };

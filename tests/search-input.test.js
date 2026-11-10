@@ -114,11 +114,24 @@ describe('search input clear button', () => {
 
     test('a click resends the input request with the emptied term', () => {
         const { input, clear } = connectSearch({ value: 'lamp', request: 'onSearch' });
+        let inputEvents = 0;
+        input.addEventListener('input', () => inputEvents++);
 
         clear.click();
 
         expect(jax.requests).toEqual([input]);
         expect(input.value).toBe('');
+        expect(inputEvents).toBe(0);
+    });
+
+    test('without a request, a click tells input listeners the term is gone', () => {
+        const { input, clear } = connectSearch({ value: 'lamp' });
+        const heard = [];
+        document.body.addEventListener('input', (ev) => heard.push(ev.target.value));
+
+        clear.click();
+
+        expect(heard).toEqual(['']);
     });
 
     test('shows again when a request completes while the input holds text', () => {

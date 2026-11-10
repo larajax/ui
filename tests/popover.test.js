@@ -86,6 +86,11 @@ function stubLayout(trigger, { viewport = [1024, 768], rect = [400, 300, 80, 30]
     });
 }
 
+// The gap between a popover and its trigger, 0.375rem in the page's root font size
+function gap() {
+    return parseFloat(getComputedStyle(document.documentElement).fontSize) * 0.375;
+}
+
 function setUp(html = '<button id="trigger">Open</button>') {
     document.body.innerHTML = html;
     return document.getElementById('trigger');
@@ -108,7 +113,7 @@ afterEach(() => {
 });
 
 describe('popover placement', () => {
-    test('defaults to below the trigger, offset along it and spaced by the arrow', () => {
+    test('defaults to below the trigger, lined up with it, a small gap below', () => {
         const trigger = setUp();
         stubLayout(trigger);
 
@@ -116,8 +121,8 @@ describe('popover placement', () => {
 
         expect(popover.element.classList.contains('placement-bottom')).toBe(true);
         expect(popover.popper.state.placement).toBe('bottom-start');
-        expect(popover.element.style.left).toBe('415px');
-        expect(popover.element.style.top).toBe('345px');
+        expect(popover.element.style.left).toBe('400px');
+        expect(popover.element.style.top).toBe((330 + gap()) + 'px');
     });
 
     test('uses the preferred placement when it fits', () => {
@@ -177,7 +182,7 @@ describe('popover placement', () => {
 
         const popover = open(trigger, { placement: 'right', offsetY: 5 });
 
-        expect(popover.element.style.left).toBe('495px');
+        expect(popover.element.style.left).toBe((480 + gap()) + 'px');
         expect(popover.element.style.top).toBe('305px');
     });
 

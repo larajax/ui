@@ -36,6 +36,17 @@
             margin-bottom: 0;
         }
     }
+
+    /* A left field beside a last right field ends the card too, while the two sit side by side */
+    @media not all and (max-width: 48.0625em) {
+        > .form-group.span-left:has(+ .form-group.span-right:nth-last-child(1 of :not(:empty, .oc-hide, .d-none, [hidden]))) {
+            padding-bottom: 0;
+
+            &:is(.checkbox-field, .radio-field) > .form-field:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
 }
 
 /*
@@ -261,12 +272,12 @@
             }
         }
 
-        &:has(> .select2-container, > .relation-widget > .select2-container) {
+        &:has(> .ts-wrapper, > .relation-widget > .ts-wrapper) {
             > .form-translatable {
                 right: 2.125rem;
             }
 
-            .select2-selection__rendered {
+            .ts-wrapper.single > .ts-control {
                 padding-right: 4.375rem;
             }
         }
@@ -724,18 +735,6 @@ body.compact-container .form-fatal-error {
 }
 
 /*
- * Select2
- */
-
-.select2-container--default .select2-selection--single .select2-selection__arrow b {
-    border: none;
-}
-
-.select2-dropdown {
-    z-index: var(--oc-zindex-select);
-}
-
-/*
  * Controls inside toolbar
  */
 
@@ -764,20 +763,11 @@ body.compact-container .form-fatal-error {
         }
     }
 
-    .select2-container {
+    .ts-wrapper {
         display: inline-block;
         width: auto;
-        height: var(--bs-btn-input-min-height);
         margin-right: 1.125rem;
-
-        /* Fills the box between the borders and the select padding so the text stays centred */
-        .select2-selection__rendered {
-            line-height: calc(var(--bs-btn-input-min-height) - 2px - 2 * var(--custom-select-input-padding-vertical));
-        }
-
-        .select2-selection--single {
-            height: var(--bs-btn-input-min-height);
-        }
+        vertical-align: middle;
     }
 
     select.form-control.custom-select {

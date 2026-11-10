@@ -6,7 +6,7 @@
 ?>
 <div class="<?= ($isGrow ?? false) ? 'facet-item is-grow' : 'facet-item' ?>">
     <?php if ($hasAdornment): ?>
-        <label class="form-control form-adorn filter-number">
+        <label class="form-control form-control-sm form-adorn filter-number">
             <?php if ($scope->prefixIcon): ?>
                 <span class="form-adorn-icon" aria-hidden="true">
                     <i class="<?= e($scope->prefixIcon) ?>"></i>
@@ -23,7 +23,7 @@
         inputmode="<?= $numberFormat && $numberFormat['decimals'] === 0 ? 'numeric' : 'decimal' ?>"
         <?php if (!$numberFormat): ?>name="Filter[<?= $valueName ?>]"<?php endif ?>
         value="<?= e($displayValue) ?>"
-        class="<?= $hasAdornment ? 'form-ghost' : 'form-control filter-number' ?> popup-allow-focus"
+        class="<?= $hasAdornment ? 'form-ghost' : 'form-control form-control-sm filter-number' ?> popup-allow-focus"
         autocomplete="off"
         data-control="number-input"
         <?php if ($numberFormat): ?>data-number-format="<?= e(json_encode($numberFormat)) ?>"<?php endif ?> />

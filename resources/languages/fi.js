@@ -36,5 +36,17 @@
         preview: 'Esikatselu',
         sideBySide: 'Rinnakkain',
         fullscreen: 'Kokonäyttö'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Ei tuloksia',
+        searching: 'Haetaan…',
+        loadingMore: 'Ladataan lisää tuloksia…',
+        errorLoading: 'Tuloksia ei saatu ladattua.',
+        inputTooShort: 'Ole hyvä ja anna :count merkkiä lisää',
+        maximumSelected: 'Voit valita ainoastaan :count kpl',
+        removeItem: 'Poista kohde',
+        removeAllItems: 'Poista kaikki kohteet'
     }
 };

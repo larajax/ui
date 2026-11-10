@@ -1,254 +1,242 @@
-.select2-container {
-    &.in-progress {
-        .select2-selection {
-            .select2-selection__arrow b {
-                display: none !important;
-            }
+/*
+ * The field
+ * --------------------------------------------------
+ */
 
-            &:after {
-                --custom-select-loader-size: 1.25rem;
-                content: '';
-                position: absolute;
-                top: 50%;
-                right: 0.75rem;
-                width: var(--custom-select-loader-size);
-                height: var(--custom-select-loader-size);
-                margin-top: calc(var(--custom-select-loader-size) / -2);
-                border: 2px solid var(--oc-primary-border);
-                border-top-color: var(--oc-accent);
-                border-radius: 50%;
-                animation: spin 0.8s linear infinite;
-            }
-        }
+.ts-wrapper {
+    /* The field keeps Bootstrap's focus ring while its dropdown holds the focus, as a native select does */
+    &.focus > .ts-control,
+    &.dropdown-active > .ts-control {
+        --bs-focus-ring-offset: -1px;
+        outline: var(--bs-focus-ring);
+        outline-offset: var(--bs-focus-ring-offset);
     }
-}
 
-.select2-container--default {
-    display: block;
+    /* A disabled field looks like a disabled form control */
+    &.disabled > .ts-control {
+        color: var(--bs-control-disabled-color, var(--bs-fg-body));
+        background-color: var(--bs-control-disabled-bg, var(--bs-bg-2));
+        box-shadow: none;
+    }
 
-    button {
-        padding: 0;
-        border: 0;
-        background: transparent;
-        line-height: 1.4375rem;
+    .select-status {
+        flex-shrink: 0;
+        margin: 0;
     }
 
     .select-icon {
-        margin-right: 0.25rem;
+        flex-shrink: 0;
+        color: var(--custom-select-icon-color);
     }
 
-    .select2-selection {
-        background-color: var(--custom-select-input-bg);
-        border: 1px solid var(--custom-select-input-border);
-        border-radius: var(--custom-select-input-border-radius);
-        color: var(--custom-select-input-color);
-        font-size: var(--custom-select-input-font-size);
-        box-shadow: var(--custom-select-input-box-shadow);
-        outline: 0;
+    .select-image {
+        flex-shrink: 0;
+        width: auto;
+        height: 1.25em;
+        border-radius: 0.125rem;
     }
+}
 
-    .select2-search--dropdown {
-        position: relative;
-        padding: 0.5rem 0.5rem 0;
-
-        &:after {
-            position: absolute;
-            font-family: var(--custom-select-icon-font-family);
-            content: var(--custom-select-icon-search);
-            right: 1.125rem;
-            top: 0.875rem;
-            color: #95a5a6;
-        }
-
-        .select2-search__field {
-            background-color: var(--custom-select-input-bg);
-            border: 1px solid var(--custom-select-input-border);
-            border-radius: var(--custom-select-input-border-radius);
-            color: var(--custom-select-input-color);
-            font-size: var(--custom-select-input-font-size);
-            box-shadow: var(--custom-select-input-box-shadow);
-            padding-left: 0.375rem;
-        }
-    }
-
-    .select2-search__field {
-        outline: 0;
-
-        &::placeholder {
-            color: var(--custom-select-input-color-placeholder);
-        }
-    }
-
-    .select2-results__option {
-        border-radius: var(--custom-select-border-radius-base);
-
-        &[role=group] {
-            padding: 0;
-        }
-
-        &[aria-disabled=true] {
-            color: var(--custom-select-link-disabled-color);
-            cursor: var(--custom-select-cursor-disabled);
-        }
-
-        &[aria-selected=true] {
-            background-color: var(--custom-select-hover-bg);
-            color: var(--custom-select-hover-color);
-        }
-
-        &--highlighted[aria-selected] {
-            background-color: var(--custom-select-active-bg);
-            color: var(--custom-select-active-color);
-        }
-
-        .select2-results__option {
-            padding: var(--custom-select-padding-base-vertical) var(--custom-select-padding-base-horizontal);
-
-            .select2-results__group {
-                padding-left: 0;
-            }
-
-            .select2-results__option {
-                margin-left: calc(-1 * var(--custom-select-padding-base-horizontal));
-                padding-left: calc(var(--custom-select-padding-base-horizontal) * 2);
-
-                .select2-results__option {
-                    margin-left: calc(-1 * var(--custom-select-padding-base-horizontal) * 2);
-                    padding-left: calc(var(--custom-select-padding-base-horizontal) * 3);
-
-                    .select2-results__option {
-                        margin-left: calc(-1 * var(--custom-select-padding-base-horizontal) * 3);
-                        padding-left: calc(var(--custom-select-padding-base-horizontal) * 4);
-
-                        .select2-results__option {
-                            margin-left: calc(-1 * var(--custom-select-padding-base-horizontal) * 4);
-                            padding-left: calc(var(--custom-select-padding-base-horizontal) * 5);
-
-                            .select2-results__option {
-                                margin-left: calc(-1 * var(--custom-select-padding-base-horizontal) * 5);
-                                padding-left: calc(var(--custom-select-padding-base-horizontal) * 6);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    .select2-results__group {
-        color: var(--custom-select-header-color);
-        display: block;
-        padding: var(--custom-select-padding-base-vertical) 0.375rem;
-        line-height: var(--custom-select-line-height-base);
-        white-space: nowrap;
-        font-weight: 600;
-    }
-
-    &.select2-container--focus,
-    &.select2-container--open {
-        .select2-selection {
-            transition: var(--custom-select-input-transition);
-            border-color: var(--custom-select-input-border-focus);
-
-            /* The same inset focus ring Bootstrap draws on a focused form control */
-            outline: var(--custom-select-input-focus-ring);
-            outline-offset: -1px;
-        }
-    }
-
-    &.select2-container--open {
-        /* Make the dropdown arrow point up while the dropdown is visible. */
-        .select2-selection .select2-selection__arrow b {
-            &:before {
-                font-family: var(--custom-select-icon-font-family);
-                content: var(--custom-select-icon-angle-up);
-                line-height: inherit;
-            }
-        }
-    }
-
-    .select2-selection__clear {
+/* The clear button, shown while the field holds a value */
+.ts-wrapper.plugin-clear_button {
+    .clear-button {
+        position: absolute;
+        top: 50%;
+        inset-inline-end: 0.625rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.25rem;
+        height: 1.25rem;
         color: var(--custom-select-icon-color);
         cursor: pointer;
-        float: right;
-        font-weight: bold;
-        margin-right: 0.75rem;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-50%);
+
+        svg {
+            width: 1rem;
+            height: 1rem;
+        }
 
         &:hover {
-            color: #333;
+            color: var(--bs-fg-body);
         }
     }
 
-    &.select2-container--disabled {
-        --custom-select-input-color: var(--custom-select-input-disabled-color);
+    &.has-items:not(.disabled) .clear-button {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
 
-        .select2-selection {
-            border-color: var(--custom-select-input-border);
-            box-shadow: none;
+/*
+ * The dropdown
+ * --------------------------------------------------
+ */
+
+.ts-dropdown {
+    overflow: hidden;
+    font-size: var(--custom-select-font-size);
+    color: var(--bs-fg-body);
+    background-color: var(--custom-select-dropdown-bg);
+    border: 1px solid var(--custom-select-dropdown-border);
+    border-radius: var(--custom-select-dropdown-radius);
+    box-shadow: var(--custom-select-dropdown-shadow);
+
+    .ts-dropdown-content {
+        padding: var(--custom-select-dropdown-padding);
+    }
+
+    .option,
+    .create,
+    .no-results,
+    .loading,
+    .loading-more-results {
+        padding: var(--custom-select-option-padding-y) var(--custom-select-option-padding-x);
+        border-radius: var(--custom-select-option-radius);
+    }
+
+    /* An option shows its dot, icon or image before its text */
+    .option,
+    .create {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        min-width: 0;
+    }
+
+    .select-text {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .option.selected {
+        color: var(--custom-select-hover-color);
+        background-color: var(--custom-select-hover-bg);
+    }
+
+    .option.active,
+    .create.active {
+        color: var(--custom-select-active-color);
+        background-color: var(--custom-select-active-bg);
+
+        .select-icon {
+            color: inherit;
+        }
+    }
+
+    [data-disabled],
+    .option:not([data-selectable]) {
+        color: var(--custom-select-disabled-color);
+        cursor: not-allowed;
+    }
+
+    .highlight {
+        font-weight: 600;
+        color: inherit;
+        background: none;
+    }
+
+    .no-results,
+    .loading,
+    .loading-more-results {
+        color: var(--custom-select-header-color);
+        cursor: default;
+    }
+
+    /* Option groups, with their options indented under the heading */
+    .optgroup-header {
+        display: block;
+        padding: var(--custom-select-option-padding-y) 0.375rem;
+        font-weight: 600;
+        color: var(--custom-select-header-color);
+        white-space: nowrap;
+        cursor: default;
+    }
+
+    .optgroup .option {
+        padding-inline-start: calc(var(--custom-select-option-padding-x) * 2);
+    }
+
+    /* The search box of a single select, at the top of its dropdown */
+    .dropdown-input-wrap {
+        padding: var(--custom-select-dropdown-padding) var(--custom-select-dropdown-padding) 0;
+    }
+
+    .dropdown-input {
+        display: block;
+        width: 100%;
+        min-height: var(--bs-btn-input-min-height);
+        padding: var(--bs-btn-input-padding-y) calc(var(--bs-btn-input-padding-x) + 1.25rem) var(--bs-btn-input-padding-y) 0.375rem;
+        font: inherit;
+        color: var(--bs-fg-body);
+        background: var(--custom-select-search-icon) no-repeat right 0.75rem center / 1rem 1rem, var(--custom-select-dropdown-bg);
+        border: 1px solid var(--bs-border-color);
+        border-radius: var(--bs-btn-input-border-radius);
+        box-shadow: var(--bs-box-shadow-inset);
+
+        &:focus {
+            outline: 0;
+            border-color: var(--bs-border-color);
         }
 
-        .select2-selection,
-        .select2-search__field {
-            cursor: var(--custom-select-cursor-disabled);
+        &::placeholder {
+            color: var(--bs-fg-3);
+        }
+    }
+
+    /* A title row with a close button, from the dropdown header option */
+    .dropdown-header {
+        position: relative;
+        padding: var(--custom-select-option-padding-y) var(--custom-select-option-padding-x);
+        font-weight: 600;
+        background-color: var(--bs-bg-1);
+        border-bottom: 1px solid var(--custom-select-dropdown-border);
+    }
+
+    .dropdown-header-close {
+        position: absolute;
+        top: 50%;
+        inset-inline-end: 0.625rem;
+        display: flex;
+        color: var(--custom-select-icon-color);
+        transform: translateY(-50%);
+
+        svg {
+            width: 1rem;
+            height: 1rem;
         }
 
-        .select2-selection {
-            background-color: var(--custom-select-input-disabled-bg);
+        &:hover {
+            color: var(--bs-fg-body);
         }
+    }
 
-        .select2-selection--multiple .select2-selection__choice {
-            background: #ccc;
-        }
+    /* Checkboxes before the options of a multiple select */
+    &.plugin-checkbox_options .option input {
+        margin-inline-end: 0.5rem;
+    }
 
-        .select2-selection__clear,
-        .select2-selection--multiple .select2-selection__choice__remove {
+    /* A notice, such as the limit of a full multiple select, shows alone */
+    > .select-notice {
+        margin: var(--custom-select-dropdown-padding);
+    }
+
+    &.is-notice {
+        .ts-dropdown-content,
+        .dropdown-input-wrap {
             display: none;
         }
     }
 
-    /* Dropdown */
-    .select2-dropdown {
-        overflow-x: hidden;
-        margin-top: 0.375rem;
-        padding-top: 0;
-        background-color: var(--custom-select-input-bg);
-        border: 1px solid var(--custom-select-input-border);
-        border-radius: var(--custom-select-border-radius-base);
-        box-shadow: var(--custom-select-box-shadow-z1);
-
-        /* Native nesting cannot join a suffix onto & the way Sass does, so the modifier class is spelled out */
-        &.select2-dropdown--above {
-            margin-top: -0.375rem;
-            box-shadow: var(--custom-select-box-shadow-z1);
-        }
-    }
-
-    .select2-results > .select2-results__options {
-        font-size: var(--custom-select-input-font-size);
-        max-height: 14.25rem;
-        overflow-y: auto;
-        padding: 0.5rem;
-    }
-
-    /* No Dropdown */
-    .select2-dropdown.select-no-dropdown {
+    /* A tag input without a dropdown turns typed text into tags as it goes */
+    &.select-no-dropdown {
         display: none !important;
     }
 
-    .select2-dropdown.select-hide-selected {
-        .select2-results__option--selected {
-            display: none !important;
-        }
-    }
-
-    /* Auto Width */
-    .select2-dropdown.select-dropdown-auto-width {
-        .select2-results__options {
-            overflow-x: hidden;
-        }
-
-        .select2-results__option {
-            white-space: nowrap;
-        }
+    /* Auto width keeps each option on one line */
+    &.select-dropdown-auto-width .option {
+        white-space: nowrap;
     }
 }

@@ -36,5 +36,27 @@
         preview: 'Predogled',
         sideBySide: 'Predogled ob urejevalniku',
         fullscreen: 'Celozaslonski način'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Ni zadetkov.',
+        searching: 'Iščem…',
+        loadingMore: 'Nalagam več zadetkov…',
+        errorLoading: 'Zadetkov iskanja ni bilo mogoče naložiti.',
+        inputTooShort: {
+            one: 'Prosim vpišite še :count znak',
+            two: 'Prosim vpišite še :count znaka',
+            few: 'Prosim vpišite še :count znake',
+            other: 'Prosim vpišite še :count znake'
+        },
+        maximumSelected: {
+            one: 'Označite lahko največ :count predmet',
+            two: 'Označite lahko največ :count predmeta',
+            few: 'Označite lahko največ :count predmete',
+            other: 'Označite lahko največ :count predmete'
+        },
+        removeItem: 'Odstrani element',
+        removeAllItems: 'Odstranite vse elemente'
     }
 };

@@ -36,5 +36,20 @@
         preview: 'Vorschau',
         sideBySide: 'Nebeneinander',
         fullscreen: 'Vollbild'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Keine Übereinstimmungen gefunden',
+        searching: 'Suche…',
+        loadingMore: 'Lade mehr Ergebnisse…',
+        errorLoading: 'Die Ergebnisse konnten nicht geladen werden.',
+        inputTooShort: 'Bitte :count Zeichen mehr eingeben',
+        maximumSelected: {
+            one: 'Sie können nur :count Element auswählen',
+            other: 'Sie können nur :count Elemente auswählen'
+        },
+        removeItem: 'Element entfernen',
+        removeAllItems: 'Entferne alle Elemente'
     }
 };

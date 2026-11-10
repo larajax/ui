@@ -429,6 +429,97 @@ describe('scope updates', () => {
         expect(document.activeElement).toBe(scope.querySelector('.menu-item[data-bs-value="example.com"]'));
     });
 
+    test('a dropdown with a search box keeps the focus there and scrolls to the picked option', async () => {
+        renderFilter();
+
+        const scope = document.querySelector('[data-scope-name="domain"]');
+        const search = document.createElement('div');
+        search.className = 'combobox-search';
+        search.innerHTML = '<input type="search" class="combobox-search-input" />';
+        scope.querySelector('.menu').prepend(search);
+
+        pickDomain('example.com');
+        const input = search.querySelector('input');
+        input.focus();
+
+        const picked = scope.querySelector('.menu-item[data-bs-value="example.com"]');
+        let scrolled = false;
+        picked.scrollIntoView = () => { scrolled = true; };
+
+        scope.querySelector('.combobox-toggle').dispatchEvent(new CustomEvent('shown.bs.combobox', { bubbles: true }));
+        await sleep(50);
+
+        expect(document.activeElement).toBe(input);
+        expect(scrolled).toBe(true);
+    });
+
+    test('enter in a dropdown search box picks the first option that matches', () => {
+        renderFilter();
+
+        const scope = document.querySelector('[data-scope-name="domain"]');
+        const search = document.createElement('div');
+        search.className = 'combobox-search';
+        search.innerHTML = '<input type="search" class="combobox-search-input" />';
+        scope.querySelector('.menu').prepend(search);
+
+        // The search has hidden the empty option, as Bootstrap's combobox does for a query
+        scope.querySelector('.menu-item[data-bs-value=""]').style.display = 'none';
+
+        const clicked = [];
+        scope.querySelectorAll('.menu-item').forEach((item) => item.addEventListener('click', () => clicked.push(item.dataset.bsValue)));
+
+        const enter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+        search.querySelector('input').dispatchEvent(enter);
+
+        expect(clicked).toEqual(['example.com']);
+        expect(enter.defaultPrevented).toBe(true);
+
+        // Other keys, and Enter outside a search box, are left alone
+        search.querySelector('input').dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true }));
+        scope.querySelector('.combobox-toggle').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        expect(clicked).toEqual(['example.com']);
+    });
+
+    test('a click in a dropdown search box stays inside the filter, so the open menu stays open', () => {
+        renderFilter();
+
+        const scope = document.querySelector('[data-scope-name="domain"]');
+        const search = document.createElement('div');
+        search.className = 'combobox-search';
+        search.innerHTML = '<label><span class="form-adorn-icon"><i></i></span><input class="combobox-search-input" /><button type="button" data-search-clear>x</button></label>';
+        scope.querySelector('.menu').prepend(search);
+
+        const reached = [];
+        const listener = (ev) => reached.push(ev.target.tagName);
+        document.addEventListener('click', listener);
+
+        search.querySelector('i').click();
+        search.querySelector('[data-search-clear]').click();
+        scope.querySelector('.menu-item').click();
+
+        document.removeEventListener('click', listener);
+
+        // Only the option click reaches the document, where the combobox closes its menu
+        expect(reached).toEqual(['BUTTON']);
+    });
+
+    test('opening a dropdown with a search box has its clear button follow the emptied search', async () => {
+        renderFilter();
+
+        const scope = document.querySelector('[data-scope-name="domain"]');
+        const search = document.createElement('div');
+        search.className = 'combobox-search';
+        search.innerHTML = '<input class="combobox-search-input" />';
+        scope.querySelector('.menu').prepend(search);
+
+        let inputEvents = 0;
+        search.querySelector('input').addEventListener('input', () => inputEvents++);
+
+        scope.querySelector('.combobox-toggle').dispatchEvent(new CustomEvent('shown.bs.combobox', { bubbles: true }));
+
+        expect(inputEvents).toBe(1);
+    });
+
     test('a combobox change from outside the dropdown scopes is left alone', () => {
         renderFilter('<div class="filter-group"><button type="button" id="other-toggle" class="combobox-toggle"></button></div>');
         jax.requests = [];

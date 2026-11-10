@@ -36,5 +36,21 @@
         preview: 'Previzualizare',
         sideBySide: 'Vizualizare alăturată',
         fullscreen: 'Ecran complet'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Nu au fost găsite rezultate',
+        searching: 'Căutare…',
+        loadingMore: 'Se încarcă mai multe rezultate…',
+        errorLoading: 'Rezultatele nu au putut fi incărcate.',
+        inputTooShort: 'Vă rugăm să introduceți :count sau mai multe caractere',
+        maximumSelected: {
+            one: 'Aveți voie să selectați cel mult :count element',
+            few: 'Aveți voie să selectați cel mult :count elemente',
+            other: 'Aveți voie să selectați cel mult :count elemente'
+        },
+        removeItem: 'Eliminați elementul',
+        removeAllItems: 'Eliminați toate elementele'
     }
 };

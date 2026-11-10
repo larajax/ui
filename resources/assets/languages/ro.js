@@ -40,6 +40,22 @@
         preview: 'Previzualizare',
         sideBySide: 'Vizualizare alăturată',
         fullscreen: 'Ecran complet'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Nu au fost găsite rezultate',
+        searching: 'Căutare…',
+        loadingMore: 'Se încarcă mai multe rezultate…',
+        errorLoading: 'Rezultatele nu au putut fi incărcate.',
+        inputTooShort: 'Vă rugăm să introduceți :count sau mai multe caractere',
+        maximumSelected: {
+            one: 'Aveți voie să selectați cel mult :count element',
+            few: 'Aveți voie să selectați cel mult :count elemente',
+            other: 'Aveți voie să selectați cel mult :count elemente'
+        },
+        removeItem: 'Eliminați elementul',
+        removeAllItems: 'Eliminați toate elementele'
     }
 };
 
@@ -205,12 +221,3 @@
     chooseDate: 'Alegeți o dată',
     chooseTime: 'Alegeți o oră'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var e=jQuery.fn.select2.amd;e.define("select2/i18n/ro",[],function(){return{errorLoading:function(){return"Rezultatele nu au putut fi incărcate."},inputTooLong:function(e){var t=e.input.length-e.maximum,n="Vă rugăm să ștergeți "+t+" caracter";return 1!==t&&(n+="e"),n},inputTooShort:function(e){return"Vă rugăm să introduceți "+(e.minimum-e.input.length)+" sau mai multe caractere"},loadingMore:function(){return"Se încarcă mai multe rezultate…"},maximumSelected:function(e){var t="Aveți voie să selectați cel mult "+e.maximum;return t+=" element",1!==e.maximum&&(t+="e"),t},noResults:function(){return"Nu au fost găsite rezultate"},searching:function(){return"Căutare…"},removeAllItems:function(){return"Eliminați toate elementele"}}}),e.define,e.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['ro'] = factory();
-} } } } });

@@ -223,7 +223,7 @@ export function registerFormWidget(jax) {
             const group = ev.target.closest('[data-change-handler]'),
                 handler = group.dataset.changeHandler;
 
-            // Debounce needed because select2 triggers change twice (vanilla + jquery)
+            // Debounced, so a burst of changes, such as several tags picked in a row, makes one request
             if (this.dependantUpdateTimers[handler] !== undefined) {
                 window.clearTimeout(this.dependantUpdateTimers[handler]);
             }

@@ -7,7 +7,7 @@
  * build only prepares vendored files ahead of publishing.
  */
 import path from 'path';
-import { bundle, bundleVirtual, combineLanguages, copy, select2Language, vendorDir } from './build-util.js';
+import { bundle, bundleVirtual, combineLanguages, copy, vendorDir } from './build-util.js';
 import { buildRichArea } from './packages/richarea/build.js';
 import { buildHotsheet } from './packages/hotsheet/build.js';
 
@@ -65,26 +65,23 @@ await bundleVirtual(
     'libphonenumber/libphonenumber.esm.js'
 );
 
-// Select2 with a private jQuery instance in a single ESM bundle. The
-// custom-select control imports the returned jQuery; window.jQuery is never
-// touched, so jQuery stays an implementation detail of this one control.
-// The UMD wrappers inside would register with a page's AMD loader, such as
-// Monaco's, instead of returning their exports, so define reads as undefined.
-// Select2 normalises AJAX results and option groups by passing _normalizeItem
-// to map() unbound, which a script tolerates, this being window, but a strict
-// module throws on, so an unbound call gets an empty this, as in a script.
+// Tom Select (searchable select and tag input, no jQuery) with every plugin registered, bundled as
+// ESM for the custom-select control, which turns the plugins on from the select's classes and data.
+await bundle('tom-select', 'tom-select/tom-select.esm.js', {
+    banner: { js: '/*! Tom Select v2.7.0 | (c) contributors | Apache License 2.0 | https://github.com/orchidjs/tom-select */' }
+});
+
+// Chart.js with every chart type, scale and plugin registered, and its date adapter hook, bundled as ESM
+// for the chart controls, which load it on first use and expose the instance for an app's own options.
 await bundleVirtual(
     [
-        "import $ from 'jquery';",
-        "import select2 from 'select2/dist/js/select2.full.js';",
-        "select2(window, $);",
-        "const SelectAdapter = $.fn.select2.amd.require('select2/data/select');",
-        "const normalizeItem = SelectAdapter.prototype._normalizeItem;",
-        "SelectAdapter.prototype._normalizeItem = function (item) { return normalizeItem.call(this || {}, item); };",
-        "export default $;"
+        "import Chart from 'chart.js/auto';",
+        "export { _adapters, Tooltip } from 'chart.js';",
+        "export { Chart };",
+        "export default Chart;"
     ].join('\n'),
-    'select2/select2.esm.js',
-    { define: { define: 'undefined' } }
+    'chartjs/chart.esm.js',
+    { banner: { js: '/*! Chart.js v4.5.1 | (c) Chart.js Contributors | MIT License | https://www.chartjs.org */' } }
 );
 
 // RichArea (rich text editor on TipTap) - built from packages/richarea for the
@@ -97,9 +94,8 @@ console.log('  ✓ richarea/richarea.js, richarea.css, base-styles.css (bundled)
 await buildHotsheet({ outdir: path.join(vendorDir, 'hotsheet') });
 console.log('  ✓ hotsheet/hotsheet.js, hotsheet.css (bundled) and languages/');
 
-// Translations, one script per language with the library's widget strings, the rich editor's and
-// grid's, which the packages keep in their own languages/ for use on their own, and Select2's own
-// translation for the custom-select control.
-combineLanguages(['resources/languages', 'packages/richarea/src/languages', 'packages/hotsheet/src/languages', select2Language]);
+// Translations, one script per language with the library's widget strings and the rich editor's and
+// grid's, which the packages keep in their own languages/ for use on their own.
+combineLanguages(['resources/languages', 'packages/richarea/src/languages', 'packages/hotsheet/src/languages']);
 
 console.log('\n  Done.\n');

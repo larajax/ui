@@ -36,5 +36,17 @@
         preview: 'แสดงตัวอย่าง',
         sideBySide: 'แสดงเคียงข้างกัน',
         fullscreen: 'เต็มหน้าจอ'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'ไม่พบข้อมูล',
+        searching: 'กำลังค้นข้อมูล…',
+        loadingMore: 'กำลังค้นข้อมูลเพิ่ม…',
+        errorLoading: 'ไม่สามารถค้นข้อมูลได้',
+        inputTooShort: 'โปรดพิมพ์เพิ่มอีก :count ตัวอักษร',
+        maximumSelected: 'คุณสามารถเลือกได้ไม่เกิน :count รายการ',
+        removeItem: 'ลบรายการ',
+        removeAllItems: 'ลบรายการทั้งหมด'
     }
 };

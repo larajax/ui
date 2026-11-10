@@ -40,6 +40,28 @@
         preview: 'Папярэдні прагляд',
         sideBySide: 'Папярэдні прагляд побач з рэдактарам',
         fullscreen: 'Поўны экран'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Нічога не знойдзена',
+        searching: 'Пошук…',
+        loadingMore: 'Загрузка дадатковых вынікаў…',
+        errorLoading: 'Немагчыма загрузіць вынікі.',
+        inputTooShort: {
+            one: 'Увядзіце яшчэ хаця б :count сімвал',
+            few: 'Увядзіце яшчэ хаця б :count сімвалы',
+            many: 'Увядзіце яшчэ хаця б :count сімвалаў',
+            other: 'Увядзіце яшчэ хаця б :count сімвала'
+        },
+        maximumSelected: {
+            one: 'Вы можаце выбраць не больш за :count элемент',
+            few: 'Вы можаце выбраць не больш за :count элементы',
+            many: 'Вы можаце выбраць не больш за :count элементаў',
+            other: 'Вы можаце выбраць не больш за :count элемента'
+        },
+        removeItem: 'Выдаліць элемент',
+        removeAllItems: 'Выдаліць усе элементы'
     }
 };
 

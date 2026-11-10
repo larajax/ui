@@ -40,6 +40,18 @@
         preview: 'پیش‌نمایش',
         sideBySide: 'نمایش کنار هم',
         fullscreen: 'تمام صفحه'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'هیچ نتیجه‌ای یافت نشد',
+        searching: 'در حال جستجو...',
+        loadingMore: 'در حال بارگذاری نتایج بیشتر...',
+        errorLoading: 'امکان بارگذاری نتایج وجود ندارد.',
+        inputTooShort: 'لطفاً تعداد :count کاراکتر یا بیشتر وارد نمایید',
+        maximumSelected: 'شما تنها می‌توانید :count آیتم را انتخاب نمایید',
+        removeItem: 'حذف آیتم',
+        removeAllItems: 'همه موارد را حذف کنید'
     }
 };
 
@@ -205,12 +217,3 @@
     chooseDate: 'انتخاب تاریخ',
     chooseTime: 'انتخاب زمان'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/fa",[],function(){return{errorLoading:function(){return"امکان بارگذاری نتایج وجود ندارد."},inputTooLong:function(n){return"لطفاً "+(n.input.length-n.maximum)+" کاراکتر را حذف نمایید"},inputTooShort:function(n){return"لطفاً تعداد "+(n.minimum-n.input.length)+" کاراکتر یا بیشتر وارد نمایید"},loadingMore:function(){return"در حال بارگذاری نتایج بیشتر..."},maximumSelected:function(n){return"شما تنها می‌توانید "+n.maximum+" آیتم را انتخاب نمایید"},noResults:function(){return"هیچ نتیجه‌ای یافت نشد"},searching:function(){return"در حال جستجو..."},removeAllItems:function(){return"همه موارد را حذف کنید"},removeItem:function(){return"حذف آیتم"},search:function(){return"جستجو"}}}),n.define,n.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['fa'] = factory();
-} } } } });

@@ -202,7 +202,7 @@ trait AssetMaker
      */
     protected function getAssetCollector()
     {
-        return app(\Larajax\Ui\Classes\AssetCollector::class);
+        return app('larajax.ui.assets');
     }
 
     /**

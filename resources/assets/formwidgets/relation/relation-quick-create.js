@@ -68,11 +68,11 @@ export function registerRelationQuickCreate(jax) {
             });
         }
 
-        // Updates the Select2 display without firing change
+        // Updates the custom select's display without firing change
         refreshCustomSelect() {
             var customSelect = jax.fetchControl(this.select, 'custom-select');
-            if (customSelect && customSelect.$el) {
-                customSelect.$el.trigger('change.select2');
+            if (customSelect && customSelect.refresh) {
+                customSelect.refresh();
             }
         }
     });

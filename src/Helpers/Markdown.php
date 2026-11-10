@@ -1,7 +1,5 @@
 <?php namespace Larajax\Ui\Helpers;
 
-use Illuminate\Support\Str;
-
 /**
  * Markdown helper renders markdown in field comments and the markdown editor preview
  *
@@ -11,28 +9,11 @@ use Illuminate\Support\Str;
 class Markdown
 {
     /**
-     * @var callable|null markdownResolver renders markdown, given the text and whether HTML in it is escaped.
-     */
-    protected static $markdownResolver;
-
-    /**
-     * resolveMarkdownUsing sets the callback that renders markdown, given the text and whether HTML in it is escaped, or null to use CommonMark.
-     */
-    public static function resolveMarkdownUsing(?callable $resolver): void
-    {
-        static::$markdownResolver = $resolver;
-    }
-
-    /**
-     * parse renders markdown as HTML, keeping any HTML in the text.
+     * parse renders markdown as HTML, keeping any HTML in the text, through the markdown hook of larajax.ui.
      */
     public static function parse($text): string
     {
-        if (static::$markdownResolver) {
-            return (string) (static::$markdownResolver)((string) $text, false);
-        }
-
-        return Str::markdown((string) $text);
+        return app('larajax.ui')->markdown((string) $text);
     }
 
     /**
@@ -40,14 +21,7 @@ class Markdown
      */
     public static function parseSafe($text): string
     {
-        if (static::$markdownResolver) {
-            return (string) (static::$markdownResolver)((string) $text, true);
-        }
-
-        return Str::markdown((string) $text, [
-            'html_input' => 'escape',
-            'allow_unsafe_links' => false,
-        ]);
+        return app('larajax.ui')->markdown((string) $text, true);
     }
 
     /**

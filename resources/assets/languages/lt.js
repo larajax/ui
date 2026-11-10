@@ -40,6 +40,26 @@
         preview: 'Peržiūra',
         sideBySide: 'Peržiūra šalia rengyklės',
         fullscreen: 'Visas ekranas'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Atitikmenų nerasta',
+        searching: 'Ieškoma…',
+        loadingMore: 'Kraunama daugiau rezultatų…',
+        errorLoading: 'Nepavyko įkelti rezultatų.',
+        inputTooShort: {
+            one: 'Įrašykite dar :count simbolį',
+            few: 'Įrašykite dar :count simbolius',
+            other: 'Įrašykite dar :count simbolių'
+        },
+        maximumSelected: {
+            one: 'Jūs galite pasirinkti tik :count elementą',
+            few: 'Jūs galite pasirinkti tik :count elementus',
+            other: 'Jūs galite pasirinkti tik :count elementų'
+        },
+        removeItem: 'Pašalinti elementą',
+        removeAllItems: 'Pašalinti visus elementus'
     }
 };
 
@@ -205,12 +225,3 @@
     chooseDate: 'Pasirinkti datą',
     chooseTime: 'Pasirinkti laiką'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/lt",[],function(){function n(n,e,i,t){return n%10==1&&(n%100<11||n%100>19)?e:n%10>=2&&n%10<=9&&(n%100<11||n%100>19)?i:t}return{inputTooLong:function(e){var i=e.input.length-e.maximum,t="Pašalinkite "+i+" simbol";return t+=n(i,"į","ius","ių")},inputTooShort:function(e){var i=e.minimum-e.input.length,t="Įrašykite dar "+i+" simbol";return t+=n(i,"į","ius","ių")},loadingMore:function(){return"Kraunama daugiau rezultatų…"},maximumSelected:function(e){var i="Jūs galite pasirinkti tik "+e.maximum+" element";return i+=n(e.maximum,"ą","us","ų")},noResults:function(){return"Atitikmenų nerasta"},searching:function(){return"Ieškoma…"},removeAllItems:function(){return"Pašalinti visus elementus"}}}),n.define,n.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['lt'] = factory();
-} } } } });

@@ -51,6 +51,8 @@ export function registerFilterWidget(jax) {
             // Bootstrap's own event names, which the framework's listener would read as namespaced events
             this.element.addEventListener('change.bs.combobox', this.proxy(this.onPickDropdown));
             this.element.addEventListener('shown.bs.combobox', this.proxy(this.onDropdownShown));
+            this.element.addEventListener('keydown', this.proxy(this.onDropdownSearchKeydown));
+            this.element.addEventListener('click', this.proxy(this.onDropdownSearchClick));
 
             this.bindScrollable();
             this.orderScopes();
@@ -59,6 +61,8 @@ export function registerFilterWidget(jax) {
         disconnect() {
             this.element.removeEventListener('change.bs.combobox', this.proxy(this.onPickDropdown));
             this.element.removeEventListener('shown.bs.combobox', this.proxy(this.onDropdownShown));
+            this.element.removeEventListener('keydown', this.proxy(this.onDropdownSearchKeydown));
+            this.element.removeEventListener('click', this.proxy(this.onDropdownSearchClick));
             this.hidePopover();
             this.unbindScrollable();
         }
@@ -577,32 +581,10 @@ export function registerFilterWidget(jax) {
             this.activeScope = anchor;
             this.showPopover(anchor, template.innerHTML);
 
-            if (this.popover) {
-                this.alignPopoverArrow(this.popover, anchor);
-            }
-
             const control = this.popover?.getContainer()?.querySelector('input:not([type="hidden"]), button');
             if (control) {
                 requestAnimationFrame(() => control.focus());
             }
-        }
-
-        // Points the popover arrow at the middle of a trigger narrower than the default offset assumes, measuring where the stylesheet draws the arrow.
-        alignPopoverArrow(popover, anchor) {
-            const content = popover.element ? popover.element.firstElementChild : null;
-            if (!content) {
-                return;
-            }
-
-            const arrow = getComputedStyle(content, '::after'),
-                tip = parseFloat(arrow.left) + parseFloat(arrow.borderLeftWidth);
-
-            if (Number.isNaN(tip)) {
-                return;
-            }
-
-            popover.options.offsetX = anchor.offsetWidth / 2 - tip;
-            popover.reposition();
         }
 
         // Keeps the new name and the saved set to update apart, so the one just used clears the other, and labels the button to match.
@@ -706,7 +688,7 @@ export function registerFilterWidget(jax) {
         onPickDropdown(ev) {
             const toggle = ev.target instanceof Element ? ev.target.closest('.filter-scope > .combobox-toggle') : null;
             const scope = toggle ? toggle.closest('.filter-scope') : null;
-            const item = scope ? scope.querySelector('.menu > .menu-item.selected') : null;
+            const item = scope ? scope.querySelector('.menu .menu-item.selected') : null;
 
             if (!item || !this.element.contains(scope)) {
                 return;
@@ -720,15 +702,51 @@ export function registerFilterWidget(jax) {
         }
 
         // The open options start at the picked one, after the combobox focuses its first item, so Escape and the arrow keys work from there.
+        // With a search box, which the combobox focuses, the picked option only scrolls into view.
         onDropdownShown(ev) {
             const toggle = ev.target instanceof Element ? ev.target.closest('.filter-scope > .combobox-toggle') : null;
-            const item = toggle ? toggle.closest('.filter-scope').querySelector('.menu > .menu-item.selected') : null;
+            const scope = toggle ? toggle.closest('.filter-scope') : null;
+            const item = scope ? scope.querySelector('.menu .menu-item.selected') : null;
+            const search = scope ? scope.querySelector('.menu .combobox-search-input') : null;
+
+            // The combobox empties the search as it opens, which the clear button follows
+            if (search && this.element.contains(search)) {
+                search.dispatchEvent(new Event('input', { bubbles: true }));
+            }
 
             if (!item || !this.element.contains(item)) {
                 return;
             }
 
+            if (search) {
+                requestAnimationFrame(() => item.scrollIntoView({ block: 'nearest' }));
+                return;
+            }
+
             requestAnimationFrame(() => item.focus());
+        }
+
+        // Enter in a dropdown's search box picks the first option that matches
+        onDropdownSearchKeydown(ev) {
+            if (ev.key !== 'Enter' || !ev.target.matches || !ev.target.matches('.filter-scope .combobox-search-input')) {
+                return;
+            }
+
+            ev.preventDefault();
+
+            const item = [...ev.target.closest('.menu').querySelectorAll('.menu-item[data-bs-value]')]
+                .find((option) => option.style.display !== 'none' && !option.disabled);
+
+            if (item) {
+                item.click();
+            }
+        }
+
+        // A click on a dropdown's search box, such as its icon or clear button, would close the menu as a click outside the options
+        onDropdownSearchClick(ev) {
+            if (ev.target.closest && ev.target.closest('.filter-scope .menu .combobox-search')) {
+                ev.stopPropagation();
+            }
         }
 
         //

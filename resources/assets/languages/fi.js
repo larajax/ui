@@ -40,6 +40,18 @@
         preview: 'Esikatselu',
         sideBySide: 'Rinnakkain',
         fullscreen: 'Kokonäyttö'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Ei tuloksia',
+        searching: 'Haetaan…',
+        loadingMore: 'Ladataan lisää tuloksia…',
+        errorLoading: 'Tuloksia ei saatu ladattua.',
+        inputTooShort: 'Ole hyvä ja anna :count merkkiä lisää',
+        maximumSelected: 'Voit valita ainoastaan :count kpl',
+        removeItem: 'Poista kohde',
+        removeAllItems: 'Poista kaikki kohteet'
     }
 };
 
@@ -205,12 +217,3 @@
     chooseDate: 'Valitse päivämäärä',
     chooseTime: 'Valitse kellonaika'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/fi",[],function(){return{errorLoading:function(){return"Tuloksia ei saatu ladattua."},inputTooLong:function(n){return"Ole hyvä ja anna "+(n.input.length-n.maximum)+" merkkiä vähemmän"},inputTooShort:function(n){return"Ole hyvä ja anna "+(n.minimum-n.input.length)+" merkkiä lisää"},loadingMore:function(){return"Ladataan lisää tuloksia…"},maximumSelected:function(n){return"Voit valita ainoastaan "+n.maximum+" kpl"},noResults:function(){return"Ei tuloksia"},searching:function(){return"Haetaan…"},removeAllItems:function(){return"Poista kaikki kohteet"}}}),n.define,n.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['fi'] = factory();
-} } } } });

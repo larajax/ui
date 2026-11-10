@@ -36,5 +36,25 @@
         preview: 'Peržiūra',
         sideBySide: 'Peržiūra šalia rengyklės',
         fullscreen: 'Visas ekranas'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Atitikmenų nerasta',
+        searching: 'Ieškoma…',
+        loadingMore: 'Kraunama daugiau rezultatų…',
+        errorLoading: 'Nepavyko įkelti rezultatų.',
+        inputTooShort: {
+            one: 'Įrašykite dar :count simbolį',
+            few: 'Įrašykite dar :count simbolius',
+            other: 'Įrašykite dar :count simbolių'
+        },
+        maximumSelected: {
+            one: 'Jūs galite pasirinkti tik :count elementą',
+            few: 'Jūs galite pasirinkti tik :count elementus',
+            other: 'Jūs galite pasirinkti tik :count elementų'
+        },
+        removeItem: 'Pašalinti elementą',
+        removeAllItems: 'Pašalinti visus elementus'
     }
 };

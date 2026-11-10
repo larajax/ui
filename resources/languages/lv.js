@@ -36,5 +36,25 @@
         preview: 'Priekšskatījums',
         sideBySide: 'Blakus skats',
         fullscreen: 'Pilnekrāna režīms'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Sakritību nav',
+        searching: 'Meklēšana…',
+        loadingMore: 'Datu ielāde…',
+        errorLoading: 'Neizdevās ielādēt rezultātus.',
+        inputTooShort: {
+            zero: 'Lūdzu ievadiet vēl :count simbolus',
+            one: 'Lūdzu ievadiet vēl :count simbolu',
+            other: 'Lūdzu ievadiet vēl :count simbolus'
+        },
+        maximumSelected: {
+            zero: 'Jūs varat izvēlēties ne vairāk kā :count elementus',
+            one: 'Jūs varat izvēlēties ne vairāk kā :count elementu',
+            other: 'Jūs varat izvēlēties ne vairāk kā :count elementus'
+        },
+        removeItem: 'Noņemt vienumu',
+        removeAllItems: 'Noņemt visus vienumus'
     }
 };

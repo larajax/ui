@@ -36,5 +36,25 @@
         preview: 'Náhled',
         sideBySide: 'Náhled vedle editoru',
         fullscreen: 'Celá obrazovka'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Nenalezeny žádné položky.',
+        searching: 'Vyhledávání…',
+        loadingMore: 'Načítají se další výsledky…',
+        errorLoading: 'Výsledky nemohly být načteny.',
+        inputTooShort: {
+            one: 'Prosím, zadejte ještě jeden znak.',
+            few: 'Prosím, zadejte ještě další dva znaky.',
+            other: 'Prosím, zadejte ještě dalších :count znaků.'
+        },
+        maximumSelected: {
+            one: 'Můžete zvolit jen jednu položku.',
+            few: 'Můžete zvolit maximálně dvě položky.',
+            other: 'Můžete zvolit maximálně :count položek.'
+        },
+        removeItem: 'Odstranit položku',
+        removeAllItems: 'Odstraňte všechny položky'
     }
 };

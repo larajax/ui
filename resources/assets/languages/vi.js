@@ -40,6 +40,18 @@
         preview: 'Xem trước',
         sideBySide: 'Xem song song',
         fullscreen: 'Toàn màn hình'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Không tìm thấy kết quả',
+        searching: 'Đang tìm…',
+        loadingMore: 'Đang lấy thêm kết quả…',
+        errorLoading: 'Không thể tải kết quả.',
+        inputTooShort: 'Vui lòng nhập thêm từ :count ký tự trở lên',
+        maximumSelected: 'Chỉ có thể chọn được :count lựa chọn',
+        removeItem: 'Xóa mục',
+        removeAllItems: 'Xóa tất cả các mục'
     }
 };
 
@@ -205,12 +217,3 @@
     chooseDate: 'Chọn ngày',
     chooseTime: 'Chọn giờ'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/vi",[],function(){return{inputTooLong:function(n){return"Vui lòng xóa bớt "+(n.input.length-n.maximum)+" ký tự"},inputTooShort:function(n){return"Vui lòng nhập thêm từ "+(n.minimum-n.input.length)+" ký tự trở lên"},loadingMore:function(){return"Đang lấy thêm kết quả…"},maximumSelected:function(n){return"Chỉ có thể chọn được "+n.maximum+" lựa chọn"},noResults:function(){return"Không tìm thấy kết quả"},searching:function(){return"Đang tìm…"},removeAllItems:function(){return"Xóa tất cả các mục"}}}),n.define,n.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['vi'] = factory();
-} } } } });

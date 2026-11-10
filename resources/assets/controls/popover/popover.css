@@ -38,104 +38,6 @@ div.control-popover {
         background: var(--popover-bg);
         box-shadow: var(--oc-overlay-box-shadow, 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24));
         border-radius: 0.375rem;
-
-        &::after,
-        &::before {
-            position: absolute;
-            content: '';
-            display: block;
-            width: 0;
-            height: 0;
-            border-style: solid;
-        }
-
-        &::after {
-            z-index: 2;
-        }
-
-        &::before {
-            z-index: 1;
-        }
-    }
-
-    /* Arrow: placement bottom */
-    &.placement-bottom > div {
-        &::after {
-            border-width: 0 7.5px 8px 7.5px;
-            border-color: transparent transparent var(--popover-bg) transparent;
-            left: 1.125rem;
-            top: -0.625rem;
-        }
-
-        &::before {
-            border-width: 0 8.5px 9px 8.5px;
-            border-color: transparent transparent var(--popover-border) transparent;
-            left: 1rem;
-            top: -0.625rem;
-        }
-    }
-
-    &.placement-bottom.placement-bottom-right > div {
-        &::after {
-            left: auto;
-            right: 1.125rem;
-        }
-
-        &::before {
-            left: auto;
-            right: 1rem;
-        }
-    }
-
-    /* Arrow: placement top */
-    &.placement-top > div {
-        &::after {
-            border-width: 8px 7.5px 0 7.5px;
-            border-color: var(--popover-bg) transparent transparent transparent;
-            left: 1.125rem;
-            bottom: -0.625rem;
-        }
-
-        &::before {
-            border-width: 9px 8.5px 0 8.5px;
-            border-color: var(--popover-border) transparent transparent transparent;
-            left: 1rem;
-            bottom: -0.625rem;
-        }
-    }
-
-    /* Arrow: placement left */
-    &.placement-left > div {
-        &::after {
-            border-width: 7.5px 0 7.5px 8px;
-            border-color: transparent transparent transparent var(--popover-bg);
-            right: -0.625rem;
-            top: 0.5rem;
-        }
-
-        &::before {
-            border-width: 8.5px 0 8.5px 9px;
-            border-color: transparent transparent transparent var(--popover-border);
-            right: -0.625rem;
-            top: 0.375rem;
-        }
-    }
-
-    /* Arrow: placement right */
-    &.placement-right > div {
-        &::after {
-            border-width: 7.5px 8px 7.5px 0;
-            border-color: transparent var(--popover-bg) transparent transparent;
-            left: -0.625rem;
-            top: 0.5rem;
-        }
-
-        &::before {
-            border-width: 8.5px 9px 8.5px 0;
-            border-color: transparent var(--popover-border) transparent transparent;
-            left: -0.625rem;
-            top: 0.375rem;
-        }
     }
 
     /* Body and footer */
@@ -160,16 +62,6 @@ div.control-popover {
         border-top-left-radius: 0.375rem;
         border-top-right-radius: 0.375rem;
         border-bottom: 1px solid var(--popover-border);
-
-        &::before {
-            z-index: 3;
-            position: absolute;
-            content: '';
-            display: none;
-            width: 0;
-            height: 0;
-            border-style: solid;
-        }
 
         h3 {
             font-size: var(--bs-body-font-size, 1rem);
@@ -206,31 +98,6 @@ div.control-popover {
         }
     }
 
-    /* Head arrow overrides per placement */
-    &.placement-bottom .popover-head::before {
-        display: block;
-        border-width: 0 7.5px 8px 7.5px;
-        border-color: transparent transparent var(--popover-head-bg) transparent;
-        left: 1.125rem;
-        top: -0.625rem;
-    }
-
-    &.placement-left .popover-head::before {
-        display: block;
-        border-width: 7.5px 0 7.5px 8px;
-        border-color: transparent transparent transparent var(--popover-head-bg);
-        right: -0.625rem;
-        top: 0.5rem;
-    }
-
-    &.placement-right .popover-head::before {
-        display: block;
-        border-width: 7.5px 8px 7.5px 0;
-        border-color: transparent var(--popover-head-bg) transparent transparent;
-        left: -0.625rem;
-        top: 0.5rem;
-    }
-
     /* Danger variant */
     &.popover-danger {
         > div {
@@ -247,25 +114,6 @@ div.control-popover {
                     color: #fff;
                 }
             }
-        }
-
-        &.placement-top > div::after {
-            border-color: var(--popover-danger-bg) transparent transparent transparent;
-        }
-
-        &.placement-bottom > div::after,
-        &.placement-bottom .popover-head::before {
-            border-color: transparent transparent var(--popover-danger-bg) transparent;
-        }
-
-        &.placement-left > div::after,
-        &.placement-left .popover-head::before {
-            border-color: transparent transparent transparent var(--popover-danger-bg);
-        }
-
-        &.placement-right > div::after,
-        &.placement-right .popover-head::before {
-            border-color: transparent var(--popover-danger-bg) transparent transparent;
         }
 
         .popover-head {
@@ -346,20 +194,11 @@ div.popover-overlay {
 
             > div {
                 padding: 0;
-
-                &::before,
-                &::after {
-                    display: none;
-                }
             }
 
             div.popover-fixed-height {
                 height: 100%;
                 min-height: 100%;
-            }
-
-            .popover-head::before {
-                display: none;
             }
         }
     }

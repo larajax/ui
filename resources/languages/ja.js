@@ -36,5 +36,17 @@
         preview: 'プレビュー',
         sideBySide: '並べて表示',
         fullscreen: '全画面表示'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: '対象が見つかりません',
+        searching: '検索しています…',
+        loadingMore: '読み込み中…',
+        errorLoading: '結果が読み込まれませんでした',
+        inputTooShort: '少なくとも :count 文字を入力してください',
+        maximumSelected: ':count 件しか選択できません',
+        removeItem: '項目を削除',
+        removeAllItems: 'すべてのアイテムを削除'
     }
 };

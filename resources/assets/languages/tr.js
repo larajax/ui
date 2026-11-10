@@ -40,6 +40,18 @@
         preview: 'Önizleme',
         sideBySide: 'Yan yana görünüm',
         fullscreen: 'Tam ekran'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Sonuç bulunamadı',
+        searching: 'Aranıyor…',
+        loadingMore: 'Daha fazla…',
+        errorLoading: 'Sonuç yüklenemedi',
+        inputTooShort: 'En az :count karakter daha girmelisiniz',
+        maximumSelected: 'Sadece :count seçim yapabilirsiniz',
+        removeItem: 'Bu öğeyi kaldır',
+        removeAllItems: 'Tüm öğeleri kaldır'
     }
 };
 
@@ -205,12 +217,3 @@
     chooseDate: 'Tarih seç',
     chooseTime: 'Saat seç'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/tr",[],function(){return{errorLoading:function(){return"Sonuç yüklenemedi"},inputTooLong:function(n){return n.input.length-n.maximum+" karakter daha girmelisiniz"},inputTooShort:function(n){return"En az "+(n.minimum-n.input.length)+" karakter daha girmelisiniz"},loadingMore:function(){return"Daha fazla…"},maximumSelected:function(n){return"Sadece "+n.maximum+" seçim yapabilirsiniz"},noResults:function(){return"Sonuç bulunamadı"},searching:function(){return"Aranıyor…"},removeAllItems:function(){return"Tüm öğeleri kaldır"},removeItem:function(){return"Bu öğeyi kaldır"},search:function(){return"Ara"}}}),n.define,n.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['tr'] = factory();
-} } } } });

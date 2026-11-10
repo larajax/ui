@@ -40,6 +40,28 @@
         preview: 'Predogled',
         sideBySide: 'Predogled ob urejevalniku',
         fullscreen: 'Celozaslonski način'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Ni zadetkov.',
+        searching: 'Iščem…',
+        loadingMore: 'Nalagam več zadetkov…',
+        errorLoading: 'Zadetkov iskanja ni bilo mogoče naložiti.',
+        inputTooShort: {
+            one: 'Prosim vpišite še :count znak',
+            two: 'Prosim vpišite še :count znaka',
+            few: 'Prosim vpišite še :count znake',
+            other: 'Prosim vpišite še :count znake'
+        },
+        maximumSelected: {
+            one: 'Označite lahko največ :count predmet',
+            two: 'Označite lahko največ :count predmeta',
+            few: 'Označite lahko največ :count predmete',
+            other: 'Označite lahko največ :count predmete'
+        },
+        removeItem: 'Odstrani element',
+        removeAllItems: 'Odstranite vse elemente'
     }
 };
 
@@ -205,12 +227,3 @@
     chooseDate: 'Izberi datum',
     chooseTime: 'Izberi čas'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var e=jQuery.fn.select2.amd;e.define("select2/i18n/sl",[],function(){return{errorLoading:function(){return"Zadetkov iskanja ni bilo mogoče naložiti."},inputTooLong:function(e){var n=e.input.length-e.maximum,t="Prosim zbrišite "+n+" znak";return 2==n?t+="a":1!=n&&(t+="e"),t},inputTooShort:function(e){var n=e.minimum-e.input.length,t="Prosim vpišite še "+n+" znak";return 2==n?t+="a":1!=n&&(t+="e"),t},loadingMore:function(){return"Nalagam več zadetkov…"},maximumSelected:function(e){var n="Označite lahko največ "+e.maximum+" predmet";return 2==e.maximum?n+="a":1!=e.maximum&&(n+="e"),n},noResults:function(){return"Ni zadetkov."},searching:function(){return"Iščem…"},removeAllItems:function(){return"Odstranite vse elemente"}}}),e.define,e.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['sl'] = factory();
-} } } } });

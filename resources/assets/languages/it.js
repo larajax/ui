@@ -40,6 +40,21 @@
         preview: 'Anteprima',
         sideBySide: 'Affiancato',
         fullscreen: 'Schermo intero'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Nessun risultato trovato',
+        searching: 'Sto cercando…',
+        loadingMore: 'Caricando più risultati…',
+        errorLoading: 'I risultati non possono essere caricati.',
+        inputTooShort: 'Per favore inserisci :count o più caratteri',
+        maximumSelected: {
+            one: 'Puoi selezionare solo :count elemento',
+            other: 'Puoi selezionare solo :count elementi'
+        },
+        removeItem: 'Rimuovi oggetto',
+        removeAllItems: 'Rimuovi tutti gli oggetti'
     }
 };
 
@@ -205,12 +220,3 @@
     chooseDate: 'Scegli una data',
     chooseTime: 'Scegli un orario'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var e=jQuery.fn.select2.amd;e.define("select2/i18n/it",[],function(){return{errorLoading:function(){return"I risultati non possono essere caricati."},inputTooLong:function(e){var n=e.input.length-e.maximum,t="Per favore cancella "+n+" caratter";return t+=1!==n?"i":"e"},inputTooShort:function(e){return"Per favore inserisci "+(e.minimum-e.input.length)+" o più caratteri"},loadingMore:function(){return"Caricando più risultati…"},maximumSelected:function(e){var n="Puoi selezionare solo "+e.maximum+" element";return 1!==e.maximum?n+="i":n+="o",n},noResults:function(){return"Nessun risultato trovato"},searching:function(){return"Sto cercando…"},removeAllItems:function(){return"Rimuovi tutti gli oggetti"},removeItem:function(){return"Rimuovi oggetto"},search:function(){return"Ricerca"}}}),e.define,e.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['it'] = factory();
-} } } } });

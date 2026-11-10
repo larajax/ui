@@ -17,19 +17,6 @@ use Exception;
 class DateTime
 {
     /**
-     * @var callable|null timezoneResolver returns the timezone of the person viewing the page.
-     */
-    protected static $timezoneResolver;
-
-    /**
-     * resolveTimezoneUsing sets the callback that returns the viewer's timezone, or null to use the app timezone.
-     */
-    public static function resolveTimezoneUsing(?callable $resolver): void
-    {
-        static::$timezoneResolver = $resolver;
-    }
-
-    /**
      * appTimezone returns the timezone values are stored in.
      */
     public static function appTimezone(): string
@@ -42,22 +29,7 @@ class DateTime
      */
     public static function userTimezone(): string
     {
-        $timezone = static::$timezoneResolver ? (static::$timezoneResolver)() : null;
-
-        if ($timezone instanceof DateTimeZone) {
-            return $timezone->getName();
-        }
-
-        if (is_string($timezone) && $timezone !== '') {
-            try {
-                return (new DateTimeZone($timezone))->getName();
-            }
-            catch (Exception $ex) {
-                // Fall back to the app timezone
-            }
-        }
-
-        return static::appTimezone();
+        return app('larajax.ui')->timezone();
     }
 
     /**

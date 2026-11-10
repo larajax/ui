@@ -36,5 +36,17 @@
         preview: 'Xem trước',
         sideBySide: 'Xem song song',
         fullscreen: 'Toàn màn hình'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Không tìm thấy kết quả',
+        searching: 'Đang tìm…',
+        loadingMore: 'Đang lấy thêm kết quả…',
+        errorLoading: 'Không thể tải kết quả.',
+        inputTooShort: 'Vui lòng nhập thêm từ :count ký tự trở lên',
+        maximumSelected: 'Chỉ có thể chọn được :count lựa chọn',
+        removeItem: 'Xóa mục',
+        removeAllItems: 'Xóa tất cả các mục'
     }
 };

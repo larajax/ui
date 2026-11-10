@@ -16,6 +16,7 @@
 @import "./elements/buttons/buttons.css";
 @import "./elements/callout/callout.css";
 @import "./elements/flag/flag.css";
+@import "./elements/status-list/status-list.css";
 
 /* Controls */
 @import "./controls/datepicker/datepicker.css";
@@ -34,6 +35,7 @@
 @import "./controls/toolbar/toolbar-control.css";
 @import "./controls/toolbar/toolbar-buttons.css";
 @import "./controls/tooltip/tooltip.css";
+@import "./controls/chart/chart.css";
 
 /* Widgets */
 @import "./widgets/form/form.css";

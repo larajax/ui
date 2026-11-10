@@ -2,71 +2,98 @@
  * Scoreboard
  */
 div.scoreboard {
-    --scoreboard-title-color: var(--bs-heading-color);
+    --scoreboard-label-color: var(--bs-fg-3);
+    --scoreboard-value-color: var(--bs-heading-color);
     --scoreboard-description-color: var(--bs-fg-3);
-    --scoreboard-body-color: var(--bs-fg-body);
-    --scoreboard-icon-color: var(--oc-color-neutral);
-    --scoreboard-positive-color: var(--oc-color-positive);
-    --scoreboard-negative-color: var(--oc-color-negative);
-    --scoreboard-scroll-indicator-color: #bbbbbb;
+    --scoreboard-divider-color: var(--bs-border-color);
+    --scoreboard-icon-color: var(--bs-fg-2);
+    --scoreboard-icon-bg: var(--bs-bg-3);
+    --scoreboard-positive-color: var(--bs-success-fg);
+    --scoreboard-positive-bg: var(--bs-success-bg-subtle);
+    --scoreboard-negative-color: var(--bs-danger-fg);
+    --scoreboard-negative-bg: var(--bs-danger-bg-subtle);
+    --scoreboard-trend-color: var(--bs-fg-2);
+    --scoreboard-trend-bg: var(--bs-bg-3);
+    --scoreboard-sparkline-color: var(--bs-primary-base);
+    --scoreboard-link-color: var(--bs-link-color);
+    --scoreboard-fade-size: 2rem;
 
     position: relative;
     padding: 0;
 
-    /* Horizontal scroll indicators */
-    &::after,
-    &::before {
-        display: none;
-        position: absolute;
-        top: 50%;
-        margin-top: -0.75rem;
-        height: 0.625rem;
-        font-size: 0.6875rem;
-        color: var(--scoreboard-scroll-indicator-color);
-        font-family: bootstrap-icons !important;
-        speak: none;
-        font-style: normal;
-        font-weight: normal;
-        font-variant: normal;
-        text-transform: none;
-        line-height: 1;
-        -webkit-font-smoothing: antialiased;
+    > [data-control~=toolbar] {
+        display: flex;
+        align-items: stretch;
     }
 
-    &::before {
-        left: 0.5rem;
-        content: "\f284";
+    /* The row fades out at an edge with more to scroll to */
+    &.scroll-before > [data-control~=toolbar] {
+        mask-image: linear-gradient(to right, transparent, #000 var(--scoreboard-fade-size));
     }
 
-    &::after {
-        right: 0.75rem;
-        content: "\f285";
+    &.scroll-after > [data-control~=toolbar] {
+        mask-image: linear-gradient(to left, transparent, #000 var(--scoreboard-fade-size));
     }
 
-    &.scroll-before::before {
-        display: block;
+    &.scroll-before.scroll-after > [data-control~=toolbar] {
+        mask-image: linear-gradient(to right, transparent, #000 var(--scoreboard-fade-size), #000 calc(100% - var(--scoreboard-fade-size)), transparent);
     }
 
-    &.scroll-after::after {
-        display: block;
-    }
-
-    /* Scoreboard items */
+    /* Scoreboard items, a thin line apart */
     div.scoreboard-item {
-        display: inline-block;
-        margin-right: 2.875rem;
-        margin-bottom: 1.375rem;
-        vertical-align: top;
+        flex: none;
+        margin: 0 0 1.375rem;
+        padding: 0 1.75rem;
+        border-left: 1px solid var(--scoreboard-divider-color);
 
-        &:last-child {
-            margin-right: 0;
+        &:first-child {
+            padding-left: 0;
+            border-left: 0;
         }
 
         &.thumbnail-value {
-            margin-right: 1.375rem;
+            padding-right: 1.25rem;
 
             img {
                 height: 5.125rem;
+                border-radius: var(--bs-radius-5);
+                object-fit: cover;
+            }
+
+            + div.scoreboard-item {
+                padding-left: 0;
+                border-left: 0;
+            }
+        }
+
+        /* An item that links somewhere is covered by its link */
+        &.has-link {
+            position: relative;
+
+            .scoreboard-link {
+                position: absolute;
+                inset: 0;
+                z-index: 1;
+                border-radius: var(--bs-radius-4);
+
+                &:focus-visible {
+                    outline: var(--bs-focus-ring);
+                    outline-offset: var(--bs-focus-ring-offset, 2px);
+                }
+            }
+
+            a:not(.scoreboard-link),
+            .scoreboard-help {
+                position: relative;
+                z-index: 2;
+            }
+
+            &:hover {
+                h4,
+                .scoreboard-label,
+                p:not(.description) {
+                    color: var(--scoreboard-link-color);
+                }
             }
         }
 
@@ -78,17 +105,22 @@ div.scoreboard {
             border-bottom-color: var(--background-color);
             border-top-color: var(--foreground-color);
             border-left-color: var(--foreground-color);
-            border-width: 10px;
+            border-width: 0.5rem;
             border-style: solid;
             border-radius: 1.375rem;
             display: inline-block;
+            position: relative;
+            vertical-align: middle;
+            top: -0.125rem;
+            margin-right: 0.375rem;
 
+            /* The outline sits a pixel outside the swatch */
             &::after {
                 content: "";
-                top: -0.75rem;
-                left: -0.75rem;
-                width: 1.375rem;
-                height: 1.375rem;
+                top: calc(-0.5rem - 1px);
+                left: calc(-0.5rem - 1px);
+                width: calc(1rem + 2px);
+                height: calc(1rem + 2px);
                 position: absolute;
                 box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--bs-bg-body) 20%, transparent);
                 border-radius: 1.375rem;
@@ -129,25 +161,48 @@ body.slim-container div.scoreboard {
 
 /* Title value */
 .title-value {
-    h4 {
-        font-size: 1.25rem;
+    h4,
+    .scoreboard-label {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin: 0 0 0.375rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        line-height: 1.25;
+        letter-spacing: 0.01em;
+        color: var(--scoreboard-label-color);
+    }
+
+    .scoreboard-help {
+        color: var(--bs-fg-4, var(--scoreboard-label-color));
+        font-size: 0.875rem;
         line-height: 1;
-        font-weight: normal;
-        margin: 0;
-        color: var(--scoreboard-title-color);
+        cursor: help;
     }
 
     p {
-        color: var(--scoreboard-body-color);
         margin: 0;
-        font-size: 2rem;
+        font-size: 1.75rem;
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        color: var(--scoreboard-value-color);
 
-        i,
-        &::before {
+        i {
+            font-size: 1.25rem;
             color: var(--scoreboard-icon-color);
-            font-size: 1.5625rem;
-            position: relative;
-            top: -2px;
+            vertical-align: -0.0625em;
+            margin-right: 0.125rem;
+        }
+
+        img.scoreboard-image {
+            height: 1.5rem;
+            width: auto;
+            border-radius: var(--bs-radius-4);
+            vertical-align: -0.1875rem;
+            margin-right: 0.375rem;
         }
 
         &.success {
@@ -158,45 +213,157 @@ body.slim-container div.scoreboard {
             color: var(--scoreboard-negative-color);
         }
 
-        &.negative,
-        &.positive {
-            &::after {
-                font-family: bootstrap-icons !important;
-                speak: none;
-                font-style: normal;
-                font-weight: normal;
-                font-variant: normal;
-                text-transform: none;
-                line-height: 1;
-                -webkit-font-smoothing: antialiased;
-                font-size: 1.1875rem;
-                vertical-align: middle;
-                position: relative;
-                top: -0.1875rem;
-                left: 0.375rem;
-            }
+        /* A figure marked by hand as up or down shows an arrow after it */
+        &.positive::after,
+        &.negative::after {
+            content: "";
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            margin-left: 0.375rem;
+            vertical-align: middle;
+            position: relative;
+            top: -0.125rem;
+            mask: var(--scoreboard-arrow) center / contain no-repeat;
         }
 
-        &.negative {
-            color: var(--scoreboard-negative-color);
-
-            &::after {
-                content: "\f27e";
-            }
+        &.positive::after {
+            --scoreboard-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 11.5 11.5 4.5M6 4.5h5.5V10' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background: var(--scoreboard-positive-color);
         }
 
-        &.positive {
-            color: var(--scoreboard-positive-color);
-
-            &::after {
-                content: "\f281";
-            }
+        &.negative::after {
+            --scoreboard-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 4.5 11.5 11.5M11.5 6v5.5H6' fill='none' stroke='%23000' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background: var(--scoreboard-negative-color);
         }
 
         &.description {
+            margin-top: 0.375rem;
+            font-size: 0.8125rem;
+            font-weight: 400;
+            line-height: 1.35;
+            letter-spacing: 0;
+            font-variant-numeric: normal;
             color: var(--scoreboard-description-color);
-            line-height: 100%;
-            font-size: 0.9375rem;
+        }
+    }
+
+    /* The change beside a figure, tinted by its direction */
+    .scoreboard-trend {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.1875rem;
+        margin-left: 0.5rem;
+        padding: 0.25rem 0.4375rem;
+        border-radius: var(--bs-radius-pill);
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: 0;
+        vertical-align: middle;
+        position: relative;
+        top: -0.125rem;
+        color: var(--scoreboard-trend-color);
+        background: var(--scoreboard-trend-bg);
+
+        i {
+            font-size: 0.75rem;
+            margin: 0;
+            color: inherit;
+            vertical-align: baseline;
+        }
+
+        &.is-positive {
+            color: var(--scoreboard-positive-color);
+            background: var(--scoreboard-positive-bg);
+        }
+
+        &.is-negative {
+            color: var(--scoreboard-negative-color);
+            background: var(--scoreboard-negative-bg);
+        }
+    }
+
+    /* A small line of recent values under the figure */
+    .scoreboard-sparkline {
+        display: block;
+        width: 100%;
+        min-width: 7.5rem;
+        height: 1.75rem;
+        margin-top: 0.5rem;
+        overflow: visible;
+        color: var(--scoreboard-sparkline-color);
+
+        &.is-positive {
+            color: var(--bs-success-base);
+        }
+
+        &.is-negative {
+            color: var(--bs-danger-base);
+        }
+
+        polygon {
+            fill: currentColor;
+            opacity: 0.12;
+        }
+
+        polyline {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+            vector-effect: non-scaling-stroke;
+        }
+
+        /* A round cap on a path of no length draws a dot that stays round however the line stretches */
+        .scoreboard-sparkline-dot {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 6;
+            stroke-linecap: round;
+            vector-effect: non-scaling-stroke;
+        }
+    }
+
+    /* A unit after the figure, smaller so the number stands out */
+    .scoreboard-unit {
+        margin-left: 0.125rem;
+        font-size: 0.5em;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--scoreboard-unit-color, var(--scoreboard-label-color));
+    }
+
+    /* A figure with no data */
+    .scoreboard-empty {
+        font-size: 1.125rem;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--scoreboard-empty-color, var(--scoreboard-label-color));
+    }
+
+    /* An icon in a tile beside the text, centered on it */
+    &.has-icon {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+    }
+
+    .scoreboard-icon {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.75rem;
+        font-size: 1.5rem;
+        color: var(--scoreboard-icon-color);
+        background: var(--scoreboard-icon-bg);
+
+        &.is-tinted {
+            color: var(--scoreboard-icon-tint);
+            background: color-mix(in oklch, var(--scoreboard-icon-tint) 14%, transparent);
         }
     }
 }

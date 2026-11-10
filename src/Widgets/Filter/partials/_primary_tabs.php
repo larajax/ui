@@ -1,9 +1,16 @@
 <?php
+    // A label named like a language file, such as "Validation", translates to the whole file, so it stays as written
+    $transLabel = function ($label) {
+        $translated = __($label);
+
+        return is_string($translated) ? $translated : (string) $label;
+    };
+
     $activeValue = $scope->scopeValue !== null ? $scope->value : null;
     $activeKey = $activeValue === null || $activeValue === '' ? '' : (string) $activeValue;
     $flatOptions = $scope->options();
     if ($scope->emptyOption) {
-        $flatOptions = ['' => __($scope->emptyOption)] + $flatOptions;
+        $flatOptions = ['' => $transLabel($scope->emptyOption)] + $flatOptions;
     }
     elseif (!array_key_exists('', $flatOptions)) {
         $flatOptions = ['' => __('All')] + $flatOptions;
@@ -32,7 +39,7 @@
             <?php elseif ($option->icon): ?>
                 <i class="<?= e($option->icon) ?>" aria-hidden="true"></i>
             <?php endif ?>
-            <span><?= e(__($option->label)) ?></span>
+            <span><?= e($transLabel($option->label)) ?></span>
         </button>
     <?php endforeach ?>
 </div>

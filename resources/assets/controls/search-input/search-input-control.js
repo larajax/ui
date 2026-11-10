@@ -41,6 +41,9 @@ export function registerSearchInput(jax) {
             if (this.$input.dataset.request) {
                 jax.request(this.$input);
             }
+            else {
+                this.$input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
         }
 
         // Shows the clear button while the input holds text, leaving its display to the stylesheet.

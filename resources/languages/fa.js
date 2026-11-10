@@ -36,5 +36,17 @@
         preview: 'پیش‌نمایش',
         sideBySide: 'نمایش کنار هم',
         fullscreen: 'تمام صفحه'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'هیچ نتیجه‌ای یافت نشد',
+        searching: 'در حال جستجو...',
+        loadingMore: 'در حال بارگذاری نتایج بیشتر...',
+        errorLoading: 'امکان بارگذاری نتایج وجود ندارد.',
+        inputTooShort: 'لطفاً تعداد :count کاراکتر یا بیشتر وارد نمایید',
+        maximumSelected: 'شما تنها می‌توانید :count آیتم را انتخاب نمایید',
+        removeItem: 'حذف آیتم',
+        removeAllItems: 'همه موارد را حذف کنید'
     }
 };

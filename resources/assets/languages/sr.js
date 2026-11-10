@@ -40,6 +40,26 @@
         preview: 'Pregled',
         sideBySide: 'Uporedni prikaz',
         fullscreen: 'Ceo ekran'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Ništa nije pronađeno',
+        searching: 'Pretraga…',
+        loadingMore: 'Preuzimanje još rezultata…',
+        errorLoading: 'Preuzimanje nije uspelo.',
+        inputTooShort: {
+            one: 'Ukucajte bar još :count simbol',
+            few: 'Ukucajte bar još :count simbola',
+            other: 'Ukucajte bar još :count simbola'
+        },
+        maximumSelected: {
+            one: 'Možete izabrati samo :count stavku',
+            few: 'Možete izabrati samo :count stavke',
+            other: 'Možete izabrati samo :count stavki'
+        },
+        removeItem: 'Ukloni stavku',
+        removeAllItems: 'Уклоните све ставке'
     }
 };
 
@@ -205,12 +225,3 @@
     chooseDate: 'Izaberi datum',
     chooseTime: 'Izaberi vreme'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/sr",[],function(){function n(n,e,r,t){return n%10==1&&n%100!=11?e:n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?r:t}return{errorLoading:function(){return"Preuzimanje nije uspelo."},inputTooLong:function(e){var r=e.input.length-e.maximum,t="Obrišite "+r+" simbol";return t+=n(r,"","a","a")},inputTooShort:function(e){var r=e.minimum-e.input.length,t="Ukucajte bar još "+r+" simbol";return t+=n(r,"","a","a")},loadingMore:function(){return"Preuzimanje još rezultata…"},maximumSelected:function(e){var r="Možete izabrati samo "+e.maximum+" stavk";return r+=n(e.maximum,"u","e","i")},noResults:function(){return"Ništa nije pronađeno"},searching:function(){return"Pretraga…"},removeAllItems:function(){return"Уклоните све ставке"}}}),n.define,n.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['sr'] = factory();
-} } } } });

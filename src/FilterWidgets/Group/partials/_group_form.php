@@ -38,24 +38,14 @@
             <input type="hidden" name="Filter[mode]" value="<?= $scope->matchMode ?: 'include' ?>">
         <?php endif ?>
 
-        <div class="filter-search loading-indicator-container size-input-text">
-            <label class="form-control form-adorn">
-                <span class="form-adorn-icon" aria-hidden="true">
-                    <?= \Larajax\Ui\Facades\Ui::icon('search.icon') ?>
-                </span>
-                <input
-                    type="text"
-                    name="search"
-                    autocomplete="off"
-                    placeholder="<?= e(__('Search...')) ?>"
-                    aria-label="<?= e(__('Search...')) ?>"
-                    class="filter-search-input form-ghost popup-allow-focus"
-                    data-request="<?= $this->getEventHandler('onGetGroupOptions') ?>"
-                    data-load-indicator-opaque
-                    data-load-indicator
-                    data-track-input />
-            </label>
-        </div>
+        <?= \Larajax\Ui\Facades\Ui::searchInput(
+            name: 'search',
+            placeholder: __('Search...'),
+            class: 'form-control-sm',
+            outerClass: 'filter-search',
+            inputClass: 'filter-search-input popup-allow-focus',
+            handler: $this->getEventHandler('onGetGroupOptions'),
+        ) ?>
         <div class="filter-active-items">
             <ul data-groupfilter-active aria-label="<?= e(__('Selected options')) ?>"></ul>
         </div>
@@ -68,11 +58,11 @@
     </div>
 
     <div class="filter-buttons">
-        <button type="button" class="btn-solid theme-secondary" data-filter-action="clear">
+        <button type="button" class="btn-solid theme-secondary btn-sm" data-filter-action="clear">
             <?= __('Clear') ?>
         </button>
         <div class="flex-grow-1"></div>
-        <button type="button" class="btn-solid theme-primary" data-filter-action="apply">
+        <button type="button" class="btn-solid theme-primary btn-sm" data-filter-action="apply">
             <?= __('Apply') ?>
         </button>
     </div>

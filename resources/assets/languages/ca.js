@@ -40,6 +40,24 @@
         preview: 'Previsualitzar',
         sideBySide: 'En paral·lel',
         fullscreen: 'Pantalla completa'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'No s\'han trobat resultats',
+        searching: 'Cercant…',
+        loadingMore: 'Carregant més resultats…',
+        errorLoading: 'La càrrega ha fallat',
+        inputTooShort: {
+            one: 'Si us plau, introdueix :count caràcter',
+            other: 'Si us plau, introdueix :count caràcters'
+        },
+        maximumSelected: {
+            one: 'Només es pot seleccionar :count element',
+            other: 'Només es pot seleccionar :count elements'
+        },
+        removeItem: 'Elimina l\'element',
+        removeAllItems: 'Treu tots els elements'
     }
 };
 
@@ -205,12 +223,3 @@
     chooseDate: 'Seleccionar una data',
     chooseTime: 'Seleccionar una hora'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var e=jQuery.fn.select2.amd;e.define("select2/i18n/ca",[],function(){return{errorLoading:function(){return"La càrrega ha fallat"},inputTooLong:function(e){var n=e.input.length-e.maximum,r="Si us plau, elimina "+n+" car";return r+=1==n?"àcter":"àcters"},inputTooShort:function(e){var n=e.minimum-e.input.length,r="Si us plau, introdueix "+n+" car";return r+=1==n?"àcter":"àcters"},loadingMore:function(){return"Carregant més resultats…"},maximumSelected:function(e){var n="Només es pot seleccionar "+e.maximum+" element";return 1!=e.maximum&&(n+="s"),n},noResults:function(){return"No s'han trobat resultats"},searching:function(){return"Cercant…"},removeAllItems:function(){return"Treu tots els elements"}}}),e.define,e.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['ca'] = factory();
-} } } } });

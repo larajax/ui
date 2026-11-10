@@ -40,6 +40,18 @@
         preview: 'Forhåndsvisning',
         sideBySide: 'Side ved side',
         fullscreen: 'Fullskjerm'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Ingen treff',
+        searching: 'Søker…',
+        loadingMore: 'Laster flere resultater…',
+        errorLoading: 'Kunne ikke hente resultater.',
+        inputTooShort: 'Vennligst skriv inn :count tegn til',
+        maximumSelected: 'Du kan velge maks :count elementer',
+        removeItem: 'Fjern element',
+        removeAllItems: 'Fjern alle elementer'
     }
 };
 
@@ -205,12 +217,3 @@
     chooseDate: 'Velg dato',
     chooseTime: 'Velg klokkeslett'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var e=jQuery.fn.select2.amd;e.define("select2/i18n/nb",[],function(){return{errorLoading:function(){return"Kunne ikke hente resultater."},inputTooLong:function(e){return"Vennligst fjern "+(e.input.length-e.maximum)+" tegn"},inputTooShort:function(e){return"Vennligst skriv inn "+(e.minimum-e.input.length)+" tegn til"},loadingMore:function(){return"Laster flere resultater…"},maximumSelected:function(e){return"Du kan velge maks "+e.maximum+" elementer"},noResults:function(){return"Ingen treff"},searching:function(){return"Søker…"},removeAllItems:function(){return"Fjern alle elementer"}}}),e.define,e.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['nb'] = factory();
-} } } } });

@@ -156,7 +156,7 @@ While the content loads, a `.popup-backdrop` with a loading indicator dims the p
 
 ## The top layer
 
-An open modal dialog renders in the browser's top layer and makes the rest of the page inert, so anything appended to `document.body` renders below the popup and cannot be clicked. Floating UI opened from inside a popup mounts inside the enclosing `<dialog>` instead: the popover control, Select2 dropdowns, the date and time pickers, the color picker and the rich editor's panels and bubbles. The helpers in `dialog-mount.js` return the mount parent and convert page coordinates into it.
+An open modal dialog renders in the browser's top layer and makes the rest of the page inert, so anything appended to `document.body` renders below the popup and cannot be clicked. Floating UI opened from inside a popup mounts inside the enclosing `<dialog>` instead: the popover control, custom select dropdowns, the date and time pickers, the color picker and the rich editor's panels and bubbles. The helpers in `dialog-mount.js` return the mount parent and convert page coordinates into it.
 
 A popup normally lets its content overflow, so menus and pickers inside are not clipped. When the content is taller than the window allows, the dialog gets `popup-scrollable` and scrolls as a whole.
 

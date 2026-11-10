@@ -36,5 +36,23 @@
         preview: 'Eelvaade',
         sideBySide: 'Kõrvuti',
         fullscreen: 'Täisekraan'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Tulemused puuduvad',
+        searching: 'Otsin…',
+        loadingMore: 'Laen tulemusi…',
+        errorLoading: 'Tulemusi ei olnud võimalik laadida.',
+        inputTooShort: {
+            one: 'Sisesta :count täht rohkem',
+            other: 'Sisesta :count tähte rohkem'
+        },
+        maximumSelected: {
+            one: 'Saad vaid :count tulemuse valida',
+            other: 'Saad vaid :count tulemust valida'
+        },
+        removeItem: 'Eemalda valik',
+        removeAllItems: 'Eemalda kõik valikud'
     }
 };

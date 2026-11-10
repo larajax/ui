@@ -40,6 +40,28 @@
         preview: 'Podgląd',
         sideBySide: 'Podgląd obok edytora',
         fullscreen: 'Pełny ekran'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Brak wyników',
+        searching: 'Trwa wyszukiwanie...',
+        loadingMore: 'Trwa ładowanie...',
+        errorLoading: 'Wystąpił błąd podczas ładowania wyników.',
+        inputTooShort: {
+            one: 'Wpisz co najmniej :count znak',
+            few: 'Wpisz co najmniej :count znaki',
+            many: 'Wpisz co najmniej :count undefined',
+            other: 'Wpisz co najmniej :count undefined'
+        },
+        maximumSelected: {
+            one: 'Możesz zaznaczyć maksymalnie :count element',
+            few: 'Możesz zaznaczyć maksymalnie :count elementy',
+            many: 'Możesz zaznaczyć maksymalnie :count undefined',
+            other: 'Możesz zaznaczyć maksymalnie :count undefined'
+        },
+        removeItem: 'Usuń element',
+        removeAllItems: 'Usuń wszystkie elementy'
     }
 };
 
@@ -205,12 +227,3 @@
     chooseDate: 'Wybierz datę',
     chooseTime: 'Wybierz godzinę'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/pl",[],function(){var n=["znak","znaki","znaków"],e=["element","elementy","elementów"],r=function(n,e){return 1===n?e[0]:n>1&&n<=4?e[1]:n>=5?e[2]:void 0};return{errorLoading:function(){return"Wystąpił błąd podczas ładowania wyników."},inputTooLong:function(e){var t=e.input.length-e.maximum;return"Usuń "+t+" "+r(t,n)},inputTooShort:function(e){var t=e.minimum-e.input.length;return"Wpisz co najmniej "+t+" "+r(t,n)},loadingMore:function(){return"Trwa ładowanie..."},maximumSelected:function(n){return"Możesz zaznaczyć maksymalnie "+n.maximum+" "+r(n.maximum,e)},noResults:function(){return"Brak wyników"},searching:function(){return"Trwa wyszukiwanie..."},removeAllItems:function(){return"Usuń wszystkie elementy"},removeItem:function(){return"Usuń element"},search:function(){return"Szukaj"}}}),n.define,n.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['pl'] = factory();
-} } } } });

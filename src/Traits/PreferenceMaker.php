@@ -1,7 +1,6 @@
 <?php namespace Larajax\Ui\Traits;
 
 use Larajax\Ui\Helpers\Str;
-use Larajax\Ui\Classes\PreferenceStore;
 
 /**
  * PreferenceMaker Trait adds methods for modifying user preferences in a controller class,
@@ -128,7 +127,7 @@ trait PreferenceMaker
      */
     protected function getPreferenceStorage()
     {
-        // Resolved from the container, so an application binds one persistent store for every widget
-        return app(PreferenceStore::class);
+        // Resolved from the container, so an application binds one persistent store for every widget to larajax.ui.preferences
+        return app('larajax.ui.preferences');
     }
 }

@@ -34,6 +34,9 @@ class OctoberIconPack implements IconPack
             'callout.warning' => 'icon-callout-danger',
             'callout.danger' => 'icon-callout-danger',
 
+            'scoreboard.up' => 'icon-arrow-up',
+            'scoreboard.down' => 'icon-arrow-down',
+
             'fileupload.upload' => 'icon-common-file-upload',
             'fileupload.remove' => 'icon-common-file-remove',
             'fileupload.reorder' => 'icon-list-reorder',

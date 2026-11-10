@@ -36,5 +36,17 @@
         preview: 'Forhåndsvisning',
         sideBySide: 'Side ved side',
         fullscreen: 'Fullskjerm'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Ingen treff',
+        searching: 'Søker…',
+        loadingMore: 'Laster flere resultater…',
+        errorLoading: 'Kunne ikke hente resultater.',
+        inputTooShort: 'Vennligst skriv inn :count tegn til',
+        maximumSelected: 'Du kan velge maks :count elementer',
+        removeItem: 'Fjern element',
+        removeAllItems: 'Fjern alle elementer'
     }
 };

@@ -40,6 +40,18 @@
         preview: 'پێشبینین',
         sideBySide: 'پیشاندانی تەنیشت بە تەنیشت',
         fullscreen: 'پڕ بە شاشە'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'هیچ ئەنجامێک نەدۆزرایەوە',
+        searching: 'گەڕان…',
+        loadingMore: 'ئەنجامی زیاتر بار دەکرێت…',
+        errorLoading: 'ئەنجامەکان بار نەکران.',
+        inputTooShort: 'تکایە :count پیت یان زیاتر بنووسە',
+        maximumSelected: 'تەنها دەتوانیت :count دانە هەڵبژێریت',
+        removeItem: 'لابردنی دانە',
+        removeAllItems: 'لابردنی هەموو دانەکان'
     }
 };
 

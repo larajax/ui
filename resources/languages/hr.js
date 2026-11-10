@@ -36,5 +36,21 @@
         preview: 'Pretpregled',
         sideBySide: 'Usporedni prikaz',
         fullscreen: 'Cijeli zaslon'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Nema rezultata',
+        searching: 'Pretraga…',
+        loadingMore: 'Učitavanje rezultata…',
+        errorLoading: 'Preuzimanje nije uspjelo.',
+        inputTooShort: {
+            one: 'Unesite još  :count znak',
+            few: 'Unesite još  :count znaka',
+            other: 'Unesite još  :count znakova'
+        },
+        maximumSelected: 'Maksimalan broj odabranih stavki je :count',
+        removeItem: 'Ukloni stavku',
+        removeAllItems: 'Ukloni sve stavke'
     }
 };

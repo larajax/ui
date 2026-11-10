@@ -36,5 +36,20 @@
         preview: 'Voorbeeld',
         sideBySide: 'Naast elkaar',
         fullscreen: 'Volledig scherm'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Geen resultaten gevonden',
+        searching: 'Zoeken…',
+        loadingMore: 'Meer resultaten laden…',
+        errorLoading: 'De resultaten konden niet worden geladen.',
+        inputTooShort: 'Gelieve :count of meer karakters in te voeren',
+        maximumSelected: {
+            one: 'Er kan maar :count item worden geselecteerd',
+            other: 'Er kunnen maar :count items worden geselecteerd'
+        },
+        removeItem: 'Item verwijderen',
+        removeAllItems: 'Verwijder alle items'
     }
 };

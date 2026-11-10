@@ -6,7 +6,7 @@
         <?php if ($scope->firstDay !== null && $scope->firstDay !== ''): ?>data-first-day="<?= e($scope->firstDay) ?>"<?php endif ?>
         data-year-range="<?= e($scope->yearRange) ?>"
         data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
-        <label class="form-control form-adorn form-adorn-end w-120">
+        <label class="form-control form-control-sm form-adorn form-adorn-end w-120">
             <span class="form-adorn-icon" aria-hidden="true">
                 <?= \Larajax\Ui\Facades\Ui::icon('datepicker.date') ?>
             </span>
@@ -37,7 +37,7 @@
         <?php if ($scope->firstDay !== null && $scope->firstDay !== ''): ?>data-first-day="<?= e($scope->firstDay) ?>"<?php endif ?>
         data-year-range="<?= e($scope->yearRange) ?>"
         data-show-week-number="<?= $scope->showWeekNumber ? 'true' : 'false' ?>">
-        <label class="form-control form-adorn form-adorn-end w-120">
+        <label class="form-control form-control-sm form-adorn form-adorn-end w-120">
             <span class="form-adorn-icon" aria-hidden="true">
                 <?= \Larajax\Ui\Facades\Ui::icon('datepicker.date') ?>
             </span>

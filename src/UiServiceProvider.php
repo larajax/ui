@@ -3,7 +3,6 @@
 namespace Larajax\Ui;
 
 use Illuminate\Support\ServiceProvider;
-use Larajax\Ui\Classes\IconManager;
 
 class UiServiceProvider extends ServiceProvider
 {
@@ -16,22 +15,25 @@ class UiServiceProvider extends ServiceProvider
 
         $this->app->register(\October\Rain\Html\HtmlServiceProvider::class);
 
-        $this->app->scoped('system.widgets', \Larajax\Ui\Classes\WidgetManager::class);
+        // The hooks that fit the library into the application, set from a service provider's boot method
+        $this->app->singleton('larajax.ui', \Larajax\Ui\Classes\UiManager::class);
+
+        $this->app->singleton('larajax.ui.icons', \Larajax\Ui\Classes\IconManager::class);
 
         // Collects the assets that widgets add during a request
-        $this->app->scoped(\Larajax\Ui\Classes\AssetCollector::class);
-        $this->app->alias(\Larajax\Ui\Classes\AssetCollector::class, 'larajax.ui.assets');
+        $this->app->scoped('larajax.ui.assets', \Larajax\Ui\Classes\AssetCollector::class);
 
         // Collects the file upload fields whose held files commit when their record saves
-        $this->app->scoped(\Larajax\Ui\Classes\HeldUploads::class);
+        $this->app->scoped('larajax.ui.uploads', \Larajax\Ui\Classes\HeldUploads::class);
+
+        // Stores widget preferences, which an application replaces by binding its own store to this code, before or after this provider
+        $this->app->bindIf('larajax.ui.preferences', \Larajax\Ui\Classes\PreferenceStore::class);
+
+        $this->app->scoped('system.widgets', \Larajax\Ui\Classes\WidgetManager::class);
 
         $this->app->singleton('system.preset', \Larajax\Ui\Classes\PresetManager::class);
 
-        $this->app->singleton(IconManager::class);
-        $this->app->alias(IconManager::class, 'larajax.ui.icons');
-
-        $this->app->singleton(\Larajax\Ui\Classes\ModelInspector::class);
-        $this->app->alias(\Larajax\Ui\Classes\ModelInspector::class, 'model.inspector');
+        $this->app->singleton('model.inspector', \Larajax\Ui\Classes\ModelInspector::class);
 
         // Gives plain Eloquent models the searchWhere methods used by the widgets
         \Larajax\Ui\Database\SearchWhereMacros::register();
@@ -66,15 +68,15 @@ class UiServiceProvider extends ServiceProvider
 
         // Sends the widget assets added during an AJAX request with its response
         $this->app['events']->listen(\Illuminate\Routing\Events\PreparingResponse::class, function ($event) {
-            if ($event->response instanceof \Larajax\Classes\AjaxResponse && $this->app->resolved(\Larajax\Ui\Classes\AssetCollector::class)) {
-                $this->app->make(\Larajax\Ui\Classes\AssetCollector::class)->addToAjaxResponse($event->response);
+            if ($event->response instanceof \Larajax\Classes\AjaxResponse && $this->app->resolved('larajax.ui.assets')) {
+                $this->app->make('larajax.ui.assets')->addToAjaxResponse($event->response);
             }
         });
 
         // Commits the files a file upload field held until its record saved
         $this->app['events']->listen('eloquent.saved: *', function ($event, $payload) {
-            if ($this->app->resolved(\Larajax\Ui\Classes\HeldUploads::class) && isset($payload[0])) {
-                $this->app->make(\Larajax\Ui\Classes\HeldUploads::class)->commitFor($payload[0]);
+            if ($this->app->resolved('larajax.ui.uploads') && isset($payload[0])) {
+                $this->app->make('larajax.ui.uploads')->commitFor($payload[0]);
             }
         });
 

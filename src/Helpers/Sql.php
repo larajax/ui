@@ -12,20 +12,7 @@ use Illuminate\Support\Facades\DB;
 class Sql
 {
     /**
-     * @var callable|null sqlResolver rewrites raw SQL written in MySQL syntax for the database connection.
-     */
-    protected static $sqlResolver;
-
-    /**
-     * resolveSqlUsing sets the callback that rewrites raw SQL written in MySQL syntax for the database connection, or null to run it as written.
-     */
-    public static function resolveSqlUsing(?callable $resolver): void
-    {
-        static::$sqlResolver = $resolver;
-    }
-
-    /**
-     * parse fills the `:name` placeholders with quoted values and passes the result through the SQL resolver, when one is set.
+     * parse fills the `:name` placeholders with quoted values and passes the result through the SQL resolver of larajax.ui, when one is set.
      */
     public static function parse(string $sql, ?array $params = null): string
     {
@@ -33,11 +20,7 @@ class Sql
             $sql = static::parseValues($sql, $params, $matches[1]);
         }
 
-        if (static::$sqlResolver) {
-            return (string) (static::$sqlResolver)($sql);
-        }
-
-        return $sql;
+        return app('larajax.ui')->resolveSql($sql);
     }
 
     /**
@@ -69,7 +52,7 @@ class Sql
     {
         $quoted = "'" . str_replace("'", "''", $separator) . "'";
 
-        if (static::$sqlResolver) {
+        if (app('larajax.ui')->hasSqlResolver()) {
             return "group_concat({$sql} separator {$quoted})";
         }
 

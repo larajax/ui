@@ -66,6 +66,9 @@
         <?= $customSeparators ? 'data-token-separators="'.$customSeparators.'"' : '' ?>
         <?= $placeholder ? 'data-placeholder="'.e(__($placeholder)).'"' : '' ?>
         <?= $maxItems ? 'data-maximum-selection-length="'.$maxItems.'"' : '' ?>
+        <?= $sortable ? 'data-sortable' : '' ?>
+        <?= $tagPattern ? 'data-create-filter="'.e($tagPattern).'"' : '' ?>
+        <?= $createOnBlur ? 'data-create-on-blur' : '' ?>
         multiple
         <?= $field->getAttributes() ?>>
         <?php foreach ($fieldOptions as $key => $option): ?>

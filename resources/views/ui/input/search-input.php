@@ -24,6 +24,7 @@ if ($handler) {
         <input
             <?= $attributes->except([
                 'outer-class',
+                'input-class',
                 'class'
             ])->merge([
                 'type' => 'text',
@@ -31,7 +32,7 @@ if ($handler) {
                 'placeholder' => $placeholder,
                 'value' => $value,
                 'aria-label' => $placeholder ?: __('Search'),
-                'class' => 'form-ghost',
+                'class' => trim('form-ghost '.$attributes->get('input-class')),
                 'autocomplete' => 'off',
                 'data-search-input' => true
             ]) ?>

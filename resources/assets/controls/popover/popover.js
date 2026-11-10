@@ -22,7 +22,7 @@
  * - closeOnEsc - close on the Escape key, default true
  * - container - element or selector to mount in, default the enclosing dialog or the body
  * - containerClass - CSS class(es) for the popover container, extraClass is the same option
- * - offset - offset in pixels along the trigger, default 15
+ * - offset - offset in pixels along the trigger, default 0, where the popover lines up with its edge
  * - offsetX - offset for top and bottom placements, overrides offset
  * - offsetY - offset for left and right placements, overrides offset
  * - useAnimation - fade and scale animation
@@ -74,7 +74,7 @@ export class Popover {
         container: false,
         containerClass: null,
         extraClass: null,
-        offset: 15,
+        offset: 0,
         offsetX: undefined,
         offsetY: undefined,
         useAnimation: false,
@@ -85,7 +85,6 @@ export class Popover {
     constructor(trigger, options = {}) {
         this.trigger = trigger;
         this.options = Object.assign({}, Popover.DEFAULTS, options);
-        this.arrowSize = 15;
         this.edgePadding = 8;
 
         this.element = null;
@@ -445,14 +444,17 @@ export class Popover {
     }
 
     /**
-     * Returns the Popper [skidding, distance] offset for a placement.
+     * Returns the Popper [skidding, distance] offset for a placement, the distance a small gap of
+     * 0.375rem in the page's root font size.
      */
     calcOffset(placement) {
         const isVertical = ['left', 'right'].includes(placement.split('-')[0]);
         const axisOffset = isVertical ? this.options.offsetY : this.options.offsetX;
         const realOffset = axisOffset !== undefined ? axisOffset : this.options.offset;
 
-        return [Number(realOffset) || 0, this.arrowSize];
+        const gap = parseFloat(getComputedStyle(document.documentElement).fontSize) * 0.375 || 6;
+
+        return [Number(realOffset) || 0, gap];
     }
 
     calcCenterPosition() {

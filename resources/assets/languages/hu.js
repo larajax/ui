@@ -40,6 +40,18 @@
         preview: 'Előnézet',
         sideBySide: 'Egymás melletti nézet',
         fullscreen: 'Teljes képernyő'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Nincs találat.',
+        searching: 'Keresés…',
+        loadingMore: 'Töltés…',
+        errorLoading: 'Az eredmények betöltése nem sikerült.',
+        inputTooShort: 'Túl rövid. Még :count karakter hiányzik.',
+        maximumSelected: 'Csak :count elemet lehet kiválasztani.',
+        removeItem: 'Elem eltávolítása',
+        removeAllItems: 'Távolítson el minden elemet'
     }
 };
 
@@ -205,12 +217,3 @@
     chooseDate: 'Dátum kiválasztása',
     chooseTime: 'Időpont kiválasztása'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var e=jQuery.fn.select2.amd;e.define("select2/i18n/hu",[],function(){return{errorLoading:function(){return"Az eredmények betöltése nem sikerült."},inputTooLong:function(e){return"Túl hosszú. "+(e.input.length-e.maximum)+" karakterrel több, mint kellene."},inputTooShort:function(e){return"Túl rövid. Még "+(e.minimum-e.input.length)+" karakter hiányzik."},loadingMore:function(){return"Töltés…"},maximumSelected:function(e){return"Csak "+e.maximum+" elemet lehet kiválasztani."},noResults:function(){return"Nincs találat."},searching:function(){return"Keresés…"},removeAllItems:function(){return"Távolítson el minden elemet"},removeItem:function(){return"Elem eltávolítása"},search:function(){return"Keresés"}}}),e.define,e.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['hu'] = factory();
-} } } } });

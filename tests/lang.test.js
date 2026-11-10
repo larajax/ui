@@ -1,9 +1,10 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import fs from 'fs';
 import path from 'path';
-import { getLanguages, getStrings, hasLanguage, loadLanguage, makeTranslator, resolveLanguage } from '../resources/assets/lang.js';
+import { getLanguages, getStrings, hasLanguage, loadLanguage, makeTranslator, pluralize, resolveLanguage } from '../resources/assets/lang.js';
 import { DEFAULT_LANG as MARKDOWN_LANG } from '../resources/assets/formwidgets/markdowneditor/markdowneditor.js';
 import { DEFAULT_MESSAGES } from '../resources/assets/formwidgets/datatable/datatable.validation.js';
+import { DEFAULT_LANG as CUSTOM_SELECT_LANG } from '../resources/assets/controls/custom-select/custom-select-control.js';
 
 // Froala's languages (ua served by uk) and those October offers beyond them
 const LANGUAGES = [
@@ -15,7 +16,8 @@ const LANGUAGES = [
 // The English strings of each widget with client-side strings
 const WIDGETS = {
     datatable: DEFAULT_MESSAGES,
-    markdowneditor: MARKDOWN_LANG
+    markdowneditor: MARKDOWN_LANG,
+    customselect: CUSTOM_SELECT_LANG
 };
 
 // The library's translations to edit, and the language files build.js joins from them and the packages'
@@ -26,10 +28,20 @@ const packageDirs = [
     path.join(import.meta.dir, '../packages/hotsheet/src/languages')
 ];
 
-const REGISTRIES = ['LarajaxUiLanguages', 'RichAreaLanguages', 'HotsheetLanguages', 'Select2Languages'];
+const REGISTRIES = ['LarajaxUiLanguages', 'RichAreaLanguages', 'HotsheetLanguages'];
 
-// Languages Select2 has no translation for, whose dropdowns keep its English messages
-const WITHOUT_SELECT2 = ['be', 'en-ca', 'en-gb', 'ku', 'me', 'nn'];
+// A translated string is text, or the forms of a count keyed by the language's plural categories
+function isTranslatedString(value, code) {
+    if (typeof value === 'string') {
+        return value.trim() !== '';
+    }
+
+    const categories = new Intl.PluralRules(code).resolvedOptions().pluralCategories;
+
+    return !!value && typeof value.other === 'string' && Object.entries(value).every(([category, text]) => {
+        return categories.includes(category) && typeof text === 'string' && text.trim() !== '';
+    });
+}
 
 describe('library translations', () => {
     afterEach(() => {
@@ -61,6 +73,13 @@ describe('library translations', () => {
         expect(hasLanguage('de')).toBe(true);
         expect(hasLanguage('de', ['LarajaxUiLanguages', 'HotsheetLanguages'])).toBe(false);
         expect(hasLanguage(null)).toBe(true);
+    });
+
+    test('pick the form for a count by the language\'s plural rules, falling back to other', () => {
+        expect(pluralize('Enter :count more', 2)).toBe('Enter 2 more');
+        expect(pluralize({ one: ':count item', other: ':count items' }, 1, 'en')).toBe('1 item');
+        expect(pluralize({ one: ':count item', other: ':count items' }, 4, 'en')).toBe('4 items');
+        expect(pluralize({ one: 'one', other: 'general :count' }, 3, 'ru')).toBe('general 3');
     });
 
     test('load one file that fills every registry, and nothing the page already has', async () => {
@@ -96,7 +115,7 @@ describe('library language files', () => {
                 expect([widget, Object.keys(translation[widget])]).toEqual([widget, Object.keys(english)]);
 
                 for (const [key, value] of Object.entries(translation[widget])) {
-                    expect([widget, key, typeof value === 'string' && value.trim() !== '']).toEqual([widget, key, true]);
+                    expect([widget, key, isTranslatedString(value, code)]).toEqual([widget, key, true]);
                 }
             }
 
@@ -104,6 +123,12 @@ describe('library language files', () => {
             for (const [key, value] of Object.entries(translation.datatable)) {
                 const placeholders = (DEFAULT_MESSAGES[key].match(/:\w+/g) || []).sort();
                 expect([key, (value.match(/:\w+/g) || []).sort()]).toEqual([key, placeholders]);
+            }
+
+            // A message about a count shows the count, at least in its general form
+            for (const key of ['inputTooShort', 'maximumSelected']) {
+                const value = translation.customselect[key];
+                expect([key, (typeof value === 'string' ? value : value.other).includes(':count')]).toEqual([key, true]);
             }
         });
     }
@@ -126,20 +151,17 @@ describe('built language files', () => {
                 const source = fs.readFileSync(path.join(dir, `${code}.js`), 'utf8').trim();
                 expect([dir, built.includes(source)]).toEqual([dir, true]);
             }
-
-            // Select2's own translation, where it has one
-            const select2 = built.includes(`(globalThis.Select2Languages = globalThis.Select2Languages || {})['${code}']`);
-            expect(['Select2', select2]).toEqual(['Select2', !WITHOUT_SELECT2.includes(code)]);
         });
     }
 
-    test('give the custom-select control Select2\'s dictionary, plural rules included', () => {
+    test('give the custom select its messages, plural forms included', () => {
         // Run as the plain script a page loads, since an import of the file may have run already
         new Function(fs.readFileSync(path.join(builtDir, 'ru.js'), 'utf8'))();
-        const russian = getLanguages('Select2Languages').ru;
+        const russian = getLanguages().ru.customselect;
 
-        expect(russian.noResults()).toBe('Совпадений не найдено');
-        expect(russian.maximumSelected({ maximum: 1 })).toBe('Вы можете выбрать не более 1 элемент');
-        expect(russian.maximumSelected({ maximum: 5 })).toBe('Вы можете выбрать не более 5 элементов');
+        expect(russian.noResults).toBe('Совпадений не найдено');
+        expect(pluralize(russian.maximumSelected, 1, 'ru')).toBe('Вы можете выбрать не более 1 элемент');
+        expect(pluralize(russian.maximumSelected, 3, 'ru')).toBe('Вы можете выбрать не более 3 элемента');
+        expect(pluralize(russian.maximumSelected, 5, 'ru')).toBe('Вы можете выбрать не более 5 элементов');
     });
 });

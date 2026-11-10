@@ -36,5 +36,17 @@
         preview: 'Pratinjau',
         sideBySide: 'Tampilan berdampingan',
         fullscreen: 'Layar penuh'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Tidak ada data yang sesuai',
+        searching: 'Sedang mencari…',
+        loadingMore: 'Mengambil data…',
+        errorLoading: 'Data tidak boleh diambil.',
+        inputTooShort: 'Masukkan :count huruf lagi',
+        maximumSelected: 'Anda hanya dapat memilih :count pilihan',
+        removeItem: 'Hapus item',
+        removeAllItems: 'Hapus semua item'
     }
 };

@@ -36,5 +36,17 @@
         preview: 'Előnézet',
         sideBySide: 'Egymás melletti nézet',
         fullscreen: 'Teljes képernyő'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Nincs találat.',
+        searching: 'Keresés…',
+        loadingMore: 'Töltés…',
+        errorLoading: 'Az eredmények betöltése nem sikerült.',
+        inputTooShort: 'Túl rövid. Még :count karakter hiányzik.',
+        maximumSelected: 'Csak :count elemet lehet kiválasztani.',
+        removeItem: 'Elem eltávolítása',
+        removeAllItems: 'Távolítson el minden elemet'
     }
 };

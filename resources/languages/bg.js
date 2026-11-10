@@ -36,5 +36,23 @@
         preview: 'Предварителен преглед',
         sideBySide: 'Предварителен преглед до редактора',
         fullscreen: 'На цял екран'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Няма намерени съвпадения',
+        searching: 'Търсене…',
+        loadingMore: 'Зареждат се още…',
+        errorLoading: 'Резултатите не можаха да бъдат заредени.',
+        inputTooShort: {
+            one: 'Моля въведете още :count символ',
+            other: 'Моля въведете още :count символа'
+        },
+        maximumSelected: {
+            one: 'Можете да направите до :count избор',
+            other: 'Можете да направите до :count избора'
+        },
+        removeItem: 'Премахване на елемента',
+        removeAllItems: 'Премахнете всички елементи'
     }
 };

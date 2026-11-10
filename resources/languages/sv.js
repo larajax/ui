@@ -36,5 +36,17 @@
         preview: 'Förhandsgranska',
         sideBySide: 'Sida vid sida',
         fullscreen: 'Fullskärm'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Inga träffar',
+        searching: 'Söker…',
+        loadingMore: 'Laddar fler resultat…',
+        errorLoading: 'Resultat kunde inte laddas.',
+        inputTooShort: 'Vänligen skriv in :count eller fler tecken',
+        maximumSelected: 'Du kan max välja :count element',
+        removeItem: 'Ta bort objekt',
+        removeAllItems: 'Ta bort alla objekt'
     }
 };

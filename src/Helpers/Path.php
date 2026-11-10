@@ -11,42 +11,11 @@ use ReflectionClass;
 class Path
 {
     /**
-     * @var array<string, string> symbols registered by the application, keyed by symbol.
-     */
-    protected static $symbols = [];
-
-    /**
-     * @var callable|null baseDirChecker decides whether a file path may be loaded.
-     */
-    protected static $baseDirChecker;
-
-    /**
-     * checkBaseDirUsing sets the callback that decides whether a file path may be loaded, or null to allow paths inside the base path and the library.
-     */
-    public static function checkBaseDirUsing(?callable $checker): void
-    {
-        static::$baseDirChecker = $checker;
-    }
-
-    /**
-     * registerSymbol adds a symbol that stands for a folder at the start of a path, or removes it when the folder is null.
-     */
-    public static function registerSymbol(string $symbol, ?string $folder): void
-    {
-        if ($folder === null) {
-            unset(static::$symbols[$symbol]);
-        }
-        else {
-            static::$symbols[$symbol] = $folder;
-        }
-    }
-
-    /**
-     * symbols returns every path symbol with its folder, where `~` is the application base path.
+     * symbols returns every path symbol with its folder, where `~` is the application base path, from larajax.ui.
      */
     public static function symbols(): array
     {
-        return ['~' => base_path()] + static::$symbols;
+        return app('larajax.ui')->pathSymbols();
     }
 
     /**
@@ -80,22 +49,7 @@ class Path
      */
     public static function checkBaseDir($path): bool
     {
-        if (static::$baseDirChecker) {
-            return (bool) (static::$baseDirChecker)($path);
-        }
-
-        $realPath = realpath($path);
-        if ($realPath === false) {
-            return false;
-        }
-
-        foreach ([base_path(), dirname(__DIR__, 2)] as $root) {
-            if ($realPath === $root || str_starts_with($realPath, rtrim($root, '/\\') . DIRECTORY_SEPARATOR)) {
-                return true;
-            }
-        }
-
-        return false;
+        return app('larajax.ui')->checkBaseDir($path);
     }
 
     /**

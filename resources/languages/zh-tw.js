@@ -36,5 +36,17 @@
         preview: '預覽',
         sideBySide: '並排顯示',
         fullscreen: '全螢幕'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: '沒有找到相符的項目',
+        searching: '搜尋中…',
+        loadingMore: '載入中…',
+        errorLoading: '無法載入結果。',
+        inputTooShort: '請再輸入:count個字元',
+        maximumSelected: '你只能選擇最多:count項',
+        removeItem: '刪除項目',
+        removeAllItems: '刪除所有項目'
     }
 };

@@ -36,5 +36,17 @@
         preview: 'Önizleme',
         sideBySide: 'Yan yana görünüm',
         fullscreen: 'Tam ekran'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Sonuç bulunamadı',
+        searching: 'Aranıyor…',
+        loadingMore: 'Daha fazla…',
+        errorLoading: 'Sonuç yüklenemedi',
+        inputTooShort: 'En az :count karakter daha girmelisiniz',
+        maximumSelected: 'Sadece :count seçim yapabilirsiniz',
+        removeItem: 'Bu öğeyi kaldır',
+        removeAllItems: 'Tüm öğeleri kaldır'
     }
 };

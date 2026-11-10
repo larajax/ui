@@ -40,6 +40,26 @@
         preview: 'תצוגה מקדימה',
         sideBySide: 'תצוגה זה לצד זה',
         fullscreen: 'מסך מלא'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'לא נמצאו תוצאות',
+        searching: 'מחפש…',
+        loadingMore: 'טוען תוצאות נוספות…',
+        errorLoading: 'שגיאה בטעינת התוצאות',
+        inputTooShort: {
+            one: 'נא להכניס תו אחד או יותר',
+            two: 'נא להכניס :count תווים או יותר',
+            other: 'נא להכניס :count תווים או יותר'
+        },
+        maximumSelected: {
+            one: 'באפשרותך לבחור עד פריט אחד',
+            two: 'באפשרותך לבחור עד :count פריטים',
+            other: 'באפשרותך לבחור עד :count פריטים'
+        },
+        removeItem: 'הסר פריט',
+        removeAllItems: 'הסר את כל הפריטים'
     }
 };
 
@@ -205,12 +225,3 @@
     chooseDate: 'בחירת תאריך',
     chooseTime: 'בחירת שעה'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var n=jQuery.fn.select2.amd;n.define("select2/i18n/he",[],function(){return{errorLoading:function(){return"שגיאה בטעינת התוצאות"},inputTooLong:function(n){var e=n.input.length-n.maximum,r="נא למחוק ";return r+=1===e?"תו אחד":e+" תווים"},inputTooShort:function(n){var e=n.minimum-n.input.length,r="נא להכניס ";return r+=1===e?"תו אחד":e+" תווים",r+=" או יותר"},loadingMore:function(){return"טוען תוצאות נוספות…"},maximumSelected:function(n){var e="באפשרותך לבחור עד ";return 1===n.maximum?e+="פריט אחד":e+=n.maximum+" פריטים",e},noResults:function(){return"לא נמצאו תוצאות"},searching:function(){return"מחפש…"},removeAllItems:function(){return"הסר את כל הפריטים"}}}),n.define,n.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['he'] = factory();
-} } } } });

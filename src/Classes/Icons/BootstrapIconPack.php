@@ -34,6 +34,9 @@ class BootstrapIconPack implements IconPack
             'callout.warning' => 'bi bi-exclamation-triangle',
             'callout.danger' => 'bi bi-exclamation-octagon',
 
+            'scoreboard.up' => 'bi bi-arrow-up-right',
+            'scoreboard.down' => 'bi bi-arrow-down-right',
+
             'fileupload.upload' => 'bi bi-upload',
             'fileupload.remove' => 'bi bi-trash',
             'fileupload.reorder' => 'bi bi-grip-vertical',

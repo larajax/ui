@@ -40,6 +40,21 @@
         preview: 'Forhåndsvisning',
         sideBySide: 'Side om side',
         fullscreen: 'Fuld skærm'
+    },
+
+    // Custom select messages
+    customselect: {
+        noResults: 'Ingen resultater fundet',
+        searching: 'Søger…',
+        loadingMore: 'Indlæser flere resultater…',
+        errorLoading: 'Resultaterne kunne ikke indlæses.',
+        inputTooShort: 'Angiv venligst :count tegn mere',
+        maximumSelected: {
+            one: 'Du kan kun vælge :count emne',
+            other: 'Du kan kun vælge :count emner'
+        },
+        removeItem: 'Fjern element',
+        removeAllItems: 'Fjern alle elementer'
     }
 };
 
@@ -205,12 +220,3 @@
     chooseDate: 'Vælg dato',
     chooseTime: 'Vælg tidspunkt'
 };
-
-// Select2's own translation, kept for the custom-select control
-(function (jQuery) {
-/*! Select2 4.1.0 | https://github.com/select2/select2/blob/master/LICENSE.md */
-
-!function(){if(jQuery&&jQuery.fn&&jQuery.fn.select2&&jQuery.fn.select2.amd)var e=jQuery.fn.select2.amd;e.define("select2/i18n/da",[],function(){return{errorLoading:function(){return"Resultaterne kunne ikke indlæses."},inputTooLong:function(e){return"Angiv venligst "+(e.input.length-e.maximum)+" tegn mindre"},inputTooShort:function(e){return"Angiv venligst "+(e.minimum-e.input.length)+" tegn mere"},loadingMore:function(){return"Indlæser flere resultater…"},maximumSelected:function(e){var n="Du kan kun vælge "+e.maximum+" emne";return 1!=e.maximum&&(n+="r"),n},noResults:function(){return"Ingen resultater fundet"},searching:function(){return"Søger…"},removeAllItems:function(){return"Fjern alle elementer"}}}),e.define,e.require}();
-})({ fn: { select2: { amd: { define: function (name, deps, factory) {
-    (globalThis.Select2Languages = globalThis.Select2Languages || {})['da'] = factory();
-} } } } });
