@@ -8,7 +8,7 @@ class OctoberIconPack implements IconPack
             'action.delete' => 'oc-icon-delete',
 
             'search.icon' => 'icon-search',
-            'search.clear' => 'storm-icon',
+            'search.clear' => 'icon-times',
 
             'dropdown.caret' => 'icon-angle-down',
 

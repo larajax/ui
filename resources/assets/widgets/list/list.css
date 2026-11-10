@@ -9,10 +9,11 @@
     --oc-list-head-color: var(--bs-fg-3);
     --oc-list-head-hover-color: var(--bs-fg-body);
     --oc-list-sort-color: var(--bs-primary-base);
-    /* A dark page needs a stronger mix for the hover to show */
+    /* A dark page needs a stronger mix for the hover to show. Greys mix in oklab: in oklch two near
+       greys can lose their hue, which then draws as red and tints the row pink */
     --oc-list-row-hover-bg: light-dark(
-        color-mix(in oklch, var(--bs-fg-body) 3%, var(--bs-bg-body)),
-        color-mix(in oklch, var(--bs-fg-body) 7%, var(--bs-bg-body))
+        color-mix(in oklab, var(--bs-fg-body) 3%, var(--bs-bg-body)),
+        color-mix(in oklab, var(--bs-fg-body) 7%, var(--bs-bg-body))
     );
     --oc-list-row-selected-bg: color-mix(in oklch, var(--bs-primary-base) 8%, var(--bs-bg-body));
 }
@@ -82,6 +83,7 @@ table.table.data {
             background-color: inherit;
 
             > a, > span {
+                position: relative;
                 display: block;
                 padding: 0.625rem 1.125rem;
                 color: var(--oc-list-head-color);
@@ -98,13 +100,17 @@ table.table.data {
                 }
             }
 
-            /* Sort indicator rendered via Ui::icon('list.sort.*') in the head row partial */
+            /* Sort indicator rendered via Ui::icon('list.sort.*') in the head row partial. It sits
+               after the label without taking space, so a right-aligned label lines up with its
+               values and the indicator falls into the cell's padding */
             .sort-icon {
+                position: absolute;
+                top: 50%;
+                translate: 0 -50%;
                 font-size: 0.875rem;
                 line-height: 1;
                 display: inline-block;
                 margin-left: 0.25rem;
-                vertical-align: -0.0625em;
                 opacity: 0;
                 transition: opacity 0.15s;
             }

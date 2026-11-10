@@ -15,7 +15,8 @@
     --oc-filter-text-active: var(--bs-fg-body);
     --oc-filter-border: var(--bs-border-color);
     --oc-filter-bg: var(--bs-bg-body);
-    --oc-filter-bg-hover: color-mix(in oklch, var(--bs-fg-body) 5%, var(--bs-bg-body));
+    /* Greys mix in oklab, as oklch can lose their hue and draw them pink */
+    --oc-filter-bg-hover: color-mix(in oklab, var(--bs-fg-body) 5%, var(--bs-bg-body));
     --oc-filter-bg-active: var(--bs-success-base);
     --oc-filter-count-bg: var(--bs-primary-base);
     --oc-filter-count-color: var(--bs-primary-contrast, #fff);
