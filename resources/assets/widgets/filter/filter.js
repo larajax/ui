@@ -55,7 +55,7 @@ export function registerFilterWidget(jax) {
             this.element.addEventListener('click', this.proxy(this.onDropdownSearchClick));
 
             this.bindScrollable();
-            this.orderScopes();
+            this.updateActiveCount();
         }
 
         disconnect() {
@@ -72,9 +72,6 @@ export function registerFilterWidget(jax) {
             if (this.scrollable) {
                 this.dragScroll = new DragScroll(this.scrollable, {
                     scrollClassContainer: this.scrollable.parentNode
-                });
-                this.scrollable.querySelectorAll(':scope > .filter-group').forEach((group, index) => {
-                    group.dataset.filterOrder ??= index;
                 });
             }
 
@@ -109,7 +106,7 @@ export function registerFilterWidget(jax) {
             if (ev.target === this.element) {
                 this.unbindScrollable();
                 this.bindScrollable();
-                this.orderScopes();
+                this.updateActiveCount();
             }
             else if (this.primaryScrollable && ev.target instanceof Node && this.primaryScrollable.contains(ev.target)) {
                 this.revealActiveTab();
@@ -136,36 +133,20 @@ export function registerFilterWidget(jax) {
             this.primaryDragScroll?.fixScrollClasses();
         }
 
-        // Active scopes lead, with the configured order retained within both groups.
-        orderScopes(updatedScopeName) {
-            if (!this.scrollable) {
-                return;
+        // The funnel shows how many scopes filter the list, for when their chips scroll out of view, and the scroll edges follow chips that changed width.
+        updateActiveCount() {
+            const badge = this.element.querySelector('[data-filter-count]');
+
+            if (badge && this.scrollable) {
+                const count = [...this.scrollable.querySelectorAll(':scope > .filter-group')]
+                    .filter((group) => group.querySelector('.filter-scope.active'))
+                    .length;
+
+                badge.hidden = count === 0;
+                badge.querySelector('[data-filter-count-value]').textContent = String(count);
             }
 
-            const groups = [...this.scrollable.querySelectorAll(':scope > .filter-group')];
-            groups.sort((a, b) => {
-                const activeA = !!a.querySelector('.filter-scope.active'),
-                    activeB = !!b.querySelector('.filter-scope.active');
-
-                return Number(activeB) - Number(activeA) || Number(a.dataset.filterOrder) - Number(b.dataset.filterOrder);
-            });
-
-            groups.forEach((group, index) => {
-                if (this.scrollable.children[index] !== group) {
-                    this.scrollable.insertBefore(group, this.scrollable.children[index]);
-                }
-            });
-
-            const updatedGroup = updatedScopeName
-                ? groups.find(group => group.querySelector('.filter-scope')?.dataset.scopeName === updatedScopeName)
-                : null;
-            if (updatedGroup) {
-                this.dragScroll.goToStart();
-                if (updatedGroup.querySelector('.filter-scope.active') && updatedGroup !== groups[0]) {
-                    this.scrollable.scrollLeft = updatedGroup.offsetLeft - groups[0].offsetLeft;
-                }
-            }
-            this.dragScroll.fixScrollClasses();
+            this.dragScroll?.fixScrollClasses();
         }
 
         onClick(ev) {
@@ -780,7 +761,7 @@ export function registerFilterWidget(jax) {
                     this.setListUpdating(false);
                 })
                 .done(() => {
-                    this.orderScopes(scopeName);
+                    this.updateActiveCount();
                     // Trigger dependsOn updates on successful requests
                     this.element.querySelectorAll('[data-scope-name]').forEach((el) => {
                         if (el.dataset.scopeName === scopeName) {

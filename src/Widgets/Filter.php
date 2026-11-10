@@ -241,6 +241,26 @@ class Filter extends WidgetBase implements FilterElement
     }
 
     /**
+     * isScopeActive returns whether a scope filters the list, which its chip shows as active.
+     */
+    public function isScopeActive(FilterScope $scope): bool
+    {
+        return match ($scope->type) {
+            'checkbox', 'switch' => $scope->scopeValue !== null && (bool) $scope->value,
+            'dropdown' => $scope->scopeValue !== null && $scope->value !== null && $scope->value !== '',
+            default => (bool) $scope->scopeValue,
+        };
+    }
+
+    /**
+     * getActiveScopeCount returns how many of the scopes shown as chips filter the list.
+     */
+    public function getActiveScopeCount(array $scopes): int
+    {
+        return count(array_filter($scopes, fn ($scope) => !$scope->hidden && $this->isScopeActive($scope)));
+    }
+
+    /**
      * defineFilterScopes creates an array of filter scopes from the configuration
      */
     protected function defineFilterScopes()

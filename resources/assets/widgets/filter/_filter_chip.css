@@ -21,6 +21,11 @@
             border-color: var(--oc-filter-text);
         }
 
+        /* An unused chip tints on hover and while open, so it reads as a button */
+        &:not(.active):is(:hover, :has(.popover-highlight), :has(.combobox-toggle.show)) {
+            background: var(--oc-filter-bg-hover);
+        }
+
         > .filter-scope,
         > .combobox-toggle {
             display: inline-flex;
@@ -42,10 +47,13 @@
             padding-inline-start: 0.3125rem;
         }
 
+        /* Centering the boxes leaves the icon high beside the text, whose letters sit low in their line, so it drops to meet them */
         .filter-chip-icon {
             flex-shrink: 0;
             font-size: 1rem;
             line-height: 1;
+            position: relative;
+            top: 0.0625rem;
         }
 
         .filter-chip-clear {

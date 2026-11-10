@@ -542,7 +542,7 @@ describe('scope updates', () => {
     });
 });
 
-describe('active scope ordering', () => {
+describe('scope order and the active count', () => {
     const names = ['alpha', 'beta', 'gamma', 'delta'];
 
     function scopeMarkup(name, active = false) {
@@ -550,16 +550,26 @@ describe('active scope ordering', () => {
     }
 
     function groupsMarkup(active = [], order = names) {
-        return order.map(name => `<div class="filter-group" data-filter-order="${names.indexOf(name) * 100}">${scopeMarkup(name, active.includes(name))}</div>`).join('');
+        return order.map(name => `<div class="filter-group">${scopeMarkup(name, active.includes(name))}</div>`).join('');
     }
 
-    function renderOrderedFilter(active = [], order = names) {
-        const control = renderFilter(`<div class="filter-scroll"><div class="filter-scopes">${groupsMarkup(active, order)}</div></div>`);
+    // The funnel with its count badge, as the filter menu partial renders it
+    function setupMarkup(count = 0) {
+        return `<div class="filter-group filter-setup"><a class="filter-action"><span class="filter-count" data-filter-count ${count ? '' : 'hidden'}><span data-filter-count-value>${count}</span></span></a></div>`;
+    }
+
+    function renderOrderedFilter(active = [], order = names, count = 0) {
+        const control = renderFilter(`${setupMarkup(count)}<div class="filter-scroll"><div class="filter-scopes">${groupsMarkup(active, order)}</div></div>`);
         return { control, scrollable: document.querySelector('.filter-scopes') };
     }
 
     function scopeOrder() {
         return [...document.querySelectorAll('.filter-scopes > .filter-group > .filter-scope')].map(el => el.dataset.scopeName);
+    }
+
+    function badge() {
+        const element = document.querySelector('[data-filter-count]');
+        return element.hidden ? null : element.querySelector('[data-filter-count-value]').textContent;
     }
 
     function updateScope(name, active) {
@@ -569,58 +579,45 @@ describe('active scope ordering', () => {
         jax.requests.at(-1).resolve();
     }
 
-    test('restored active scopes lead in configured order, followed by inactive scopes', () => {
-        renderOrderedFilter(['alpha', 'gamma'], ['gamma', 'alpha', 'delta', 'beta']);
+    test('active scopes keep their configured place', () => {
+        renderOrderedFilter(['gamma', 'delta'], ['gamma', 'alpha', 'delta', 'beta']);
 
-        expect(scopeOrder()).toEqual(['alpha', 'gamma', 'beta', 'delta']);
+        expect(scopeOrder()).toEqual(['gamma', 'alpha', 'delta', 'beta']);
         expect(jax.requests.length).toBe(0);
     });
 
-    test('applying a rightmost scope moves it first and scrolls back after a successful response', () => {
+    test('applying a scope leaves it, and the row, where they were', () => {
         const { scrollable } = renderOrderedFilter();
         scrollable.scrollLeft = 200;
-        const scope = document.querySelector('[data-scope-name="delta"]');
-        scope.click();
-
-        expect(scopeOrder()).toEqual(names);
-        expect(scrollable.scrollLeft).toBe(200);
-
-        scope.parentNode.innerHTML = scopeMarkup('delta', true);
-        jax.requests[0].resolve();
-
-        expect(scopeOrder()).toEqual(['delta', 'alpha', 'beta', 'gamma']);
-        expect(scrollable.scrollLeft).toBe(0);
-    });
-
-    test('clearing scopes restores their configured place among inactive scopes', () => {
-        const { scrollable } = renderOrderedFilter(['gamma', 'delta']);
-        scrollable.scrollLeft = 200;
-        updateScope('gamma', false);
-        expect(scopeOrder()).toEqual(['delta', 'alpha', 'beta', 'gamma']);
-        expect(scrollable.scrollLeft).toBe(0);
-
-        updateScope('delta', false);
-        expect(scopeOrder()).toEqual(names);
-    });
-
-    test('another active scope remains in order and the newly applied scope is revealed', () => {
-        const { scrollable } = renderOrderedFilter(['gamma']);
-        Object.defineProperty(document.querySelector('[data-scope-name="gamma"]').parentNode, 'offsetLeft', { value: 40 });
-        Object.defineProperty(document.querySelector('[data-scope-name="delta"]').parentNode, 'offsetLeft', { value: 180 });
 
         updateScope('delta', true);
 
-        expect(scopeOrder()).toEqual(['gamma', 'delta', 'alpha', 'beta']);
-        expect(scrollable.scrollLeft).toBe(140);
+        expect(scopeOrder()).toEqual(names);
+        expect(scrollable.scrollLeft).toBe(200);
     });
 
-    test('replacing the full filter container rebinds and orders the new scopes', () => {
+    test('the funnel counts the active scopes, and hides the count with none', () => {
+        renderOrderedFilter(['beta'], names, 5);
+
+        // The count the page rendered is corrected from the chips as the filter connects
+        expect(badge()).toBe('1');
+
+        updateScope('delta', true);
+        expect(badge()).toBe('2');
+
+        updateScope('beta', false);
+        updateScope('delta', false);
+        expect(badge()).toBeNull();
+    });
+
+    test('replacing the full filter container rebinds it and counts the new scopes', () => {
         const { control, scrollable } = renderOrderedFilter(['gamma']);
-        document.getElementById('Filter').innerHTML = `<div class="filter-scroll"><div class="filter-scopes">${groupsMarkup(['beta', 'delta'])}</div></div>`;
+        document.getElementById('Filter').innerHTML = `${setupMarkup()}<div class="filter-scroll"><div class="filter-scopes">${groupsMarkup(['beta', 'delta'])}</div></div>`;
         jax.Events.dispatch('ajax:update', { target: document.getElementById('Filter') });
 
         expect(control.scrollable).not.toBe(scrollable);
-        expect(scopeOrder()).toEqual(['beta', 'delta', 'alpha', 'gamma']);
+        expect(scopeOrder()).toEqual(names);
+        expect(badge()).toBe('2');
     });
 });
 

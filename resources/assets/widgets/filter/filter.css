@@ -15,7 +15,10 @@
     --oc-filter-text-active: var(--bs-fg-body);
     --oc-filter-border: var(--bs-border-color);
     --oc-filter-bg: var(--bs-bg-body);
+    --oc-filter-bg-hover: color-mix(in oklch, var(--bs-fg-body) 5%, var(--bs-bg-body));
     --oc-filter-bg-active: var(--bs-success-base);
+    --oc-filter-count-bg: var(--bs-primary-base);
+    --oc-filter-count-color: var(--bs-primary-contrast, #fff);
 }
 
 .control-filter {
@@ -172,6 +175,33 @@
         padding: 0.375rem 0.75rem;
         flex-shrink: 0;
 
+        > .filter-action {
+            position: relative;
+        }
+    }
+
+    /* How many scopes filter the list, on the corner of the funnel */
+    .filter-count {
+        position: absolute;
+        top: -0.125rem;
+        right: -0.375rem;
+        min-width: 1rem;
+        height: 1rem;
+        padding: 0 0.25rem;
+        border-radius: var(--bs-radius-pill);
+        font-size: 0.625rem;
+        font-weight: 600;
+        line-height: 1rem;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+        color: var(--oc-filter-count-color);
+        background: var(--oc-filter-count-bg);
+        box-shadow: 0 0 0 2px var(--oc-filter-bg);
+        pointer-events: none;
+
+        &[hidden] {
+            display: none;
+        }
     }
 
     /* Scroll wrapper with edge shadows */
