@@ -7,7 +7,7 @@
     </div>
     <?php if ($pageLast > 1): ?>
         <nav class="list-pagination-links">
-            <ul class="pagination">
+            <ul class="pagination pagination-sm">
                 <?php if ($pageCurrent > 1): ?>
                     <li class="page-item">
                         <a

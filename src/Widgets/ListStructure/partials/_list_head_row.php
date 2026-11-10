@@ -10,8 +10,12 @@
     <?php $index = 0; foreach ($columns as $key => $column): ?>
         <?php
             $index++;
+
+            // A sorted list shows its way back to the structure at the end of the last head cell, which drops a set width to fit it
+            $hasStructureLink = $showStructureLink && $index === count($columns);
+
             $styles = [];
-            if ($column->width) {
+            if ($column->width && !$hasStructureLink) {
                 $styles[] = 'width: '.$column->width;
             }
 
@@ -30,6 +34,10 @@
                 $styles[] = 'padding-left: '.$this->getIndentStartSize(0).'px';
                 $classes[] = 'explicit-left-padding';
             }
+
+            if ($hasStructureLink) {
+                $classes[] = 'has-show-structure';
+            }
         ?>
         <?php if ($showSorting && $column->sortable): ?>
             <?php
@@ -40,6 +48,9 @@
                 $sortIcon = 'list.sort.'.($isSorted ? $this->sortDirection : 'desc');
             ?>
             <th style="<?= implode(';', $styles) ?>" class="<?= implode(' ', $classes) ?>">
+                <?php if ($hasStructureLink): ?>
+                    <?= $this->makePartial('list_show_structure') ?>
+                <?php endif ?>
                 <a
                     href="javascript:;"
                     data-request="<?= $this->getEventHandler('onSort') ?>"
@@ -51,18 +62,13 @@
             </th>
         <?php else: ?>
             <th style="<?= implode(';', $styles) ?>" class="<?= implode(' ', $classes) ?>">
+                <?php if ($hasStructureLink): ?>
+                    <?= $this->makePartial('list_show_structure') ?>
+                <?php endif ?>
                 <span><?= $this->getHeaderValue($column) ?><?php if ($column->tooltip): ?><?=
                     $this->makePartial('list_head_tooltip', ['column' => $column])
                 ?><?php endif ?></span>
             </th>
         <?php endif ?>
     <?php endforeach ?>
-
-    <?php if (!$useStructure): ?>
-        <th class="list-setup setup-show-structure">
-            <a href="javascript:;"
-                title="<?= __("Show Structure") ?>"
-                data-request="<?= $this->getEventHandler('onShowStructure') ?>"><span><?= \Larajax\Ui\Facades\Ui::icon('list.structure') ?></span></a>
-        </th>
-    <?php endif ?>
 </tr>

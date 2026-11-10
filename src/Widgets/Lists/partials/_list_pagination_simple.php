@@ -3,7 +3,7 @@
 ?>
 <div class="list-pagination">
     <nav class="list-pagination-links ms-auto">
-        <ul class="pagination">
+        <ul class="pagination pagination-sm">
             <?php if ($pageCurrent > 1): ?>
                 <li class="page-item">
                     <a

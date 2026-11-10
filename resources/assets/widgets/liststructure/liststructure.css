@@ -156,6 +156,40 @@ table.table.data {
     opacity: 1;
 }
 
+/* Sorted flat, the list offers its way back to the tree as an accent pill floated to the end of its last head cell, which widens to fit it */
+table.table.data thead th.has-show-structure {
+    button.list-show-structure {
+        float: inline-end;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3125rem;
+        /* Centred on the label line: its 0.625rem padding, less half the pill's extra height over the 1.3125rem line */
+        margin-block-start: 0.40625rem;
+        margin-inline: 0.75rem;
+        padding: 0.25rem 0.625rem;
+        font: inherit;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        line-height: 1.25rem;
+        color: var(--oc-list-sort-color);
+        background-color: color-mix(in oklch, var(--oc-list-sort-color) 10%, transparent);
+        border: 0;
+        border-radius: 7.125rem;
+        cursor: pointer;
+        transition: background-color 0.15s;
+
+        > i {
+            font-size: 0.9375rem;
+            line-height: 1;
+        }
+
+        &:hover,
+        &:focus-visible {
+            background-color: color-mix(in oklch, var(--oc-list-sort-color) 18%, transparent);
+        }
+    }
+}
+
 /* A row that drags shows it is under the pointer, whether or not it opens a record */
 .control-list[data-control~="liststructurewidget"] table.table.data tbody:not(.tree-drag-mode) tr:not(.no-data):not(.active):not(.selected):hover td {
     background-color: var(--oc-list-row-hover-bg);

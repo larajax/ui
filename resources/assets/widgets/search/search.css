@@ -112,25 +112,46 @@
         }
     }
 
+    /* The search sits over the end of the row, out of its flow, so opening and closing never move the buttons */
+    .control-toolbar > .toolbar-item:has(.form-control.is-growable) {
+        position: absolute;
+        inset-inline-end: 0;
+        z-index: 3;
+        padding-inline-end: 0;
+    }
+
+    /* The buttons keep room for the closed circle, and keep the row's height without it, by the root size a field's height comes from */
+    .control-toolbar:has(> .toolbar-item .form-control.is-growable) > .toolbar-primary {
+        min-height: var(--bs-btn-input-min-height);
+        margin-inline-end: var(--bs-btn-input-min-height);
+    }
+
+    /* Beside the list setup, the closed circle keeps the toolbar's spacing from it */
+    .control-toolbar:has(> .toolbar-setup) {
+        > .toolbar-item:has(.form-control.is-growable:not(:focus-within)) {
+            inset-inline-end: calc(2rem + 0.75rem);
+        }
+
+        &:has(> .toolbar-item .form-control.is-growable) > .toolbar-primary {
+            margin-inline-end: calc(var(--bs-btn-input-min-height) + 0.75rem);
+        }
+    }
+
     /* Open, it spans the toolbar row over the buttons, growing from the right */
     .control-toolbar:has(.form-control.is-growable:focus-within) {
         > .toolbar-item:not(:has(.form-control.is-growable)) {
             visibility: hidden;
         }
 
-        > .toolbar-item:has(.form-control.is-growable) {
-            position: absolute;
-            inset-inline: 0;
-            top: 0;
-            z-index: 3;
-            padding-inline-end: 0;
-        }
-
-        /* Sized by the toolbar rather than its item, so it closes from its full width once back in the row */
         .form-control.is-growable {
             width: 100cqi;
-            margin-inline-start: auto;
         }
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .control-toolbar > .toolbar-item:has(.form-control.is-growable) {
+        transition: inset-inline-end 0.2s ease;
     }
 }
 

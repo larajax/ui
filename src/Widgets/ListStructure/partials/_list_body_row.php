@@ -18,7 +18,7 @@
     <?php if ($showReorder): ?>
         <?= $this->makePartial('list_body_reorder', ['record' => $record]) ?>
     <?php endif ?>
-    <?php $index = $action = 0; $total = count($columns); foreach ($columns as $key => $column): ?>
+    <?php $index = $action = 0; foreach ($columns as $key => $column): ?>
         <?php
             $index++;
             $classes = [
@@ -33,8 +33,6 @@
                 $classes[] = 'nolink';
             }
 
-            $isLastWithoutStructure = $expandLastColumn && !$useStructure && $index === $total;
-
             $styles = '';
             $isTreeCell = $index === 1 && $useStructure;
             if ($isTreeCell) {
@@ -43,7 +41,7 @@
                 $styles = '--tree-level:'.$treeLevel.';--tree-pad:'.$indent.'px;padding-left:'.$indent.'px';
             }
         ?>
-        <td class="<?= implode(' ', $classes) ?>" style="<?= $styles ?>" <?= $isLastWithoutStructure ? 'colspan="2"' : '' ?>>
+        <td class="<?= implode(' ', $classes) ?>" style="<?= $styles ?>">
             <?php if ($isTreeCell): ?>
                 <?= $this->makePartial('list_body_tree', [
                     'treeLevel' => $treeLevel,
@@ -61,9 +59,6 @@
             <?php endif ?>
         </td>
     <?php endforeach ?>
-    <?php if (!$expandLastColumn && !$useStructure): ?>
-        <td></td>
-    <?php endif ?>
 </tr>
 
 <?php if ($showTree && $expanded): ?>

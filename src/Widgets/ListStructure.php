@@ -65,6 +65,11 @@ class ListStructure extends Lists
     protected $permissions;
 
     /**
+     * @var bool isTree is whether the list is configured as a tree, kept while sorting flattens it.
+     */
+    protected $isTree = true;
+
+    /**
      * make the list structure widget from named arguments; repeats the parent
      * list parameters and adds the structure options.
      *
@@ -131,6 +136,8 @@ class ListStructure extends Lists
             'permissions'
         ]);
 
+        $this->isTree = (bool) $this->showTree;
+
         parent::init();
 
         // Hide tree when sorting
@@ -169,6 +176,10 @@ class ListStructure extends Lists
         $this->vars['includeSortOrders'] = $this->useSortOrdering();
         $this->vars['treeLevel'] = 0;
         $this->vars['indentSize'] = $this->getIndentSize();
+
+        // A sorted list links back to its structure, which a search hides until the search is cleared
+        $this->vars['showStructureLink'] = !$this->useStructure && !strlen((string) $this->searchTerm);
+        $this->vars['structureLinkLabel'] = $this->isTree ? __('Show tree') : __('Show order');
     }
 
     /**
