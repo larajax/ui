@@ -57,7 +57,7 @@ export class History {
 }
 
 /**
- * invertTransaction returns the operations that reverse an applied transaction.
+ * invertTransaction returns the operations reversing a transaction.
  */
 export function invertTransaction(store, ops) {
     return ops.slice().reverse().flatMap((op) => store.invert(op));

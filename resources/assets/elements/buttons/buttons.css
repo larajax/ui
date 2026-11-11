@@ -2,7 +2,7 @@
  * Buttons
  */
 
-/* The bare base class is the neutral default, a surface a step above the page inside a light border, apart from the tinted secondary and the outline */
+/* Neutral default for the bare base class */
 :where(.btn:not(.btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link)) {
     --bs-btn-bg: light-dark(var(--bs-bg-body), var(--bs-bg-2));
     --bs-btn-border-color: var(--bs-border-color);
@@ -19,13 +19,13 @@
     --oc-btn-active-box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.06);
 }
 
-/* Solid buttons keep a light lift, a soft shadow under a faint top highlight, so they read as buttons without the old raised look */
+/* Solid buttons keep a light lift */
 .btn-solid {
     --oc-btn-box-shadow: var(--bs-box-shadow-sm), inset 0 1px 0 rgb(255 255 255 / 0.16);
     --oc-btn-active-box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.16);
 }
 
-/* A press sinks the button without changing its shape, its lift giving way to a soft inner shadow, as Bootstrap's styled button does but lighter, and so does an open menu's toggle */
+/* Pressed and open buttons sink with an inner shadow */
 :is(.btn, .btn-solid) {
     box-shadow: var(--oc-btn-box-shadow, none);
 
@@ -41,7 +41,7 @@
     --bs-btn-font-weight: 600;
 }
 
-/* Secondary is a tint of the text colour, edged by a hairline of it and a slight shadow, so it sits on any surface in either theme */
+/* Secondary tints with the text colour on any surface */
 .btn-solid.theme-secondary {
     --oc-btn-box-shadow: var(--bs-box-shadow-xs), inset 0 0 0 1px color-mix(in oklch, var(--bs-fg-body) 7%, transparent);
     --oc-btn-active-box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--bs-fg-body) 7%, transparent), inset 0 1px 2px rgb(0 0 0 / 0.1);
@@ -111,8 +111,7 @@
     }
 }
 
-/* Joined buttons get a faint divider, except outline buttons whose own borders divide them.
-   The last button, or one followed only by its menu, keeps its own right border */
+/* Faint dividers between joined buttons */
 .btn-group {
     :is(.btn, .btn-solid, .btn-subtle, .btn-text, .btn-link, .btn-icon) {
         margin-left: 0 !important;
@@ -135,7 +134,7 @@
     }
 }
 
-/* Display a button as an icon link, the icon class on the element draws the glyph */
+/* Button shown as an icon link */
 .btn-icon-link {
     display: inline-block;
     height: var(--bs-btn-input-min-height);

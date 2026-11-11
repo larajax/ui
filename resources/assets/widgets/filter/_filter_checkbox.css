@@ -9,7 +9,7 @@
     .filter-group > .filter-scope.scope-checkbox,
     /* @deprecated */
     .filter-group > .filter-scope {
-        /* Checkbox and switch scopes sit the check beside its label on one line */
+        /* Check and label on one line */
         &.form-field {
             display: flex;
             align-items: center;

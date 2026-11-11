@@ -1,5 +1,5 @@
 /**
- * h creates an element with properties, attributes, listeners and children.
+ * h creates an element with props, listeners and children.
  */
 export function h(tagName, props = {}, children = []) {
     const element = document.createElement(tagName);
@@ -40,7 +40,7 @@ export function h(tagName, props = {}, children = []) {
 }
 
 /**
- * icon renders an icon element from a class name string or an { html } definition.
+ * icon renders an icon from a class name or an { html } definition.
  */
 export function icon(definition, className = 'rich-editor-icon') {
     if (definition && typeof definition === 'object' && definition.html) {
@@ -53,19 +53,19 @@ export function icon(definition, className = 'rich-editor-icon') {
 }
 
 /**
- * mountRoot returns the dialog enclosing an element, or the page body, since the page outside an open modal dialog is inert.
+ * mountRoot returns the enclosing modal dialog, else the body.
  */
 export function mountRoot(element) {
     return (element && element.closest('dialog')) || document.body;
 }
 
 /**
- * applyTheme gives a panel placed on the page body the colour theme of the nearest themed ancestor of the editor.
+ * applyTheme gives a body panel the editor's nearest theme.
  */
 export function applyTheme(panel, element) {
     const scope = element.closest('[data-bs-theme]');
 
-    // Panels on the body inherit the page theme, so only a nested theme scope is copied
+    // Only a nested theme needs copying
     if (scope && scope !== document.documentElement && scope !== document.body) {
         panel.setAttribute('data-bs-theme', scope.getAttribute('data-bs-theme'));
     }
@@ -75,7 +75,7 @@ export function applyTheme(panel, element) {
 }
 
 /**
- * selectFiles opens the browser file picker and resolves with the chosen files, placing its input beside the given element.
+ * selectFiles opens the file picker and resolves with the files.
  */
 export function selectFiles({ accept, multiple = false, root = null } = {}) {
     return new Promise((resolve) => {

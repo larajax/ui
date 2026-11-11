@@ -42,14 +42,14 @@ import {
     withAlpha
 } from './chart-utils.js';
 
-// The share of each bar's slot the bar fills, leaving the rest as the gap
+// Share of each bar's slot the bar fills
 const BAR_SHARE = 0.75;
 
 // The opacity of a hovered bar
 const HOVER_OPACITY = 0.85;
 
 /**
- * buildBarConfig returns the Chart.js config for one bar per value, rounded at the top and scaled to the largest value, with a gap in pixels when given one.
+ * buildBarConfig returns the Chart.js config for a bar chart.
  */
 export function buildBarConfig({ values, colors, max, gap, label = (index) => String(index) }) {
     const hasFixedGap = typeof gap === 'number' && gap >= 0;
@@ -64,7 +64,7 @@ export function buildBarConfig({ values, colors, max, gap, label = (index) => St
         categoryPercentage: 1
     };
 
-    // A clear border on either side leaves a fixed gap between bars at any width
+    // Clear borders keep a fixed gap between bars
     if (hasFixedGap) {
         Object.assign(dataset, {
             borderColor: 'transparent',
@@ -128,7 +128,7 @@ export function registerChartBar(jax) {
 
             destroyChart(this);
 
-            // Puts the list back, so the chart draws again when the element reconnects
+            // Restore the list so the chart redraws on reconnect
             if (this.canvasBox) {
                 this.canvasBox.remove();
                 this.legend.remove();
@@ -185,7 +185,7 @@ export function registerChartBar(jax) {
             }));
         }
 
-        // The values take the palette again, which may differ between light and dark
+        // Reapply the palette, which differs by theme
         onThemeChange() {
             if (!this.chart) {
                 return;

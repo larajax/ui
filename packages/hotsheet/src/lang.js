@@ -1,6 +1,5 @@
 /**
- * Default English strings. The language option picks a translation from languages/, and hosts
- * pass their own overrides through the lang option.
+ * Default English strings; see the language and lang options.
  */
 export const defaultLang = {
     // The placeholder of an empty grid, with emptyState: true
@@ -18,7 +17,7 @@ export const defaultLang = {
     // A cell whose value its column does not accept
     invalidValue: 'The value is not valid.',
 
-    // The button that opens the browser's date or time picker on an edited cell
+    // The button opening the native date or time picker
     chooseDate: 'Choose a date',
     chooseTime: 'Choose a time'
 };
@@ -37,8 +36,7 @@ const LANGUAGE_ALIASES = {
 };
 
 /**
- * getLanguages returns the translations on the page, keyed by language code. Each file in languages/
- * adds itself here, so it can load before or after the grid, as a plain script or a module.
+ * getLanguages returns the page's translations, keyed by code.
  */
 export function getLanguages() {
     if (!globalThis.HotsheetLanguages) {
@@ -49,14 +47,14 @@ export function getLanguages() {
 }
 
 /**
- * registerLanguage adds a translation, its strings keyed like the English defaults.
+ * registerLanguage adds a translation keyed like the defaults.
  */
 export function registerLanguage(code, strings) {
     getLanguages()[normalizeLanguage(code)] = strings;
 }
 
 /**
- * languageCandidates lists the codes that serve a locale, most specific first, such as pt-br and pt for pt_BR.
+ * languageCandidates lists codes for a locale, such as pt-br and pt.
  */
 export function languageCandidates(code) {
     if (!code) {
@@ -71,7 +69,7 @@ export function languageCandidates(code) {
 }
 
 /**
- * resolveLanguage returns the code of the loaded translation serving a locale, or null for English.
+ * resolveLanguage returns the loaded code serving a locale, or null.
  */
 export function resolveLanguage(code) {
     const languages = getLanguages();
@@ -84,8 +82,7 @@ function normalizeLanguage(code) {
 }
 
 /**
- * makeTranslator returns a lookup function. A string comes from the host overrides, then the
- * translation for the language, then the English defaults.
+ * makeTranslator returns a lookup: overrides, language, English.
  */
 export function makeTranslator(overrides, language) {
     const code = resolveLanguage(language);

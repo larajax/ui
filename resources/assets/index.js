@@ -85,9 +85,7 @@ export { markdownEditor } from './formwidgets/markdowneditor/markdowneditor.js';
 const registered = new WeakSet();
 
 /**
- * registerUi registers all Larajax UI controls and widgets against the given
- * framework instance, layered: generic controls first, then widgets that
- * build on them.
+ * registerUi registers all controls and widgets on an instance.
  */
 export function registerUi(jax) {
     if (

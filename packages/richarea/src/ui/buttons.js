@@ -4,8 +4,7 @@ import { formatShortcut, tooltipAttributes } from './tooltip.js';
 const warnedCodes = new Set();
 
 /**
- * ButtonGroup renders a list of button codes into a container and keeps each button's
- * pressed, disabled, label and icon state in step with the editor.
+ * ButtonGroup renders button codes and keeps their state in step.
  */
 export class ButtonGroup {
     constructor(richArea, container, codes) {
@@ -37,7 +36,7 @@ export class ButtonGroup {
                 return;
             }
 
-            // Sets are separated from their neighbors, like the alignment buttons of the document toolbar
+            // Sets stand apart, like the alignment buttons
             if (definition.buttons) {
                 const set = this.renderSet(code, definition);
                 if (set.childElementCount) {
@@ -60,7 +59,7 @@ export class ButtonGroup {
     }
 
     /**
-     * resolveDefinition looks up a button code, warning once about unknown codes.
+     * resolveDefinition looks up a code, warning once if unknown.
      */
     resolveDefinition(code) {
         const definition = this.richArea.getButtonDefinition(code);
@@ -74,7 +73,7 @@ export class ButtonGroup {
     }
 
     /**
-     * renderSet renders the buttons listed by a set definition side by side, so they wrap together.
+     * renderSet renders a set's buttons together, so they wrap as one.
      */
     renderSet(code, definition) {
         const label = this.richArea.trans(definition.label || code, definition.label || code);
@@ -174,7 +173,7 @@ export class ButtonGroup {
     }
 
     /**
-     * refreshIcon swaps a button icon when its state picks a different one.
+     * refreshIcon swaps a button icon when its state changes it.
      */
     refreshIcon(item, value) {
         if (!value || value === item.iconValue) {

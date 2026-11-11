@@ -107,7 +107,7 @@ export class LoadIndicator
 }
 
 /**
- * registerLoadIndicator shows the indicator for elements with data-load-indicator while their AJAX requests run.
+ * registerLoadIndicator shows data-load-indicator during AJAX requests.
  */
 export function registerLoadIndicator() {
     document.addEventListener('ajax:promise', (ev) => {

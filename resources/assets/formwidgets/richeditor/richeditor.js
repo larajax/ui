@@ -31,7 +31,7 @@
 import { richEditor } from './richeditor-api.js';
 import { loadLanguage } from '../../lang.js';
 
-// Options a field may not set through editorOptions, since the control or the page owns them
+// Options the control or page owns, not set via editorOptions
 const RESERVED_OPTIONS = ['content', 'readOnly', 'useLineBreaks', 'toolbarButtons', 'buttons', 'hooks', 'extensions', 'sourceEditor'];
 
 // RichArea is shared by every field, loaded on first use
@@ -110,7 +110,7 @@ export function registerRichEditor(jax) {
             });
         }
 
-        // Page hooks, plus the built-in upload when the field has one and the page sets no uploadFile hook
+        // Page hooks, plus the field upload unless the page sets uploadFile
         getHooks() {
             if (!this.config.uploadHandler || richEditor.hooks.uploadFile) {
                 return richEditor.hooks;
@@ -121,7 +121,7 @@ export function registerRichEditor(jax) {
             });
         }
 
-        // Posts a file to the field's upload handler, resolving with the address of the stored file
+        // Posts a file to the upload handler, resolving with its URL
         uploadFile(file, context) {
             return new Promise((resolve, reject) => {
                 jax.request(this.element, this.config.uploadHandler, {
@@ -160,7 +160,7 @@ function plainObject(value) {
     return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
 }
 
-// Reads the message of a failed AJAX response, leaving out server error pages
+// Reads a failed response's message, skipping error pages
 function responseMessage(data) {
     if (data && data.$env && data.$env.getMessage()) {
         return data.$env.getMessage();

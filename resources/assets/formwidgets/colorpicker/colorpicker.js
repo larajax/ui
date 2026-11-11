@@ -24,7 +24,7 @@
 // Coloris is a single picker shared by every field, loaded on first use
 let colorisPromise = null;
 
-// The field whose picker is open, since moving straight to another field opens it without a close
+// Field with the open picker, as switching fields skips close
 let openField = null;
 
 export function registerColorPicker(jax) {
@@ -58,7 +58,7 @@ export function registerColorPicker(jax) {
 
             this.listen('click', this.onClickField);
 
-            // Coloris moves the focus into the picker and fires these on the input without bubbling
+            // Coloris fires these on the input without bubbling
             this.listen('open', this.input, this.onPickerOpen);
             this.listen('close', this.input, this.onPickerClose);
         }
@@ -91,7 +91,7 @@ export function registerColorPicker(jax) {
             this.element.classList.remove('is-picker-open');
         }
 
-        // Refreshes the options before the picker opens, since the theme can change after connect
+        // Refresh options on open, as the theme may have changed
         onClickField(ev) {
             if (this.coloris && ev.target === this.input) {
                 this.coloris.setInstance(this.selector, this.getInstanceOptions());
@@ -103,7 +103,7 @@ export function registerColorPicker(jax) {
                 swatches = Array.isArray(this.config.swatches) ? this.config.swatches : [];
 
             return {
-                // Inside a dialog the picker joins it, since the page outside an open modal dialog is inert
+                // Mount inside an open dialog, as the page outside is inert
                 parent: this.element.closest('dialog') || 'body',
                 themeMode: themeElement && themeElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light',
                 alpha: !!this.config.showAlpha,
@@ -139,14 +139,14 @@ export function registerColorPicker(jax) {
         return colorisPromise;
     }
 
-    // Keeps keys pressed inside the picker from reaching the form and popup around the field
+    // Keep picker keys from reaching the form and popup
     function onPickerKeydown(ev, coloris) {
-        // Enter confirms the color, Coloris returns focus to the field input before the form sees the key
+        // Enter confirms, so keep it from submitting the form
         if (ev.key === 'Enter' && ev.target.tagName !== 'BUTTON') {
             ev.preventDefault();
         }
 
-        // Escape reverts the color, and cancelling it keeps an enclosing dialog open
+        // Escape reverts, without closing an enclosing dialog
         if (ev.key === 'Escape') {
             ev.preventDefault();
             ev.stopPropagation();

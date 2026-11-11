@@ -1,8 +1,7 @@
 /*
  * Popup control styles
  *
- * The popup is a native dialog carrying Bootstrap's dialog classes, so these rules
- * only add the popup chrome, the sizes Bootstrap lacks and the loading backdrop.
+ * Popup chrome, extra sizes and the loading backdrop.
  */
 
 .control-popup {
@@ -17,18 +16,18 @@
         outline: none;
     }
 
-    /* The backdrop inherits the dialog's visibility, which the fade-in holds hidden for its first frame, so it keeps its own to take over from the loading backdrop without the page flashing between them */
+    /* Own visibility, avoids a flash after the loading backdrop */
     &[open]::backdrop {
         visibility: visible;
     }
 
-    /* Over another popup, only the first popup dims and blurs the page, and this one adds a light tint so the popups under it recede without fading into grey */
+    /* Stacked popups only add a light tint */
     &.popup-stacked {
         --bs-dialog-backdrop-bg: rgba(0, 0, 0, var(--oc-backdrop-stacked-opacity));
         --bs-dialog-backdrop-blur: 0px;
     }
 
-    /* Scales in from its closed state, and out while hidden behind the loading indicator */
+    /* Scale in on open, out while loading */
     &:not(.show) {
         opacity: 0;
         transform: scale(0.7);
@@ -102,7 +101,7 @@
         }
     }
 
-    /* Popup widths over the Bootstrap dialog size classes, numeric sizes set the width inline */
+    /* Popup widths, numeric sizes are set inline */
     &.size-tiny {
         --bs-dialog-width: 21.375rem;
     }
@@ -139,7 +138,7 @@
         height: calc(100% - 7.125rem);
     }
 
-    /* The popup chrome above would otherwise outrank Bootstrap's fullscreen size */
+    /* Override the chrome for fullscreen */
     &.dialog-fullscreen {
         --bs-dialog-width: 100vw;
         border: 0;
@@ -163,13 +162,13 @@
     backdrop-filter: blur(var(--bs-dialog-backdrop-blur, 8px));
     opacity: 1;
 
-    /* Loading a popup over another, it carries the stacked popup's light tint, which that popup's backdrop then takes over */
+    /* Loading over another popup, takes the stacked tint */
     &.popup-backdrop-stacked {
         background-color: rgba(0, 0, 0, var(--oc-backdrop-stacked-opacity));
         backdrop-filter: none;
     }
 
-    /* Over its own open popup, whose dialog backdrop already dims the page */
+    /* Over its own open popup, already dimmed */
     &.popup-backdrop-clear {
         background-color: transparent;
         backdrop-filter: none;

@@ -5,7 +5,7 @@
             outline-offset: var(--bs-focus-ring-offset);
         }
 
-        /* Option marks keep to the text size, with the gap spacing them from the label */
+        /* The gap spaces option marks from the label */
         .status-indicator {
             margin-inline-end: 0;
         }
@@ -20,7 +20,7 @@
                 outline: 0;
             }
 
-            /* The picked option's colour, image or icon, sitting as close to the label as in the options */
+            /* Picked option's mark */
             [data-scope-mark] {
                 display: flex;
                 align-items: center;
@@ -32,7 +32,7 @@
 
         }
 
-        /* The options, as wide as the longest one, with the picked one highlighted */
+        /* Options menu */
         > .menu {
             --bs-menu-min-width: 0;
             --bs-menu-padding-y: 0.25rem;
@@ -43,7 +43,7 @@
             --bs-menu-item-gap: 0.375rem;
             --bs-menu-item-border-radius: 0.25rem;
 
-            /* The options scroll on their own, so they never pass under the search box above them */
+            /* Options scroll below the search box */
             --bs-menu-overflow-y: hidden;
 
             > .combobox-search {
@@ -70,7 +70,7 @@
                     color: inherit;
                 }
 
-                /* The picked option is shaded grey, as the select list showed it, focused on open too, until hovered */
+                /* Picked option shaded grey until hovered */
                 &.selected {
                     font-weight: inherit;
 

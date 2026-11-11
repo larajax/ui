@@ -2,7 +2,7 @@ import { makeHooks } from './hooks.js';
 import { makeIcons } from './icons.js';
 
 /**
- * Paragraph formats offered when the host sets none, as format keys mapped to their lang keys.
+ * Default paragraph formats, as format keys to lang keys.
  */
 export const defaultParagraphFormats = {
     N: 'formatNormal',
@@ -24,10 +24,10 @@ export const defaultOptions = {
     lang: {},
     icons: {},
 
-    // Translation from languages/, such as de or pt-br, the page's lang attribute when not set
+    // Translation from languages/, defaulting to the page's lang
     language: null,
 
-    // The page draws the toolbar from getToolbarItems() and getButtonState(), so the editor draws none
+    // Page draws the toolbar from getToolbarItems() and getButtonState()
     externalToolbar: false,
 
     toolbarButtons: [
@@ -50,7 +50,7 @@ export const defaultOptions = {
 
     buttons: {},
 
-    // Format keys mapped to labels, the translated defaultParagraphFormats when omitted
+    // Format keys to labels, defaulting to defaultParagraphFormats
     paragraphFormat: null,
 
     paragraphStyles: {
@@ -128,8 +128,7 @@ export const defaultOptions = {
     sourceEditor: null,
     extensions: [],
 
-    // HTML kept without the editor's tools, for content written by hand, see extensions/passthrough.js.
-    // Lists are arrays or comma separated text, and allowTags turns it on
+    // Unknown HTML kept via allowTags, see extensions/passthrough.js
     allowTags: null,
     allowAttrs: null,
     allowEmptyTags: null,
@@ -139,8 +138,7 @@ export const defaultOptions = {
 };
 
 /**
- * makeOptions merges host options over the defaults, ignoring undefined and null values and
- * copying the default maps and lists so instances never share them, then resolves the hooks and icons.
+ * makeOptions merges options over copied defaults and resolves hooks.
  */
 export function makeOptions(options) {
     const result = {};
@@ -172,7 +170,7 @@ export function makeOptions(options) {
 }
 
 /**
- * makeParagraphFormats returns the default paragraph formats with their labels translated.
+ * makeParagraphFormats returns the default formats, translated.
  */
 export function makeParagraphFormats(trans) {
     const result = {};

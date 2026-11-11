@@ -48,7 +48,7 @@ export function registerFilterWidget(jax) {
             this.listen('click', this.onClick);
             this.listen('ajax:update', this.onContainerUpdate);
 
-            // Bootstrap's own event names, which the framework's listener would read as namespaced events
+            // Native listeners for Bootstrap's dotted event names
             this.element.addEventListener('change.bs.combobox', this.proxy(this.onPickDropdown));
             this.element.addEventListener('shown.bs.combobox', this.proxy(this.onDropdownShown));
             this.element.addEventListener('keydown', this.proxy(this.onDropdownSearchKeydown));
@@ -75,7 +75,7 @@ export function registerFilterWidget(jax) {
                 });
             }
 
-            // Primary tabs scroll inside their group, which stays in place when the tabs render again
+            // Primary tabs scroll inside their group
             const primaryGroup = this.element.querySelector('.filter-primary > .filter-group');
             if (primaryGroup?.querySelector('.scope-tabs')) {
                 this.primaryScrollable = primaryGroup;
@@ -101,7 +101,7 @@ export function registerFilterWidget(jax) {
             this.primaryScrollable = null;
         }
 
-        // Rebinds the scrollable areas when the entire container is replaced, and keeps the primary tabs in view when they render again.
+        // Rebinds on container replace, keeps primary tabs in view
         onContainerUpdate(ev) {
             if (ev.target === this.element) {
                 this.unbindScrollable();
@@ -113,7 +113,7 @@ export function registerFilterWidget(jax) {
             }
         }
 
-        // Scrolls the primary tabs, and only them, so the active tab is in view.
+        // Scrolls the active primary tab into view
         revealActiveTab() {
             const scrollable = this.primaryScrollable,
                 tab = scrollable ? scrollable.querySelector('.scope-tabs .active') : null;
@@ -125,7 +125,7 @@ export function registerFilterWidget(jax) {
             this.primaryDragScroll?.fixScrollClasses();
         }
 
-        // The funnel shows how many scopes filter the list, for when their chips scroll out of view, and the scroll edges follow chips that changed width.
+        // Updates the active scope count and scroll edges
         updateActiveCount() {
             const badge = this.element.querySelector('[data-filter-count]');
 
@@ -209,7 +209,7 @@ export function registerFilterWidget(jax) {
         // Popover Scope
         //
 
-        // Bound on the popover element directly since it is attached outside this widget.
+        // Bound directly, as the popover sits outside the widget
         initContainer(container) {
             container.addEventListener('click', (ev) => {
                 const actionEl = ev.target.closest('[data-filter-action]');
@@ -228,7 +228,7 @@ export function registerFilterWidget(jax) {
                 }
             });
 
-            // In the save form, a new name and a saved set to update each clear the other
+            // Save form: new name and saved set clear each other
             container.addEventListener('input', (ev) => {
                 if (ev.target.name === 'savedFilterName' && ev.target.form) {
                     this.syncSaveForm(ev.target.form, ev.target);
@@ -241,7 +241,7 @@ export function registerFilterWidget(jax) {
                 }
             });
 
-            // The save form saves on its button and on Enter alike, in place of the browser submitting it
+            // Save form saves on its button and on Enter
             container.addEventListener('submit', (ev) => {
                 if (ev.target.querySelector('[data-filter-action="save"]')) {
                     ev.preventDefault();
@@ -305,7 +305,7 @@ export function registerFilterWidget(jax) {
             this.activeScope = null;
         }
 
-        // Shows a popover below the scope or button, holding the given form, or else the scope's own form.
+        // Shows a scope popover with the given or scope form
         showPopover(scopeLink, formHtml = null) {
             const scopeName = scopeLink.dataset.scopeName;
 
@@ -330,7 +330,7 @@ export function registerFilterWidget(jax) {
                 return;
             }
 
-            // The form comes rendered with the scope, so it reflects the scope's value and opens without a request
+            // Prerendered form opens without a request
             const formTemplate = formHtml === null ? this.scopeFormTemplate(scopeLink) : null;
 
             if (formHtml !== null) {
@@ -353,7 +353,7 @@ export function registerFilterWidget(jax) {
             this.initContainer(container);
         }
 
-        // setPopoverContent places the scope form in the popover and initializes its controls.
+        // setPopoverContent places the scope form and inits its controls
         setPopoverContent(container, html) {
             container.querySelector('.control-filter-popover').innerHTML = html;
 
@@ -368,19 +368,19 @@ export function registerFilterWidget(jax) {
             return template ? template.innerHTML : '';
         }
 
-        // The popover form rendered alongside a scope, which the server renders again whenever the scope changes.
+        // Popover form prerendered with the scope
         scopeFormTemplate(scopeLink) {
             const group = scopeLink.closest('.filter-group');
 
             return group ? group.querySelector(':scope > template[data-scope-form]') : null;
         }
 
-        // A press inside a date picker calendar, which mounts outside the popover, keeps the popover open.
+        // Date picker clicks keep the popover open
         onCheckDocumentClickTargetDatePicker(target) {
             return !!(target && target.closest && target.closest('[data-vc="calendar"]'));
         }
 
-        // bindPopoverContent wires the group filter option loading inside the popover form.
+        // bindPopoverContent wires group filter option loading
         bindPopoverContent(container) {
             const group = container.querySelector('[data-control="groupfilter"]');
             if (group) {
@@ -406,7 +406,7 @@ export function registerFilterWidget(jax) {
             let availableOptions = [],
                 selectedOptions = [];
 
-            // A selected option is a chip with a dismiss button, and an available one a row that adds it
+            // Selected options as chips, available ones as rows
             const renderItem = (list, option, isActive) => {
                 const li = document.createElement('li');
                 li.dataset.itemId = option.id;
@@ -483,7 +483,7 @@ export function registerFilterWidget(jax) {
                 }
             });
 
-            // The form carries its first options, and only a form rendered without them asks for them
+            // Only a form rendered without options requests them
             const initialOptions = readJson(group.dataset.options);
 
             if (initialOptions) {
@@ -502,7 +502,7 @@ export function registerFilterWidget(jax) {
             this.focusGroupSearch(group);
         }
 
-        // Puts the caret at the end of the group search, except on touch devices, where the on-screen keyboard would cover the options.
+        // Caret to end of search, skipped on touch devices
         focusGroupSearch(group) {
             const input = group.querySelector('input[name="search"]');
 
@@ -544,7 +544,7 @@ export function registerFilterWidget(jax) {
         // Saved filters
         //
 
-        // Opens the save or manage form in a popover below the filter menu button, focusing its first control once the menu has closed.
+        // Opens the save or manage form below the filter menu
         showSavedFiltersPopover(kind) {
             const anchor = this.element.querySelector('.filter-setup > [data-bs-toggle="menu"]'),
                 template = this.element.querySelector(`template[data-filter-${kind}-form]`);
@@ -563,7 +563,7 @@ export function registerFilterWidget(jax) {
             }
         }
 
-        // Keeps the new name and the saved set to update apart, so the one just used clears the other, and labels the button to match.
+        // New name and saved set clear each other; relabels the button
         syncSaveForm(form, changed) {
             const input = form.querySelector('[name="savedFilterName"]'),
                 select = form.querySelector('[name="savedFilterExisting"]'),
@@ -591,7 +591,7 @@ export function registerFilterWidget(jax) {
             }
         }
 
-        // Saves the current scope values under the picked saved set, or else the new name, once the browser finds one given.
+        // Saves scope values under the picked set or new name
         saveFilters(form) {
             const input = form.querySelector('[name="savedFilterName"]'),
                 select = form.querySelector('[name="savedFilterExisting"]'),
@@ -609,7 +609,7 @@ export function registerFilterWidget(jax) {
             this.hidePopover();
         }
 
-        // Applies a saved set, which redraws the filter and the linked list as clearing the filters does.
+        // Applies a saved set
         applySavedFilters(name) {
             if (!this.config.applySavedHandler) {
                 return;
@@ -633,7 +633,7 @@ export function registerFilterWidget(jax) {
                 });
         }
 
-        // Deletes a saved set, taking its row out of the open form, which closes after the last one.
+        // Deletes a saved set and its row
         deleteSavedFilters(button) {
             if (!this.config.deleteSavedHandler) {
                 return;
@@ -660,7 +660,7 @@ export function registerFilterWidget(jax) {
         // Dropdowns and switches
         //
 
-        // Dropdown and switch scopes are Bootstrap's combobox, which shows the picked label itself, so a pick copies the option's mark beside it and updates the scope.
+        // Copies the picked option's mark and updates the scope
         onPickDropdown(ev) {
             const toggle = ev.target instanceof Element ? ev.target.closest('.filter-scope > .combobox-toggle') : null;
             const scope = toggle ? toggle.closest('.filter-scope') : null;
@@ -677,15 +677,14 @@ export function registerFilterWidget(jax) {
             this.submitUpdate(scope, { value: item.dataset.bsValue });
         }
 
-        // The open options start at the picked one, after the combobox focuses its first item, so Escape and the arrow keys work from there.
-        // With a search box, which the combobox focuses, the picked option only scrolls into view.
+        // Focus the picked option, or scroll to it with a search
         onDropdownShown(ev) {
             const toggle = ev.target instanceof Element ? ev.target.closest('.filter-scope > .combobox-toggle') : null;
             const scope = toggle ? toggle.closest('.filter-scope') : null;
             const item = scope ? scope.querySelector('.menu .menu-item.selected') : null;
             const search = scope ? scope.querySelector('.menu .combobox-search-input') : null;
 
-            // The combobox empties the search as it opens, which the clear button follows
+            // Sync the clear button with the emptied search
             if (search && this.element.contains(search)) {
                 search.dispatchEvent(new Event('input', { bubbles: true }));
             }
@@ -718,7 +717,7 @@ export function registerFilterWidget(jax) {
             }
         }
 
-        // A click on a dropdown's search box, such as its icon or clear button, would close the menu as a click outside the options
+        // Keeps search box clicks from closing the menu
         onDropdownSearchClick(ev) {
             if (ev.target.closest && ev.target.closest('.filter-scope .menu .combobox-search')) {
                 ev.stopPropagation();
@@ -771,7 +770,7 @@ export function registerFilterWidget(jax) {
                 });
         }
 
-        // Marks the linked list as updating while a scope update redraws it, finding the list each time since the update replaces it.
+        // Marks the linked list as updating
         setListUpdating(isUpdating) {
             const listId = this.element.dataset.listLinkage;
             const container = listId ? document.getElementById(listId) : null;
@@ -785,7 +784,7 @@ export function registerFilterWidget(jax) {
     });
 }
 
-// Fills {{ name }} placeholders in the popover template with escaped values
+// Fills {{ name }} placeholders with escaped values
 function renderTemplate(template, values) {
     return template.replace(/\{\{\s*(\w+)\s*\}\}/g, (match, name) => escapeHtml(values[name] ?? ''));
 }
@@ -800,7 +799,7 @@ function escapeHtml(value) {
     })[char]);
 }
 
-// Parses JSON from a data attribute, or null when it is missing or invalid
+// Parses JSON, or null when missing or invalid
 function readJson(value) {
     if (!value) {
         return null;

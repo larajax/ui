@@ -2,9 +2,7 @@
  * Variables
  * --------------------------------------------------
  *
- * The library's colors are Bootstrap 6's, so the controls follow whatever
- * Bootstrap theme the page has, in light and dark mode. Theming belongs to
- * the host, which overrides these. October sets them in its backend _brand.css.
+ * Bootstrap 6 colors; the host overrides these to theme.
  * --------------------------------------------------*/
 
 :root {
@@ -26,12 +24,12 @@
     --oc-emphasis-color:         var(--bs-fg-body);
     --oc-border-color:           var(--bs-border-color);
     --oc-border-focus:           var(--bs-focus-ring-color);
-    /* Inputs, and the editors framed like them, draw Bootstrap's focus ring this wide. 0 leaves focus to the border */
+    /* Input focus ring width, 0 leaves focus to the border */
     --oc-input-focus-ring-width: var(--bs-focus-ring-width);
     --oc-popup-bg:               var(--bs-bg-body);
     --oc-popup-border:           var(--bs-border-width) solid var(--bs-border-color-translucent);
     --oc-backdrop-opacity:       0.5;
-    /* A popup stacked on another adds only this tint, without blur, so the page does not darken with each one */
+    /* Stacked popup tint, no blur */
     --oc-backdrop-stacked-opacity: 0.15;
 
     --oc-accent:                 var(--bs-primary-base);
@@ -40,13 +38,12 @@
     --oc-color-positive:         var(--bs-success-base);
     --oc-color-negative:         var(--bs-danger-base);
 
-    /* Surfaces drawn on the page, such as the popover head and the upload list */
+    /* Page surfaces, such as popover heads */
     --oc-primary-bg:             var(--bs-bg-body);
     --oc-primary-color:          var(--bs-fg-2);
     --oc-primary-border:         var(--bs-border-color);
 
     /* The secondary button fill */
-    /* Secondary buttons tint whatever surface they sit on with the text colour */
     --oc-secondary-bg:           color-mix(in oklch, var(--bs-fg-body) 7%, transparent);
     --oc-secondary-hover-bg:     color-mix(in oklch, var(--bs-fg-body) 11%, transparent);
     --oc-secondary-active-bg:    color-mix(in oklch, var(--bs-fg-body) 15%, transparent);
@@ -83,7 +80,7 @@
     /* The selected list row */
     --oc-table-active-bg:        var(--bs-primary-bg-subtle);
 
-    /* The icon buttons beside a search, such as list setup, the same in a toolbar and a filter */
+    /* Icon buttons beside a search, such as list setup */
     --oc-toolbar-action-size:      1.75rem;
     --oc-toolbar-action-icon-size: 1.375rem;
 

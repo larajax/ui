@@ -43,7 +43,7 @@ function normalizeColumn(column) {
     normalized.filter = column.filter ?? normalized.type === 'autocomplete';
     normalized.strict = column.strict ?? normalized.type === 'dropdown';
 
-    // Labels by key text, and the keys themselves so a numeric key stays a number
+    // Labels by key text; keys kept so numeric keys stay numbers
     normalized.labels = new Map();
     normalized.keys = new Map();
     if (Array.isArray(normalized.options)) {
@@ -93,7 +93,7 @@ export class Sheet extends Emitter {
         this.selection = null;
         this.painted = [];
 
-        // Row window: the rows drawn, their elements, and measured heights of wrapped rows
+        // Row window: drawn rows, their elements, wrapped row heights
         this.rowWindow = { first: 0, last: -1 };
         this.rowEls = [];
         this.rowHeights = new WeakMap();
@@ -207,7 +207,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * markInvalid flags a cell with a message, as when a save finds it, and tints its row until it is fixed.
+     * markInvalid flags a cell with a message and tints its row.
      */
     markInvalid(row, col, message = '') {
         const column = this.viewColumns[col];
@@ -239,7 +239,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * getEditorValue returns the value an open editor holds, an option key when its text matches an option label.
+     * getEditorValue returns the editor's value, or a matched option key.
      */
     getEditorValue() {
         if (!this.editor.isOpen()) {
@@ -259,7 +259,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * canMoveRows tells whether dragging row headers moves rows, which a read only sheet never allows.
+     * canMoveRows tells whether dragging row headers moves rows.
      */
     canMoveRows() {
         return !!this.options.rowMove && !this.options.readOnly;
@@ -270,7 +270,7 @@ export class Sheet extends Emitter {
     //
 
     /**
-     * setCells sets values by visual row and column key or index, as one undoable change.
+     * setCells sets values by row and column, as one undoable change.
      */
     setCells(cells, source = 'edit') {
         const changes = cells.map((cell) => {
@@ -282,13 +282,13 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * insertRows adds empty rows at a visual index; `beforeInsertRows` listeners may fill in default values.
+     * insertRows adds empty rows at a visual index.
      */
     insertRows(index, count = 1, source = 'insert') {
         const dataIndex = index >= this.viewRows.length ? this.store.length : this.store.indexOf(this.viewRows[index]);
         const rows = this.createRows(count, index, source);
 
-        // In a sorted view the new rows appear before the row shown at the index
+        // When sorted, new rows go before the row shown at the index
         const sortedIndex = this.sortedRows && index < this.viewRows.length ? this.sortedRows.indexOf(this.viewRows[index]) : -1;
         if (sortedIndex !== -1) {
             this.sortedRows.splice(sortedIndex, 0, ...rows);
@@ -304,8 +304,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * createRows makes empty row objects for rows being added at a visual index, which `beforeInsertRows`
-     * listeners may fill with default values.
+     * createRows makes empty rows for beforeInsertRows to fill.
      */
     createRows(count, index, source) {
         const rows = Array.from({ length: count }, () => this.store.createRow());
@@ -318,9 +317,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * moveRows moves rows (visual indexes) to a gap between rows, 0 being before the first row and the row
-     * count after the last, and selects them in their new place. In a sorted view the order people see,
-     * with the move, becomes the saved order and the sort clears.
+     * moveRows moves rows to a gap, saving a sorted view's order.
      */
     moveRows(rows, gap, source = 'move') {
         const sorted = rows.slice().sort((a, b) => a - b);
@@ -368,8 +365,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * sortBy orders the view by a column, or restores the saved order when `order` is null; it never
-     * changes the saved order, and rows added while sorted go at the end.
+     * sortBy sorts the view by a column, or unsorts for a null order.
      */
     sortBy(key, order) {
         this.commitEditor();
@@ -395,7 +391,7 @@ export class Sheet extends Emitter {
     //
 
     /**
-     * search highlights the cells whose value contains the text, returning their positions.
+     * search highlights matching cells and returns their positions.
      */
     search(query) {
         this.searchQuery = String(query || '');
@@ -435,7 +431,7 @@ export class Sheet extends Emitter {
     //
 
     /**
-     * resizeColumn gives a column a width in pixels, or puts back a percentage or a shared width (null), while other columns keep sharing the space left over.
+     * resizeColumn sets a column's width in pixels, or null to share.
      */
     resizeColumn(col, width) {
         const column = this.viewColumns[col];
@@ -450,7 +446,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * moveColumns moves columns (visual indexes) to a gap between columns, for viewing only.
+     * moveColumns moves columns to a gap, for viewing only.
      */
     moveColumns(cols, gap) {
         const sorted = cols.slice().sort((a, b) => a - b);
@@ -472,7 +468,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * freezeColumn keeps a column at the left while scrolling sideways, moving it after the frozen columns.
+     * freezeColumn pins a column at the left, after the frozen columns.
      */
     freezeColumn(col) {
         if (col < this.frozenCount || !this.columnOrder[col]) {
@@ -487,7 +483,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * unfreezeColumn lets a column scroll again, moving it to the end of the frozen columns.
+     * unfreezeColumn unpins a column, placing it after the frozen ones.
      */
     unfreezeColumn(col) {
         if (col >= this.frozenCount) {
@@ -510,7 +506,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * frozenWidth returns how much of the left edge row headers and frozen columns cover.
+     * frozenWidth returns the width row headers and frozen columns cover.
      */
     frozenWidth() {
         let width = this.options.rowHeaders ? ROW_HEADER_WIDTH : 0;
@@ -523,7 +519,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * updateFrozenOffsets measures the frozen columns once, so their sticky left offsets stack.
+     * updateFrozenOffsets measures frozen columns to stack their offsets.
      */
     updateFrozenOffsets() {
         let left = this.options.rowHeaders ? ROW_HEADER_WIDTH : 0;
@@ -541,7 +537,7 @@ export class Sheet extends Emitter {
             .sort((a, b) => b - a)
             .map((dataIndex) => ({ type: 'remove', index: dataIndex, rows: [this.store.at(dataIndex)] }));
 
-        // Keep the minimum number of rows by adding empty ones in the same change
+        // Top up to minRows in the same change
         const shortBy = this.options.minRows - (this.store.length - ops.length);
         if (shortBy > 0) {
             ops.push({
@@ -569,8 +565,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * changesToOps parses values for their column type, lets beforeChange listeners adjust them, and
-     * returns set operations for the changes that remain.
+     * changesToOps parses changes, runs beforeChange, returns set ops.
      */
     changesToOps(changes, source) {
         const prepared = changes
@@ -593,7 +588,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * transact applies operations as one change, then validates, records, renders and announces it.
+     * transact applies operations as one change and announces it.
      */
     transact(ops, source, record = true) {
         if (!ops.length) {
@@ -602,7 +597,7 @@ export class Sheet extends Emitter {
 
         const applied = ops.map((op) => this.store.apply(op));
 
-        // Spare rows are topped up in the same change, so undo takes them back with it
+        // Spare rows join the change, so undo removes them too
         for (const op of this.spareRowOps(source)) {
             applied.push(this.store.apply(op));
         }
@@ -630,8 +625,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * validate checks a cell after a change. A validator gets (value, column, rowData) and returns true when
-     * valid, or false or a message when not; empty values are valid unless the column disallows them.
+     * validate checks a cell; validators return true, false or a message.
      */
     validate(rowData, key) {
         const column = this.columns.find((item) => item.key === key);
@@ -670,8 +664,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * spareRowOps returns an insert operation that brings the empty rows at the end up to the spareRows
-     * option, or nothing when there are enough.
+     * spareRowOps returns an insert topping up the spare rows.
      */
     spareRowOps(source) {
         const wanted = this.options.spareRows;
@@ -698,8 +691,7 @@ export class Sheet extends Emitter {
     //
 
     /**
-     * setRows starts over with new rows, edited in place like the rows option, without undo history,
-     * selection, sort or validation marks. It announces no change.
+     * setRows replaces the rows, clearing undo, selection, sort and marks.
      */
     setRows(rows) {
         this.cancelEditor();
@@ -719,7 +711,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * setReadOnly turns editing off or on. Text being typed into a cell is saved first.
+     * setReadOnly turns editing off or on, saving typed text first.
      */
     setReadOnly(readOnly) {
         this.commitEditor();
@@ -729,7 +721,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * setHeight changes the height option: pixels to scroll inside the grid, or 'auto' to grow with the rows.
+     * setHeight sets the height option: pixels or 'auto'.
      */
     setHeight(height) {
         this.options.height = height;
@@ -755,7 +747,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * select makes `row, col` the active cell and selects through to `row2, col2`, or only the active cell without multiSelect.
+     * select makes `row, col` active, selecting through `row2, col2`.
      */
     select(row, col, row2 = row, col2 = col, { scroll = true, notify = true } = {}) {
         const rows = this.getRowCount();
@@ -808,7 +800,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * moveActive moves the active cell by a step, wrapping across rows and columns.
+     * moveActive moves the active cell by a step, wrapping at edges.
      */
     moveActive(rowStep, colStep) {
         if (!this.selection) {
@@ -820,7 +812,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * extendFocus moves the far corner of the selection by a step, keeping the active cell.
+     * extendFocus moves the selection's far corner by a step.
      */
     extendFocus(rowStep, colStep) {
         if (!this.selection) {
@@ -833,7 +825,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * scrollToCell brings a cell into view, first drawing the rows around it when they aren't drawn.
+     * scrollToCell brings a cell into view, drawing its rows if needed.
      */
     scrollToCell(cell) {
         if (!this.getRowElement(cell.row) && cell.row < this.viewRows.length) {
@@ -888,7 +880,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * beginTyping opens an empty editor on the active cell so the key being pressed lands in it.
+     * beginTyping opens an empty editor so the pressed key lands in it.
      */
     beginTyping() {
         const cell = this.getActiveCell();
@@ -903,7 +895,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * openEditorExtras shows the option list or the picker button for the edited cell's type.
+     * openEditorExtras shows the cell type's option list or picker button.
      */
     openEditorExtras() {
         const { cell } = this.editor;
@@ -921,7 +913,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * updateOptions loads the edited cell's options and shows those matching the typed text.
+     * updateOptions loads the cell's options and shows matching ones.
      */
     async updateOptions() {
         const { cell } = this.editor;
@@ -934,7 +926,7 @@ export class Sheet extends Emitter {
         const text = this.editor.getValue();
         const cellEl = this.getCellElement(cell.row, cell.col);
 
-        // Options from a function may come from the server, so the cell shows it is loading
+        // Function options may be loading from the server
         cellEl?.classList.toggle('is-loading', typeof column.options === 'function');
         const items = await this.loadOptions(column, cell.row, text);
         cellEl?.classList.remove('is-loading');
@@ -953,7 +945,7 @@ export class Sheet extends Emitter {
         const exact = shown.findIndex((item) => String(item.label).toLowerCase() === query);
         const highlight = exact >= 0 ? exact : (!column.filter && query === '' && shown.length ? 0 : -1);
 
-        // The list hangs from the editor, which keeps its place when rows are redrawn
+        // Anchored to the editor, which survives row redraws
         this.optionList.show(this.editor.textarea, shown, highlight);
         this.editor.describeOptions(this.optionList);
     }
@@ -978,8 +970,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * commitEditor saves the editor's text, the highlighted option, or a given value, and closes it; an
-     * editor closed with its text unchanged saves nothing.
+     * commitEditor saves and closes the editor, if the text changed.
      */
     commitEditor(value) {
         if (!this.editor.isOpen()) {
@@ -1048,8 +1039,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * changeCheckboxes toggles or unchecks the selected checkbox cells, returning false when the selection
-     * doesn't start on a checkbox (the key then does its usual job).
+     * changeCheckboxes toggles or unchecks checkboxes, false if none.
      */
     changeCheckboxes(uncheck = false) {
         if (!this.selection) {
@@ -1126,9 +1116,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * paste writes clipboard text from the selection's top left corner, repeating it to fill a larger
-     * selection, adding rows as needed and dropping columns past the last one; without multiSelect only
-     * the first value is written.
+     * paste writes clipboard text at the selection, repeating to fill it.
      */
     paste(text) {
         if (!this.selection || text === '') {
@@ -1156,8 +1144,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * writeValues writes rows of values from a cell, adding rows past the last one and skipping read only
-     * cells and columns past the last one, as one undoable change.
+     * writeValues writes rows of values from a cell as one change.
      */
     writeValues(top, left, values, source = 'edit') {
         const rowCount = this.getRowCount();
@@ -1203,8 +1190,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * fillArea returns the cells a fill reaching `row, col` covers beside the selection: the rows past it when
-     * the cell is above or below it, otherwise the columns past it, or null when the cell is inside it.
+     * fillArea returns the cells a fill to `row, col` covers, or null.
      */
     fillArea(row, col) {
         if (!this.selection) {
@@ -1230,8 +1216,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * fill copies the selected values into an area beside the selection, repeating them as a pattern and
-     * skipping read only cells, as one undoable change, then selects both.
+     * fill repeats the selected values into an area as one change.
      */
     fill(area) {
         if (!this.canFill() || !area) {
@@ -1257,8 +1242,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * fillDown fills the selection down to the last row where a neighbouring column has a value, as long as
-     * the cells below the selection are empty.
+     * fillDown fills down as far as a neighbouring column has values.
      */
     fillDown() {
         if (!this.canFill()) {
@@ -1289,8 +1273,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * placeFillHandle centers the handle on the bottom right corner of the selection, inside the grid lines
-     * and kept within the table so the last row and column don't clip it.
+     * placeFillHandle centers the handle on the selection's corner.
      */
     placeFillHandle() {
         const handle = this.elements.fillHandle;
@@ -1311,7 +1294,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * showFillArea outlines the selection together with the area a fill would cover, or hides the outline.
+     * showFillArea outlines the selection and fill area, or hides it.
      */
     showFillArea(area) {
         const outline = this.elements.fillArea;
@@ -1341,7 +1324,7 @@ export class Sheet extends Emitter {
     //
 
     /**
-     * openContextMenu shows the menu the contextMenu option builds for the selection, at a window position.
+     * openContextMenu shows the contextMenu option's menu at a position.
      */
     openContextMenu(x, y) {
         if (typeof this.options.contextMenu !== 'function' || !this.selection) {
@@ -1371,8 +1354,7 @@ export class Sheet extends Emitter {
     //
 
     /**
-     * refreshView works out the rows and columns as shown: sorted rows first in their sorted order, then
-     * rows added since the sort, in saved order.
+     * refreshView orders view rows: sorted first, then rows added since.
      */
     refreshView() {
         this.viewColumns = this.columnOrder.slice();
@@ -1397,8 +1379,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * neededRows returns the rows in view widened by a margin, in view meaning inside a scroller with a height
-     * or else inside the browser window, or every row when the table isn't windowed.
+     * neededRows returns the rows in view plus a margin, or every row.
      */
     neededRows(margin) {
         const count = this.viewRows.length;
@@ -1414,7 +1395,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * getRowOffsets returns where each row starts, using measured heights for wrapped rows.
+     * getRowOffsets returns each row's top, with wrapped rows measured.
      */
     getRowOffsets() {
         const rowHeight = this.rowHeightPx || this.options.rowHeight;
@@ -1422,7 +1403,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * updateWindow redraws the rows once scrolling brings rows that aren't drawn close to view.
+     * updateWindow redraws once scrolling nears rows that aren't drawn.
      */
     updateWindow() {
         if (this.isWindowed() && !covers(this.rowWindow, this.neededRows(WINDOW_EDGE))) {
@@ -1431,7 +1412,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * renderRows redraws the body for the rows in view, or a given window, keeping rows already drawn and the selection painted.
+     * renderRows redraws the body for the rows in view or a given window.
      */
     renderRows(range) {
         renderBody(this, range, true);
@@ -1444,7 +1425,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * measureRows records the heights of drawn rows when columns wrap, so rows further away are placed right.
+     * measureRows records wrapped row heights for placing far rows.
      */
     measureRows() {
         if (!this.isWindowed() || !this.viewColumns.some((column) => column.wrap)) {
@@ -1457,7 +1438,7 @@ export class Sheet extends Emitter {
     }
 
     /**
-     * rowGapAt returns the gap between drawn rows nearest a pointer height, 0 being above the first row.
+     * rowGapAt returns the drawn row gap nearest a pointer height.
      */
     rowGapAt(clientY) {
         for (let index = 0; index < this.rowEls.length; index++) {

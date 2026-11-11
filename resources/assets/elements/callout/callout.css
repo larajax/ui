@@ -43,7 +43,7 @@
         background: var(--callout-bg);
         margin-bottom: -1px;
 
-        /* The icon comes from the icon pack, as the custom icon or the pack's callout key for the type */
+        /* Icon from the pack, custom or by type */
         > .custom-icon {
             width: 1.875rem;
             text-align: center;

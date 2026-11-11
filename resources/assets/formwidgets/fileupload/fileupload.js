@@ -35,7 +35,7 @@ const DEFAULT_MESSAGES = {
     removeFile: 'Remove file'
 };
 
-// Dropzone and SortableJS are shared by every field, loaded on first use
+// Dropzone and SortableJS, shared and loaded on first use
 let dependenciesPromise = null;
 
 export function registerFileUpload(jax) {
@@ -252,7 +252,7 @@ export function registerFileUpload(jax) {
             this.uploaderOptions.dictResponseError = messages.responseError;
             this.uploaderOptions.dictRemoveFile = messages.removeFile;
 
-            // Add CSRF tokens to headers, from the meta tag or the XSRF-TOKEN cookie as larajax sends them
+            // CSRF headers, from the meta tag or XSRF-TOKEN cookie
             const token = document.querySelector('meta[name="csrf-token"]');
             if (token && token.getAttribute('content')) {
                 this.uploaderOptions.headers['X-CSRF-TOKEN'] = token.getAttribute('content');
@@ -303,7 +303,7 @@ export function registerFileUpload(jax) {
             this.dropzone._updateMaxFilesReachedClass();
         }
 
-        // Reads a server file from its data attributes, as numbers and booleans where they hold them
+        // Reads a server file's data attributes as typed values
         readServerFile(element) {
             const file = {};
 
@@ -417,7 +417,7 @@ export function registerFileUpload(jax) {
             const preview = file.previewElement;
             preview.classList.add('is-error');
 
-            // A server error page arrives as HTML, so the message names its status code instead
+            // Name the status code instead of an HTML error page
             if (xhr && typeof error === 'string' && /^\s*</.test(error)) {
                 const message = this.uploaderOptions.dictResponseError.replace('{{statusCode}}', xhr.status);
                 preview.querySelectorAll('[data-dz-errormessage]').forEach((element) => {
@@ -474,7 +474,7 @@ export function registerFileUpload(jax) {
                 });
             }
 
-            // Form fields as text, leaving out file inputs such as the uploader's own
+            // Form fields as text, skipping file inputs
             const form = this.element.closest('form');
             if (form) {
                 for (const [name, value] of new FormData(form)) {
@@ -641,7 +641,7 @@ export function registerFileUpload(jax) {
             const target = ev.target.closest('.upload-object');
             if (!target) return;
 
-            // Cancelling fileupload:click keeps the file closed, so a page can act on the click instead
+            // Cancelling fileupload:click keeps the file closed
             const event = new CustomEvent('fileupload:click', { bubbles: true, cancelable: true, detail: { fileupload: this } });
             if (!target.dispatchEvent(event)) return;
 
@@ -811,8 +811,7 @@ export function registerFileUpload(jax) {
         return dependenciesPromise;
     }
 
-    // Asks to confirm through larajax's confirm event, so a page's own dialog can answer,
-    // falling back to the browser prompt
+    // Confirm via larajax's confirm event, else the browser prompt
     function confirmMessage(message) {
         return new Promise((resolve) => {
             if (!message) {

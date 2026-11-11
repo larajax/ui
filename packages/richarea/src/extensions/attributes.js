@@ -2,7 +2,7 @@ import { Extension, Mark, mergeAttributes } from '@tiptap/core';
 import { cleanClassName } from '../html/utils.js';
 
 /**
- * classAttribute keeps an element's class names, minus runtime editor classes.
+ * classAttribute keeps class names, minus runtime editor classes.
  */
 function classAttribute() {
     return {
@@ -13,8 +13,7 @@ function classAttribute() {
 }
 
 /**
- * PreservedAttributes keeps the class and id attributes found on existing content, so styled
- * blocks and anchors survive a round trip through the editor.
+ * PreservedAttributes keeps existing class and id attributes.
  */
 export const PreservedAttributes = Extension.create({
     name: 'preservedAttributes',
@@ -62,8 +61,7 @@ export const PreservedAttributes = Extension.create({
 });
 
 /**
- * InlineClass is a span carrying class names, used by the inline style menu and to keep
- * classed spans from existing content.
+ * InlineClass is a span with class names, for inline styles.
  */
 export const InlineClass = Mark.create({
     name: 'inlineClass',
@@ -111,8 +109,7 @@ export const InlineClass = Mark.create({
 });
 
 /**
- * LineBreaks makes the Enter key insert a line break instead of a new paragraph, except
- * inside lists where a new item is still expected.
+ * LineBreaks makes Enter insert a line break, except inside lists.
  */
 export const LineBreaks = Extension.create({
     name: 'lineBreaks',

@@ -29,7 +29,7 @@ export function parseNumericText(value, decimalSeparator = '.') {
 }
 
 /**
- * isNumericValue checks a stored value is a number or numeric text, for the numeric validator.
+ * isNumericValue checks a value is a number or numeric text.
  */
 export function isNumericValue(value) {
     if (typeof value === 'number') {

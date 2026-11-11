@@ -31,7 +31,7 @@
     color: var(--rich-editor-color);
     transition: border-color ease-in-out .15s;
 
-    /* Focus matches a form control: its border, and Bootstrap's focus ring at the width the host sets */
+    /* Focus matches a form control's border and ring */
     &.is-focused {
         border-color: var(--rich-editor-focus);
     }
@@ -41,7 +41,7 @@
         outline-offset: -1px;
     }
 
-    /* Kept under popovers and popups, so properties panels and pickers open over it */
+    /* Below popovers, so panels and pickers open over it */
     &.is-fullscreen {
         position: fixed;
         inset: 0;
@@ -196,7 +196,7 @@ html.rich-editor-has-fullscreen body {
         margin-bottom: 0;
     }
 
-    /* Structural paragraphs the saved HTML unwraps, kept unlayered to beat page resets */
+    /* Structural paragraphs, unlayered to beat page resets */
     li > p,
     td > p,
     th > p {
@@ -326,7 +326,7 @@ html.rich-editor-has-fullscreen body {
         font-size: 0.875rem;
     }
 
-    /* Snippets, the snippet control or the placeholder supplies the label styles */
+    /* Snippets; the control or placeholder styles the label */
     [data-snippet].ProseMirror-selectednode {
         outline: none;
         border-color: var(--bs-primary-base, #3498db);
@@ -362,7 +362,7 @@ html.rich-editor-has-fullscreen body {
         background: var(--bs-primary-base, #3498db);
     }
 
-    /* Caret between blocks, the default black line disappears in dark mode */
+    /* Gap cursor, as the default black line vanishes in dark mode */
     .ProseMirror-gapcursor::after {
         border-top-color: currentColor;
     }
@@ -455,7 +455,7 @@ html.rich-editor-has-fullscreen body {
     }
 }
 
-/* Keeps the resize cursor everywhere on the page while dragging a handle */
+/* Resize cursor everywhere while dragging a handle */
 html.rich-editor-resizing {
     user-select: none;
 
@@ -472,7 +472,7 @@ html.rich-editor-resizing {
  * Floating panels, menus and forms
  */
 
-/* Theme variables are read directly, since the panels sit on the page body with a copy of the editor's theme */
+/* Theme variables read directly, as panels sit on the body */
 .rich-editor-floating,
 .rich-editor-bubble {
     position: fixed;
@@ -594,7 +594,7 @@ html.rich-editor-resizing {
         color: inherit;
         font-size: 0.9375rem;
 
-        /* The same ring a focused Bootstrap form control draws, with a matching one when Bootstrap is absent */
+        /* Bootstrap's focus ring, with a fallback */
         &:focus {
             border-color: var(--oc-border-focus, var(--bs-primary-base, #3498db));
             outline: var(--bs-focus-ring, 3px solid color-mix(in oklch, var(--bs-primary-base, #3498db) 50%, transparent));
@@ -614,7 +614,7 @@ html.rich-editor-resizing {
     gap: 0.375rem;
     margin-bottom: 0.75rem;
 
-    /* Bootstrap enlarges a small check's label, which keeps the form's own size here */
+    /* Undo Bootstrap's larger small-check label */
     label {
         font-size: inherit;
     }
@@ -779,7 +779,7 @@ html.rich-editor-resizing {
     font-size: 0.875rem;
 }
 
-/* Elements kept whole, such as forms, shown as a labelled placeholder that never runs */
+/* Raw elements, such as forms, as inert labelled placeholders */
 .rich-editor-raw-html {
     display: block;
     margin: 0.5rem 0;

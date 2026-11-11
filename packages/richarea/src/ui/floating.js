@@ -4,8 +4,7 @@ const GAP = 4;
 const MARGIN = 8;
 
 /**
- * placePanel positions a fixed panel below an anchor rectangle, flipping above when there is
- * no room and keeping it inside the viewport.
+ * placePanel places a fixed panel below an anchor, flipping if needed.
  */
 export function placePanel(panel, rect, placement = 'bottom-start') {
     panel.style.left = '0px';
@@ -39,8 +38,7 @@ export function placePanel(panel, rect, placement = 'bottom-start') {
 }
 
 /**
- * Floating manages the single open dropdown or popover of an editor, closing it on outside
- * clicks and Escape and following its anchor when the page scrolls.
+ * Floating manages an editor's single open dropdown or popover.
  */
 export class Floating {
     constructor(richArea) {
@@ -56,7 +54,7 @@ export class Floating {
     }
 
     /**
-     * open shows a panel against an anchor element or a function returning a rectangle.
+     * open shows a panel at an anchor element or rect function.
      */
     open(panel, anchor, options = {}) {
         this.close();
@@ -117,7 +115,7 @@ export class Floating {
     }
 
     /**
-     * isOpen checks for an open panel, optionally opened by a specific button.
+     * isOpen checks for an open panel, optionally by its owner.
      */
     isOpen(owner) {
         return !!this.panel && (!owner || this.owner === owner);

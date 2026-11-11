@@ -1,9 +1,7 @@
 import { isEmptyValue, isNumericValue } from '../values/numeric.js';
 
 /**
- * sortRows returns rows ordered by a column's values. Empty values always come last, numeric columns
- * compare as numbers (with text that isn't a number after them), other columns compare case-insensitively.
- * The sort is stable, so equal values keep their order.
+ * sortRows orders rows by a column's values, empty values last.
  */
 export function sortRows(rows, column, order, getValue) {
     const numbers = [];

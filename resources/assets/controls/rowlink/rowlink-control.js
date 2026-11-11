@@ -64,7 +64,7 @@ export function registerRowlink(jax) {
             const state = { skipNextBubble: false };
             const exclude = this.excludeClass;
 
-            // Resolves the linkable cell the event originated in, or null when excluded.
+            // Linkable cell of the event, or null when excluded
             const activeCell = (ev) => {
                 const cell = ev.target.closest('td');
                 return cell && !cell.classList.contains(exclude) && row.contains(cell) ? cell : null;
@@ -98,7 +98,7 @@ export function registerRowlink(jax) {
             };
 
             this.listen('click', row, (ev) => {
-                // Mirrors the "td:not(.nolink) > .nolink" delegated guard, which matches any such element on the click path, even around a nested exclude element.
+                // Skip the row link for a nolink element on the click path
                 const excluded = ev.target.closest('td:not(.' + exclude + ') > .' + exclude);
                 if (excluded && row.contains(excluded)) {
                     state.skipNextBubble = true;
@@ -106,7 +106,7 @@ export function registerRowlink(jax) {
             });
 
             this.listen('click', row, (ev) => {
-                // Delegation guard: only clicks inside a linkable cell activate the row.
+                // Only clicks in a linkable cell activate the row
                 if (activeCell(ev)) {
                     handleClick(ev);
                 }
@@ -129,7 +129,7 @@ export function registerRowlink(jax) {
             row.classList.add(this.linkedClass);
             this.rows.push(row);
 
-            // Reveal the link contents in place (order preserved), then hide the redundant anchor.
+            // Unwrap the link contents in place, hide the anchor
             const contents = document.createDocumentFragment();
             while (link.firstChild) {
                 contents.appendChild(link.firstChild);

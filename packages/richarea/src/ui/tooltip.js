@@ -1,4 +1,4 @@
-// Matches the platform test ProseMirror uses to resolve Mod to Cmd or Ctrl.
+// Same Mac test ProseMirror uses for Mod.
 const isMac = typeof navigator !== 'undefined' && /Mac|iP(hone|[oa]d)/.test(navigator.platform);
 
 const MAC_MODIFIERS = [['Ctrl', '⌃'], ['Alt', '⌥'], ['Shift', '⇧'], ['Mod', '⌘']];
@@ -6,8 +6,7 @@ const MAC_MODIFIERS = [['Ctrl', '⌃'], ['Alt', '⌥'], ['Shift', '⇧'], ['Mod'
 const OTHER_MODIFIERS = [['Mod', 'keyCtrl'], ['Ctrl', 'keyCtrl'], ['Alt', 'keyAlt'], ['Shift', 'keyShift']];
 
 /**
- * formatShortcut turns a key binding such as Mod-Shift-z into the platform notation, ⇧⌘Z on
- * Apple devices and Ctrl+Shift+Z elsewhere.
+ * formatShortcut turns a key binding into the platform notation.
  */
 export function formatShortcut(shortcut, trans) {
     const parts = shortcut.split(/-(?!$)/);
@@ -29,7 +28,7 @@ export function formatShortcut(shortcut, trans) {
 }
 
 /**
- * tooltipAttributes returns the hover tooltip attributes for a button from the tooltip hook.
+ * tooltipAttributes returns a button's tooltip attributes.
  */
 export function tooltipAttributes(hooks, label, shortcut) {
     return hooks.tooltip(label, shortcut || null) || {};

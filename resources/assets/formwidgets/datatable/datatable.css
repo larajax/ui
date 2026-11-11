@@ -18,7 +18,7 @@
     transition: border-color ease-in-out .15s;
 
     > .toolbar {
-        /* Contains the floated search box, which would otherwise narrow the grid's scroller below it */
+        /* Contain the floated search box so the grid keeps its width */
         display: flow-root;
         padding: 0.1875rem;
         font-size: 0;
@@ -40,7 +40,7 @@
         }
     }
 
-    /* The grid takes the input background and the frame's inner corners, under the toolbar or on its own */
+    /* Input background and inner corners for the grid */
     > .hotsheet {
         --hotsheet-cell-bg: var(--bs-btn-input-bg, var(--oc-form-control-bg, #fff));
         border-radius: 0 0 var(--datatable-inner-radius) var(--datatable-inner-radius);
@@ -50,16 +50,14 @@
         }
     }
 
-    /* While people work in the grid, the frame takes a focused input's border and focus ring */
+    /* Focus ring while editing */
     &:has(> .hotsheet.is-active) {
         border-color: var(--oc-border-focus);
         outline: var(--oc-input-focus-ring-width) solid var(--bs-focus-ring-color);
         outline-offset: -1px;
     }
 
-    /* Slim scrollbars that always show, so a table that scrolls says so even where the system hides
-       scrollbars until scrolling. Chromium ignores the webkit pseudos once scrollbar-width is set, so the
-       standard properties apply only elsewhere */
+    /* Slim scrollbars that always show */
     .hotsheet-scroller {
         &::-webkit-scrollbar {
             width: 0.625rem;
@@ -104,7 +102,7 @@
         background: transparent;
     }
 
-    /* Without a frame there is nothing to ring, so focus shows in the grid alone */
+    /* No focus ring without a frame */
     &:has(> .hotsheet.is-active) {
         outline: 0;
     }

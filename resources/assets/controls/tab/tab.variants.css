@@ -29,7 +29,7 @@
  */
 
 .control-tabs.primary-tabs {
-    /* The active tab is one shape, masked in three slices (two fixed corners and a stretching middle) so its corners never distort */
+    /* Active tab masked in three slices so corners never distort */
     --tab-shape-fill:
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 39' preserveAspectRatio='none'%3E%3Cpath d='M0 39V38Q6 38 6.65 32.03L9.14 8.96Q10 1 18 1V39Z'/%3E%3C/svg%3E") left top / 1.25rem 100% no-repeat,
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 39' preserveAspectRatio='none'%3E%3Crect width='10' height='39'/%3E%3C/svg%3E") center top / calc(100% - 2.375rem) 100% no-repeat,
@@ -80,7 +80,7 @@
                 padding-bottom: 0.1875rem;
                 margin: 0;
                 position: relative;
-                /* Every tab sits at the active tab's offset, so labels share one baseline when the selection moves */
+                /* Shared offset keeps labels on one baseline */
                 top: 2px;
                 z-index: calc(var(--tab-zindex) + 1);
                 background: transparent;
@@ -100,7 +100,7 @@
                         border-top: 2px solid transparent;
                     }
 
-                    /* The shape runs from the top of the title to the bottom of the baseline, with feet that flare into it */
+                    /* Shape spans title to baseline, with flared feet */
                     &:before,
                     &:after {
                         content: '';

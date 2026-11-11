@@ -2,7 +2,7 @@
  * Toolbar
  */
 
-/* The toolbar widget is a size container, so a growable search in it closes by the toolbar's width */
+/* Size container, so growable searches size to the toolbar */
 .toolbar-widget {
     container: toolbar / inline-size;
 }
@@ -37,9 +37,7 @@
             padding-right: 0;
         }
 
-        /* Primary item fills the remaining width; min-width lets it shrink
-           below its content so the inner scroller clips instead of the row
-           overflowing */
+        /* Fills the rest; min-width lets the scroller clip, not the row */
         &.toolbar-primary {
             position: relative;
             flex: 1 1 auto;
@@ -124,7 +122,7 @@
         }
     }
 
-    /* Groups and containers sit inline, while buttons keep their own inline-flex layout */
+    /* Inline groups; buttons keep inline-flex */
     .btn-group,
     .btn-container {
         display: inline-block;

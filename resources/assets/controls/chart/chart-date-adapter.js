@@ -20,7 +20,7 @@ const UNIT_MS = {
     week: 604800000
 };
 
-// The tick formats for each unit, which a chart's own displayFormats replace
+// Tick formats per unit, overridden by displayFormats
 export const DATE_FORMATS = {
     datetime: '%b %d, %Y %H:%M:%S',
     millisecond: '%H:%M:%S',
@@ -36,7 +36,7 @@ export const DATE_FORMATS = {
 
 const nameCache = new Map();
 
-// Returns the page locale from <html lang>, or undefined for the browser's own
+// Page locale, or undefined for the browser's
 function pageLocale() {
     const lang = (document.documentElement.getAttribute('lang') || '').trim().replace(/_/g, '-');
     if (!lang) {
@@ -51,7 +51,7 @@ function pageLocale() {
     }
 }
 
-// Returns the short month and day names for a locale, from January and from Sunday
+// Short month and day names for a locale
 function localeNames(locale) {
     const key = locale || '';
     if (!nameCache.has(key)) {
@@ -70,7 +70,7 @@ function localeNames(locale) {
 const pad = (number, padding = '0') => (number < 10 ? padding + number : String(number));
 
 /**
- * formatDate formats a time in UTC with a strftime pattern, or with Intl.DateTimeFormat options.
+ * formatDate formats a UTC time with strftime or Intl options.
  */
 export function formatDate(time, format, locale = pageLocale()) {
     const date = new Date(time);
@@ -124,7 +124,7 @@ export function formatDate(time, format, locale = pageLocale()) {
 }
 
 /**
- * parseDate reads a timestamp, a Date or a date string as a UTC time, or returns null.
+ * parseDate reads a value as a UTC time, or returns null.
  */
 export function parseDate(value) {
     if (value === null || value === undefined || value === '') {
@@ -141,7 +141,7 @@ export function parseDate(value) {
 
     let text = String(value).trim();
 
-    // A date or date and time with no zone is read as UTC, as a date on its own already is
+    // Zoneless date-times read as UTC
     if (/^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?)?$/.test(text)) {
         text = text.replace(' ', 'T') + (text.length > 10 ? 'Z' : '');
     }
@@ -152,8 +152,7 @@ export function parseDate(value) {
 }
 
 /**
- * startOfDate returns the start of the unit a time falls in, a week starting on Sunday, or on the
- * given ISO weekday for "isoWeek", where 1 is Monday.
+ * startOfDate returns a unit's start, isoWeek from a given weekday.
  */
 export function startOfDate(time, unit, weekday) {
     const date = new Date(time);
@@ -188,7 +187,7 @@ export function startOfDate(time, unit, weekday) {
 }
 
 /**
- * addToDate adds an amount of a unit to a time, by calendar month for months, quarters and years.
+ * addToDate adds units to a time, by calendar month for months.
  */
 export function addToDate(time, amount, unit) {
     if (UNIT_MS[unit]) {
@@ -207,8 +206,7 @@ export function addToDate(time, amount, unit) {
 }
 
 /**
- * diffDates returns how many of a unit lie between two times, whole calendar months for months,
- * quarters and years.
+ * diffDates returns how many units lie between two times.
  */
 export function diffDates(max, min, unit) {
     if (UNIT_MS[unit]) {

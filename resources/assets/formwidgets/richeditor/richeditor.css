@@ -25,7 +25,7 @@
         --rich-editor-min-height: 25rem;
     }
 
-    /* An adaptive editor fills its container, which frames it, so it draws no frame, focus border or ring */
+    /* Adaptive: the container frames it, so no frame or ring */
     &.size-adaptive .rich-editor:not(.is-fullscreen) {
         --rich-editor-radius: 0;
         border-width: 0;

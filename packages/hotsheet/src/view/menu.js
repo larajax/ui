@@ -37,7 +37,7 @@ export class ContextMenu {
     }
 
     /**
-     * show opens the menu at a window position, returning focus to `restoreFocus` when it closes.
+     * show opens the menu at a position, refocusing `restoreFocus` on close.
      */
     show(x, y, items, restoreFocus) {
         this.items = items;
@@ -105,7 +105,7 @@ export class ContextMenu {
                 const position = enabled.indexOf(this.active);
                 const step = event.key === 'ArrowDown' ? 1 : -1;
 
-                // With nothing highlighted yet, down starts at the first item and up at the last
+                // Unhighlighted: down starts at the first item, up at the last
                 const next = position === -1 ? (step === 1 ? 0 : enabled.length - 1) : (position + step + enabled.length) % enabled.length;
                 this.active = enabled[next];
                 this.renderItems();

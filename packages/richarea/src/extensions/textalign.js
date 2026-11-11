@@ -1,7 +1,7 @@
 import { TextAlign as BaseTextAlign } from '@tiptap/extension-text-align';
 
 /**
- * TextAlign clears the alignment for the left shortcut, matching the Align Left button.
+ * TextAlign clears alignment for the left shortcut, like Align Left.
  */
 export const TextAlign = BaseTextAlign.extend({
     addKeyboardShortcuts() {

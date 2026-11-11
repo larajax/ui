@@ -1,8 +1,7 @@
 import { DOMSerializer } from '@tiptap/pm/model';
 
 /**
- * serializeDocument renders a document to HTML and tidies the structural wrappers the
- * schema needs internally but saved content does not.
+ * serializeDocument renders a document to tidy HTML.
  */
 export function serializeDocument(doc, schema, options = {}) {
     if (isEmptyDocument(doc)) {
@@ -18,7 +17,7 @@ export function serializeDocument(doc, schema, options = {}) {
 }
 
 /**
- * isEmptyDocument checks for a single empty paragraph without attributes.
+ * isEmptyDocument checks for one empty, attribute-free paragraph.
  */
 export function isEmptyDocument(doc) {
     if (doc.childCount !== 1) {
@@ -37,7 +36,7 @@ export function isEmptyDocument(doc) {
 }
 
 /**
- * tidyHtml applies the output conventions to a rendered container element.
+ * tidyHtml applies the output conventions to a container.
  */
 export function tidyHtml(container, options = {}) {
     unwrapListParagraphs(container);
@@ -53,8 +52,7 @@ export function tidyHtml(container, options = {}) {
 }
 
 /**
- * unwrapListParagraphs turns a list item's leading paragraph back into plain inline content
- * when only nested lists follow it.
+ * unwrapListParagraphs unwraps a paragraph before nested lists.
  */
 function unwrapListParagraphs(container) {
     container.querySelectorAll('li').forEach((item) => {
@@ -73,7 +71,7 @@ function unwrapListParagraphs(container) {
 }
 
 /**
- * unwrapCellParagraphs removes the paragraph wrapper from table cells with a single paragraph.
+ * unwrapCellParagraphs unwraps lone paragraphs in table cells.
  */
 function unwrapCellParagraphs(container) {
     container.querySelectorAll('td, th').forEach((cell) => {
@@ -84,8 +82,7 @@ function unwrapCellParagraphs(container) {
 }
 
 /**
- * doubleTrailingBreaks adds a second line break to blocks ending in one, since browsers
- * ignore a final line break and the empty line shown in the editor would be lost.
+ * doubleTrailingBreaks doubles a final break, which browsers ignore.
  */
 function doubleTrailingBreaks(container) {
     container.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, td, th').forEach((block) => {
@@ -96,8 +93,7 @@ function doubleTrailingBreaks(container) {
 }
 
 /**
- * fillEmptyParagraphs adds a line break to empty paragraphs so they keep their height when
- * rendered, matching what authors see in the editor.
+ * fillEmptyParagraphs adds a break so empty paragraphs keep height.
  */
 function fillEmptyParagraphs(container) {
     container.querySelectorAll('p').forEach((paragraph) => {
@@ -108,8 +104,7 @@ function fillEmptyParagraphs(container) {
 }
 
 /**
- * preserveSpaces alternates repeated spaces with non-breaking spaces outside preformatted
- * blocks, so spacing typed in the editor is not collapsed when rendered.
+ * preserveSpaces keeps repeated spaces from collapsing outside pre.
  */
 function preserveSpaces(container) {
     const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
@@ -123,7 +118,7 @@ function preserveSpaces(container) {
 }
 
 /**
- * wrapHeaderRows moves leading rows made entirely of header cells into a thead element.
+ * wrapHeaderRows moves leading header rows into a thead.
  */
 function wrapHeaderRows(container) {
     container.querySelectorAll('table').forEach((table) => {
@@ -153,7 +148,7 @@ function wrapHeaderRows(container) {
 }
 
 /**
- * unwrapSingleParagraph returns bare inline content when line break mode produced one paragraph.
+ * unwrapSingleParagraph unwraps a lone paragraph in line break mode.
  */
 function unwrapSingleParagraph(container) {
     if (container.childNodes.length === 1 && isPlainParagraph(container.firstChild)) {

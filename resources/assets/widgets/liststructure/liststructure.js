@@ -22,7 +22,7 @@
 let sortablePromise = null;
 
 /**
- * isTouchEnabled returns true only for pure touch devices, false for hybrid devices like touch laptops.
+ * isTouchEnabled is true only for pure touch devices, not hybrids.
  */
 export function isTouchEnabled() {
     if (typeof window.matchMedia !== 'function') {
@@ -92,7 +92,7 @@ export function registerListStructureWidget(jax) {
             this.listen('touchmove', this.onDragging);
             this.listen('pointermove', this.onDragging);
 
-            // Captured because Sortable stops dragover at the table body, and Firefox drag events carry no position
+            // Captured, as Sortable stops dragover and Firefox lacks positions
             this.listen('dragover', this.onDragging, true);
         }
 
@@ -270,8 +270,7 @@ export function registerListStructureWidget(jax) {
         // Move data
         //
 
-        // Each neighbour is sent by its id and by its root id, the record it was copied from on
-        // other sites, so a multisite reorder can be repeated on every site
+        // Neighbours by id and root id, for multisite reorders
         getMovePostData(row, proposedLevel) {
             const data = {
                 record_id: row.dataset.treeId

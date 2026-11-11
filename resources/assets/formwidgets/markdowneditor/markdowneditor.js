@@ -35,7 +35,7 @@
 import { makeTranslator, loadLanguage } from '../../lang.js';
 
 /**
- * DEFAULT_LANG are the button labels, keyed by the camel cased button name.
+ * DEFAULT_LANG are the button labels, keyed by camel cased name.
  */
 export const DEFAULT_LANG = {
     bold: 'Bold',
@@ -103,7 +103,7 @@ let easyMdePromise = null;
 
 export const markdownEditor = {
     /*
-     * hooks shared by every editor on this page, see the header for the available names
+     * hooks shared by every editor on this page, see the header
      */
     hooks: {}
 };
@@ -204,7 +204,7 @@ export function registerMarkdownEditor(jax) {
             this.element.dispatchEvent(new CustomEvent('markdowneditor:ready', { bubbles: true, detail: { markdownEditor: this } }));
         }
 
-        // Builds EasyMDE buttons from the field toolbar, each running the EasyMDE action of its name
+        // Builds EasyMDE buttons from the field toolbar
         getToolbar(EasyMDE) {
             return this.toolbarButtons()
                 .map((button) => {
@@ -237,7 +237,7 @@ export function registerMarkdownEditor(jax) {
             return makeTranslator('markdowneditor', DEFAULT_LANG, { language: this.config.language });
         }
 
-        // heading-1 is labelled by heading1, a button with no label of its own by its title
+        // heading-1 uses the heading1 label, else the button title
         buttonLabel(button) {
             const key = button.name.replace(/-([a-z0-9])/g, (match, letter) => letter.toUpperCase());
 
@@ -258,7 +258,7 @@ export function registerMarkdownEditor(jax) {
             this.scheduleUpdate();
         }
 
-        // A value set on the textarea from outside, announced with a change event, reaches the editor
+        // Sync outside textarea changes into the editor
         onTextareaChange() {
             if (this.dispatchingChange || !this.editor || this.textarea.value === this.lastValue) {
                 return;
@@ -268,8 +268,7 @@ export function registerMarkdownEditor(jax) {
             this.editor.value(this.textarea.value);
         }
 
-        // The page may change the markdown first, see the preparePreview hook. EasyMDE's own rendering
-        // applies the sanitizer in safe mode
+        // Runs the preparePreview hook; EasyMDE applies the sanitizer
         renderPreview(text) {
             const preparePreview = markdownEditor.hooks.preparePreview;
 
@@ -321,8 +320,7 @@ export function registerMarkdownEditor(jax) {
         }
 
         /**
-         * getToolbarItems lists the toolbar in order, { type: 'separator' } and { type: 'button', code }.
-         * The page handles fullscreen itself, so it is left out with an external toolbar.
+         * getToolbarItems lists the toolbar as separator and button items.
          */
         getToolbarItems() {
             const items = [];
@@ -354,8 +352,7 @@ export function registerMarkdownEditor(jax) {
         }
 
         /**
-         * getButtonState describes a button as it stands: its label, icon class, and whether it is
-         * active or disabled, all but the view buttons being disabled in the preview.
+         * getButtonState returns a button's label, icon and state.
          */
         getButtonState(code) {
             const button = this.toolbarButtons().find((item) => item && item.name === code);
@@ -392,8 +389,7 @@ export function registerMarkdownEditor(jax) {
         }
 
         /**
-         * activateButton runs a button's EasyMDE action. Without an editor toolbar, side by side leaves
-         * the full preview first, as EasyMDE expects its toolbar there.
+         * activateButton runs a button's EasyMDE action.
          */
         activateButton(code) {
             const state = this.getButtonState(code);

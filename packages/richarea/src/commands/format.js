@@ -2,8 +2,7 @@ import { h, icon } from '../ui/dom.js';
 import { insertionChain } from './helpers.js';
 
 /**
- * markButton defines a toggle button for a text mark, with the key binding of the mark shown
- * in its tooltip.
+ * markButton defines a mark toggle, its shortcut in the tooltip.
  */
 function markButton(label, markName, command, shortcut = null) {
     return {

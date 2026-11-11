@@ -111,7 +111,7 @@ export function registerRepeaterAccordion(jax) {
             item.classList.remove('collapsed');
             this.eventUpdateItemTitle(item);
 
-            // Relayout controls revealed by expanding, as the framework render cycle does
+            // Relayout controls revealed by expanding
             jax.Events.dispatch('render');
             dispatchEvent(new Event('resize'));
         }
@@ -130,7 +130,7 @@ export function registerRepeaterAccordion(jax) {
             this.eventOnAddItem();
         }
 
-        // eventUpdateItemTitle shows the field title when collapsed, the group name when open
+        // eventUpdateItemTitle shows the field title only when collapsed
         eventUpdateItemTitle(item) {
             const title = item.querySelector(':scope > .repeater-header > .repeater-item-title');
             if (title) {

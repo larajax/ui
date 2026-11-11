@@ -13,14 +13,14 @@
 'use strict';
 
 /**
- * mountParentFor returns the dialog enclosing an element, or the body outside one.
+ * mountParentFor returns the enclosing dialog, or the body.
  */
 export function mountParentFor(element) {
     return (element && element.closest('dialog')) || document.body;
 }
 
 /**
- * mountOrigin returns the page coordinates that absolute positions inside the parent start from, and its width.
+ * mountOrigin returns the parent's page origin and width.
  */
 export function mountOrigin(parent) {
     if (!parent || parent === document.body) {

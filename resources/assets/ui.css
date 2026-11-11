@@ -1,14 +1,10 @@
 /*
  * Larajax UI - entry stylesheet
  *
- * Aggregates per-widget CSS via native @import, layered: variables first,
- * then elements, then generic controls, then widgets that build on them.
- * The consumer includes only this file; the browser fetches the imports on
- * first paint.
+ * Imports every stylesheet in layer order.
  */
 
-/* Variables: bridges to Bootstrap 6 custom properties, which follow the
-   data-bs-theme attribute for light and dark mode */
+/* Variables: Bootstrap 6 bridges */
 @import "./variables.css";
 
 /* Elements */
@@ -56,5 +52,5 @@
 @import "./formwidgets/phone/phone.css";
 @import "./formwidgets/repeater/repeater.css";
 
-/* Icon packs: sizes for packs whose glyphs fill their box differently, after the widgets they adjust */
+/* Icon packs, after the widgets they adjust */
 @import "./icons/october.css";

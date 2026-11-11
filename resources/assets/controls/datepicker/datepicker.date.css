@@ -2,14 +2,13 @@
  * Date Picker - calendar
  * --------------------------------------------------
  *
- * Bootstrap 6 styles the calendar's [data-vc] markup as its Datepicker, and these rules
- * add the stacking above popovers, which the time panel shares, and the week numbers it leaves out.
+ * Adds popover stacking and week numbers to Bootstrap's Datepicker.
  */
 
 [data-vc="calendar"] {
     --bs-datepicker-zindex: var(--oc-zindex-datepicker);
 
-    /* A closed calendar leaves the layout, so it never stretches the page or dialog it waits in */
+    /* Hidden calendar leaves the layout */
     &[data-vc-calendar-hidden] {
         display: none;
     }

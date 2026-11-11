@@ -10,7 +10,7 @@ const TOKEN = /\[[^\]]*\]|YYYY|YY|MMMM|MMM|MM|M|DD|D|HH|H|hh|h|mm|m|ss|s|A|a/g;
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-// A month name or its first three letters, for text the browser may read as a date
+// Month name prefix, for text the browser may read as a date
 const MONTH_NAME = new RegExp(`\\b(?:${MONTHS.map((month) => month.slice(0, 3)).join('|')})`, 'i');
 
 function pad(value, length = 2) {
@@ -37,7 +37,7 @@ function tokenize(format) {
 }
 
 /**
- * formatParts writes date parts ({ year, month, day, hour, minute, second }) in a format.
+ * formatParts writes date parts in a format.
  */
 export function formatParts(parts, format) {
     const hour12 = parts.hour % 12 || 12;
@@ -79,14 +79,14 @@ function tokenPattern(token) {
 }
 
 function escapeLiteral(text) {
-    // Separators match any run of separator characters, so `7-8` reads in a `/` format too
+    // Any separator run matches, so `7-8` reads in a `/` format
     return text.replace(/[\s\-/.:,]+/g, '\u0000')
         .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
         .replace(/\u0000/g, '[\\s\\-/.:,]+');
 }
 
 /**
- * parseText reads text in a format leniently (single digits, any separators), returning date parts or null.
+ * parseText leniently reads text in a format, or returns null.
  */
 export function parseText(text, format, defaults = {}) {
     const parts = tokenize(format);
@@ -148,17 +148,16 @@ function isValidParts(parts) {
 }
 
 /**
- * correctDate returns date text in the format, read from text in that format or any text the browser can
- * read as a date, or null when it isn't a date.
+ * correctDate returns date text in the format, or null if not a date.
  */
 export function correctDate(text, format) {
     const value = String(text);
 
-    // ISO dates, and the date of ISO date times, are read directly, since the browser reads them in UTC or local time and can land on another day
+    // Read ISO dates directly, as the browser may shift the day
     const isoDate = value.match(/^(\d{4}-\d{1,2}-\d{1,2})(?:[T ]|$)/);
     let parts = parseText(value, format) || (isoDate && parseText(isoDate[1], 'YYYY-M-D'));
 
-    // Text naming a month and a year (like "March 4, 2026") goes to the browser, kept only when the day it reads appears in the text, so impossible dates aren't rolled over
+    // Month name text goes to the browser, rejecting rolled-over days
     if (!parts && MONTH_NAME.test(value) && /\b\d{4}\b/.test(value)) {
         const parsed = new Date(value);
         const days = (value.match(/\b\d{1,2}\b/g) || []).map(Number);
@@ -172,7 +171,7 @@ export function correctDate(text, format) {
 }
 
 /**
- * correctTime returns time text in the format, or null when the text isn't a time.
+ * correctTime returns time text in the format, or null.
  */
 export function correctTime(text, format) {
     const parts = parseText(text, format);
@@ -187,7 +186,7 @@ export function isInFormat(text, format, read = correctDate) {
 }
 
 /**
- * toIsoDate and fromIsoDate convert between a column's format and the YYYY-MM-DD of a native date input.
+ * toIsoDate and fromIsoDate convert to and from YYYY-MM-DD.
  */
 export function toIsoDate(text, format) {
     const parts = parseText(text, format);

@@ -174,7 +174,7 @@ div.popover-overlay {
     }
 }
 
-/* Mobile: full-screen bottom sheet, important rules override the inline position */
+/* Mobile bottom sheet, !important beats the inline position */
 @media (max-width: 48em) {
     body.popover-open {
         overflow: hidden;

@@ -54,7 +54,7 @@ import {
     withAlpha
 } from './chart-utils.js';
 
-// The opacity at the top of the area under a line, which fades out toward the bottom
+// Top opacity of the fading area under a line
 const FILL_OPACITY = 0.28;
 
 // The tooltip date format
@@ -134,7 +134,7 @@ export function translateFlotOptions(flot = {}) {
 }
 
 /**
- * readDataSets reads the data sets of a line chart's dataset spans, with their data-set-* attributes as camel case keys.
+ * readDataSets reads the dataset spans, with camelCased data-set-* keys.
  */
 export function readDataSets(element) {
     return Array.from(element.querySelectorAll(':scope > [data-chart="dataset"]')).map((span) => {
@@ -218,7 +218,7 @@ export function buildDataSet(dataSet, index, defaults, theme = {}) {
         pointHoverBorderWidth: 2
     };
 
-    // A data set can draw straight lines between its points, where the chart smooths them
+    // Straight lines when smooth is off
     if (lines.smooth === false) {
         result.cubicInterpolationMode = 'default';
         result.tension = 0;
@@ -228,7 +228,7 @@ export function buildDataSet(dataSet, index, defaults, theme = {}) {
 }
 
 /**
- * fadingFill returns a fill for the area under a line that fades from the colour at the top of the chart to clear at the bottom.
+ * fadingFill returns an area fill fading from the colour to clear.
  */
 export function fadingFill(color, opacity) {
     let cache = null;
@@ -252,7 +252,7 @@ export function fadingFill(color, opacity) {
 }
 
 /**
- * weekendAreas returns the Saturday to Monday ranges, in UTC, that overlap a time range.
+ * weekendAreas returns UTC weekend ranges within a time range.
  */
 export function weekendAreas(min, max) {
     const areas = [];
@@ -272,7 +272,7 @@ export function weekendAreas(min, max) {
 }
 
 /**
- * buildLineConfig returns the Chart.js config for a line chart's data sets and Flot style options.
+ * buildLineConfig returns the Chart.js config for a line chart.
  */
 export function buildLineConfig({ dataSets = [], flotOptions = {}, timeMode = null, theme = {} }) {
     const translated = translateFlotOptions(flotOptions);
@@ -326,7 +326,7 @@ export function buildLineConfig({ dataSets = [], flotOptions = {}, timeMode = nu
 
     plugins.push({
         id: 'hoverLine',
-        // Draws a faint line down the chart at the hovered point, behind the lines
+        // Faint hover line behind the lines
         beforeDatasetsDraw(chart) {
             const active = chart.getActiveElements();
             if (!active.length) {
@@ -476,7 +476,7 @@ export function registerChartLine(jax) {
 
             destroyChart(this);
 
-            // Colours such as var(--bs-success-base) resolve here, since a canvas cannot read them
+            // Resolve CSS variables, which a canvas cannot read
             const dataSets = this.fullDataSet.map((dataSet) => dataSet.color
                 ? { ...dataSet, color: resolveColors(this.element, [dataSet.color])[0] }
                 : dataSet);
@@ -534,7 +534,7 @@ export function registerChartLine(jax) {
             this.clearZoom();
         }
 
-        // Starts a selection across the chart, which zooms to the range it covers when released
+        // Drag-select zooms to the range on release
         onSelectStart(event) {
             if (!this.chart || event.button !== 0) {
                 return;

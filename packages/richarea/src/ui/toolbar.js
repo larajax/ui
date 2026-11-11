@@ -1,7 +1,7 @@
 import { ButtonGroup } from './buttons.js';
 
 /**
- * Toolbar renders the main button row, one tab stop with arrow keys moving between buttons.
+ * Toolbar renders the main button row as one arrow-key tab stop.
  */
 export class Toolbar {
     constructor(richArea, element) {

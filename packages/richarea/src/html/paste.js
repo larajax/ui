@@ -1,5 +1,5 @@
 /**
- * Elements from office documents and web pages that never carry content.
+ * Pasted elements that never carry content.
  */
 const REMOVED_ELEMENTS = 'style, meta, link, title, script, xml, template';
 
@@ -13,8 +13,7 @@ const BLOCK_TAGS = new Set([
 ]);
 
 /**
- * Inline style properties that carry bold, italic, underline and sub or superscript, which
- * the schema turns into clean marks.
+ * Inline styles the schema turns into marks, such as bold and italic.
  */
 const INLINE_PROPERTIES = ['font-weight', 'font-style', 'text-decoration', 'text-decoration-line', 'vertical-align'];
 
@@ -26,7 +25,7 @@ function isBoldWeight(value) {
 }
 
 /**
- * keptProperties returns the style properties kept for a pasted element.
+ * keptProperties returns the styles kept for a pasted element.
  */
 function keptProperties(element) {
     if (element.tagName === 'IMG') {
@@ -41,8 +40,7 @@ function keptProperties(element) {
 }
 
 /**
- * unwrapNeutralFormatting removes bold and italic tags whose own style cancels them, such as
- * the normal weight bold wrapper Google Docs puts around copied content.
+ * unwrapNeutralFormatting removes bold and italic their style cancels.
  */
 function unwrapNeutralFormatting(root) {
     root.querySelectorAll('b, strong').forEach((element) => {
@@ -60,8 +58,7 @@ function unwrapNeutralFormatting(root) {
 }
 
 /**
- * cleanPastedHtml strips classes, ids and presentational styles from content pasted from
- * other applications, while copy and paste within the editor is left untouched.
+ * cleanPastedHtml strips classes, ids and styles from external pastes.
  */
 export function cleanPastedHtml(html) {
     if (typeof html !== 'string' || html.includes('data-pm-slice')) {

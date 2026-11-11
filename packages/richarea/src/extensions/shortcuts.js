@@ -2,7 +2,7 @@ import { Extension } from '@tiptap/core';
 import { openLinkForm, browseLinks } from '../commands/links.js';
 
 /**
- * createShortcuts binds editor level keyboard shortcuts, Mod+K opens the link picker.
+ * createShortcuts binds editor shortcuts, such as Mod+K for links.
  */
 export function createShortcuts(richArea) {
     return Extension.create({

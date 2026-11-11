@@ -8,8 +8,7 @@ const MIN_WIDTH = 16;
 const CORNERS = ['nw', 'ne', 'sw', 'se'];
 
 /**
- * ImageResizer shows corner handles over the selected image, where dragging a handle sets the
- * image width, the height follows the aspect ratio and each drag is one undo step.
+ * ImageResizer drags corner handles to set an image's width.
  */
 export class ImageResizer {
     constructor(richArea) {
@@ -41,8 +40,7 @@ export class ImageResizer {
     }
 
     /**
-     * update follows the selection, showing the handles while an image is selected in a
-     * focused, editable document.
+     * update shows the handles while an image is selected and editable.
      */
     update() {
         if (this.drag) {
@@ -58,7 +56,7 @@ export class ImageResizer {
     }
 
     /**
-     * setImage switches the tracked image, listening for layout changes only while one is shown.
+     * setImage switches the tracked image and its layout listeners.
      */
     setImage(image) {
         if (image === this.image) {
@@ -87,8 +85,7 @@ export class ImageResizer {
     }
 
     /**
-     * position places the handles on the corners of the image, relative to the editor body so
-     * they scroll along with the content.
+     * position places the handles on the image, relative to the body.
      */
     position() {
         const image = this.image;
@@ -166,7 +163,7 @@ export class ImageResizer {
         drag.image.style.width = Math.max(MIN_WIDTH, drag.startWidth + delta / drag.rate) + 'px';
         drag.image.style.height = 'auto';
 
-        // The image max width caps the size, so the stored width is what is actually shown.
+        // Store the shown width, capped by max width.
         drag.width = parseFloat(getComputedStyle(drag.image).width);
 
         this.position();
@@ -195,8 +192,7 @@ export class ImageResizer {
     }
 
     /**
-     * measureGrowth finds how far the dragged edge moves for each pixel of width, a half for
-     * centered images, so the handle stays under the pointer.
+     * measureGrowth finds how far the edge moves per pixel of width.
      */
     measureGrowth(image, corner, width) {
         const probe = Math.min(10, width - 1);
@@ -229,8 +225,7 @@ export class ImageResizer {
     }
 
     /**
-     * finish ends a drag, saving the new width as one undo step or restoring the image when
-     * cancelled.
+     * finish ends a drag, saving the width or restoring the image.
      */
     finish(save) {
         const drag = this.drag;
@@ -250,14 +245,13 @@ export class ImageResizer {
             this.saveWidth(drag, width);
         }
 
-        // Saving replaced the image element, so move the handles now rather than a frame later.
+        // Saving replaced the image, so reposition now.
         this.update();
         this.richArea.refreshUi();
     }
 
     /**
-     * saveWidth stores the width as an inline style like Froala did, keeping the image
-     * selected, unless the document changed during the drag.
+     * saveWidth saves the width as a style, unless the document changed.
      */
     saveWidth(drag, width) {
         const { state, view } = this.richArea.editor;

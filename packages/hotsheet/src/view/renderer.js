@@ -13,7 +13,7 @@ export const MIN_COLUMN_WIDTH = 30;
 export const ROW_HEADER_WIDTH = 50;
 
 /**
- * scaledRowHeight returns the row height in pixels, given for a 16px root font and scaled with the page's, so rows grow with the text.
+ * scaledRowHeight returns the row height scaled with the root font size.
  */
 export function scaledRowHeight(rowHeight) {
     const rootSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
@@ -33,7 +33,7 @@ function element(tag, className, attributes = {}) {
 }
 
 /**
- * columnTemplate returns the grid-template-columns value and the narrowest the table may get.
+ * columnTemplate returns the column template and minimum table width.
  */
 export function columnTemplate(columns, rowHeaders) {
     const flexCount = columns.filter((column) => !column.width).length;
@@ -63,7 +63,7 @@ export function columnTemplate(columns, rowHeaders) {
 }
 
 /**
- * buildSkeleton creates the scroller, table, header row, body and editor slots inside the root.
+ * buildSkeleton creates the grid's scroller, table, header and body.
  */
 export function buildSkeleton(root) {
     root.classList.add('hotsheet');
@@ -123,7 +123,7 @@ export function renderHead(sheet) {
 }
 
 /**
- * markFrozen makes a cell in a frozen column stick at its column's left offset.
+ * markFrozen sticks a frozen column's cell at its left offset.
  */
 function markFrozen(sheet, cell, colIndex) {
     if (colIndex < sheet.frozenCount) {
@@ -134,8 +134,7 @@ function markFrozen(sheet, cell, colIndex) {
 }
 
 /**
- * renderBody draws the rows in view, or a given window of rows, with spacers keeping the place of the others;
- * `reuse` keeps already drawn rows, for redraws that only follow scrolling.
+ * renderBody draws the rows in view; `reuse` keeps drawn rows.
  */
 export function renderBody(sheet, range = sheet.neededRows(WINDOW_MARGIN), reuse = false) {
     const fragment = document.createDocumentFragment();
@@ -181,7 +180,7 @@ function renderSpacer(height) {
 }
 
 /**
- * renderEmptyState shows the empty message as a ghost row across every column.
+ * renderEmptyState shows the empty message as a full-width row.
  */
 function renderEmptyState({ title, description }) {
     const rowEl = element('div', 'hotsheet-row hotsheet-empty is-last', { role: 'row' });
@@ -206,10 +205,10 @@ function renderEmptyState({ title, description }) {
 function renderRow(sheet, row, rowIndex) {
     const rowEl = element('div', 'hotsheet-row', { role: 'row', 'aria-rowindex': rowIndex + 2 });
 
-    // The last row's edge goes by row number, since a large table draws only some rows
+    // By row number, as only visible rows are drawn
     rowEl.classList.toggle('is-last', rowIndex === sheet.viewRows.length - 1);
 
-    // After a save found errors, rows with invalid cells stand out until fixed
+    // Rows with invalid cells stand out until fixed
     if (sheet.revealErrors && sheet.rowHasInvalid(row)) {
         rowEl.classList.add('has-invalid');
     }
@@ -269,7 +268,7 @@ export function renderCell(sheet, row, rowIndex, column, colIndex) {
 }
 
 /**
- * applyLayout sets the column template, table minimum width and height on the elements.
+ * applyLayout applies the column template, minimum width and height.
  */
 export function applyLayout(sheet) {
     const { scroller, table } = sheet.elements;

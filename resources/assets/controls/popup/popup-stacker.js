@@ -1,24 +1,21 @@
 /*
  * Popup stacker
  *
- * Pushes open popups back, scaled and offset, when another popup opens on
- * top of them, and pulls the next one forward when the top popup closes.
- * Popups are modal dialogs, so the browser's top layer already orders them
- * by opening and the stacker only moves them. Registered as jax.popupStacker.
+ * Offsets popups behind the top one. Registered as jax.popupStacker.
  */
 'use strict';
 
 export class PopupStacker
 {
     constructor() {
-        // Dialogs fire a close event that does not bubble, so it is caught on the way down
+        // Close doesn't bubble, so capture it
         document.addEventListener('close', (ev) => {
             if (ev.target instanceof Element && ev.target.matches('.control-popup')) {
                 this.onPopupHidden(ev);
             }
         }, true);
 
-        // Only the document-level announcement, not the bubbling popup:show element event
+        // Document-level popup:show only
         document.addEventListener('popup:show', (ev) => {
             if (ev.target === document) {
                 this.onPopupShowing(ev);
@@ -32,7 +29,7 @@ export class PopupStacker
         this.restoreBottomBackdrop();
     }
 
-    // The popup left at the bottom of the stack dims the page again, should the one under it close first
+    // Bottom popup dims the page again
     restoreBottomBackdrop() {
         const bottom = this.getAllPopups().at(-1);
         if (bottom) {
@@ -86,7 +83,7 @@ export class PopupStacker
         return this.getAllPopups()[0];
     }
 
-    // Open popups, topmost first, since popups join the page in the order they open
+    // Open popups, topmost first
     getAllPopups() {
         return Array.from(document.querySelectorAll('dialog.control-popup.show[open]')).reverse();
     }

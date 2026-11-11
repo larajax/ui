@@ -33,7 +33,7 @@
 import { Popup } from '../../controls/popup/popup.js';
 
 export function registerListWidget(jax) {
-    // List helper, opens a record form in a popup from the controller's onLoadPopupForm handler
+    // Opens a record form in a popup via onLoadPopupForm
     jax.listOnLoadForm = function(recordId, context) {
         Popup.open({
             handler: 'onLoadPopupForm',
@@ -72,7 +72,7 @@ export function registerListWidget(jax) {
             this.pageChange = null;
         }
 
-        // A page change marks the list as updating, turns the pressed link into a spinner and shows the target page as current straight away.
+        // Shows a page change in progress
         onPageRequest(ev) {
             const link = pageLinkFor(ev, this.element);
             if (!link) {
@@ -93,7 +93,7 @@ export function registerListWidget(jax) {
             this.pageChange = { link, current, target };
         }
 
-        // A successful page change redraws the list, so this only undoes the state when the request failed or changed nothing.
+        // Undoes the page change state if the list was not redrawn
         onPageRequestEnd(ev) {
             if (!pageLinkFor(ev, this.element) || !this.pageChange) {
                 return;
@@ -112,7 +112,7 @@ export function registerListWidget(jax) {
             this.pageChange = null;
         }
 
-        // Marks the list as updating while a request that redraws it runs, which the stylesheet shows after a short delay.
+        // Marks the list as updating
         setUpdating(isUpdating) {
             this.element.classList.toggle('is-updating', !!isUpdating);
 
@@ -176,7 +176,7 @@ export function registerListWidget(jax) {
                 el.checked = checked;
             });
 
-            // One change event updates the head state and any trigger watching the rows
+            // One change event updates the head and triggers
             if (checkboxes.length) {
                 checkboxes[0].dispatchEvent(new Event('change', { bubbles: true }));
             }
@@ -203,7 +203,7 @@ export function registerListWidget(jax) {
             this.checkIndeterminate();
         }
 
-        // Shift-click selects the range between the previously clicked checkbox and this one
+        // Shift-click selects a range
         onClickCheckbox(ev) {
             const el = ev.target;
             if (!el.matches || !el.matches('.list-checkbox > input[type=checkbox]') || !this.body || !this.body.contains(el)) {
@@ -277,7 +277,7 @@ export function registerListWidget(jax) {
     // LIST HELPER DATA-API
     // ============================
 
-    // Reads the checked rows of the list control inside a list widget container
+    // Reads the checked rows of a linked list
     function listGetChecked(listId) {
         const listEl = document.querySelector('#' + listId + ' > .control-list'),
             control = listEl ? jax.fetchControl(listEl, 'listwidget') : null;
@@ -285,10 +285,10 @@ export function registerListWidget(jax) {
         return control ? control.getChecked() : [];
     }
 
-    // Buttons bound to the trigger API, so later renders only ask them to re-evaluate
+    // Trigger-bound buttons, re-evaluated on later renders
     const triggerBoundButtons = new WeakSet();
 
-    // listCheckedTriggerOn enables a button through the trigger API while rows of its linked list are checked.
+    // listCheckedTriggerOn enables a button while linked rows are checked
     function listCheckedTriggerOn(buttonEl) {
         const linkageEl = buttonEl.closest('[data-list-linkage]'),
             listId = linkageEl ? linkageEl.dataset.listLinkage : null;
@@ -323,9 +323,7 @@ export function registerListWidget(jax) {
     });
 
     /*
-     * Checked-request buttons: AJAX requests fired from a [data-list-checked-request]
-     * button inside a [data-list-linkage] container include the checked row values of
-     * the linked list widget
+     * Checked-request buttons post the linked list's checked rows
      */
     addEventListener('ajax:setup', function(ev) {
         const buttonEl = ev.target.closest && ev.target.closest('[data-list-checked-request]');
@@ -347,7 +345,7 @@ export function registerListWidget(jax) {
     });
 
     /*
-     * Page chooser: closes its popover, then submits the "Go to page" form via AJAX
+     * Page chooser: closes its popover and submits via AJAX
      */
     addEventListener('submit', function(ev) {
         const form = ev.target.closest && ev.target.closest('form[data-list-page-chooser]');
@@ -424,7 +422,7 @@ function pageLinkFor(ev, listElement) {
     return link && listElement.contains(link) ? link : null;
 }
 
-// The page a pagination request asks for, from the link's request data such as { page: 2 } or the request's own options
+// The page a pagination request asks for
 function targetPageFor(ev, link) {
     const match = /:\s*(\d+)\s*}\s*$/.exec(link.dataset.requestQuery || link.dataset.requestData || '');
     if (match) {

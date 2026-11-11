@@ -38,7 +38,7 @@ import { PopupStacker } from './popup-stacker.js';
 // Framework instance bound by registerPopup
 let jax = null;
 
-// Popup instances keyed by trigger element, popup container and first content div
+// Instances keyed by trigger, container and first div
 const instances = new WeakMap();
 
 // Popup sizes that have a Bootstrap dialog size class
@@ -194,7 +194,7 @@ export class Popup
             this.hide();
         });
 
-        // The browser can still close the dialog itself, which then closes the popup
+        // Browser-initiated close also hides the popup
         this.listen('close', () => {
             if (!this.isOpen || this.isConcealed || this.container.open) {
                 return;
@@ -208,7 +208,7 @@ export class Popup
             this.hide();
         });
 
-        // A backdrop click must also start on the backdrop, so a drag out of the popup is not one
+        // Backdrop clicks must start on the backdrop, not a drag out
         this.listen('mousedown', (ev) => {
             this.isBackdropPress = ev.target === this.container && isOutside(this.container, ev);
         }, false);
@@ -225,7 +225,7 @@ export class Popup
         jax.Events.dispatch('popup:show');
     }
 
-    // Binds a container listener, by default only for events targeting the dialog itself
+    // Binds a container listener, own events only by default
     listen(eventName, handler, ownEventsOnly = true) {
         const listener = (ev) => {
             if (!ownEventsOnly || ev.target === this.container) {
@@ -275,11 +275,11 @@ export class Popup
 
         dialog.className = 'control-popup dialog';
 
-        // Focus lands on the dialog itself, the content's autofocus elements follow after the animation
+        // Focus the dialog first, autofocus follows the animation
         dialog.tabIndex = -1;
         dialog.setAttribute('autofocus', '');
 
-        // Browsers that support it then ignore Escape, which could otherwise force the dialog closed
+        // Stop Escape from force closing the dialog
         if (!this.options.keyboard) {
             dialog.setAttribute('closedby', 'none');
         }
@@ -295,7 +295,7 @@ export class Popup
     }
 
     /**
-     * applySize maps a popup size onto Bootstrap's dialog size classes, replacing any earlier size.
+     * applySize maps a popup size to Bootstrap's dialog size classes.
      */
     applySize(size) {
         var dialog = this.container;
@@ -371,7 +371,7 @@ export class Popup
     }
 
     /**
-     * openDialog shows the dialog as a modal in the browser's top layer, returning false when it was already open.
+     * openDialog shows the modal, returning false when already open.
      */
     openDialog() {
         var dialog = this.container;
@@ -388,15 +388,15 @@ export class Popup
         this.isOpen = true;
         this.isConcealed = false;
 
-        // Over another popup, its backdrop only tints the page that popup already dims
+        // Stacked popups only tint the backdrop
         dialog.classList.toggle('popup-stacked', hasOtherOpenPopup(dialog));
 
-        // The loading backdrop already dims the page, so the dialog backdrop starts dimmed
+        // Start dimmed when swapping from the loading backdrop
         if (this.backdrop) {
             dialog.classList.add('dialog-swap-in');
         }
 
-        // Reading the layout settles the closed style, so the opening transition runs
+        // Force reflow so the opening transition runs
         void dialog.offsetWidth;
 
         dialog.showModal();
@@ -425,7 +425,7 @@ export class Popup
     }
 
     /**
-     * hideDialog runs the closing transition, then closes the dialog and removes the popup.
+     * hideDialog animates out, then closes and removes the popup.
      */
     hideDialog() {
         var dialog = this.container;
@@ -441,7 +441,7 @@ export class Popup
     }
 
     /**
-     * closeDialog closes the native dialog while it is still connected, so its close event reaches the stacker.
+     * closeDialog closes while connected, so the stacker sees the close.
      */
     closeDialog() {
         var dialog = this.container;
@@ -510,7 +510,7 @@ export class Popup
         afterTransition(dialog, () => dialog.classList.remove('dialog-static'));
     }
 
-    // Watches the content size, since the popup only scrolls while its content outgrows the window
+    // Watch content size to toggle scrolling
     observeContent() {
         if (typeof ResizeObserver === 'undefined') {
             return;
@@ -526,8 +526,7 @@ export class Popup
     }
 
     /**
-     * updateScrollable scrolls the popup as a whole only while its content is taller than the dialog allows,
-     * because a scrolling dialog clips the menus and pickers mounted inside it.
+     * updateScrollable scrolls only when needed, scrolling clips menus.
      */
     updateScrollable() {
         var dialog = this.container;
@@ -555,7 +554,7 @@ export class Popup
             this.backdrop = document.createElement('div');
             this.backdrop.className = 'popup-backdrop fade';
 
-            // Over its own open popup the dialog backdrop already dims the page, and over another it only tints it
+            // Clear over its own popup, tinted over another
             if (isOverPopup) {
                 this.backdrop.classList.add('popup-backdrop-clear');
             }
@@ -567,7 +566,7 @@ export class Popup
             indicator.className = 'popup-loading-indicator';
             this.backdrop.appendChild(indicator);
 
-            // Inside the open dialog it renders above it and stays outside the inert page
+            // Mount inside the open dialog, the page is inert
             var parent = isOverPopup
                 ? this.container
                 : (this.el && this.el.isConnected && this.el.closest('dialog[open]')) || document.body;
@@ -584,7 +583,7 @@ export class Popup
     }
 
     setLoading(val) {
-        // An open popup hidden behind the loading indicator needs a backdrop to hold it
+        // An open popup behind the loader needs a backdrop
         if (val && !this.backdrop && this.isOpen) {
             this.setBackdrop(true);
         }
@@ -735,14 +734,14 @@ export class Popup
     //
 
     /**
-     * getInstance returns the popup for a trigger element, popup container or first content div.
+     * getInstance returns the popup for a trigger, container or first div.
      */
     static getInstance(element) {
         return element ? instances.get(element) || null : null;
     }
 
     /**
-     * fromElement creates the popup on first use, then reloads it or calls the named method.
+     * fromElement creates the popup, or reloads it or calls a method.
      */
     static fromElement(element, option, ...args) {
         var data = instances.get(element);
@@ -773,8 +772,7 @@ export class Popup
     }
 
     /**
-     * bindToPopups transfers the supplied variables as hidden form inputs to any popup
-     * that is spawned within the supplied container. The spawned popup must contain a form element.
+     * bindToPopups adds vars as hidden inputs to popups opened inside.
      */
     static bindToPopups(container, vars) {
         resolveElements(container).forEach((el) => {
@@ -801,8 +799,7 @@ export class Popup
     }
 
     /**
-     * focusFirstInput focuses the first input when no other autofocus attribute is found,
-     * using a delay to account for the CSS animations used by the modal.
+     * focusFirstInput focuses the first input unless one has autofocus.
      */
     static focusFirstInput(container) {
         setTimeout(function() {
@@ -890,7 +887,7 @@ function parseContents(contents) {
     return template.content;
 }
 
-// Inserted markup does not run its scripts, so recreate them as jQuery's html() would
+// Recreate scripts so inserted markup runs them
 function activateScripts(container) {
     container.querySelectorAll('script').forEach((oldScript) => {
         var script = document.createElement('script');
@@ -905,19 +902,19 @@ function isVisible(el) {
     return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
 }
 
-// Checks a pointer event landed outside the dialog box, on its backdrop
+// Pointer event landed on the backdrop
 function isOutside(dialog, ev) {
     var rect = dialog.getBoundingClientRect();
 
     return ev.clientX < rect.left || ev.clientX > rect.right || ev.clientY < rect.top || ev.clientY > rect.bottom;
 }
 
-// Shows an element as a manual popover so it renders in the top layer, above open dialogs
 // Checks whether a popup other than the given dialog is open
 function hasOtherOpenPopup(dialog) {
     return Array.from(document.querySelectorAll('dialog.control-popup[open]')).some((open) => open !== dialog);
 }
 
+// Shows an element in the top layer, above open dialogs
 function showInTopLayer(element) {
     if (typeof element.showPopover !== 'function') {
         return;
@@ -927,7 +924,7 @@ function showInTopLayer(element) {
     element.showPopover();
 }
 
-// Runs the callback once the element's transition ends, or straight away when it has none
+// Runs the callback after the transition, or at once
 function afterTransition(element, callback) {
     var style = getComputedStyle(element),
         duration = (parseFloat(style.transitionDuration) || 0) + (parseFloat(style.transitionDelay) || 0),
@@ -961,7 +958,7 @@ function resolveElements(container) {
 }
 
 /*
- * Declarative binding, request loading indicator hooks and the jax.popup / jax.popupStacker globals
+ * Declarative binding, load indicator hooks and globals
  */
 export function registerPopup(framework) {
     jax = framework;

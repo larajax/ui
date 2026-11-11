@@ -189,7 +189,7 @@ export class Tooltips
     }
 }
 
-// Returns the event target when it carries a tooltip, ignoring text nodes and the document.
+// Event target with a tooltip, ignoring text nodes
 function tooltipTarget(ev) {
     const target = ev.target;
 

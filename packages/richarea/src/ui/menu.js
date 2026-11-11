@@ -2,8 +2,8 @@ import { h, icon } from './dom.js';
 import { defaultIcons } from '../icons.js';
 
 /**
- * createMenu renders a dropdown menu, where items are { label, icon, active, disabled,
- * style, run } objects or { type: 'separator' } and checkable menus show their state with checkIcon.
+ * createMenu renders a dropdown menu of items { label, icon, active,
+ * disabled, style, run } or { type: 'separator' }.
  */
 export function createMenu(items, { onSelect, checkable = false, checkIcon = defaultIcons.check, className = '' } = {}) {
     const menu = h('div', { className: 'rich-editor-menu ' + className, role: 'menu' });

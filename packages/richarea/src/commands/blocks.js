@@ -2,7 +2,7 @@ import { hasClass, toggleClass } from '../html/utils.js';
 import { currentTextblock, insertionChain, updateTextblocks } from './helpers.js';
 
 /**
- * isFormatActive checks a paragraph format key (N, H1 to H6, PRE) against the selection.
+ * isFormatActive checks a format key (N, H1-H6, PRE) is active.
  */
 function isFormatActive(re, key) {
     const { editor } = re;
@@ -42,7 +42,7 @@ function setFormat(re, key) {
 }
 
 /**
- * currentAlignment returns the text alignment of the block holding the selection.
+ * currentAlignment returns the selected block's text alignment.
  */
 function currentAlignment(re) {
     const block = currentTextblock(re.editor);
@@ -50,7 +50,7 @@ function currentAlignment(re) {
 }
 
 /**
- * alignButton defines a text alignment button, where left clears the alignment since it is the default.
+ * alignButton defines an alignment button; left clears alignment.
  */
 function alignButton(label, alignment, shortcut) {
     return {

@@ -7,7 +7,7 @@ import {
 } from '@tiptap/extension-table';
 
 /**
- * spanAttribute parses a colspan or rowspan, only writing it when it spans more than one.
+ * spanAttribute parses a colspan or rowspan, written only above one.
  */
 function spanAttribute(name) {
     return {
@@ -21,8 +21,7 @@ function spanAttribute(name) {
 }
 
 /**
- * cellAttributes drops the column widths the table plugin tracks, so saved tables carry no
- * pixel sizes and follow the site styles.
+ * cellAttributes drops column widths, so tables follow site styles.
  */
 function cellAttributes(parent) {
     return {
@@ -38,8 +37,7 @@ function cellAttributes(parent) {
 }
 
 /**
- * Table renders a plain table with a tbody, without the colgroup and width styles of the
- * default table node.
+ * Table renders a plain table, without colgroup and width styles.
  */
 export const Table = BaseTable.extend({
     renderHTML({ HTMLAttributes }) {

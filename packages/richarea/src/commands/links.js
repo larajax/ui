@@ -3,7 +3,7 @@ import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import { hasClass, isSafeUrl, toggleClass } from '../html/utils.js';
 
 /**
- * applyLink links the selection, or the link around the caret, to an address. Options:
+ * applyLink links the selection or caret's link. Options:
  * - text replaces the linked text when given
  * - fallbackText is inserted when nothing is selected
  * - target and className set those link attributes
@@ -41,8 +41,7 @@ export function applyLink(re, href, { text, fallbackText, target, className } = 
         attributes.class = className;
     }
 
-    // Nothing is selected, so the text is inserted as a new link, which also places it
-    // correctly at a gap cursor between blocks
+    // No selection: insert the link, which also suits a gap cursor
     if (empty) {
         const marks = (state.storedMarks || selection.$from.marks())
             .filter((mark) => mark.type !== linkType)
@@ -79,7 +78,7 @@ export function removeLink(re) {
 }
 
 /**
- * linkText returns the text of the link around the selection, or the selected text.
+ * linkText returns the surrounding link's text, or the selected text.
  */
 function linkText(re) {
     const { state } = re.editor;
@@ -180,7 +179,7 @@ export function browseLinks(re) {
 }
 
 /**
- * resolveLinkUrl turns a stored link into a browsable address with the resolveLink hook.
+ * resolveLinkUrl resolves a stored link with the resolveLink hook.
  */
 function resolveLinkUrl(re, href) {
     return re.options.hooks.resolveLink ? re.options.hooks.resolveLink(href) : href;

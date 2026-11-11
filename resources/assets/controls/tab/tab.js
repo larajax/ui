@@ -90,7 +90,7 @@ export function registerTab(jax) {
 
             const anchor = ev.target.closest('a') || ev.target;
 
-            // Relayout controls revealed by the tab, as the framework render cycle does
+            // Relayout controls the tab reveals
             jax.Events.dispatch('render');
             dispatchEvent(new Event('resize'));
 
@@ -189,7 +189,7 @@ export function registerTab(jax) {
             }
         }
 
-        // Returns the index of a tab or pane, or of the active tab when none is given.
+        // Index of a tab or pane, or of the active tab
         findTabIndex(tab) {
             const tabToFind = tab === undefined
                 ? this.nav.querySelector(':scope > li.active')
@@ -206,7 +206,7 @@ export function registerTab(jax) {
             return this.panes().indexOf(tabToFind);
         }
 
-        // Resolves a tab or pane given as an element or as a selector inside the control.
+        // Resolves a tab or pane from an element or selector
         resolveElement(tab) {
             if (typeof tab === 'string') {
                 return this.element.querySelector(tab);
@@ -342,7 +342,7 @@ export function registerTab(jax) {
     });
 }
 
-// Counts the ancestors of an element, used to tell nested tab controls apart.
+// Ancestor depth, to tell nested tab controls apart
 function countParents(element) {
     let count = 0;
 

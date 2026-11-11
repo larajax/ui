@@ -4,8 +4,7 @@
  */
 
 /**
- * readQuotedCell reads a quoted cell starting at its opening quote, returning null when the quote doesn't
- * close right before a tab, a line break or the end (the cell is then plain text starting with a quote).
+ * readQuotedCell reads a quoted cell, or null when it isn't one.
  */
 function readQuotedCell(text, start) {
     let value = '';
@@ -39,7 +38,7 @@ export function parseTsv(input) {
     let row = [];
     let i = 0;
 
-    // Spreadsheets end the copied text with a line break, which isn't another row
+    // A trailing line break isn't another row
     if (text.endsWith('\n')) {
         text = text.slice(0, -1);
     }
@@ -79,7 +78,7 @@ export function parseTsv(input) {
 }
 
 /**
- * stringifyTsv turns rows of values into clipboard text, quoting cells a spreadsheet would split or unquote.
+ * stringifyTsv turns rows into clipboard text, quoting where needed.
  */
 export function stringifyTsv(rows) {
     const text = rows.map((row) => row.map((value) => {
@@ -91,7 +90,7 @@ export function stringifyTsv(rows) {
         return /[\t\n\r]/.test(cell) || cell.startsWith('"') ? `"${cell.replace(/"/g, '""')}"` : cell;
     }).join('\t')).join('\n');
 
-    // A last row of empty cells keeps a line break after it, since a final line break is dropped when read
+    // An empty last row needs a line break, as reading drops one
     const last = rows[rows.length - 1];
     return last && last.every((value) => value === null || value === undefined || value === '') ? text + '\n' : text;
 }

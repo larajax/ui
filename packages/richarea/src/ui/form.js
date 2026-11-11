@@ -1,8 +1,7 @@
 import { h } from './dom.js';
 
 /**
- * createForm renders a small popover form, where onSubmit returns an error message to keep
- * the form open or anything else to accept the values.
+ * createForm renders a popover form; an onSubmit error keeps it open.
  */
 export function createForm({ title, fields, submitLabel, onSubmit, actions = [] }) {
     const controls = {};
@@ -17,7 +16,7 @@ export function createForm({ title, fields, submitLabel, onSubmit, actions = [] 
         let control;
 
         if (field.type === 'checkbox') {
-            // The Bootstrap check classes style it on a Bootstrap page, while it stays a native checkbox anywhere else
+            // Styled by Bootstrap if present, else a native checkbox
             control = h('input', { type: 'checkbox', className: 'check', id, name: field.name });
             control.checked = !!field.value;
 

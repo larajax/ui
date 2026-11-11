@@ -2,8 +2,7 @@ import { Node, mergeAttributes } from '@tiptap/core';
 import { cleanClassName, isSafeUrl } from '../html/utils.js';
 
 /**
- * parseDimension reads a width or height from the attribute or the inline style Froala wrote
- * when an image was resized, where style values keep their unit so they save as a style again.
+ * parseDimension reads a size from the attribute or Froala's style.
  */
 function parseDimension(element, name) {
     const attribute = (element.getAttribute(name) || '').trim();
@@ -28,7 +27,7 @@ function parseDimension(element, name) {
 }
 
 /**
- * renderDimension writes plain numbers as attributes and pixel or percentage values as a style.
+ * renderDimension writes numbers as attributes, units as a style.
  */
 function renderDimension(name, value) {
     if (!value) {
@@ -43,8 +42,7 @@ function renderDimension(name, value) {
 }
 
 /**
- * Image is an inline image, kept inline so existing content with images inside paragraphs
- * round trips unchanged; alignment is expressed through classes.
+ * Image is an inline node, so inline images round trip unchanged.
  */
 export const Image = Node.create({
     name: 'image',

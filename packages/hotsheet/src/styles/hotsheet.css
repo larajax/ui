@@ -122,7 +122,7 @@
     }
 }
 
-/* After a save found errors, the row is tinted and its invalid cell ringed */
+/* Invalid rows are tinted and the cell ringed */
 .hotsheet-row.has-invalid > .hotsheet-cell {
     &:not(.is-invalid) {
         background: var(--hotsheet-invalid-row-bg);
@@ -249,8 +249,7 @@
     z-index: 4;
 }
 
-/* Editor: invisible on the active cell while closed, covering it while open; at the top until a cell is
-   selected, so it never adds scroll space below the last row */
+/* Editor: hidden while closed, covers the cell while open */
 
 .hotsheet-input {
     position: absolute;
@@ -280,9 +279,9 @@
     }
 }
 
-/* Fill handle: a square on the selection's bottom right corner, hidden while editing */
+/* Fill handle: the selection's corner square, hidden while editing */
 
-/* Centred on the selection's corner by half its own size, which placeFillHandle relies on to keep it inside the grid */
+/* Offset by half its size, which placeFillHandle relies on */
 .hotsheet-fill-handle {
     --hotsheet-fill-handle-size: 0.625rem;
     position: absolute;
@@ -336,7 +335,7 @@
     background: var(--hotsheet-search-bg);
 }
 
-/* Resizing columns: a handle on the header's right edge, shown on hover */
+/* Column resizer on the header's right edge, shown on hover */
 
 .hotsheet-header {
     position: relative;
@@ -368,8 +367,7 @@
     }
 }
 
-/* Touch: the selected cell, the fill handle, the row headers of a selection and a selected column's resizer
-   take finger drags instead of scrolling */
+/* Touch: these take finger drags instead of scrolling */
 
 .hotsheet-cell.is-active,
 .hotsheet-fill-handle,
@@ -502,7 +500,7 @@
 
 /* Option list, a popover in the top layer */
 
-/* The list hangs from the cell: same width, no top edge, rounded only at the bottom */
+/* Hangs from the cell: same width, rounded at the bottom */
 .hotsheet-options {
     position: fixed;
     inset: auto;

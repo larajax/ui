@@ -1,9 +1,9 @@
 /*
  * Dropdown
  *
- * Gives Bootstrap menus (data-bs-toggle="menu") that carry the .control-dropdown class the library look.
+ * Library look for Bootstrap menus with .control-dropdown.
  */
-/* Rows sit a little in from the menu's edges with rounded corners, sized like form controls, as the filter's dropdown options are, under Bootstrap's own menu corners and shadow */
+/* Inset rounded rows, sized like form controls */
 .menu.control-dropdown {
     --bs-menu-zindex: var(--oc-zindex-dropdown);
     --bs-menu-font-size: 1rem;
@@ -21,7 +21,7 @@
     --bs-menu-item-border-radius: 0.25rem;
     border: var(--oc-popup-border);
 
-    /* Unlayered item states so link rules from the surrounding widget never win, submenu triggers included */
+    /* Unlayered states so widget link rules never win */
     > .menu-item,
     > .submenu > .menu-item {
         padding: var(--bs-menu-item-padding-y) var(--bs-menu-item-padding-x);

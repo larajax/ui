@@ -37,7 +37,7 @@
         }
     }
 
-    /* A left field beside a last right field ends the card too, while the two sit side by side */
+    /* Side-by-side last pair also ends the card */
     @media not all and (max-width: 48.0625em) {
         > .form-group.span-left:has(+ .form-group.span-right:nth-last-child(1 of :not(:empty, .oc-hide, .d-none, [hidden]))) {
             padding-bottom: 0;
@@ -80,7 +80,7 @@
     position: relative;
     -webkit-appearance: none;
 
-    /* Preview values keep block text flow, since Bootstrap 6 lays out every form control as flex */
+    /* Block flow for preview values, not flex */
     &:not(input, select, textarea, button, .form-adorn) {
         display: block;
     }
@@ -96,7 +96,7 @@
         border: 1px solid var(--oc-border-focus);
     }
 
-    /* A validated field keeps its colour in focus, so it shows without a ring too */
+    /* Invalid colour holds in focus */
     &.is-invalid:is(:focus, :focus-within) {
         border-color: var(--bs-danger-border);
     }
@@ -121,19 +121,19 @@
         cursor: not-allowed;
     }
 
-    /* A disabled input takes the field's disabled text colour, as a plain disabled input shows it */
+    /* Disabled input takes the field's disabled colour */
     &.form-adorn > .form-ghost:disabled {
         color: inherit;
     }
 }
 
-/* Font icons in an adornment take the size Bootstrap gives an SVG one */
+/* Font icons sized like SVG adornments */
 .form-adorn-icon > i {
     font-size: var(--bs-form-adorn-icon-size);
     line-height: 1;
 }
 
-/* An icon button inside an adorned field, such as a password's show button, is a round target around an adornment-sized icon */
+/* Round icon button inside an adorned field */
 .form-adorn > .btn-icon {
     --bs-btn-min-height: 1.5rem;
     --bs-btn-border-radius: 50%;
@@ -169,10 +169,10 @@
     position: relative;
     box-sizing: border-box;
 
-    /* Field containers keep block flow, since Bootstrap 6 lays out form groups as a grid */
+    /* Block flow, not Bootstrap's grid */
     display: block;
 
-    /* Bootstrap 6 zeroes the label margin inside form groups, so the label spacing is restored */
+    /* Restore the label margin Bootstrap 6 zeroes */
     > .form-label {
         margin-bottom: var(--bs-label-margin-bottom, calc(var(--bs-spacer) / 2));
     }
@@ -395,7 +395,7 @@
 }
 
 .form-text {
-    /* Bootstrap 6 darkened help text and dropped its top margin, so both are pinned */
+    /* Pin help text colour and margin over Bootstrap 6 */
     --bs-form-text-color: var(--bs-fg-3);
     margin-top: 0.25rem;
     margin-bottom: 0;
@@ -720,7 +720,7 @@ body.compact-container .form-fatal-error {
         display: inline-block;
         margin-right: 1.125rem;
 
-        /* An adorned field keeps the flex layout that lines its icon up with the input */
+        /* Adorned field keeps flex layout */
         &.form-adorn {
             display: inline-flex;
         }

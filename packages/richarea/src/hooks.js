@@ -36,7 +36,7 @@ export const defaultHooks = {
 };
 
 /**
- * makeHooks merges host hooks over the defaults, ignoring anything that is not a function.
+ * makeHooks merges host hooks over the defaults, functions only.
  */
 export function makeHooks(hooks) {
     const result = { ...defaultHooks };

@@ -17,7 +17,7 @@ export class CellEditor {
         this.textarea.setAttribute('rows', '1');
         this.textarea.setAttribute('aria-hidden', 'true');
 
-        // A touch screen's keyboard shows only while editing; a physical keyboard types into the closed editor
+        // Hides the touch keyboard until editing
         this.textarea.inputMode = 'none';
         container.append(this.textarea);
 
@@ -45,8 +45,7 @@ export class CellEditor {
     }
 
     /**
-     * refocus focuses the editor again, which a touch screen needs before its keyboard follows a change of
-     * input mode; call it while handling a tap.
+     * refocus refocuses so a touch keyboard follows; call it on a tap.
      */
     refocus() {
         this.textarea.blur();
@@ -54,7 +53,7 @@ export class CellEditor {
     }
 
     /**
-     * park places the closed textarea over a cell, so focusing it never scrolls the page.
+     * park places the closed editor over a cell, so focus never scrolls.
      */
     park(cellEl) {
         if (this.isOpen()) {
@@ -81,7 +80,7 @@ export class CellEditor {
     }
 
     /**
-     * openForTyping shows the editor without touching its value, so the key or composition being typed lands in it.
+     * openForTyping shows the editor, keeping its value for the typed key.
      */
     openForTyping(cell, cellEl) {
         this.cell = cell;
@@ -107,7 +106,7 @@ export class CellEditor {
     }
 
     /**
-     * describeOptions marks the editor as a combobox controlling the option list.
+     * describeOptions marks the editor as the option list's combobox.
      */
     describeOptions(list) {
         this.textarea.setAttribute('role', 'combobox');
@@ -131,7 +130,7 @@ export class CellEditor {
     }
 
     /**
-     * place covers the cell inside its grid lines at fractional precision, so the open editor's ring lands on the selection ring.
+     * place covers the cell exactly, so its ring matches the selection.
      */
     place(cellEl) {
         if (!cellEl) {

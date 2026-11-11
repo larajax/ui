@@ -15,7 +15,7 @@
 
 .ts-wrapper,
 .ts-dropdown {
-    /* Options, highlighted on hover and from the keyboard, the picked ones on a raised surface in the dark theme */
+    /* Options */
     --custom-select-option-padding-y: 0.625rem;
     --custom-select-option-padding-x: 0.875rem;
     --custom-select-option-radius: 0.25rem;
@@ -35,11 +35,11 @@
     --custom-select-dropdown-max-height: 14.25rem;
     --custom-select-font-size: var(--bs-btn-input-font-size);
 
-    /* Tags, Bootstrap chips sized to sit inside a field of the input height */
+    /* Tags */
     --custom-select-chip-height: 1.75rem;
     --custom-select-chip-gap: 0.25rem;
 
-    /* Icons drawn as images, so the field doesn't depend on the icon pack */
+    /* Icons as images, independent of the icon pack */
     --custom-select-icon-color: var(--bs-fg-3);
     --custom-select-search-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cg fill='none' stroke='%2395a5a6' stroke-width='1.5' stroke-linecap='round'%3e%3ccircle cx='7' cy='7' r='4.75'/%3e%3cpath d='m10.5 10.5 3.5 3.5'/%3e%3c/g%3e%3c/svg%3e");
 }

@@ -4,9 +4,9 @@
  */
 
 .field-phone {
-    /* The country picker at the start of the field: a flag, the calling code and a caret */
+    /* Country picker: flag, calling code and caret */
     .combobox-toggle.phone-country {
-        /* The space after the picker, on top of the field's own gap, with the divider in the middle */
+        /* Space after the picker, split by the divider */
         --phone-country-space: 0.75rem;
 
         position: relative;
@@ -38,7 +38,7 @@
             color: var(--bs-form-adorn-icon-color);
         }
 
-        /* The field draws the focus ring, so the focused or open picker only takes a background, as it does on hover */
+        /* Field draws the focus ring, so only a background here */
         &:hover:not(:disabled),
         &:focus-visible,
         &.show {
@@ -56,7 +56,7 @@
         }
     }
 
-    /* The country list: flag, name and calling code on one line, with the picked country highlighted */
+    /* Country list: flag, name and code on one line */
     .phone-countries {
         --bs-menu-min-width: 18.25rem;
         --bs-menu-max-height: 20.625rem;

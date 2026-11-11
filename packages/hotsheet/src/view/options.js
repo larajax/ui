@@ -61,7 +61,7 @@ export class OptionList {
     }
 
     /**
-     * move steps the highlight, starting from the first or last option when nothing is highlighted.
+     * move steps the highlight, from either end when none is set.
      */
     move(step) {
         if (!this.items.length) {
@@ -117,7 +117,7 @@ export class OptionList {
     }
 
     /**
-     * position hangs the list from the cell's selection ring, under it or above it when there isn't room below.
+     * position places the list below the cell, or above if no room.
      */
     position() {
         if (!this.anchorEl || !this.isOpen()) {

@@ -40,7 +40,7 @@ import {
     withAlpha
 } from './chart-utils.js';
 
-// How much of the ring's radius is the hole in the middle, less for small rings so they keep a visible band
+// Hole size as a share of radius, smaller for small rings
 const CUTOUT = '78%';
 const SMALL_CUTOUT = '70%';
 const SMALL_SIZE = 120;
@@ -48,14 +48,14 @@ const SMALL_SIZE = 120;
 // The opacity of a hovered value
 const HOVER_OPACITY = 0.85;
 
-// How far a hovered value lifts out of the ring, which the ring leaves room for
+// Hover lift distance, which the ring leaves room for
 const HOVER_OFFSET = 4;
 
 /**
- * buildPieConfig returns the Chart.js config for a ring of values, drawn counter-clockwise from the start angle, an angle from three o'clock.
+ * buildPieConfig returns the config for a counter-clockwise ring.
  */
 export function buildPieConfig({ values, colors, startAngle = 45, size = 200, theme = {}, label = (index) => String(index) }) {
-    // Chart.js draws clockwise, so the values go in reverse to run counter-clockwise from the start
+    // Reverse values to run counter-clockwise
     const order = values.map((_, index) => index).reverse();
     const ringColors = order.map((index) => colors[index]);
     const total = values.reduce((sum, valueInfo) => sum + valueInfo.value, 0);
@@ -97,7 +97,7 @@ export function buildPieConfig({ values, colors, startAngle = 45, size = 200, th
         },
         plugins: [{
             id: 'pieTrack',
-            // Draws an empty ring when there is nothing to show, so the chart keeps its shape
+            // Empty ring keeps the chart's shape
             beforeDatasetsDraw(chart) {
                 const meta = chart.getDatasetMeta(0);
                 const controller = meta && meta.controller;
@@ -150,7 +150,7 @@ export function registerChartPie(jax) {
 
             destroyChart(this);
 
-            // Puts the list back, so the chart draws again when the element reconnects
+            // Restore the list so the chart redraws on reconnect
             if (this.canvasBox) {
                 this.canvasBox.remove();
                 this.legend.remove();
@@ -197,7 +197,7 @@ export function registerChartPie(jax) {
 
             this.element.prepend(this.canvasBox);
 
-            // Truncate scoreboard in cases where there are more than 3 items, without leaving space under a shorter legend
+            // Truncate legends past 3 items
             legend.style.maxHeight = `${size}px`;
             legend.style.overflow = 'hidden';
 
@@ -215,7 +215,7 @@ export function registerChartPie(jax) {
             }));
         }
 
-        // The track reads the theme object it was given, so refreshing that object recolours it, and the values take the palette again
+        // Recolour the track and values for the theme
         onThemeChange() {
             if (!this.chart) {
                 return;

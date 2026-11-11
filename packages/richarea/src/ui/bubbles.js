@@ -44,7 +44,7 @@ function nodeRect(re) {
 }
 
 /**
- * imageRect returns the rectangle of the selected image, grown to keep clear of the resize handles.
+ * imageRect returns the selected image's rect, padded for handles.
  */
 function imageRect(re) {
     const rect = nodeRect(re);
@@ -75,7 +75,7 @@ const BUBBLES = [
     {
         name: 'snippet',
         buttons: ['snippetProperties', '|', 'nodeRemove'],
-        // Stands aside while the snippet properties panel is open, which takes the same spot
+        // Hidden while the snippet panel takes its spot
         match: (re) => {
             const element = selectedNode(re.editor, ['snippetBlock', 'snippetInline']) && selectedNodeElement(re.editor);
             return !!element && !isSnippetEditing(element);
@@ -104,8 +104,7 @@ const BUBBLES = [
 ];
 
 /**
- * BubbleManager shows a small contextual toolbar next to links, images, tables, snippets and
- * embeds while the editor has focus.
+ * BubbleManager shows contextual toolbars for selected content.
  */
 export class BubbleManager {
     constructor(richArea) {
@@ -177,8 +176,7 @@ export class BubbleManager {
     }
 
     /**
-     * isRectVisible checks the target overlaps both the viewport and the editor body, so
-     * bubbles for content scrolled out of view are hidden.
+     * isRectVisible checks a rect overlaps the viewport and editor body.
      */
     isRectVisible(rect) {
         const body = this.richArea.bodyElement.getBoundingClientRect();

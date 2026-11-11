@@ -29,13 +29,13 @@ const LANGUAGE_ALIASES = {
     zh: 'zh-cn'
 };
 
-// The folder of the language files relative to this file, in a variable so bundlers leave the folder out of a bundle
+// Language folder, a variable so bundlers leave it out
 const LANGUAGE_FOLDER = './languages';
 
 const LANGUAGE_CODE = /^[a-z]{2,3}(-[a-z0-9]{2,8})?$/;
 
 /**
- * getLanguages returns a registry of translations on the page, keyed by language code.
+ * getLanguages returns the page's translations by language code.
  */
 export function getLanguages(registry = 'LarajaxUiLanguages') {
     if (!globalThis[registry]) {
@@ -46,7 +46,7 @@ export function getLanguages(registry = 'LarajaxUiLanguages') {
 }
 
 /**
- * languageCandidates lists the codes that serve a locale, most specific first, such as pt-br and pt for pt_BR.
+ * languageCandidates lists a locale's codes, most specific first.
  */
 export function languageCandidates(code) {
     if (!code) {
@@ -61,7 +61,7 @@ export function languageCandidates(code) {
 }
 
 /**
- * resolveLanguage returns the code of the loaded translation serving a locale, or null for English.
+ * resolveLanguage returns a locale's loaded code, or null for English.
  */
 export function resolveLanguage(code, registry = 'LarajaxUiLanguages') {
     const languages = getLanguages(registry);
@@ -70,8 +70,7 @@ export function resolveLanguage(code, registry = 'LarajaxUiLanguages') {
 }
 
 /**
- * getStrings returns a widget's strings. A string comes from the overrides, then the translation for
- * the language (the page's lang attribute when not given), then the English defaults.
+ * getStrings returns a widget's strings, from overrides to English.
  */
 export function getStrings(widget, defaults, { language = null, overrides = null } = {}) {
     const code = resolveLanguage(language || document.documentElement.lang);
@@ -96,8 +95,7 @@ export function makeTranslator(widget, defaults, options = {}) {
 }
 
 /**
- * pluralize returns a string for a count with :count filled in, picking from an object of forms by
- * the language's plural category, such as one, few and many for ru, and falling back to other.
+ * pluralize picks a count's plural form and fills in :count.
  */
 export function pluralize(value, count, language = null) {
     let text = value;
@@ -117,16 +115,14 @@ export function pluralize(value, count, language = null) {
 }
 
 /**
- * hasLanguage tells whether the page has the translations of a language in all the given registries.
+ * hasLanguage tells whether every given registry has a language.
  */
 export function hasLanguage(language, registries = ['LarajaxUiLanguages']) {
     return !language || registries.every((registry) => !!getLanguages(registry)[language]);
 }
 
 /**
- * loadLanguage loads the language file of a language unless the page already has its translations in
- * all the given registries. The language is a code with a file, as the field's data-language gives it;
- * the widgets stay in English when the file fails to load, as it does from inside a bundle.
+ * loadLanguage loads a missing language file; failures stay English.
  */
 export function loadLanguage(language, registries = ['LarajaxUiLanguages']) {
     if (!language || !LANGUAGE_CODE.test(language) || hasLanguage(language, registries)) {

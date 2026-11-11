@@ -2,8 +2,7 @@
  * Date Picker - time controls
  * --------------------------------------------------
  *
- * Bootstrap 6 has no styles for the hour and minute inputs, AM/PM button and sliders below a
- * datetime calendar's dates, which the time panel of a time-only field shows on their own.
+ * Styles the time inputs, AM/PM button and sliders.
  */
 
 [data-vc="calendar"] {
@@ -28,7 +27,7 @@
         }
     }
 
-    /* Hours only fixes the minutes at 00, so their slider has nothing to choose and is left out */
+    /* Hours only: no minute slider */
     [data-vc-time-range="minute"]:has(> input[min="0"][max="0"]) {
         display: none;
     }
@@ -104,14 +103,14 @@
         }
     }
 
-    /* The sliders take the width left over, so the time controls never widen the calendar */
+    /* Sliders never widen the calendar */
     [data-vc-time="ranges"] {
         display: grid;
         gap: 0.25rem;
         contain: inline-size;
     }
 
-    /* The sliders take Bootstrap's range look: a rounded track and a primary thumb */
+    /* Bootstrap range look */
     [data-vc-time-range] input {
         display: block;
         width: 100%;

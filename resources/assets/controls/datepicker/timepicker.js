@@ -26,7 +26,7 @@
  */
 'use strict';
 
-// Labels of the panel and its controls, worded as the calendar's time controls are
+// Labels, worded as the calendar's time controls
 const LABELS = {
     panel: 'Time',
     time: 'Selecting a time',
@@ -83,7 +83,7 @@ export class TimePicker {
         return this.element !== null;
     }
 
-    // Opens the panel on the body, where onShow can move it, then places it.
+    // Opens on the body, where onShow can move it
     show() {
         if (this.element) {
             return;
@@ -153,7 +153,7 @@ export class TimePicker {
         this.element = null;
     }
 
-    // Selects an HH:mm or HH:mm:ss time, held inside the limits, without announcing it.
+    // Selects a time within limits, without announcing it
     setTime(time) {
         const [hours, minutes] = String(time).split(':').map(Number);
 
@@ -174,7 +174,7 @@ export class TimePicker {
     // Rendering
     //
 
-    // Renders the time controls with the markup of Vanilla Calendar Pro's time extension.
+    // Renders Vanilla Calendar Pro's time markup
     render() {
         const keeping = this.getKeeping();
 
@@ -203,7 +203,7 @@ export class TimePicker {
         return `<div data-vc-time-range="${unit}"><input type="range" min="${min}" max="${max}" step="1" aria-label="${LABELS[unit + 'Range']}" value="${value}"></div>`;
     }
 
-    // Shows the selected time in the inputs, the sliders and the AM/PM button.
+    // Shows the selected time in all controls
     update() {
         const keeping = this.getKeeping(),
             button = this.element.querySelector('[data-vc-time="keeping"]');
@@ -236,7 +236,7 @@ export class TimePicker {
     // Selection
     //
 
-    // Selects a time inside the limits and announces it, otherwise shows the selected time again.
+    // Selects an allowed time, else restores the shown one
     select(hours, minutes) {
         if (this.isAllowed('hour', hours) && this.isAllowed('minute', minutes)) {
             this.hours = hours;
@@ -307,7 +307,7 @@ export class TimePicker {
         }
     }
 
-    // Hovering a slider highlights the input it sets, as the calendar's time controls do.
+    // Hovering a slider highlights its input
     onPanelHover(ev) {
         const range = ev.target.matches('[data-vc-time-range] input') ? ev.target.parentNode : null;
 
@@ -330,7 +330,7 @@ export class TimePicker {
         }
     }
 
-    // Tab moves from the input into the open panel, and ArrowDown also opens it first.
+    // Tab enters the open panel, ArrowDown opens it first
     onInputKeydown(ev) {
         if (ev.shiftKey || ev.altKey || ev.ctrlKey || ev.metaKey) {
             return;
@@ -347,7 +347,7 @@ export class TimePicker {
         this.getControl('input', 'hour').focus();
     }
 
-    // Escape closes the panel, and cancelling the key keeps an enclosing dialog or popover open.
+    // Escape closes only the panel, not its dialog
     onDocumentKeydown(ev) {
         if (ev.key !== 'Escape') {
             return;
@@ -372,14 +372,14 @@ export class TimePicker {
         }
     }
 
-    // A press or focus outside the panel, its input and the input's labels closes the panel.
+    // Outside press or focus closes the panel
     onDocumentInteract(ev) {
         if (ev.target !== this.input && !this.element.contains(ev.target) && !this.isInputLabel(ev.target)) {
             this.hide();
         }
     }
 
-    // A press on a label of the input, such as the adorned field around it, focuses the input instead.
+    // A press on an input label focuses the input
     isInputLabel(target) {
         return Array.from(this.input.labels || []).some((label) => label.contains(target));
     }

@@ -8,7 +8,7 @@
 }
 
 table.table.data {
-    /* The reorder grip and the tree toggle share a size, so their hovers match */
+    /* Grip and tree toggle share a size */
     --list-control-size: 1.25rem;
 
     /*
@@ -53,7 +53,7 @@ table.table.data {
         vertical-align: middle;
         position: relative;
 
-        /* Flex centres the glyph, which overflows the square, evenly on each side, where grid would pin it to the start */
+        /* Flex centres the overflowing glyph evenly */
         span.list-reorder-handle {
             display: flex;
             align-items: center;
@@ -73,7 +73,7 @@ table.table.data {
             text-decoration: none;
             transition: opacity 0.15s, background-color 0.15s;
 
-            /* The grip glyph draws small in its em, so it takes a large size to stand as tall as the row's text */
+            /* Grip glyph draws small, so it needs a large size */
             i {
                 font-size: 1.75rem;
                 line-height: 1;
@@ -97,7 +97,7 @@ table.table.data {
         }
     }
 
-    /* The tree cell indents by level, with a guide under each ancestor's toggle running down its children */
+    /* Tree indent and ancestor guides */
     td.list-cell-tree {
         --tree-indent: 18px;
         --tree-toggle-size: var(--list-control-size);
@@ -107,7 +107,7 @@ table.table.data {
         vertical-align: middle;
         position: relative;
         transition: padding 0.3s ease;
-        /* Each guide sits mid-tile on a whole pixel, so no tile edge bleeds a faint line into the row's own toggle */
+        /* Guides snap to whole pixels to avoid edge bleed */
         background-image: repeating-linear-gradient(to right, transparent 0 calc(var(--tree-indent) / 2), var(--tree-guide-color) 0 calc(var(--tree-indent) / 2 + 1px), transparent 0 var(--tree-indent));
         background-repeat: no-repeat;
         background-size: calc(var(--tree-level, 0) * var(--tree-indent)) 100%;
@@ -144,7 +144,7 @@ table.table.data {
     }
 }
 
-/* After a checkbox, the grip column opens with a small gap so the grip keeps clear of it */
+/* Small gap after a checkbox */
 .control-list.list-checkboxes table.table.data {
     th.list-reorder,
     td.list-reorder {
@@ -152,7 +152,7 @@ table.table.data {
         min-width: 2rem;
     }
 
-    /* Placed to leave about the same room on each side, between the checkbox and the tree toggle */
+    /* Centred between checkbox and toggle */
     td.list-reorder {
         span.list-reorder-handle {
             left: 0.25rem;
@@ -160,12 +160,12 @@ table.table.data {
     }
 }
 
-/* The grip, toggle and name sit centred in a row however tall it grows, so the checkbox does too */
+/* Checkbox centres with the grip and toggle */
 .control-list[data-control~="liststructurewidget"] table.table.data tbody td.list-checkbox {
     vertical-align: middle;
 }
 
-/* With no row dragging, the grip is the only way to reorder, so it stays faintly in view */
+/* Grip stays faintly visible without row dragging */
 .control-list[data-drag-row=""] table.table.data td.list-reorder span.list-reorder-handle {
     opacity: 0.45;
 }
@@ -174,14 +174,14 @@ table.table.data {
     opacity: 1;
 }
 
-/* Sorted flat, the list offers its way back to the tree as an accent pill floated to the end of its last head cell, which widens to fit it */
+/* Pill to return a sorted list to the tree */
 table.table.data thead th.has-show-structure {
     button.list-show-structure {
         float: inline-end;
         display: inline-flex;
         align-items: center;
         gap: 0.3125rem;
-        /* Centred on the label line: its 0.625rem padding, less half the pill's extra height over the 1.3125rem line */
+        /* Centred on the label line */
         margin-block-start: 0.40625rem;
         margin-inline: 0.75rem;
         padding: 0.25rem 0.625rem;
@@ -208,7 +208,7 @@ table.table.data thead th.has-show-structure {
     }
 }
 
-/* A row that drags shows it is under the pointer, whether or not it opens a record */
+/* Hover on draggable rows */
 .control-list[data-control~="liststructurewidget"] table.table.data tbody:not(.tree-drag-mode) tr:not(.no-data):not(.active):not(.selected):hover td {
     background-color: var(--oc-list-row-hover-bg);
 }

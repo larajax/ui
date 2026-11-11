@@ -9,7 +9,7 @@ function clamp(value, max) {
 }
 
 /**
- * moveCell returns the cell reached from `cell` by a row and column step.
+ * moveCell returns the cell a row and column step away.
  */
 export function moveCell(cell, rowStep, colStep, rowCount, colCount, wrap = true) {
     let rowDelta = rowStep;
@@ -42,7 +42,7 @@ export function moveCell(cell, rowStep, colStep, rowCount, colCount, wrap = true
 }
 
 /**
- * extendCell returns the range end reached from `cell` by a step, without wrapping.
+ * extendCell returns the range end a step away, without wrapping.
  */
 export function extendCell(cell, rowStep, colStep, rowCount, colCount) {
     return {

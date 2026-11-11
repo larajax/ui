@@ -55,7 +55,7 @@ import { createPopper } from '../../vendor/popperjs/popper.esm.js';
 import { hasLanguage, loadLanguage, makeTranslator, pluralize, resolveLanguage } from '../../lang.js';
 
 /**
- * DEFAULT_LANG are the messages, a count's forms keyed by plural category, see pluralize().
+ * DEFAULT_LANG are the default messages, see pluralize().
  */
 export const DEFAULT_LANG = {
     noResults: 'No results found',
@@ -72,8 +72,7 @@ export const DEFAULT_LANG = {
 };
 
 /**
- * CustomTomSelect marks the change events Tom Select dispatches itself, so the control only follows
- * changes made to the select from outside.
+ * CustomTomSelect flags change events it dispatches itself.
  */
 class CustomTomSelect extends TomSelect {
     onChange() {
@@ -88,11 +87,11 @@ class CustomTomSelect extends TomSelect {
     }
 }
 
-// A cross drawn inline, so the remove and clear buttons don't depend on the icon pack
+// Inline cross icon, independent of the icon pack
 const CROSS_ICON ='<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>';
 
 /**
- * optionMark returns the dot, icon or image shown before an option's text, from its status, icon or image.
+ * optionMark returns the dot, icon or image before an option's text.
  */
 export function optionMark(data, escape, isChip = false) {
     if (data.status) {
@@ -113,8 +112,7 @@ export function optionMark(data, escape, isChip = false) {
 }
 
 /**
- * normalizeResults turns a handler's response into options and option groups: a results (or result)
- * list of id and text items, where an item with children is a group, or a map of values to labels.
+ * normalizeResults turns a handler response into options and groups.
  */
 export function normalizeResults(data) {
     const results = (data && (data.result || data.results)) || [];
@@ -205,7 +203,7 @@ export function registerCustomSelect(jax) {
             this.bindTomSelect();
         }
 
-        // focus moves the keyboard focus to the field without opening its dropdown, as tabbing to it would
+        // focus focuses the field without opening the dropdown
         focus() {
             if (this.element.disabled) {
                 return;
@@ -219,7 +217,7 @@ export function registerCustomSelect(jax) {
             this.tomSelect.focus();
         }
 
-        // refresh reads the options and value from the select again, without a change event
+        // refresh resyncs from the select without a change event
         refresh() {
             if (this.tomSelect) {
                 this.tomSelect.sync();
@@ -248,17 +246,17 @@ export function registerCustomSelect(jax) {
                 placeholder,
                 hidePlaceholder: true,
                 persist: false,
-                // Typing the first separator makes a tag, and without separators typed text only becomes one on Enter
+                // First separator makes a tag, otherwise only Enter does
                 delimiter: separators.length ? separators[0] : '',
                 duplicates: isTrue(data.duplicates),
                 selectOnTab: isTrue(data.selectOnTab),
                 searchField: data.searchFields ? data.searchFields.split(',').map((field) => field.trim()) : ['text'],
-                // Inside a dialog the dropdown joins it, since the page outside an open modal dialog is inert
+                // Mount inside a dialog, the page outside is inert
                 dropdownParent: select.closest('dialog') || 'body',
                 render: this.buildRender()
             };
 
-            // The search box sits in the dropdown of a single select, as the field shows the picked option
+            // Single select search box sits in the dropdown
             if (!isMultiple) {
                 if (this.hasSearch()) {
                     plugins.dropdown_input = {};
@@ -389,10 +387,8 @@ export function registerCustomSelect(jax) {
         }
 
         /**
-         * buildLoadSettings loads the options from the AJAX handler as the visitor types. The request sends
-         * the search text as term (and q), _type as query or query:append, and page from the second page.
-         * The handler returns a results list of id and text items, where an item with children is a group,
-         * or a map of values to labels, plus pagination.more to offer the next page.
+         * buildLoadSettings loads options from the AJAX handler on typing.
+         * Sends term, q, _type and page; expects results and pagination.more.
          */
         buildLoadSettings(settings, handler) {
             const select = this.element;
@@ -452,7 +448,7 @@ export function registerCustomSelect(jax) {
                 ts.control.classList.add('form-control-caret');
             }
 
-            // The size comes from the select's own class or a small or large group around it, and the dropdown follows
+            // Size from the select or its input group
             const size = ['sm', 'lg'].find((name) => select.classList.contains('form-control-' + name) || select.closest(`.form-group-${name}, .input-group-${name}`));
             if (size) {
                 ts.control.classList.add('form-control-' + size);
@@ -463,7 +459,7 @@ export function registerCustomSelect(jax) {
                 ts.control_input.classList.add('form-ghost');
             }
 
-            // Without a search box there is no input to hold the placeholder, so the field shows it
+            // No search box, so the field shows the placeholder
             if (!select.multiple && ts.settings.controlInput === null && ts.settings.placeholder) {
                 ts.control.dataset.placeholder = ts.settings.placeholder;
             }
@@ -478,8 +474,7 @@ export function registerCustomSelect(jax) {
                 ts.dropdown.classList.add('select-dropdown-auto-width');
             }
 
-            // The dropdown belongs to the field, so pressing in it is no press outside an enclosing popover, and
-            // as Tom Select's own page listener would, the press keeps the focus in the field unless it is the search box
+            // Contain presses and keep focus, except in the search box
             ts.dropdown.addEventListener('mousedown', (ev) => {
                 ev.stopPropagation();
 
@@ -488,11 +483,11 @@ export function registerCustomSelect(jax) {
                 }
             });
 
-            // Popper places the dropdown below the field, or above it when there is no room below
+            // Position with Popper
             ts.positionDropdown = () => this.positionDropdown();
             ts.on('dropdown_close', () => this.destroyPopper());
 
-            // A click opens the dropdown, a second click closes it, while focus from the keyboard leaves it closed
+            // Click toggles the dropdown, keyboard focus leaves it shut
             const onClick = ts.onClick;
             ts.hook('instead', 'onClick', () => {
                 const wasOpen = ts.isOpen;
@@ -522,7 +517,7 @@ export function registerCustomSelect(jax) {
             this.element.addEventListener('change', this.proxy(this.onSelectChange));
             this.element.addEventListener('focus', this.proxy(this.onSelectFocus));
 
-            // The field follows the select's disabled state, as input triggers toggle it
+            // Follow the select's disabled state
             this.observer = new MutationObserver(() => {
                 if (select.disabled) {
                     ts.disable();
@@ -534,7 +529,7 @@ export function registerCustomSelect(jax) {
             this.observer.observe(select, { attributes: true, attributeFilter: ['disabled'] });
         }
 
-        // A key typed on a closed single select opens it and starts the search, as in a native select
+        // Typing on a closed single select opens it and searches
         bindTypeToSearch() {
             const ts = this.tomSelect;
 
@@ -558,7 +553,7 @@ export function registerCustomSelect(jax) {
             });
         }
 
-        // Picking an option already picked in a multiple select that shows them takes it out again
+        // Picking a picked option removes it
         bindToggleOnSelect() {
             const ts = this.tomSelect;
             const onOptionSelect = ts.onOptionSelect;
@@ -599,7 +594,7 @@ export function registerCustomSelect(jax) {
             ts.on('blur', () => this.hideNotice());
         }
 
-        // The notice stands apart from the options, which Tom Select renders again as the field takes focus
+        // Notice sits outside the options, which Tom Select rerenders
         showNotice(message) {
             const ts = this.tomSelect;
 
@@ -628,7 +623,7 @@ export function registerCustomSelect(jax) {
             this.destroyPopper();
         }
 
-        // Each separator after the first turns the typed text into a tag, as the first does
+        // Extra separators also make tags
         bindExtraSeparators() {
             const ts = this.tomSelect;
             const separators = this.tokenSeparators.slice(1);
@@ -641,7 +636,7 @@ export function registerCustomSelect(jax) {
             });
         }
 
-        // A change made to the select from outside, such as setting its value, reaches the field
+        // Sync outside changes to the select
         onSelectChange() {
             const ts = this.tomSelect;
             if (!ts || ts.isDispatchingChange) {
@@ -656,7 +651,7 @@ export function registerCustomSelect(jax) {
             }
         }
 
-        // Code that focuses the hidden select, such as a popup's autofocus, focuses the field
+        // Forward focus on the hidden select to the field
         onSelectFocus() {
             this.focus();
         }
@@ -674,7 +669,7 @@ export function registerCustomSelect(jax) {
 
             const autoWidth = ts.dropdown.classList.contains('select-dropdown-auto-width');
 
-            // The dropdown sits a small gap from its field, 0.375rem in the page's root font size
+            // Gap of 0.375rem in the root font size
             const gap = parseFloat(getComputedStyle(document.documentElement).fontSize) * 0.375 || 6;
 
             this.popper = createPopper(ts.control, ts.dropdown, {
@@ -725,7 +720,7 @@ export function registerCustomSelect(jax) {
             }
         }
 
-        // A copy of the field stands in while the page swaps the markup, so the form does not jump
+        // Stand-in copy while markup swaps, so the form doesn't jump
         clonePlaceholder() {
             const wrapper = this.tomSelect && this.tomSelect.wrapper;
             if (!wrapper || !wrapper.isConnected) {
@@ -740,7 +735,7 @@ export function registerCustomSelect(jax) {
         }
     });
 
-    // A select with the custom-select class becomes the control when the page renders
+    // Bind select.custom-select on render
     addEventListener('render', function() {
         document.querySelectorAll('select.custom-select:not([data-control~="custom-select"])').forEach(function(element) {
             element.dataset.control = ((element.dataset.control || '') + ' custom-select').trim();

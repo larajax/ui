@@ -21,14 +21,14 @@ import { formatShortcut } from './ui/tooltip.js';
 import { h } from './ui/dom.js';
 
 /**
- * imageFiles returns the image files from a clipboard or drag data transfer.
+ * imageFiles returns the image files of a data transfer.
  */
 function imageFiles(dataTransfer) {
     return Array.from((dataTransfer && dataTransfer.files) || []).filter((file) => file.type.startsWith('image/'));
 }
 
 /**
- * scrollPositions records the scroll offsets of an element's ancestors, the page included.
+ * scrollPositions records the scroll offsets of all ancestors.
  */
 function scrollPositions(element) {
     const positions = [];
@@ -123,8 +123,7 @@ export class RichArea {
     }
 
     /**
-     * setContent replaces the document, where emitChange fires the change event and undoable
-     * records it in the undo history, both off for content loaded by the host.
+     * setContent replaces the document; change and undo are opt-in.
      */
     setContent(html, { emitChange = false, undoable = false } = {}) {
         const content = normalizeHtml(html || '', this.options);
@@ -144,8 +143,7 @@ export class RichArea {
     }
 
     /**
-     * emitChange fires the change event when the saved HTML actually changed, skipping the
-     * serialization entirely when nothing listens.
+     * emitChange fires change when the HTML changed, if anyone listens.
      */
     emitChange() {
         if (!(this.listeners.change || []).length) {
@@ -189,7 +187,7 @@ export class RichArea {
     }
 
     /**
-     * hasFocus checks whether the document, toolbar or an editor popup holds focus.
+     * hasFocus checks whether the editor or its popups hold focus.
      */
     hasFocus() {
         const active = document.activeElement;
@@ -201,8 +199,7 @@ export class RichArea {
     }
 
     /**
-     * addFocusElement counts an element outside the editor, such as a toolbar the page draws, as part
-     * of the editor for focus, so the contextual toolbars stay while it is used.
+     * addFocusElement treats an outside element as part of the editor.
      */
     addFocusElement(element) {
         if (element && !this.focusElements.includes(element)) {
@@ -215,7 +212,7 @@ export class RichArea {
     //
 
     /**
-     * getButtonDefinition resolves a button code, registered buttons taking precedence.
+     * getButtonDefinition resolves a button code, registered ones first.
      */
     getButtonDefinition(code) {
         const custom = this.options.buttons ? this.options.buttons[code] : null;
@@ -227,7 +224,7 @@ export class RichArea {
     }
 
     /**
-     * isButtonDisabled applies the read only and source view states to a button.
+     * isButtonDisabled applies read only and source view states.
      */
     isButtonDisabled(definition) {
         if (this.options.readOnly && !definition.availableReadOnly) {
@@ -242,8 +239,7 @@ export class RichArea {
     }
 
     /**
-     * resolveButtonIcon returns a button icon from its definition, then the icons option by button
-     * code, falling back to the custom button icon.
+     * resolveButtonIcon returns the definition, option or default icon.
      */
     resolveButtonIcon(code, definition) {
         if (definition.getIcon) {
@@ -305,8 +301,7 @@ export class RichArea {
     }
 
     /**
-     * getButtonState describes a button as it stands: its label, icon or text, shortcut, whether it runs,
-     * opens a menu or opens a panel, and whether it is active or disabled.
+     * getButtonState describes a button's label, icon, kind and state.
      */
     getButtonState(code) {
         const definition = this.getButtonDefinition(code);
@@ -331,9 +326,8 @@ export class RichArea {
     }
 
     /**
-     * getButtonMenu returns the items of a menu button as they stand, { type, label, icon, active,
-     * disabled, style, className, title }. Read them again before each showing, since they follow
-     * the selection.
+     * getButtonMenu returns a menu button's items: { type, label, icon,
+     * active, disabled, style, className, title }. Reread before showing.
      */
     getButtonMenu(code) {
         const definition = this.getButtonDefinition(code);
@@ -345,8 +339,7 @@ export class RichArea {
     }
 
     /**
-     * activateButton runs a button, or opens its menu or panel under an anchor element, such as a
-     * button of a toolbar the page draws, closing it when it is already open there.
+     * activateButton runs a button, or toggles its menu or panel.
      */
     activateButton(code, { anchor = null, focusMenu = false } = {}) {
         const definition = this.getButtonDefinition(code);
@@ -389,7 +382,7 @@ export class RichArea {
     }
 
     /**
-     * runMenuItem runs an item of a menu button by its position in getButtonMenu().
+     * runMenuItem runs a menu item by its getButtonMenu() index.
      */
     runMenuItem(code, index, { anchor = null } = {}) {
         const definition = this.getButtonDefinition(code);
@@ -404,7 +397,7 @@ export class RichArea {
     }
 
     /**
-     * openForm shows a popover form below an anchor element, or the selection when omitted.
+     * openForm shows a popover form below an anchor or the selection.
      */
     openForm(config, anchor) {
         const close = () => this.floating.close();
@@ -436,7 +429,7 @@ export class RichArea {
     toggleFullscreen() {
         this.isFullscreen = !this.isFullscreen;
 
-        // Locking the page for fullscreen resets its scroll, so the positions are put back instantly on the way out, since pages may scroll smoothly
+        // Fullscreen resets page scroll, so restore it instantly on exit
         if (this.isFullscreen) {
             this.fullscreenScroll = scrollPositions(this.root);
         }
@@ -455,7 +448,7 @@ export class RichArea {
     }
 
     /**
-     * refreshUi updates the toolbar and contextual toolbar, batched to one per frame.
+     * refreshUi updates the toolbars, once per frame.
      */
     refreshUi() {
         if (this.refreshFrame) {

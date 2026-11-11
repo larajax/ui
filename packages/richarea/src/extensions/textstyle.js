@@ -1,13 +1,12 @@
 import { TextStyle as BaseTextStyle } from '@tiptap/extension-text-style';
 
 /**
- * Style properties the text style mark stores, other span styles are ignored.
+ * Style properties the text style mark keeps; others are ignored.
  */
 const SUPPORTED_PROPERTIES = ['color', 'background-color', 'font-family', 'font-size'];
 
 /**
- * TextStyle only claims spans carrying a supported style property, so spans styled with
- * anything else are unwrapped instead of saved as empty span tags.
+ * TextStyle claims only spans with supported styles; others unwrap.
  */
 export const TextStyle = BaseTextStyle.extend({
     parseHTML() {

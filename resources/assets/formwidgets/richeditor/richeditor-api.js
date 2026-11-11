@@ -21,7 +21,7 @@
  */
 'use strict';
 
-// normalizeList accepts an array or comma separated string, returning a clean array or null
+// normalizeList returns a clean array, or null
 function normalizeList(value) {
     if (typeof value === 'string') {
         value = value.split(',');
@@ -38,7 +38,7 @@ function normalizeList(value) {
     return result.length ? result : null;
 }
 
-// findInsertIndex resolves a placement hint to an index in the button list
+// findInsertIndex resolves a placement hint to a list index
 function findInsertIndex(list, placement) {
     if (placement === 'start') {
         return 0;
@@ -80,7 +80,7 @@ export const richEditor = {
     buttons: {},
 
     /*
-     * hooks shared by every editor on this page, see the RichArea hooks for the available names
+     * hooks shared by every editor on this page, see the RichArea hooks
      */
     hooks: {},
 
@@ -121,9 +121,7 @@ export const richEditor = {
     },
 
     /*
-     * resolveButtons builds the toolbar list for an editor instance, configured
-     * buttons are used verbatim while the built-in default list receives
-     * registered button injection
+     * resolveButtons builds an editor's toolbar list
      */
     resolveButtons(context) {
         context = context || {};
@@ -142,8 +140,7 @@ export const richEditor = {
     },
 
     /*
-     * injectRegisteredButtons returns a copy of a button list with the
-     * registered buttons that request a toolbar placement injected
+     * injectRegisteredButtons returns a copy with placed buttons injected
      */
     injectRegisteredButtons(list) {
         const result = (list || []).slice();

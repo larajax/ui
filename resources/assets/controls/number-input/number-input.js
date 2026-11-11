@@ -39,7 +39,7 @@ export function registerNumberInput(jax) {
                 ? next
                 : this.element;
 
-            // The browser's separators replace the server's, which can differ or be missing for the locale
+            // Reformat with the browser's locale separators
             if (this.valueInput !== this.element && document.activeElement !== this.element) {
                 this.element.value = displayPlain(this.valueInput.value, this.format);
             }
@@ -61,7 +61,7 @@ export function registerNumberInput(jax) {
             return this.valueInput === this.element ? this.readShown() : this.valueInput.value;
         }
 
-        // Shows a plain number and posts it, announcing the change to dependent fields and triggers.
+        // Shows and posts a value, firing change.
         setValue(value) {
             this.show(normalizePlain(String(value ?? '')));
             this.commit(true);
@@ -84,7 +84,7 @@ export function registerNumberInput(jax) {
                 return;
             }
 
-            // Deleting a group separator deletes the digit beyond it, since the separator would come straight back
+            // Deleting a separator deletes the digit beyond it
             if (ev.key === 'Backspace' && start > 1 && value[start - 1] === group) {
                 ev.preventDefault();
                 this.reformat(value.slice(0, start - 2) + value.slice(start - 1), start - 2);
@@ -103,7 +103,7 @@ export function registerNumberInput(jax) {
             this.reformat(this.element.value, this.element.selectionStart ?? this.element.value.length);
         }
 
-        // A committed edit or a trigger fill settles the shown text, and only a separate hidden input needs its own change event.
+        // Settles on commit, only a hidden value input needs a change event.
         onChange(ev) {
             if (ev.target === this.element) {
                 this.settle(this.readShown());
@@ -111,7 +111,7 @@ export function registerNumberInput(jax) {
             }
         }
 
-        // Leaving an edited input settles it and announces a value the arrow keys changed, which fires no change event of its own.
+        // Settles on blur, announcing arrow key changes.
         onBlur() {
             if (this.isEdited) {
                 this.settle(this.getValue());
@@ -125,7 +125,7 @@ export function registerNumberInput(jax) {
             }
         }
 
-        // Rebuilds the typed text as a number, keeping the caret beside the same digit.
+        // Reformats typed text, keeping the caret by its digit.
         reformat(text, caret) {
             const parsed = parse(text, this.format, this.allowsNegative);
             const { display, positions } = render(parsed, this.format);
@@ -150,7 +150,7 @@ export function registerNumberInput(jax) {
             return toPlain(parse(this.element.value, this.format, this.allowsNegative));
         }
 
-        // Applies the range and the fixed decimals to a value once editing ends.
+        // Applies range and decimals once editing ends.
         settle(value) {
             value = normalizePlain(value);
 
@@ -185,7 +185,7 @@ export function registerNumberInput(jax) {
             this.isEdited = true;
         }
 
-        // Shows a plain number in the input and writes it to the input that posts.
+        // Shows a plain number and writes the posted value.
         show(value) {
             this.element.value = this.valueInput === this.element ? value : displayPlain(value, this.format);
             this.writeValue(value);
@@ -197,7 +197,7 @@ export function registerNumberInput(jax) {
             }
         }
 
-        // Records a value that differs from the last one, firing a change event from the input that posts when asked.
+        // Records a changed value, firing change when asked.
         commit(announce) {
             const value = this.getValue();
             if (value === this.committedValue) {
@@ -213,7 +213,7 @@ export function registerNumberInput(jax) {
     });
 }
 
-// Reads the display format, taking the separators and group sizes of its locale from the browser
+// Reads the display format with the locale's separators
 function resolveFormat(json) {
     let options = json;
 
@@ -263,7 +263,7 @@ function localeSymbols(locale) {
     };
 }
 
-// Reads typed text into a sign, integer digits and fraction digits, noting where each kept character came from
+// Parses text into sign and digits, tracking kept characters
 function parse(text, format, allowsNegative) {
     const parsed = { sign: '', integer: [], fraction: null, kept: [] };
     let decimalIndex = -1, signIndex = -1;
@@ -303,7 +303,7 @@ function parse(text, format, allowsNegative) {
     return parsed;
 }
 
-// The format's decimal symbol, or a point or comma that is not its group separator
+// Decimal symbol, or a point or comma that is not the group
 function isDecimalChar(char, format) {
     return char === format.decimal || ((char === '.' || char === ',') && char !== format.group);
 }
@@ -375,7 +375,7 @@ function displayPlain(value, format) {
     return render(parsed, format).display;
 }
 
-// Tidies a plain number: no leading zeros, no lone point and no sign on zero
+// Strips leading zeros, a lone point and sign on zero
 function normalizePlain(value) {
     const match = /^(-?)(\d*)(?:\.(\d*))?$/.exec(value.trim());
     if (!match || (!match[2] && !match[3])) {
@@ -389,7 +389,7 @@ function normalizePlain(value) {
     return sign + integer + (fraction ? '.' + fraction : '');
 }
 
-// Pads or rounds a plain number to a number of decimals, carrying into the integer digits
+// Pads or rounds to a number of decimals
 function withDecimals(value, decimals) {
     if (decimals === null || value === '') {
         return value;

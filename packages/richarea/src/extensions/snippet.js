@@ -10,19 +10,19 @@ import { h, icon } from '../ui/dom.js';
 const editingSnippets = new WeakSet();
 
 /**
- * Class of a snippet shown as a labelled placeholder, which never belongs in saved content.
+ * Placeholder class, never saved with the content.
  */
 const PLACEHOLDER_CLASS = 'rich-editor-snippet';
 
 /**
- * isSnippetEditing checks whether a snippet element has its properties panel open.
+ * isSnippetEditing checks whether a snippet's properties are open.
  */
 export function isSnippetEditing(element) {
     return editingSnippets.has(element);
 }
 
 /**
- * Attributes the snippet control and inspector add while editing, stripped from saved content.
+ * Editing attributes, stripped from saved content.
  */
 const EDITOR_ATTRIBUTES = new Set([
     'contenteditable',
@@ -40,8 +40,7 @@ const EDITOR_ATTRIBUTES = new Set([
 ]);
 
 /**
- * readSnippetAttributes collects the persisted attributes of a snippet element, which are
- * the snippet code, component, ajax flag and data-property-* values set by the inspector.
+ * readSnippetAttributes collects a snippet's saved attributes.
  */
 export function readSnippetAttributes(element) {
     const result = {};
@@ -76,9 +75,7 @@ function sameAttributes(first, second) {
 }
 
 /**
- * SnippetView renders the snippet element, hands it to the mountSnippet hook, which shows its
- * name and properties panel, and writes property changes back into the document, or shows a
- * labelled placeholder when there is no hook.
+ * SnippetView mounts a snippet with mountSnippet, or a placeholder.
  */
 class SnippetView {
     constructor({ node, editor, getPos }, tagName, options) {
@@ -108,7 +105,7 @@ class SnippetView {
     }
 
     /**
-     * renderPlaceholder labels the snippet with an icon, its snippet code and its component class.
+     * renderPlaceholder labels the snippet with its icon, code and class.
      */
     renderPlaceholder() {
         const attributes = this.node.attrs.attributes || {};
@@ -180,8 +177,7 @@ class SnippetView {
     }
 
     /**
-     * onPropertiesClosed saves the final properties and returns focus to the editor when the
-     * closed panel leaves it nowhere.
+     * onPropertiesClosed saves the properties and restores focus.
      */
     onPropertiesClosed() {
         editingSnippets.delete(this.dom);
@@ -220,7 +216,7 @@ class SnippetView {
 }
 
 /**
- * createSnippetNode builds the block (figure) or inline (span) snippet node type.
+ * createSnippetNode builds a block or inline snippet node type.
  */
 function createSnippetNode({ name, tagName, inline }) {
     return Node.create({
@@ -269,7 +265,7 @@ function createSnippetNode({ name, tagName, inline }) {
 
         addKeyboardShortcuts() {
             return {
-                // Space opens the properties of a selected snippet instead of typing over it
+                // Space opens a selected snippet's properties
                 Space: () => {
                     const { selection } = this.editor.state;
                     const element = selection instanceof NodeSelection && selection.node.type.name === name
@@ -290,6 +286,6 @@ function createSnippetNode({ name, tagName, inline }) {
 export const SnippetBlock = createSnippetNode({ name: 'snippetBlock', tagName: 'figure', inline: false });
 
 /**
- * SnippetInline is an inline snippet, stored as span[data-snippet][data-ui-block-inline].
+ * SnippetInline is stored as span[data-snippet][data-ui-block-inline].
  */
 export const SnippetInline = createSnippetNode({ name: 'snippetInline', tagName: 'span', inline: true });

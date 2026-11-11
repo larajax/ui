@@ -4,7 +4,7 @@
  */
 
 .ts-wrapper {
-    /* The field keeps Bootstrap's focus ring while its dropdown holds the focus, as a native select does */
+    /* Focus ring stays while the dropdown is open */
     &.focus > .ts-control,
     &.dropdown-active > .ts-control {
         --bs-focus-ring-offset: -1px;
@@ -218,7 +218,7 @@
         margin-inline-end: 0.5rem;
     }
 
-    /* A notice, such as the limit of a full multiple select, shows alone */
+    /* Notice, such as the selection limit, shows alone */
     > .select-notice {
         margin: var(--custom-select-dropdown-padding);
     }
@@ -230,7 +230,7 @@
         }
     }
 
-    /* A tag input without a dropdown turns typed text into tags as it goes */
+    /* Tag input without a dropdown */
     &.select-no-dropdown {
         display: none !important;
     }

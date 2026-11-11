@@ -592,7 +592,7 @@
             border-radius: 2px 2px 0 0;
         }
 
-        /* The cross is a mask painted in its background color, so it keeps the default fill */
+        /* Cross is a mask, so it keeps the default fill */
         .btn-close {
             position: absolute;
             top: 0.75rem;

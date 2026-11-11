@@ -5,8 +5,7 @@ import { serializeDocument } from '../html/serializer.js';
 import { h } from './dom.js';
 
 /**
- * SourceView swaps the document for its formatted HTML, using a plain textarea unless the
- * host supplies a code editor through the sourceEditor option.
+ * SourceView shows formatted HTML in a textarea or the sourceEditor.
  */
 export class SourceView {
     constructor(richArea, element) {
@@ -80,8 +79,7 @@ export class SourceView {
     }
 
     /**
-     * pinHeight holds the view at the height of the document it replaces so toggling it keeps the
-     * editor size, except in fullscreen where it fills the screen.
+     * pinHeight keeps the editor's height when toggling, except fullscreen.
      */
     pinHeight() {
         const re = this.richArea;
@@ -98,7 +96,7 @@ export class SourceView {
     }
 
     /**
-     * setValue replaces the source text, used when content is set while the view is open.
+     * setValue replaces the source text while the view is open.
      */
     setValue(html) {
         if (this.adapter) {
@@ -107,8 +105,7 @@ export class SourceView {
     }
 
     /**
-     * getCleanContent parses the source through the schema, so saving from the source view
-     * produces the same clean HTML as the document.
+     * getCleanContent parses the source through the schema for clean HTML.
      */
     getCleanContent() {
         const re = this.richArea;

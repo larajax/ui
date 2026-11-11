@@ -11,8 +11,7 @@ const BLOCK_TAGS = new Set([
 const INDENT = '    ';
 
 /**
- * formatHtml pretty prints editor HTML for the source view, one block per line with nested
- * blocks indented and inline content left untouched.
+ * formatHtml pretty prints HTML for the source view, a block per line.
  */
 export function formatHtml(html) {
     const template = document.createElement('template');
@@ -25,7 +24,7 @@ export function formatHtml(html) {
 }
 
 /**
- * formatChildren writes child nodes, grouping inline runs onto a single line.
+ * formatChildren writes child nodes, inline runs on one line.
  */
 function formatChildren(parent, depth, lines) {
     let inline = '';
@@ -53,7 +52,7 @@ function formatChildren(parent, depth, lines) {
 }
 
 /**
- * formatBlock writes a block element, expanding it only when it contains other blocks.
+ * formatBlock writes a block, expanded only if it holds blocks.
  */
 function formatBlock(element, depth, lines) {
     const hasBlockChildren = Array.from(element.childNodes).some(isBlock);

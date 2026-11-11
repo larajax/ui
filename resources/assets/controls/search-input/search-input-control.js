@@ -33,7 +33,7 @@ export function registerSearchInput(jax) {
             this.element.classList.remove('loading-indicator-container');
         }
 
-        // Empties the input and gives it focus, which would otherwise be lost with the hidden button.
+        // Empties the input and keeps focus.
         clearInput() {
             this.$input.value = '';
             this.toggleClearButton();
@@ -47,14 +47,13 @@ export function registerSearchInput(jax) {
             }
         }
 
-        // Escape in a growable box takes the focus from it, which closes the box again.
+        // Escape blurs a growable box to close it.
         onInputKeydown(ev) {
             if (ev.key === 'Escape' && this.$input.closest('.is-growable')) {
                 this.$input.blur();
             }
         }
 
-        // Shows the clear button while the input holds text, leaving its display to the stylesheet.
         toggleClearButton() {
             if (this.$input.value) {
                 this.$clearBtn.style.display = '';
@@ -74,7 +73,7 @@ export function registerSearchInput(jax) {
             ev.detail.context.options.data.allChecked = control.getAllChecked();
         }
 
-        // Marks the linked list as updating while a search redraws it, where a newer search aborts the last one without it ending.
+        // Marks the linked list updating while searching.
         onSearchRequest() {
             this.setListUpdating(true);
         }
@@ -91,7 +90,7 @@ export function registerSearchInput(jax) {
             }
         }
 
-        // Finds the list control named by the enclosing [data-list-linkage], each time since a search replaces it.
+        // Finds the linked list each time, a search replaces it.
         linkedList() {
             const linkage = this.element.closest('[data-list-linkage]');
             const widget = linkage ? document.querySelector('#' + linkage.dataset.listLinkage + ' > .control-list') : null;

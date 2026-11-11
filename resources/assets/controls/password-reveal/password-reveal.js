@@ -39,7 +39,6 @@ export function registerPasswordReveal(jax) {
             this.icon = null;
         }
 
-        // Finds the input named by aria-controls, or the one sharing the button's adorned field.
         findInput() {
             const id = this.element.getAttribute('aria-controls');
             const input = id ? document.getElementById(id) : null;
@@ -51,7 +50,7 @@ export function registerPasswordReveal(jax) {
             return field ? field.querySelector('input') : null;
         }
 
-        // A press and release on the button leave focus and the caret in the input, so typing carries on.
+        // Keeps focus and caret in the input.
         keepInputFocus(ev) {
             if (this.input && document.activeElement === this.input) {
                 ev.preventDefault();
@@ -83,7 +82,7 @@ export function registerPasswordReveal(jax) {
             this.setShown(false);
         }
 
-        // Switches the input type, keeping the caret where it was since a type change can move it.
+        // Switches type, restoring the caret it can move.
         setShown(isShown) {
             if (!this.input) {
                 return;

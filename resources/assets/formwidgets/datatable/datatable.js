@@ -155,7 +155,7 @@ export function registerDataTable(jax) {
                 lang: this.config.lang
             });
 
-            // New rows can be given default values by listening for datatable:new-row and setting detail.row keys
+            // datatable:new-row lets listeners set default values
             this.hot.on('beforeInsertRows', function(event) {
                 event.rows.forEach(function(row) {
                     self.element.dispatchEvent(new CustomEvent('datatable:new-row', { bubbles: true, detail: { row: row } }));
@@ -178,7 +178,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * buildColumns maps the widget's column definitions onto Hotsheet columns.
+         * buildColumns maps column definitions to Hotsheet columns.
          */
         buildColumns() {
             var self = this;
@@ -238,7 +238,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * indexPreloadedOptions keys the options loaded with the field by column and then by dependency values.
+         * indexPreloadedOptions keys preloaded options by dependency values.
          */
         indexPreloadedOptions(preloaded) {
             var self = this;
@@ -256,7 +256,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * getDependencyKey identifies a column's options by a row's values of the columns it depends on.
+         * getDependencyKey builds a key from the row's dependency values.
          */
         getDependencyKey(column, rowObject) {
             var dependsOn = [].concat(this.config.columnDependencies[column] || []);
@@ -268,7 +268,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * getKnownOptions returns every option loaded with the field for a column, so saved keys show their labels.
+         * getKnownOptions returns all preloaded options, to label saved keys.
          */
         getKnownOptions(column) {
             var preloaded = this.preloadedOptions[column] || {};
@@ -279,8 +279,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * loadOptions returns a remote column's options for a row, from those loaded with the field when they
-         * match its dependency values, or else from the model, cached per row values.
+         * loadOptions returns a remote column's options, preloaded or fetched.
          */
         loadOptions(column, rowObject) {
             var self = this;
@@ -296,7 +295,7 @@ export function registerDataTable(jax) {
                 rowData[col.data] = value === undefined ? null : value;
             });
 
-            // The promise is cached, so requests for the same row values while one is loading share it
+            // Cache the promise so concurrent requests share it
             var cacheKey = column + ':' + JSON.stringify(rowData);
             if (!this.optionCache[cacheKey]) {
                 this.optionCache[cacheKey] = new Promise(function(resolve) {
@@ -319,7 +318,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * clearOptionCache forgets a column's loaded options, after a column it depends on changes.
+         * clearOptionCache drops a column's cached options.
          */
         clearOptionCache(column) {
             var self = this;
@@ -332,7 +331,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * getDecimalSeparator returns the decimal separator of the backend locale, used to read typed numbers.
+         * getDecimalSeparator returns the backend locale's decimal separator.
          */
         getDecimalSeparator() {
             var meta = document.querySelector('meta[name="backend-locale"]');
@@ -351,8 +350,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * getEmptyState reads the placeholder message, given as true, { message: {...} } or the message itself,
-         * true leaving the grid its translated "No data".
+         * getEmptyState reads the placeholder message, true for the default.
          */
         getEmptyState(setting) {
             var message = setting && setting.message ? setting.message : setting;
@@ -365,7 +363,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * canAddRows and canDeleteRows tell whether rows may be added or removed, which a read-only table never allows.
+         * canAddRows and canDeleteRows tell whether rows may change.
          */
         canAddRows() {
             return this.config.readOnly !== true && this.config.adding !== false;
@@ -376,8 +374,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * buildContextMenu returns the right click menu: inserting and removing rows when allowed, undo and redo
-         * unless read-only, and freezing columns when columns can be reordered.
+         * buildContextMenu returns the right click menu items.
          */
         buildContextMenu(sheet, cell) {
             var options = this.config.hotOptions || {};
@@ -419,8 +416,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * onShortcut handles Alt+A (add a row below), Alt+Shift+A (add a row above) and Alt+D (delete the row),
-         * by the physical key so Option on macOS works too; disallowed ones are still kept from the grid.
+         * onShortcut handles row shortcuts by key code, so macOS Option works.
          */
         onShortcut(event, sheet) {
             var selection = sheet.getSelection();
@@ -451,8 +447,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * findInvalidCell checks every cell that would be saved, returning the first that breaks its column's
-         * rules as { row, col, message } in visual positions, or null.
+         * findInvalidCell returns the first invalid cell, or null.
          */
         findInvalidCell() {
             var sheet = this.hot;
@@ -490,7 +485,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * isSaveRequest tells whether a request saves the form, the requests requireValid blocks.
+         * isSaveRequest tells whether a request saves the form.
          */
         isSaveRequest(handler) {
             var formHandler = this.formEl ? this.formEl.getAttribute('data-request') : null;
@@ -498,8 +493,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * onBeforeChange stores checkbox text from pastes and fills as the column's checked or unchecked value,
-         * and resets the columns that depend on a changed one.
+         * onBeforeChange normalizes checkbox values and resets dependents.
          */
         onBeforeChange(changes) {
             var self = this;
@@ -515,14 +509,13 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * addDependentResets clears the columns that depend on a changed column within the same change, so one
-         * undo puts both back; a dependent the change sets itself, as a paste or import does, is left alone.
+         * addDependentResets clears dependents within the same undo step.
          */
         addDependentResets(changes) {
             var deps = this.config.columnDependencies || {};
             var dependents = Object.keys(deps);
 
-            // Resets join the list as it is read, so a chain of dependencies clears in turn
+            // Appended resets are read too, so chains clear in turn
             for (var i = 0; i < changes.length; i++) {
                 var change = changes[i];
 
@@ -565,7 +558,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * onChange saves the rows and lets the form know, for unsaved change warnings and fields that depend on it.
+         * onChange saves the rows and notifies the form.
          */
         onChange() {
             this.syncToHiddenInput();
@@ -573,7 +566,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * getLockerData reads the saved rows; a saved list with gaps in its keys arrives as an object.
+         * getLockerData reads the saved rows, which may arrive as an object.
          */
         getLockerData() {
             try {
@@ -646,7 +639,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * importCsv sends CSV text to the server, which matches its columns, and appends the returned rows.
+         * importCsv sends CSV to the server and appends the returned rows.
          */
         importCsv(text) {
             var self = this;
@@ -666,7 +659,7 @@ export function registerDataTable(jax) {
         }
 
         /**
-         * appendRows writes rows keyed by column after the last row with a value, adding rows as needed.
+         * appendRows writes rows after the last row with a value.
          */
         appendRows(rows) {
             var sheet = this.hot;
@@ -707,7 +700,7 @@ export function registerDataTable(jax) {
         onBeforeFormSubmit(event) {
             var handler = event.detail && event.detail.context && event.detail.context.handler;
 
-            // Requests the form sends take the typed value; the control's own, like option loads, leave the editor open
+            // Commit the editor, except for the control's own requests
             if (this.hot.isEditing() && !(handler && handler.indexOf(this.config.alias + '::') === 0)) {
                 this.hot.commitEditor();
             }
@@ -719,7 +712,7 @@ export function registerDataTable(jax) {
                 return;
             }
 
-            // With requireValid, a save stops at the first invalid cell, which is flagged, selected and explained
+            // requireValid stops a save at the first invalid cell
             var invalid = this.findInvalidCell();
             if (invalid) {
                 event.preventDefault();

@@ -6,8 +6,7 @@ import { tableButtons } from './tables.js';
 import { toolButtons } from './tools.js';
 
 /**
- * Built-in button definitions keyed by button code, the codes match the toolbar
- * button codes of earlier editors so saved toolbars keep working.
+ * Built-in buttons by code, matching earlier editors' toolbar codes.
  */
 export const buttonDefinitions = {
     ...formatButtons,
@@ -19,9 +18,7 @@ export const buttonDefinitions = {
 };
 
 /**
- * customButtonDefinition adapts a registered button (label, icon, onClick, focus, undo) to a
- * button definition, where onClick receives the editor facade and errors are logged so a
- * faulty button cannot break the editor.
+ * customButtonDefinition wraps a registered button, logging errors.
  */
 export function customButtonDefinition(name, definition) {
     return {

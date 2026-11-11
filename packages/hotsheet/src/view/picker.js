@@ -75,7 +75,7 @@ export class NativePicker {
             this.input.showPicker();
         }
         catch (error) {
-            // Browsers refuse without a user gesture; the editor stays usable by typing
+            // Needs a user gesture; typing still works
         }
     }
 

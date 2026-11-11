@@ -139,7 +139,7 @@ export function registerInputTrigger(jax) {
                 var triggers = this.findTriggers().filter((el) => !el.matches(NON_VALUE_INPUTS)),
                     checkedTriggers = this.findTriggers().filter((el) => el.matches('input[type=checkbox]:checked, input[type=radio]:checked'));
 
-                // A checked option posts over the hidden input that holds its field's empty value, so it is the value to test
+                // A checked option overrides its hidden empty-value input
                 if (checkedTriggers.length) {
                     triggers = triggers.filter((el) => !el.matches('input[type=hidden]')).concat(checkedTriggers);
                 }

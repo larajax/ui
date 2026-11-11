@@ -6,7 +6,7 @@ import { cleanClassName, splitClasses, titleFromUrl, parseList } from './utils.j
 const RUNTIME_ATTRIBUTES = ['contenteditable', 'draggable', 'tabindex', 'data-ui-block', 'spellcheck'];
 
 /**
- * Block elements that cannot live inside a paragraph and are lifted out of it.
+ * Blocks lifted out of paragraphs.
  */
 const LIFTED_TAGS = new Set([
     'FIGURE', 'IFRAME', 'TABLE', 'UL', 'OL', 'BLOCKQUOTE', 'HR', 'PRE', 'DIV',
@@ -14,15 +14,14 @@ const LIFTED_TAGS = new Set([
 ]);
 
 /**
- * Block elements where a final line break is ignored by browsers and removed.
+ * Blocks whose final line break is removed.
  */
 const TRAILING_BREAK_TAGS = new Set([
     'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'TD', 'TH', 'DIV', 'BLOCKQUOTE'
 ]);
 
 /**
- * Froala classes in older content and the classes that replace them, where null drops a class
- * that carries no styling.
+ * Froala classes and their replacements; null drops an unstyled class.
  */
 const LEGACY_CLASSES = new Map([
     ['fr-dib', 'oc-dib'],
@@ -34,9 +33,7 @@ const LEGACY_CLASSES = new Map([
 ]);
 
 /**
- * normalizeHtml repairs incoming markup before the schema parses it, covering Froala era
- * wrappers and editor artifacts that would otherwise be dropped or misread. The removeTags
- * option lists tags taken out with what they hold.
+ * normalizeHtml repairs incoming markup before the schema parses it.
  */
 export function normalizeHtml(html, options = {}) {
     if (typeof html !== 'string' || !html.trim()) {
@@ -82,8 +79,7 @@ function unwrapElements(root, selector) {
 }
 
 /**
- * unwrapImageCaptions flattens the Froala caption wrapper, moving its display classes to the
- * image and keeping the caption as text so no content is lost.
+ * unwrapImageCaptions flattens Froala captions, keeping their text.
  */
 function unwrapImageCaptions(root) {
     root.querySelectorAll('span.fr-img-caption').forEach((wrapper) => {
@@ -109,8 +105,7 @@ function unwrapImageCaptions(root) {
 }
 
 /**
- * convertMediaElements turns native video and audio tags into media figures, the same
- * markup the server renders back into players.
+ * convertMediaElements turns video and audio tags into media figures.
  */
 function convertMediaElements(root) {
     root.querySelectorAll('video[src], audio[src]').forEach((element) => {
@@ -127,7 +122,7 @@ function convertMediaElements(root) {
 }
 
 /**
- * cleanRuntimeArtifacts strips editor state attributes and classes from every element.
+ * cleanRuntimeArtifacts strips editor state attributes and classes.
  */
 function cleanRuntimeArtifacts(root) {
     root.querySelectorAll('*').forEach((element) => {
@@ -146,7 +141,7 @@ function cleanRuntimeArtifacts(root) {
 }
 
 /**
- * renameLegacyClasses swaps the Froala image and file classes for their oc- names.
+ * renameLegacyClasses swaps Froala classes for their oc- names.
  */
 function renameLegacyClasses(root) {
     root.querySelectorAll('[class*="fr-"]').forEach((element) => {
@@ -164,8 +159,7 @@ function renameLegacyClasses(root) {
 }
 
 /**
- * liftBlocksFromParagraphs splits paragraphs around nested block elements, so the parser
- * does not leave empty paragraphs behind.
+ * liftBlocksFromParagraphs splits paragraphs around nested blocks.
  */
 function liftBlocksFromParagraphs(root) {
     root.querySelectorAll('p').forEach((paragraph) => {
@@ -205,7 +199,7 @@ function isBlankParagraph(paragraph) {
 }
 
 /**
- * convertPreformattedBreaks turns line breaks inside preformatted blocks into newlines.
+ * convertPreformattedBreaks turns pre line breaks into newlines.
  */
 function convertPreformattedBreaks(root) {
     root.querySelectorAll('pre br').forEach((element) => {
@@ -214,8 +208,7 @@ function convertPreformattedBreaks(root) {
 }
 
 /**
- * removeTrailingBreaks drops the final line break of a block, which browsers ignore but the
- * editor would render as an extra empty line.
+ * removeTrailingBreaks drops a block's final line break.
  */
 function removeTrailingBreaks(root) {
     root.querySelectorAll('br').forEach((element) => {

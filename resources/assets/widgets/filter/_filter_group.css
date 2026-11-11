@@ -28,7 +28,7 @@
         }
     }
 
-    /* The selected options, as Bootstrap chips whose dismiss button takes each one off */
+    /* Selected options as dismissible chips */
     .filter-active-items {
         &:has(> ul:empty) {
             display: none;
@@ -64,7 +64,7 @@
         }
     }
 
-    /* The options left to add, as menu rows a little in from the popover's edges, scrolling on their own */
+    /* Options left to add */
     .filter-items {
         max-height: 14.25rem;
         margin-inline: -0.5rem;
@@ -83,7 +83,7 @@
         }
     }
 
-    /* Highlighted as the dropdown scope's options are, on hover and keyboard focus alike, with their text level with the chips */
+    /* Option rows, highlighted on hover and focus */
     .filter-item {
         display: flex;
         align-items: center;
@@ -113,7 +113,7 @@
         white-space: normal;
     }
 
-    /* The add mark shows on the row under the pointer or keyboard, so the list reads as plain options */
+    /* Add mark shows on hover and focus */
     .filter-item-icon {
         flex-shrink: 0;
         color: inherit;

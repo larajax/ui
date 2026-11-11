@@ -21,7 +21,7 @@
             text-overflow: ellipsis;
         }
 
-        /* Without a search box, the placeholder shows from the field's data attribute */
+        /* Placeholder without a search box */
         &[data-placeholder]::before {
             content: attr(data-placeholder);
             overflow: hidden;
@@ -47,7 +47,7 @@
     }
 }
 
-/* The placeholder of a select whose search box sits in the dropdown */
+/* Placeholder when the search box is in the dropdown */
 .ts-wrapper.plugin-dropdown_input {
     .items-placeholder {
         flex: 1 1 auto;

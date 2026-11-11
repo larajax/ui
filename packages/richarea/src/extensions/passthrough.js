@@ -27,7 +27,7 @@ const INLINE_TAGS = new Set([
     'kbd', 'label', 'mark', 'q', 'samp', 'small', 'span', 'strong', 'time', 'tt', 'u', 'var'
 ]);
 
-// Elements kept whole, since what they hold isn't text to edit, as blocks or inside text
+// Elements kept whole, as their content isn't editable text
 const RAW_BLOCK_TAGS = new Set([
     'audio', 'canvas', 'embed', 'form', 'map', 'math', 'menu', 'noscript', 'object', 'picture', 'script',
     'style', 'svg', 'template', 'video'
@@ -35,7 +35,7 @@ const RAW_BLOCK_TAGS = new Set([
 
 const RAW_INLINE_TAGS = new Set(['button', 'input', 'keygen', 'meter', 'output', 'progress', 'select', 'textarea']);
 
-// Tags with their own tools, the editor's attributes for each, and its kinds of content
+// Tool tags with their editor attributes and content kinds
 const TOOL_ATTRIBUTES = {
     paragraph: ['class', 'id'],
     heading: ['class', 'id'],
@@ -53,7 +53,7 @@ const TOOL_ATTRIBUTES = {
     link: ['href', 'target', 'rel', 'class']
 };
 
-// Style properties the editor's own tools set, left out of a kept style
+// Style properties the tools set, left out of a kept style
 const TOOL_STYLE_PROPERTIES = {
     paragraph: ['text-align'],
     heading: ['text-align']
@@ -63,7 +63,7 @@ const TOOL_STYLE_PROPERTIES = {
 const RUNTIME_ATTRIBUTES = new Set(['contenteditable', 'draggable', 'tabindex', 'spellcheck', 'data-ui-block']);
 
 /**
- * makePassthroughSettings turns the options into the lookups the passthrough uses, or null when off.
+ * makePassthroughSettings builds lookups from the options, or null.
  */
 export function makePassthroughSettings(options) {
     const allowTags = parseList(options.allowTags);
@@ -94,7 +94,7 @@ function isAllowedAttribute(settings, name) {
 }
 
 /**
- * captureAttributes returns the attributes an element keeps, leaving out those the editor sets itself.
+ * captureAttributes returns the attributes kept, minus the editor's.
  */
 function captureAttributes(settings, element, skip = [], skipStyles = []) {
     const result = {};
@@ -145,7 +145,7 @@ function allowedTags(settings, set) {
     return Array.from(settings.allowTags).filter((tag) => set.has(tag));
 }
 
-// The empty element matches an entry of allowEmptyTags, a tag name or a .class name
+// allowEmptyTags entries are tag names or .class names
 function emptyRuleSelectors(settings) {
     return settings.allowEmptyTags.map((entry) => (entry.startsWith('.') ? '*' + entry : entry));
 }
@@ -162,7 +162,7 @@ function renderTag(node) {
 }
 
 /**
- * HtmlBlock keeps a container holding other blocks, such as a div around paragraphs.
+ * HtmlBlock keeps a container of blocks, such as a wrapping div.
  */
 const HtmlBlock = Node.create({
     name: 'htmlBlock',
@@ -194,8 +194,7 @@ const HtmlBlock = Node.create({
 });
 
 /**
- * HtmlTextBlock keeps a container holding text directly, such as a div with a line of text, so the
- * text isn't moved into a paragraph.
+ * HtmlTextBlock keeps a text container without wrapping a paragraph.
  */
 const HtmlTextBlock = Node.create({
     name: 'htmlTextBlock',
@@ -234,8 +233,7 @@ const HtmlTextBlock = Node.create({
 });
 
 /**
- * HtmlInline keeps an element around text, such as an abbr, or a span with attributes beyond the
- * class and style the editor's own tools set.
+ * HtmlInline keeps an element around text, such as an abbr.
  */
 const HtmlInline = Mark.create({
     name: 'htmlInline',
@@ -255,7 +253,7 @@ const HtmlInline = Mark.create({
 
         return allowedTags(settings, INLINE_TAGS).map((tag) => ({
             tag,
-            // Ahead of the editor's own marks for the same tag only when it carries more than they keep
+            // Outranks the tool marks only when carrying more than they keep
             priority: 60,
             getAttrs: (element) => {
                 if (element.hasAttribute('data-snippet')) {
@@ -281,7 +279,7 @@ const HtmlInline = Mark.create({
 });
 
 /**
- * HtmlEmpty keeps an empty element listed in allowEmptyTags, such as an icon font element.
+ * HtmlEmpty keeps an allowed empty element, such as an icon.
  */
 const HtmlEmpty = Node.create({
     name: 'htmlEmpty',
@@ -321,8 +319,7 @@ const HtmlEmpty = Node.create({
 });
 
 /**
- * rawHtmlNode makes a node keeping an element whole, shown as a labelled placeholder so a form or
- * script in the content never runs inside the editor.
+ * rawHtmlNode keeps an element whole as an inert placeholder.
  */
 function rawHtmlNode(name, inline, tags) {
     return Node.create({
@@ -383,7 +380,7 @@ const HtmlRawBlock = rawHtmlNode('htmlRawBlock', false, RAW_BLOCK_TAGS);
 const HtmlRawInline = rawHtmlNode('htmlRawInline', true, RAW_INLINE_TAGS);
 
 /**
- * KeepAttributes keeps the other allowed attributes of the elements the editor has tools for.
+ * KeepAttributes keeps other allowed attributes on tool elements.
  */
 const KeepAttributes = Extension.create({
     name: 'keepAttributes',
@@ -410,7 +407,7 @@ const KeepAttributes = Extension.create({
 });
 
 /**
- * passthroughExtensions returns the extensions keeping unknown HTML, none when the options leave it off.
+ * passthroughExtensions returns the extensions keeping unknown HTML.
  */
 export function passthroughExtensions(options) {
     const settings = makePassthroughSettings(options);

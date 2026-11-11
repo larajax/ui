@@ -3,7 +3,6 @@
  */
 
 [data-control~="selector"] > .btn-group {
-    /* Many options wrap onto another row instead of overflowing the field */
     flex-wrap: wrap;
 
     /* Options are sized and coloured like the other inputs in the form */
@@ -20,7 +19,7 @@
         --bs-btn-disabled-color: var(--bs-btn-input-fg);
         --bs-btn-disabled-border-color: var(--bs-border-color);
 
-        /* Only the checked option takes the theme colour, also when disabled so preview mode shows the value */
+        /* Checked option is themed, also when disabled for preview */
         &:has(input:checked) {
             --bs-btn-active-bg: var(--bs-theme-bg);
             --bs-btn-active-color: var(--bs-theme-contrast);
@@ -31,7 +30,7 @@
         }
     }
 
-    /* A read-only selector looks like a disabled one, while its checked value still posts */
+    /* Read-only looks disabled, the value still posts */
     &[aria-readonly="true"] > .btn-check {
         pointer-events: none;
         opacity: var(--bs-btn-disabled-opacity);

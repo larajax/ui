@@ -1,22 +1,19 @@
 /*
  * Chart utilities
  *
- * Shared by the chart controls: the colour palette, the values and legend read from a chart's list,
- * the hover tooltip, the theme colours, and Chart.js, which loads on first use.
+ * Palette, legend, tooltip and theme helpers shared by the charts.
  */
 'use strict';
 
 import { registerDateAdapter } from './chart-date-adapter.js';
 
-// The colours given to values and data sets that set none, read from --chart-color-1 onwards, with
-// Bootstrap's blue, green, amber, red, violet, cyan, orange, pink, teal, lime, indigo and brown 500
-// for a token that is unset
+// Default palette from --chart-color-*, Bootstrap 500 fallbacks
 export const PALETTE = [
     '#0087fe', '#00b15a', '#ffa500', '#e62845', '#8e3de8', '#00b4f8',
     '#ff6800', '#e12871', '#00beb6', '#40ab00', '#7740ff', '#b76a32'
 ];
 
-// The theme colours a chart reads from its element, with the colour used when a token is unset
+// Theme colour tokens with their fallbacks
 const THEME_TOKENS = {
     text: ['--chart-text-color', '#545454'],
     grid: ['--chart-grid-color', 'rgba(0, 0, 0, 0.1)'],
@@ -41,7 +38,7 @@ export const chartLibrary = {
 };
 
 /**
- * loadChart imports Chart.js on first use, with the date adapter and the pointer tooltip position, and resolves with the Chart class.
+ * loadChart lazily imports Chart.js and resolves with Chart.
  */
 export function loadChart() {
     if (!chartLibrary.promise) {
@@ -63,14 +60,14 @@ export function loadChart() {
 }
 
 /**
- * isFlagOn returns whether a flag attribute is on, which it is when present with no value or a true one.
+ * isFlagOn returns whether a flag is present and not false.
  */
 export function isFlagOn(value) {
     return value === '' || (value !== undefined && value !== null && value !== false && value !== 0 && value !== 'false');
 }
 
 /**
- * getColor returns the palette colour for a value's position, from the theme's palette when given one.
+ * getColor returns the palette colour for a value's position.
  */
 export function getColor(index, palette = PALETTE) {
     const colors = palette && palette.length ? palette : PALETTE;
@@ -79,14 +76,14 @@ export function getColor(index, palette = PALETTE) {
 }
 
 /**
- * valueColors returns the colour of each value, its own or the next from the palette, resolved for a canvas.
+ * valueColors returns each value's colour, resolved for a canvas.
  */
 export function valueColors(element, values, palette) {
     return resolveColors(element, values.map((valueInfo, index) => valueInfo.color !== undefined ? valueInfo.color : getColor(index, palette)));
 }
 
 /**
- * loadListValues reads each item of a chart's list, its value from data-value or its span, and its data-color.
+ * loadListValues reads the value and colour of each list item.
  */
 export function loadListValues(list) {
     const result = {
@@ -123,7 +120,7 @@ export function loadListValues(list) {
 }
 
 /**
- * createLegend builds the legend table from a chart's list after it, with a colour indicator per row, and hides the list.
+ * createLegend builds a legend table from the list and hides it.
  */
 export function createLegend(list) {
     const legend = document.createElement('div');
@@ -168,7 +165,7 @@ export function getLegendLabel(legend, index) {
 }
 
 /**
- * showTooltip shows the chart tooltip below and to the right of a page position, kept inside the window.
+ * showTooltip shows the chart tooltip near a page position.
  */
 export function showTooltip(x, y, html) {
     hideTooltip();
@@ -210,7 +207,7 @@ export function escapeHtml(text) {
 }
 
 /**
- * formatNumber formats a value with the grouping and decimals of the page locale, leaving anything else as it is.
+ * formatNumber formats a number in the page locale.
  */
 export function formatNumber(value) {
     if (typeof value !== 'number' || !isFinite(value)) {
@@ -228,7 +225,7 @@ export function formatNumber(value) {
 }
 
 /**
- * tooltipRow returns a tooltip line with a colour dot, a label in markup and the value.
+ * tooltipRow returns a tooltip line: dot, label and value.
  */
 export function tooltipRow(color, labelHtml, value) {
     return '<div class="chart-tooltip-row">'
@@ -239,7 +236,7 @@ export function tooltipRow(color, labelHtml, value) {
 }
 
 /**
- * tooltipOptions returns the Chart.js tooltip settings that show the chart tooltip at the pointer, with the content a callback returns for the hovered points.
+ * tooltipOptions returns Chart.js settings for the pointer tooltip.
  */
 export function tooltipOptions(content) {
     return {
@@ -262,7 +259,7 @@ export function tooltipOptions(content) {
 }
 
 /**
- * readThemeColors resolves the chart colour tokens and the palette on an element to colours a canvas can draw.
+ * readThemeColors resolves the theme and palette colours for a canvas.
  */
 export function readThemeColors(element) {
     const colors = {};
@@ -282,7 +279,7 @@ export function readThemeColors(element) {
 }
 
 /**
- * resolveColors turns colours a canvas cannot draw as written, such as var(--bs-success-base), into the colours they compute to on an element.
+ * resolveColors resolves colours like CSS variables for a canvas.
  */
 export function resolveColors(element, colors) {
     const resolve = makeColorResolver(element);
@@ -292,7 +289,7 @@ export function resolveColors(element, colors) {
     return resolved;
 }
 
-// Returns a function that computes a colour through a hidden element, so CSS variables and theme functions resolve as the page draws them
+// Computes colours through a hidden element
 function makeColorResolver(element) {
     let probe = null;
 
@@ -322,7 +319,7 @@ function makeColorResolver(element) {
 }
 
 /**
- * watchTheme calls back when the page switches between light and dark, and returns a function that stops watching.
+ * watchTheme calls back on theme switches, returns a stop function.
  */
 export function watchTheme(callback) {
     const observer = new MutationObserver(() => callback());
@@ -342,7 +339,7 @@ export function watchTheme(callback) {
 }
 
 /**
- * withAlpha returns a colour at an opacity, for hex colours and the rgb, hsl, oklch, oklab, lab, lch and color() functions, or the colour as it is in another format.
+ * withAlpha returns a colour at an opacity, as-is when unsupported.
  */
 export function withAlpha(color, alpha) {
     const text = String(color || '').trim();
@@ -369,7 +366,7 @@ export function withAlpha(color, alpha) {
         return `hsla(${match[1].trim()}, ${match[2].trim()}, ${match[3].trim()}, ${alpha})`;
     }
 
-    // Space separated functions take the opacity after a slash, replacing one already there
+    // Opacity goes after a slash, replacing any existing
     match = text.match(/^(rgba?|hsla?|hwb|oklch|oklab|lch|lab|color)\(([^)]*)\)$/i);
     if (match) {
         return `${match[1].toLowerCase()}(${match[2].split('/')[0].trim()} / ${alpha})`;
@@ -379,7 +376,7 @@ export function withAlpha(color, alpha) {
 }
 
 /**
- * mergeOptions deep merges plain objects into a target, replacing arrays and other values.
+ * mergeOptions deep merges plain objects, replacing arrays.
  */
 export function mergeOptions(target, ...sources) {
     for (const source of sources) {
@@ -405,7 +402,7 @@ function isPlainObject(value) {
 }
 
 /**
- * createChart loads Chart.js and draws a chart for a control, dispatching "init" with the config first, which listeners may change, and "ready" with the chart after.
+ * createChart draws a control's chart, firing "init" then "ready".
  */
 export function createChart(control, canvas, config) {
     const ticket = control.chartTicket = (control.chartTicket || 0) + 1;
@@ -439,7 +436,7 @@ export function prefersReducedMotion() {
 }
 
 /**
- * destroyChart removes a control's chart and stops a pending one from drawing.
+ * destroyChart removes a control's chart, cancelling a pending one.
  */
 export function destroyChart(control) {
     control.chartTicket = (control.chartTicket || 0) + 1;

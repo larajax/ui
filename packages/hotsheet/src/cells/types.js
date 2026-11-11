@@ -50,7 +50,7 @@ function checkboxBoolean(value) {
 }
 
 /**
- * checkboxState returns checked, unchecked, empty (shown unchecked) or bad for a checkbox value.
+ * checkboxState returns checked, unchecked, empty or bad.
  */
 export function checkboxState(value, column) {
     const bool = checkboxBoolean(value);
@@ -67,7 +67,7 @@ export function checkboxState(value, column) {
 }
 
 /**
- * toggledCheckboxValue returns the value after a toggle, or undefined for a value that isn't a checkbox value.
+ * toggledCheckboxValue returns the value after a toggle, or undefined.
  */
 export function toggledCheckboxValue(value, column) {
     const state = checkboxState(value, column);
@@ -80,7 +80,7 @@ export function toggledCheckboxValue(value, column) {
 }
 
 /**
- * optionLabel returns the label shown for an option key, or the value itself when its label isn't known.
+ * optionLabel returns an option key's label, or the value itself.
  */
 export function optionLabel(column, value) {
     if (isEmptyValue(value)) {
@@ -92,7 +92,7 @@ export function optionLabel(column, value) {
 }
 
 /**
- * optionKey returns the key of the option whose label (or key) matches entered text, or the text itself.
+ * optionKey returns the key matching entered text, or the text.
  */
 export function optionKey(column, text) {
     const wanted = String(text).toLowerCase();
@@ -205,7 +205,7 @@ export function cellType(column) {
 }
 
 /**
- * registerCellType adds a column type, or replaces one, using the type properties described above.
+ * registerCellType adds or replaces a column type.
  */
 export function registerCellType(name, definition) {
     CELL_TYPES[name] = { render: renderText, parse: (value) => value, ...definition };

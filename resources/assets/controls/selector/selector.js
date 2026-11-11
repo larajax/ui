@@ -38,7 +38,7 @@ export function registerSelector(jax) {
             this.listen('trigger:disable', this.onTriggerDisable);
         }
 
-        // Cancels a pick on a read-only selector, and clears the value when the checked option is clicked and empty values are allowed.
+        // Blocks read-only picks, clears on clicking the checked option.
         onClick(ev) {
             const radio = ev.target.closest('input[type=radio]');
             if (!radio || !this.element.contains(radio)) {
@@ -50,13 +50,13 @@ export function registerSelector(jax) {
                 return;
             }
 
-            // A click on the checked option fires no change event, so it still matches the last value
+            // No change event fires, so it still matches lastValue
             if (this.allowEmpty && radio.value === this.lastValue) {
                 this.setValue('');
             }
         }
 
-        // Space on the checked option clears it when empty values are allowed, since browsers fire no click for it.
+        // Space clears the checked option, browsers fire no click.
         onKeydown(ev) {
             if (ev.key !== ' ' || !this.allowEmpty || this.isReadOnly()) {
                 return;
@@ -72,7 +72,7 @@ export function registerSelector(jax) {
             this.clearedByKey = radio;
         }
 
-        // A browser that still turns the key release into a click is stopped from checking the option again.
+        // Stops a key release click from rechecking the option.
         onKeyup(ev) {
             if (ev.key === ' ' && this.clearedByKey) {
                 setTimeout(() => {
@@ -107,7 +107,7 @@ export function registerSelector(jax) {
             return checked ? checked.value : '';
         }
 
-        // Checks the matching option, or none for an empty value, and notifies dependent fields and triggers of the change.
+        // Checks the matching option and fires change.
         setValue(value) {
             value = value === null || value === undefined ? '' : String(value);
 

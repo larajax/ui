@@ -8,7 +8,7 @@
 
 import { Popover } from '../../controls/popover/popover.js';
 
-// One base class per framework instance, so subclasses extend the injected ControlBase
+// One base class per framework instance, for its ControlBase
 const baseClasses = new WeakMap();
 
 // SortableJS is shared by every repeater, loaded on first use
@@ -44,7 +44,7 @@ export function createRepeaterFormWidgetBase(jax) {
                 maxItems: null
             };
 
-            // Only missing attributes take the default; an empty attribute is PHP's false
+            // Default only missing attributes, as empty is PHP's false
             for (const key in defaults) {
                 if (this.config[key] === undefined) {
                     this.config[key] = defaults[key];
@@ -150,8 +150,7 @@ export function createRepeaterFormWidgetBase(jax) {
             }
         }
 
-        // syncSortableSelection makes the multi-drag selection match the checked items, since
-        // a handle click toggles it and another repeater's selection replaces it
+        // syncSortableSelection matches multi-drag to the checked items
         syncSortableSelection() {
             if (!this.sortable) {
                 return;
@@ -231,7 +230,7 @@ export function createRepeaterFormWidgetBase(jax) {
             });
         }
 
-        // findOwnItem returns this repeater's item for the element, skipping nested repeaters
+        // findOwnItem returns this repeater's item, skipping nested ones
         findOwnItem(el) {
             if (!this.itemContainer) {
                 return null;
@@ -262,8 +261,7 @@ export function createRepeaterFormWidgetBase(jax) {
             }
         }
 
-        // ownsElement checks containment against this repeater, so nested
-        // repeaters never respond to each other's elements
+        // ownsElement ignores elements of nested repeaters
         ownsElement(el) {
             return el.closest('.field-repeater') === this.element;
         }
@@ -339,7 +337,7 @@ export function createRepeaterFormWidgetBase(jax) {
 
         onRemoveItemSuccess(items) {
             items.forEach((item) => {
-                // A removed item must leave the selection, or a multi-drag would put it back
+                // Deselect a removed item so multi-drag can't restore it
                 if (Sortable) {
                     Sortable.utils.deselect(item);
                 }
@@ -461,7 +459,7 @@ export function createRepeaterFormWidgetBase(jax) {
         }
 
         clickPaletteAddItem(ev, target) {
-            // The request fires from the repeater element to inherit the parent form data
+            // Fire from the repeater to inherit the parent form data
             if (this.palettePopover) {
                 this.palettePopover.hide();
                 this.palettePopover = null;
@@ -661,7 +659,7 @@ export function createRepeaterFormWidgetBase(jax) {
     return RepeaterFormWidgetBase;
 }
 
-// loadSortable imports SortableJS once, which comes with its MultiDrag plugin mounted for checked items
+// loadSortable imports SortableJS once, with MultiDrag mounted
 function loadSortable() {
     if (!sortablePromise) {
         sortablePromise = import('../../vendor/sortablejs/sortable.esm.js').then((sortable) => {

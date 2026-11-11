@@ -61,7 +61,7 @@ export function registerCheckbox(jax) {
             }
         }
 
-        // The browser has already toggled the input here, so the full state is reapplied.
+        // The browser already toggled the input, so reapply the state
         onClickCycleState() {
             this.setState((this.getState() + 1) % 3);
         }

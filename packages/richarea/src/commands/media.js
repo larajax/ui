@@ -15,19 +15,19 @@ const IMAGE_ALIGNMENTS = {
 };
 
 /**
- * Classes of the default image alignments, cleared on realignment even when a host configures others.
+ * Default alignment classes, always cleared on realignment.
  */
 const DEFAULT_ALIGN_CLASSES = ['oc-dii', 'oc-dib', 'oc-fil', 'oc-fir'];
 
 /**
- * allAlignClasses lists every class used by the image alignment options.
+ * allAlignClasses lists every image alignment class.
  */
 function allAlignClasses(re) {
     return splitClasses(Object.values(re.options.imageAlignClasses)).concat(DEFAULT_ALIGN_CLASSES);
 }
 
 /**
- * imageAlignment reads the alignment option matching an image's classes.
+ * imageAlignment returns the alignment matching an image's classes.
  */
 function imageAlignment(re, className) {
     const classes = splitClasses(className);
@@ -63,7 +63,7 @@ function imageAlignClass(re, currentClass, alignment) {
 }
 
 /**
- * insertImages inserts images at the selection, or replaces the source of a selected image.
+ * insertImages inserts images, or replaces a selected image's source.
  */
 export function insertImages(re, urls, { replace = false } = {}) {
     if (!urls.length) {
@@ -82,7 +82,7 @@ export function insertImages(re, urls, { replace = false } = {}) {
 }
 
 /**
- * uploadImages uploads images from the computer with the upload hook and inserts them.
+ * uploadImages uploads and inserts local images.
  */
 async function uploadImages(re, { replace = false } = {}) {
     const files = await selectFiles({ accept: 'image/*', multiple: !replace, root: re.root });
@@ -90,7 +90,7 @@ async function uploadImages(re, { replace = false } = {}) {
 }
 
 /**
- * uploadAndInsertImages uploads image files one at a time, inserting each as it completes.
+ * uploadAndInsertImages uploads and inserts images one at a time.
  */
 export async function uploadAndInsertImages(re, files, { replace = false } = {}) {
     for (const file of files) {
@@ -105,7 +105,7 @@ export async function uploadAndInsertImages(re, files, { replace = false } = {})
 }
 
 /**
- * alertUploadFailed reports a failed upload with the reason given by the upload hook.
+ * alertUploadFailed reports a failed upload and its reason.
  */
 function alertUploadFailed(re, error) {
     const reason = error && error.message ? error.message : '';
@@ -138,7 +138,7 @@ function browseImages(re, { replace = false } = {}) {
 }
 
 /**
- * promptUrl opens a single address field and passes the valid address to a callback.
+ * promptUrl asks for an address and passes a valid one to a callback.
  */
 function promptUrl(re, anchor, callback, value = '') {
     re.openForm({
@@ -159,7 +159,7 @@ function promptUrl(re, anchor, callback, value = '') {
 }
 
 /**
- * promptEmbedCode opens the embedding code field and inserts the frame it contains.
+ * promptEmbedCode asks for embed code and inserts its frame.
  */
 function promptEmbedCode(re, anchor) {
     re.openForm({
@@ -186,7 +186,7 @@ function promptEmbedCode(re, anchor) {
 }
 
 /**
- * embedUrlFor converts a YouTube or Vimeo page address into its embeddable frame address.
+ * embedUrlFor converts a YouTube or Vimeo address to its embed URL.
  */
 function embedUrlFor(url) {
     const youtube = /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/i.exec(url);
@@ -203,7 +203,7 @@ function embedUrlFor(url) {
 }
 
 /**
- * insertMedia inserts a video or audio figure, or a frame for known video hosts.
+ * insertMedia inserts a video or audio figure, or a host's frame.
  */
 function insertMedia(re, type, url, label) {
     const embedUrl = type === 'video' ? embedUrlFor(url) : null;
@@ -223,8 +223,7 @@ function insertMedia(re, type, url, label) {
 }
 
 /**
- * browseSingleFile picks one file with the media picker hook, alerting when nothing or more
- * than one was chosen.
+ * browseSingleFile picks one file with the media picker, else alerts.
  */
 function browseSingleFile(re, type, callback) {
     re.options.hooks.browseMedia({
@@ -248,7 +247,7 @@ function browseSingleFile(re, type, callback) {
 }
 
 /**
- * browseMedia picks a single video or audio file with the media picker hook.
+ * browseMedia picks a video or audio file with the media picker.
  */
 function browseMedia(re, type) {
     browseSingleFile(re, type, (item) => {
@@ -262,14 +261,14 @@ function browseMedia(re, type) {
 }
 
 /**
- * insertFileLink links the selection, or a new title, to a file with the file link class.
+ * insertFileLink links the selection or a new title to a file.
  */
 function insertFileLink(re, url, title) {
     applyLink(re, url, { fallbackText: title || titleFromUrl(url), className: 'oc-file' });
 }
 
 /**
- * mediaMenu builds the shared upload, browse and address menu for insert buttons.
+ * mediaMenu builds the upload, browse and address menu.
  */
 function mediaMenu(re, handlers) {
     const items = [];

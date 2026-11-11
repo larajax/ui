@@ -2,10 +2,7 @@
  * October icon pack
  * --------------------------------------------------
  *
- * The library sizes its icons for Phosphor, whose glyphs fill about three quarters of the
- * font size, where October's icon font fills all of it. These rules size October's icons
- * where that difference shows, keeping the sizes October has always drawn them at.
- * Each one matches only October's icon classes, so other icon packs keep the widget sizes.
+ * Sizes October icons, which fill more of their box than Phosphor's.
  */
 
 /* Rich editor toolbar, snippets and menus */
@@ -23,7 +20,7 @@ figure.rich-editor-snippet .rich-editor-icon:is([class^="icon-"], [class*=" icon
     font-size: 1rem;
 }
 
-/* The reorder glyph is drawn small within its box, so its handles take a larger size */
+/* Reorder glyph draws small, so handles size up */
 .field-repeater a.repeater-item-handle :is([class^="icon-"], [class*=" icon-"]),
 .list-setup-columns .drag-handle :is([class^="icon-"], [class*=" icon-"]) {
     font-size: 1.75rem;

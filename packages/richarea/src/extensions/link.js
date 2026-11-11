@@ -24,7 +24,7 @@ export const Link = BaseLink.extend({
 });
 
 /**
- * linkProtocolValidator accepts links using the extra protocols, such as page references, besides the default ones.
+ * linkProtocolValidator also accepts the extra protocols given.
  */
 export function linkProtocolValidator(protocols) {
     const names = protocols.map((name) => String(name).replace(/[^\w+.-]/g, '').replace(/[+.]/g, '\\$&')).filter(Boolean);

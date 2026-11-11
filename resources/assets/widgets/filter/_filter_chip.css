@@ -21,7 +21,7 @@
             border-color: var(--oc-filter-text);
         }
 
-        /* An unused chip tints on hover and while open, so it reads as a button */
+        /* Inactive chip tints on hover and while open */
         &:not(.active):is(:hover, :has(.popover-highlight), :has(.combobox-toggle.show)) {
             background: var(--oc-filter-bg-hover);
         }
@@ -42,12 +42,12 @@
             box-shadow: none;
         }
 
-        /* Beside a clear button, while an active toggle keeps the spacing of the icon it swaps */
+        /* Tighter start padding beside a clear button */
         &:has(> .filter-chip-clear) > :is(.filter-scope, .combobox-toggle) {
             padding-inline-start: 0.3125rem;
         }
 
-        /* Centering the boxes leaves the icon high beside the text, whose letters sit low in their line, so it drops to meet them */
+        /* Nudge the icon down to the text */
         .filter-chip-icon {
             flex-shrink: 0;
             font-size: 1rem;
@@ -73,7 +73,7 @@
             }
         }
 
-        /* At least a line tall, so a value that is only an icon has a divider as tall as the others */
+        /* Line tall, so icon-only values get a full divider */
         .filter-setting {
             display: inline-flex;
             align-items: center;
@@ -96,7 +96,7 @@
         }
     }
 
-    /* The check and cross that stand for yes and no, stroked heavier so they hold their own beside semibold text */
+    /* Heavier yes/no marks beside semibold text */
     .filter-mark {
         -webkit-text-stroke: 0.5px currentColor;
     }

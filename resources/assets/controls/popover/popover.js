@@ -106,7 +106,7 @@ export class Popover {
 
         Popover.hideActive();
 
-        // A popover still fading out from an earlier hide is removed straight away
+        // Remove a popover still fading out
         if (this.element) {
             this.hidePopover();
         }
@@ -142,7 +142,7 @@ export class Popover {
             this.element.style.width = this.options.width + 'px';
         }
 
-        // Mounting inside an enclosing dialog keeps the popover and overlay in its top layer and out of the inert page
+        // Mount in an enclosing dialog's top layer, outside the inert page
         const container = this.getMountContainer();
 
         this.overlay = document.createElement('div');
@@ -179,8 +179,7 @@ export class Popover {
             }
         });
 
-        // Outside detection uses mousedown so a click handler that detaches its own target
-        // cannot read as an outside click, bound later so the opening interaction cannot close it
+        // Outside clicks use mousedown, bound late so opening cannot close it
         setTimeout(() => {
             if (this.element && !this.isHiding) {
                 addEventListener('mousedown', this.onDocumentClick);
@@ -225,7 +224,7 @@ export class Popover {
         }
 
         if (this.element.classList.contains('fade')) {
-            // The timer covers a transition that never runs, such as when the styles are missing
+            // Timer covers a transition that never runs
             this.element.addEventListener('transitionend', () => this.hidePopover(), { once: true });
             this.hideTimer = setTimeout(() => this.hidePopover(), 350);
         }
@@ -367,7 +366,7 @@ export class Popover {
     }
 
     /**
-     * Popper modifier that moves the popover to the placement chosen by calcPlacement.
+     * Popper modifier applying the calcPlacement placement.
      */
     applyPlacement(state, name) {
         if (state.modifiersData[name]._skip) {
@@ -388,7 +387,7 @@ export class Popover {
     }
 
     /**
-     * Returns how far the popover overflows each side of the viewport for every placement.
+     * Viewport overflow per side for every placement.
      */
     calcDimensions(state) {
         const dimensions = {};
@@ -444,8 +443,7 @@ export class Popover {
     }
 
     /**
-     * Returns the Popper [skidding, distance] offset for a placement, the distance a small gap of
-     * 0.375rem in the page's root font size.
+     * Popper [skidding, distance] offset, with a 0.375rem gap.
      */
     calcOffset(placement) {
         const isVertical = ['left', 'right'].includes(placement.split('-')[0]);
@@ -491,7 +489,7 @@ export class Popover {
             return;
         }
 
-        // Cancelling the key keeps an enclosing dialog from treating it as its own close request
+        // Keep an enclosing dialog from closing too
         if (ev.key === 'Escape') {
             ev.preventDefault();
             this.hide();
@@ -512,7 +510,7 @@ export class Popover {
 }
 
 /*
- * Declarative binding: toggles a popover configured from the element's data attributes
+ * Declarative binding from data attributes
  */
 export function registerPopover(jax) {
     jax.registerControl('popover', class extends jax.ControlBase {

@@ -75,7 +75,7 @@ export function registerFormWidget(jax) {
             const field = ev.target.closest('.field-checkboxlist'),
                 isDisabled = field.classList.contains('control-disabled');
 
-            // An attribute rather than the property, since the quick select buttons are links with no disabled property
+            // Attribute, as the quick select links lack a disabled property
             field.querySelectorAll('input[type=checkbox]:not([data-option-disabled]), .checkboxlist-controls > .control-button').forEach((el) => {
                 el.toggleAttribute('disabled', isDisabled);
             });
@@ -223,7 +223,7 @@ export function registerFormWidget(jax) {
             const group = ev.target.closest('[data-change-handler]'),
                 handler = group.dataset.changeHandler;
 
-            // Debounced, so a burst of changes, such as several tags picked in a row, makes one request
+            // Debounced, so a burst of changes makes one request
             if (this.dependantUpdateTimers[handler] !== undefined) {
                 window.clearTimeout(this.dependantUpdateTimers[handler]);
             }

@@ -36,7 +36,7 @@ export class RowStore {
     }
 
     /**
-     * createRow makes a new row with the first loaded row's keys set to null.
+     * createRow makes a row with the first row's keys set to null.
      */
     createRow() {
         const row = {};
@@ -47,14 +47,14 @@ export class RowStore {
     }
 
     /**
-     * apply performs an operation and returns it with what's needed to invert it.
+     * apply performs an operation, returning it with its inverse data.
      */
     apply(op) {
         switch (op.type) {
             case 'set': {
                 const from = this.get(op.row, op.key);
 
-                // Setting nothing over nothing leaves the row alone, so no key appears that wasn't there
+                // Nothing over nothing adds no key
                 if (!(from === null && (op.to === null || op.to === undefined))) {
                     op.row[op.key] = op.to;
                 }

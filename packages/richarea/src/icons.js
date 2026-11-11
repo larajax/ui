@@ -1,5 +1,5 @@
 /**
- * Default icon classes keyed by button code or interface element, hosts pass overrides through the icons option.
+ * Default icon classes by button code; override with the icons option.
  */
 export const defaultIcons = {
     // Text formatting
@@ -84,7 +84,7 @@ export const defaultIcons = {
 };
 
 /**
- * makeIcons merges host icon classes over the defaults, ignoring empty values.
+ * makeIcons merges non-empty host icon classes over the defaults.
  */
 export function makeIcons(icons) {
     const result = { ...defaultIcons };

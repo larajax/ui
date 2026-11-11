@@ -4,7 +4,7 @@
  */
 
 /*
- * Images, the fr- selectors cover the classes Froala wrote in older content
+ * Images; fr- selectors cover Froala's older classes
  */
 
 img.oc-dib,
@@ -92,7 +92,7 @@ a.fr-file::before {
     padding: 0.75rem 0;
 }
 
-/* The dark rules would vanish on a dark page, so they take the text colour */
+/* Text colour, as dark borders vanish on a dark page */
 [data-bs-theme="dark"] .oc-text-bordered {
     border-color: currentColor;
 }
@@ -175,8 +175,7 @@ table th.oc-cell-thick-border {
 }
 
 /*
- * Table cells, unlayered so resets such as Bootstrap's cannot remove the borders, with a low
- * specificity so the table and cell style classes still apply
+ * Table cells: unlayered against resets, low specificity for classes
  */
 
 .rich-editor-content :where(td, th) {
@@ -187,7 +186,7 @@ table th.oc-cell-thick-border {
 }
 
 /*
- * Default typography, layered so any theme or page styles take precedence
+ * Default typography, layered so page styles win
  */
 
 @layer rich-editor-base {

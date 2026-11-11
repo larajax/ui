@@ -2,7 +2,7 @@ import { findParentNode } from '@tiptap/core';
 import { NodeSelection } from '@tiptap/pm/state';
 
 /**
- * selectedNode returns the node of a node selection, optionally limited to type names.
+ * selectedNode returns the selected node, optionally of given types.
  */
 export function selectedNode(editor, typeNames) {
     const { selection } = editor.state;
@@ -31,8 +31,7 @@ export function selectedNodeElement(editor) {
 }
 
 /**
- * insertionChain starts a command chain for inserting content, moving past a selected block
- * such as a figure or frame so inserting adds after it instead of replacing it.
+ * insertionChain starts an insert chain after any selected block.
  */
 export function insertionChain(editor) {
     const { selection } = editor.state;
@@ -48,8 +47,7 @@ export function insertionChain(editor) {
 }
 
 /**
- * updateSelectedNode changes the attributes of the selected node and keeps it selected,
- * since leaf nodes are replaced on update and would otherwise lose the selection.
+ * updateSelectedNode sets attributes, reselecting the replaced node.
  */
 export function updateSelectedNode(editor, attributes) {
     return editor.chain().focus().command(({ tr, state }) => {
@@ -66,14 +64,14 @@ export function updateSelectedNode(editor, attributes) {
 }
 
 /**
- * parentNode finds the closest ancestor of the selection with a type name.
+ * parentNode finds the selection's closest ancestor of a type.
  */
 export function parentNode(editor, typeName) {
     return findParentNode((node) => node.type.name === typeName)(editor.state.selection);
 }
 
 /**
- * updateTextblocks changes the attributes of every paragraph and heading in the selection.
+ * updateTextblocks updates every selected paragraph and heading.
  */
 export function updateTextblocks(editor, update) {
     return editor.chain().focus().command(({ tr, state }) => {
@@ -97,7 +95,7 @@ export function updateTextblocks(editor, update) {
 }
 
 /**
- * currentTextblock returns the paragraph or heading holding the selection start.
+ * currentTextblock returns the textblock at the selection start.
  */
 export function currentTextblock(editor) {
     const { $from } = editor.state.selection;
@@ -113,7 +111,7 @@ export function currentTextblock(editor) {
 }
 
 /**
- * selectionRect returns the viewport rectangle of the selection, used to anchor popovers.
+ * selectionRect returns the selection's viewport rectangle.
  */
 export function selectionRect(editor) {
     const { view, state } = editor;

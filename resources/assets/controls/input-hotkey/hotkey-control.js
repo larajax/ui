@@ -85,7 +85,7 @@ export function registerInputHotkey(jax) {
                     return;
                 }
 
-                // Without the popup stacker, the last open dialog in the DOM is the topmost
+                // No stacker: the last open dialog is topmost
                 var activeContainer = jax.popupStacker
                     ? jax.popupStacker.getFirstPopup()
                     : Array.from(document.querySelectorAll('dialog[open]')).pop();

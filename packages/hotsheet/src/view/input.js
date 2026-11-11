@@ -8,8 +8,7 @@ function cellPosition(el) {
 }
 
 /**
- * onKeyDown handles keys while the editor is open (commit, cancel, move) and while it is closed
- * (navigate, start editing, clear, undo).
+ * onKeyDown handles keys with the editor open or closed.
  */
 function onKeyDown(sheet, event) {
     if (!sheet.selection || event.isComposing || event.keyCode === 229) {
@@ -30,7 +29,7 @@ function onKeyDown(sheet, event) {
         return;
     }
 
-    // Space, Enter, Delete and Backspace toggle or uncheck a selection starting on a checkbox
+    // Space, Enter, Delete and Backspace change checkboxes
     if (!command && (event.key === ' ' || event.key === 'Enter') && sheet.changeCheckboxes(false)) {
         event.preventDefault();
         return;
@@ -128,7 +127,7 @@ function arrow(sheet, key, extend) {
 }
 
 /**
- * onGridKeyDown handles a key with the editor closed, returning false when the key was not used.
+ * onGridKeyDown handles a key with the editor closed, or returns false.
  */
 function onGridKeyDown(sheet, event, command) {
     const { anchor } = sheet.selection;
@@ -187,7 +186,7 @@ function onGridKeyDown(sheet, event, command) {
             sheet.moveActive(sheet.countVisibleRows(), 0);
             return true;
 
-        // With nothing to cancel, Escape carries on to the page, so a dialog holding the grid can close
+        // Let Escape reach the page, so a host dialog can close
         case 'Escape':
             return false;
 
@@ -222,17 +221,16 @@ function onGridKeyDown(sheet, event, command) {
     return false;
 }
 
-// How far a drag past the grid's edge scrolls it for each movement of the pointer
+// Scroll step per pointer move when dragging past the edge
 const DRAG_SCROLL_Y = 20;
 const DRAG_SCROLL_X = 50;
 
-// How far a finger may wander before a touch counts as a drag, and how long a press lasts before it opens
-// the context menu
+// Touch drag threshold and long press delay
 const TOUCH_SLOP = 8;
 const LONG_PRESS_MS = 550;
 
 /**
- * bindInput attaches the grid's listeners and returns a function that removes them.
+ * bindInput attaches the grid's listeners, returning a remover.
  */
 export function bindInput(sheet) {
     const root = sheet.element;
@@ -243,8 +241,7 @@ export function bindInput(sheet) {
     let resizing = null;
     let filling = null;
 
-    // Dragging past the edge of the grid's scroll box scrolls it a step for each movement of the pointer
-    // outside, measured against the box as it was when the drag started
+    // Dragging past the scroll box scrolls it, using its start bounds
     let scrollBounds = null;
 
     const dragScroll = (event) => {
@@ -265,7 +262,7 @@ export function bindInput(sheet) {
         }
     };
 
-    // Without multiSelect a header press selects one cell, so the header that made that selection is kept for moving
+    // Without multiSelect, the pressed header is kept for moving
     let pickedHeader = null;
 
     const isPickedRow = (selection, row) => sheet.options.multiSelect
@@ -281,7 +278,7 @@ export function bindInput(sheet) {
     dropLine.hidden = true;
     sheet.elements.table.append(dropLine);
 
-    // A resize remembers the column's own width, so cancelling it puts back a width shared with other columns
+    // Keeps the column's own width, so cancel can restore it
     const startResize = (headerEl, startX) => {
         const col = Number(headerEl.dataset.col);
         return { col, startX, startWidth: headerEl.offsetWidth, originalWidth: sheet.getColumns()[col]?.width ?? null };
@@ -316,7 +313,7 @@ export function bindInput(sheet) {
         event.preventDefault();
         sheet.commitEditor();
 
-        // The handle on a header's right edge resizes its column without selecting anything
+        // The header's edge handle resizes without selecting
         if (event.target.classList.contains('hotsheet-resizer') && event.button === 0) {
             resizing = startResize(headerEl, event.clientX);
             root.classList.add('is-resizing');
@@ -347,7 +344,7 @@ export function bindInput(sheet) {
         else if (rowHeaderEl) {
             const row = Number(rowHeaderEl.dataset.row);
 
-            // Pressing a row header inside a selection of whole rows starts moving them
+            // Pressing a selected row header starts a row move
             if (event.button === 0 && sheet.canMoveRows() && selection && isPickedRow(selection, row)) {
                 const top = Math.min(selection.anchor.row, selection.focus.row);
                 const bottom = Math.max(selection.anchor.row, selection.focus.row);
@@ -364,7 +361,7 @@ export function bindInput(sheet) {
             const col = Number(headerEl.dataset.col);
             const onLabel = event.target.classList.contains('hotsheet-header-label');
 
-            // Pressing a header inside a selection of whole columns (away from its label) starts moving them
+            // Pressing a selected column header (off its label) starts a move
             if (event.button === 0 && !onLabel && sheet.options.columnMove && selection && isPickedColumn(selection, col)) {
                 const left = Math.min(selection.anchor.col, selection.focus.col);
                 const right = Math.max(selection.anchor.col, selection.focus.col);
@@ -392,8 +389,7 @@ export function bindInput(sheet) {
     };
 
     /**
-     * extendDrag follows a drag over an element: the selection grows over cells and headers, and the fill
-     * area over cells.
+     * extendDrag grows the selection or fill area over an element.
      */
     const extendDrag = (target) => {
         if (!dragging || !sheet.selection || !target) {
@@ -436,12 +432,12 @@ export function bindInput(sheet) {
     const onMouseOver = (event) => extendDrag(event.target);
 
     /**
-     * dropGap returns the gap between rows nearest the pointer, 0 being before the first row.
+     * dropGap returns the row gap nearest the pointer.
      */
     const dropGap = (clientY) => sheet.rowGapAt(clientY);
 
     /**
-     * columnGap returns the gap between columns nearest the pointer, 0 being before the first column.
+     * columnGap returns the column gap nearest the pointer.
      */
     const columnGap = (clientX) => {
         for (let col = 0; col < sheet.getColumnCount(); col++) {
@@ -492,7 +488,7 @@ export function bindInput(sheet) {
             dragging = null;
             dropLine.hidden = true;
 
-            // Dropping the rows back in their place, or a press without a drag, moves nothing
+            // A drop in place or a press without a drag moves nothing
             const gap = dropGap(event.clientY);
             if (gap < movingRows[0] || gap > movingRows[movingRows.length - 1] + 1) {
                 sheet.moveRows(movingRows, gap);
@@ -536,11 +532,7 @@ export function bindInput(sheet) {
         }
     };
 
-    // Touch. Taps arrive as the mouse events browsers make from them, so selecting, checkboxes, sorting and
-    // double taps work as clicks do. Finger drags are followed here: from the selected cell (selecting a
-    // range), the fill handle, the row headers of a selection (moving rows) and a selected column's resizer,
-    // which don't scroll (touch-action: none); anywhere else a finger scrolls. Tapping the selected cell again
-    // edits it, and a long press opens the context menu.
+    // Touch drags select, fill, move or resize; elsewhere they scroll
     let touch = null;
     let editOnTap = null;
 
@@ -586,7 +578,7 @@ export function bindInput(sheet) {
         touch.longPressed = true;
         const selection = sheet.getSelection();
 
-        // The menu acts on what was pressed, selecting it first unless it is already selected
+        // Select the pressed target first, unless already selected
         if (touch.cellEl) {
             const { row, col } = cellPosition(touch.cellEl);
             if (!selection || !isInside(selection, row, col)) {
@@ -604,7 +596,7 @@ export function bindInput(sheet) {
     };
 
     /**
-     * startTouchDrag begins a finger drag the way a mouse press on the same element would.
+     * startTouchDrag begins a finger drag like a mouse press.
      */
     const startTouchDrag = () => {
         sheet.commitEditor();
@@ -684,8 +676,7 @@ export function bindInput(sheet) {
     };
 
     /**
-     * onDocumentKeyDown lets Escape cancel a drag wherever focus is: a fill, move or resize is dropped and the
-     * column width put back, while a selection drag keeps the cells reached so far.
+     * onDocumentKeyDown lets Escape cancel a drag wherever focus is.
      */
     const onDocumentKeyDown = (event) => {
         if (event.key !== 'Escape' || !dragging) {
@@ -706,7 +697,7 @@ export function bindInput(sheet) {
         }
     };
 
-    // After a long press the browser would still turn the touch into a click, which is cancelled here
+    // Cancel the click a long press would still make
     const onTouchEnd = (event) => {
         if (touch?.longPressed) {
             event.preventDefault();
@@ -728,7 +719,7 @@ export function bindInput(sheet) {
         const { row, col } = cellPosition(cellEl);
         sheet.select(row, col, row, col, { scroll: false, notify: false });
 
-        // A checkbox has no editor: double clicking beside the box toggles it (the box itself already toggled)
+        // Double click beside a checkbox toggles it; the box toggles itself
         if (!sheet.openEditor('full') && !event.target.classList.contains('hotsheet-checkbox')) {
             sheet.toggleCell(row, col);
         }
@@ -753,8 +744,7 @@ export function bindInput(sheet) {
         }
     };
 
-    // Checkboxes change through the data, so the native toggle is cancelled and the cell re-rendered. Every
-    // click toggles, as with any checkbox, since quick clicks and a double click can't be told apart.
+    // Checkboxes change through the data; every click toggles
     const onClick = (event) => {
         if (event.target.classList.contains('hotsheet-checkbox')) {
             event.preventDefault();
@@ -795,8 +785,7 @@ export function bindInput(sheet) {
 
     const onTextareaKeyDown = (event) => onKeyDown(sheet, event);
 
-    // Scrolling (the grid, the page or any parent) and resizing can bring undrawn rows into view and move the
-    // selection's corner without a repaint, so both are checked once per frame
+    // Scroll and resize can reveal undrawn rows, so check once per frame
     let viewFrame = null;
     const onViewChange = () => {
         if (viewFrame === null) {

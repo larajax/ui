@@ -1,9 +1,9 @@
 /*
- * Tom Select layout: the hidden select, the field with its items and input, and the dropdown
+ * Tom Select layout
  * --------------------------------------------------
  */
 
-/* The original select stays in the form, out of sight, so it still posts its value */
+/* Hidden original select, still posts its value */
 .ts-hidden-accessible {
     position: absolute !important;
     width: 1px !important;

@@ -179,7 +179,7 @@ export default class DragScroll {
         return overflow === 'auto' || overflow === 'scroll';
     }
 
-    // The scroll classes follow the size of the element and its content, falling back to the window
+    // Scroll classes track element and content size, or the window
     observeSize() {
         if (typeof ResizeObserver === 'undefined') {
             this.listen(window, 'resize', this.onResize);
@@ -191,7 +191,7 @@ export default class DragScroll {
         Array.from(this.el.children).forEach((child) => this.resizeObserver.observe(child));
     }
 
-    // Where an element sits along the scroll direction, in the scrolled content, whatever its offset parent
+    // Element position along the scroll axis, in content coordinates
     itemBounds(target) {
         const itemRect = target.getBoundingClientRect(),
             elRect = this.el.getBoundingClientRect();
@@ -234,8 +234,7 @@ export default class DragScroll {
             along = this.options.vertical ? offsetY : offsetX,
             across = this.options.vertical ? offsetX : offsetY;
 
-        // A native scroll container takes the wheel along its direction itself, scrolling it here as well
-        // would move it twice, so only the wheel across it is turned
+        // Native containers scroll their own axis, so only turn the cross wheel
         if (along && this.scrollsNatively()) {
             if (this.options.noOverScroll && (along < 0 ? this.isStart() : this.isEnd())) {
                 event.preventDefault();
@@ -291,7 +290,7 @@ export default class DragScroll {
             this.startDrag(event.touches[0]);
             this.touchDragStarted = true;
 
-            // Listen only while dragging since a non-passive window listener delays page scrolling
+            // Non-passive window listener only while dragging
             window.addEventListener('touchmove', this.onTouchMove, { passive: false });
 
             event.stopPropagation();
@@ -547,7 +546,7 @@ export default class DragScroll {
             current = this.el[prop],
             size = vertical ? this.el.clientHeight : this.el.clientWidth,
             { start, end } = this.itemBounds(target),
-            // Aligning to the bottom leaves an item's height of room after a vertical target
+            // Leave an item's height of room after a vertical target
             room = vertical && params.alignBottom ? end - start : 0;
 
         let destination = null;

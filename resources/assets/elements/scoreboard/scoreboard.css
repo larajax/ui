@@ -316,7 +316,7 @@ body.slim-container div.scoreboard {
             vector-effect: non-scaling-stroke;
         }
 
-        /* A round cap on a path of no length draws a dot that stays round however the line stretches */
+        /* Zero-length round cap draws a dot */
         .scoreboard-sparkline-dot {
             fill: none;
             stroke: currentColor;

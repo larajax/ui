@@ -9,7 +9,7 @@ function currentCell(re) {
 }
 
 /**
- * hasHeaderRow checks whether the first row of the current table is made of header cells.
+ * hasHeaderRow checks whether the table's first row is header cells.
  */
 function hasHeaderRow(re) {
     const table = parentNode(re.editor, 'table');
@@ -26,7 +26,7 @@ function hasHeaderRow(re) {
 }
 
 /**
- * tableMenuItem builds a menu item that runs a table command when it is allowed.
+ * tableMenuItem builds a menu item for an allowed table command.
  */
 function tableMenuItem(re, label, command) {
     return {

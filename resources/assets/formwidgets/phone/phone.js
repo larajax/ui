@@ -48,11 +48,11 @@ export function registerPhone(jax) {
                 this.listen('blur', this.input, this.onBlur);
                 this.listen('click', this.onClick);
 
-                // Bootstrap's own event names, which the framework's listener would read as namespaced change and shown events
+                // Native listeners, as these names look namespaced to listen()
                 this.toggle.addEventListener('change.bs.combobox', this.proxy(this.onCountryPicked));
                 this.toggle.addEventListener('shown.bs.combobox', this.proxy(this.onMenuShown));
 
-                // Captured ahead of the combobox, so a space typed within a country name is not taken as picking a country
+                // Capture phase, so a space continues a typed country name
                 this.menu.addEventListener('keydown', this.proxy(this.onMenuKeydown), true);
             }
 
@@ -92,7 +92,7 @@ export function registerPhone(jax) {
             return this.valueInput ? this.valueInput.value : this.element.dataset.phoneValue || '';
         }
 
-        // Shows a number given in the E.164 format and posts it, announcing the change.
+        // Shows and posts an E.164 number, announcing the change
         setValue(value) {
             this.valueInput.value = value || '';
             this.markInvalid(false);
@@ -113,7 +113,7 @@ export function registerPhone(jax) {
             this.reformat(this.input.value, this.input.selectionStart ?? this.input.value.length);
         }
 
-        // Deleting a space or bracket deletes the digit beyond it, since the formatting would come straight back.
+        // Deleting a separator deletes the digit beyond it
         onKeydown(ev) {
             if (!this.library || this.input.readOnly || this.input.disabled) {
                 return;
@@ -147,7 +147,7 @@ export function registerPhone(jax) {
             }
         }
 
-        // A country picked from the list reads the national digits typed so far as a number of that country.
+        // Reads the typed national digits as the picked country's number
         onCountryPicked() {
             const item = this.menu.querySelector('.menu-item.selected');
             if (!this.library || !item) {
@@ -166,11 +166,11 @@ export function registerPhone(jax) {
                 this.commit();
             }
 
-            // After the combobox hands focus back to its toggle, the number takes it
+            // Refocus the number after the combobox focuses its toggle
             requestAnimationFrame(() => this.input && this.input.focus());
         }
 
-        // The open list starts at the picked country, after the combobox focuses its first item.
+        // Focus the picked country once the list opens
         onMenuShown() {
             requestAnimationFrame(() => {
                 const item = this.menu && this.menu.querySelector('.menu-item.selected');
@@ -180,8 +180,7 @@ export function registerPhone(jax) {
             });
         }
 
-        // Typing in the open list moves to the first country whose name starts with the typed text, where a space
-        // continues a name being typed and otherwise picks the focused country.
+        // Typeahead: jump to the first country matching the typed text
         onMenuKeydown(ev) {
             if (ev.key.length !== 1 || ev.ctrlKey || ev.metaKey || ev.altKey || (ev.key === ' ' && !this.typeahead)) {
                 return;
@@ -207,14 +206,14 @@ export function registerPhone(jax) {
             }
         }
 
-        // A press on the field around the picker and the input puts the cursor in the input.
+        // Clicking the field around the input focuses it
         onClick(ev) {
             if (!ev.target.closest('button, input, a, .menu') && ev.target.closest('.form-adorn')) {
                 this.input.focus();
             }
         }
 
-        // Formats the typed text as a number, keeping the caret beside the same digit.
+        // Formats the typed number, keeping the caret by the same digit
         reformat(text, caret) {
             const typed = dialable(text);
             const isInternational = typed.startsWith('+');
@@ -238,7 +237,7 @@ export function registerPhone(jax) {
             this.isEdited = true;
         }
 
-        // Once editing ends, a possible number shows in its national format, and anything else is marked invalid.
+        // Format or flag the number once editing ends
         settle() {
             const typed = dialable(this.input.value);
             this.isEdited = false;
@@ -264,7 +263,7 @@ export function registerPhone(jax) {
             }
         }
 
-        // Shows a stored number in the national format of its country, leaving the posted value alone.
+        // Shows a stored number in its national format
         showValue(value) {
             const number = value ? this.library.parsePhoneNumberFromString(value, this.defaultCountry) : null;
 
@@ -282,7 +281,7 @@ export function registerPhone(jax) {
             }
         }
 
-        // Shows the number in a link, in the national format for the default country and the international one otherwise.
+        // Shows the number in a link, national for the default country
         showLink() {
             const value = this.element.dataset.phoneValue || '';
             const number = value ? this.library.parsePhoneNumberFromString(value, this.defaultCountry) : null;
@@ -294,7 +293,7 @@ export function registerPhone(jax) {
             }
         }
 
-        // Lists each country with its flag, name in the page's language and calling code, the preferred ones first.
+        // Lists the countries with flags and codes, preferred first
         fillCountries() {
             const { getCountries, getCountryCallingCode } = this.library;
             const supported = getCountries();
@@ -349,7 +348,7 @@ export function registerPhone(jax) {
             this.menu.replaceChildren(...preferred.map(item), ...separator, ...others.map(item));
         }
 
-        // Shows the country's flag and calling code on the picker and marks it in the list.
+        // Shows the country on the picker and marks it in the list
         setCountry(code) {
             if (!code || !this.library.getCountries().includes(code)) {
                 return;
@@ -386,7 +385,7 @@ export function registerPhone(jax) {
             }
         }
 
-        // Announces a posted value that differs from the last one, from the hidden input.
+        // Announces a changed posted value
         commit() {
             if (this.valueInput.value === this.committedValue) {
                 return;
@@ -410,7 +409,7 @@ function flagClass(code) {
     return 'flag-' + (FLAG_ALIASES[code] || code.toLowerCase());
 }
 
-// The browser's region, such as AU for en-AU, as the country for numbers typed without one
+// The browser's region, such as AU for en-AU
 function browserRegion() {
     try {
         const locale = new Intl.Locale(navigator.language || 'en');
@@ -449,7 +448,7 @@ function readCountries(json) {
     }
 }
 
-// A leading plus and the digits of typed text, the only characters a number dials
+// The leading plus and digits of typed text
 function dialable(text) {
     return (/^\s*\+/.test(text) ? '+' : '') + text.replace(/\D/g, '');
 }

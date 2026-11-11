@@ -1,5 +1,5 @@
 /**
- * Classes added by editors at runtime that never belong in saved content.
+ * Runtime editor classes, never saved.
  */
 export const RUNTIME_CLASSES = [
     'fr-draggable',
@@ -16,7 +16,7 @@ export const RUNTIME_CLASSES = [
 ];
 
 /**
- * cleanClassName removes runtime classes from a class attribute, returning null when nothing remains.
+ * cleanClassName strips runtime classes, null when none remain.
  */
 export function cleanClassName(value, extraClasses = []) {
     if (typeof value !== 'string') {
@@ -38,7 +38,7 @@ export function hasClass(value, className) {
 }
 
 /**
- * toggleClass adds or removes a class name within a class attribute value.
+ * toggleClass adds or removes a class in a class attribute.
  */
 export function toggleClass(value, className, force) {
     const classes = typeof value === 'string' ? value.split(/\s+/).filter(Boolean) : [];
@@ -56,7 +56,7 @@ export function toggleClass(value, className, force) {
 }
 
 /**
- * replaceClasses removes a set of classes and adds another, used for mutually exclusive styles.
+ * replaceClasses swaps one set of classes for another.
  */
 export function replaceClasses(value, removeClasses, addClasses) {
     const remove = splitClasses(removeClasses);
@@ -83,7 +83,7 @@ export function splitClasses(value) {
 }
 
 /**
- * isSafeUrl rejects script URLs, optionally allowing data image URLs for pasted images.
+ * isSafeUrl rejects script URLs, optionally allowing data images.
  */
 export function isSafeUrl(url, allowDataImages = false) {
     if (typeof url !== 'string' || !url.trim()) {
@@ -105,14 +105,14 @@ export function isSafeUrl(url, allowDataImages = false) {
 }
 
 /**
- * isRemoteUrl checks for an absolute http address, as required by embedded frames.
+ * isRemoteUrl checks for an absolute http address, as frames need.
  */
 export function isRemoteUrl(url) {
     return typeof url === 'string' && /^(https?:)?\/\//i.test(url.trim());
 }
 
 /**
- * titleFromUrl returns the decoded last path segment of a URL, used as a default label.
+ * titleFromUrl returns a URL's decoded last path segment.
  */
 export function titleFromUrl(url) {
     const parts = String(url).split('?')[0].split('/');
@@ -132,7 +132,7 @@ export function titleFromUrl(url) {
 }
 
 /**
- * parseList reads a list option given as an array or as comma separated text.
+ * parseList reads a list option as an array or comma separated text.
  */
 export function parseList(value) {
     if (!value) {

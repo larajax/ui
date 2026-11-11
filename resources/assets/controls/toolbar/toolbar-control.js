@@ -37,7 +37,7 @@ export function registerToolbar(jax) {
 
             if (this.toolbar) {
                 this.growables = this.toolbar.querySelectorAll('.form-control.is-growable');
-                // An adorned field grows while its input has focus, so the focus events are the bubbling ones
+                // Bubbling focus events, as adorned fields grow on focus
                 this.growables.forEach((el) => {
                     this.listen('focusin', el, this.onGrowableFocus);
                     this.listen('focusout', el, this.onGrowableFocus);
@@ -56,8 +56,7 @@ export function registerToolbar(jax) {
             this.growables = null;
         }
 
-        // Growable inputs resize the primary item as they animate; refresh the
-        // scroll classes once the transition settles
+        // Refresh scroll classes as growable inputs resize
         onGrowableFocus() {
             if (this.instance) {
                 this.instance.fixScrollClasses();

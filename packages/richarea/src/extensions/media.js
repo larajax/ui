@@ -65,8 +65,7 @@ export const MediaFigure = Node.create({
 });
 
 /**
- * Iframe is an embedded frame from pasted embedding code, previewed behind an overlay so
- * clicks select it instead of interacting with the frame.
+ * Iframe is an embedded frame, behind an overlay so clicks select it.
  */
 export const Iframe = Node.create({
     name: 'iframe',

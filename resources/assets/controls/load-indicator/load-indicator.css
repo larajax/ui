@@ -144,7 +144,7 @@
     right: 0;
 }
 
-/* A small field, such as a filter's search, takes a smaller indicator, centered on it where the clear button sits */
+/* Small fields take a smaller indicator at the clear button */
 .loading-indicator-container.size-input-text:has(.form-control-sm) .loading-indicator > span {
     --loader-size: 1rem;
     top: 50%;

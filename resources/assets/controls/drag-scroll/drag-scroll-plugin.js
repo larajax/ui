@@ -1,9 +1,7 @@
 /*
  * DragScroll jQuery Plugin
  *
- * Backward compatibility shim for the $.fn.dragScroll() API. This is an
- * opt-in compatibility layer: it is not part of the ui.js bundle and only
- * registers when jQuery is present on the page.
+ * Opt-in $.fn.dragScroll() shim, outside ui.js, needs jQuery.
  */
 import DragScroll from './drag-scroll.js';
 
@@ -37,7 +35,7 @@ if ($) {
         return this;
     };
 
-    // Options given as jQuery objects, such as scrollMarkerContainer, are passed as their element
+    // jQuery object options are passed as elements
     function unwrapOptions(option) {
         var options = Object.assign({}, option);
 

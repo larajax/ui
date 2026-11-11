@@ -9,7 +9,7 @@
     .clr-field {
         display: block;
 
-        /* The swatch stays above the input, which form controls position relatively */
+        /* Keep the swatch above the input */
         button {
             z-index: 1;
             width: 2.625rem;
@@ -22,7 +22,7 @@
         }
     }
 
-    /* The field keeps its focused look while its picker holds the focus, as a datepicker field does */
+    /* Focused look while the picker is open */
     &.is-picker-open .form-control {
         border-color: var(--oc-border-focus);
         outline: var(--oc-input-focus-ring-width) solid var(--bs-focus-ring-color);
@@ -30,10 +30,7 @@
     }
 }
 
-/*
- * The picker panel takes Bootstrap's datepicker look: its padding, surface, border, corners,
- * shadow and small text, with Bootstrap's small controls for the value and buttons
- */
+/* Picker panel, styled like the datepicker */
 .clr-picker {
     z-index: var(--oc-zindex-datepicker);
     box-sizing: border-box;
@@ -48,7 +45,7 @@
     border-radius: var(--bs-radius-7);
     box-shadow: var(--bs-box-shadow);
 
-    /* The panel mounts on the body, so it takes the field's theme from the class Coloris sets */
+    /* Mounted on body, so theme comes from the Coloris class */
     &.clr-light {
         color-scheme: light;
     }
@@ -76,7 +73,7 @@
         box-shadow: 0 0 0 1px var(--bs-border-color);
     }
 
-    /* The preview is also the button that confirms the color, drawn over it */
+    /* Preview doubles as the confirm button */
     .clr-preview {
         width: var(--bs-btn-input-sm-min-height);
         height: var(--bs-btn-input-sm-min-height);
@@ -153,7 +150,7 @@
         }
     }
 
-    /* Keyboard focus on the marker and the slider thumbs takes Bootstrap's focus color */
+    /* Keyboard focus on marker and slider thumbs */
     &.clr-keyboard-nav {
         .clr-marker:focus,
         .clr-hue input:focus + div,

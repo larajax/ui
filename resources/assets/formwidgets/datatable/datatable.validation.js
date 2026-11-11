@@ -12,7 +12,7 @@
  */
 
 /**
- * DEFAULT_MESSAGES are the English messages for rules without their own, replaced by translations passed to validateValue.
+ * DEFAULT_MESSAGES are the English fallback rule messages.
  */
 export const DEFAULT_MESSAGES = {
     ruleRequired: 'The value should not be empty.',
@@ -42,7 +42,7 @@ function rowHasValue(rowData, column) {
 }
 
 /**
- * makeMessage returns a default message by name with its :placeholders filled in.
+ * makeMessage returns a message with its :placeholders filled in.
  */
 function makeMessage(messages, name, params = {}) {
     const text = messages[name] ?? DEFAULT_MESSAGES[name];
@@ -117,8 +117,7 @@ const RULES = {
 };
 
 /**
- * validateValue checks a value against a column's rules in order, returning the first message, or null when valid;
- * `messages` holds translations of DEFAULT_MESSAGES.
+ * validateValue returns the first failing rule's message, or null.
  */
 export function validateValue(rules, value, rowData, messages = DEFAULT_MESSAGES) {
     const text = textOf(value);

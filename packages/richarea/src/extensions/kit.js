@@ -14,7 +14,7 @@ import { Table, TableRow, TableCell, TableHeader } from './table.js';
 import { passthroughExtensions } from './passthrough.js';
 
 /**
- * buildExtensions assembles the schema and behavior extensions for an editor instance.
+ * buildExtensions assembles an editor's extensions.
  */
 export function buildExtensions(options, richArea) {
     const snippetOptions = {
