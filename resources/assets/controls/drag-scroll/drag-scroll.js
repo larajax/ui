@@ -37,7 +37,8 @@
  * - isStart - determines if the scrollable area is in its start (left or top)
  * - isEnd - determines if the scrollable area is in its end (right or bottom)
  * - goToStart - moves the scrollable area to the start (left or top)
- * - goToElement - moves the scrollable area to an element, at once with a duration of 0
+ * - goToElement - moves the scrollable area to an element, at once with a duration of 0,
+ *   leaving the room the element's scroll-padding asks for
  * - pause - pauses drag and scroll
  * - resume - resumes drag and scroll
  */
@@ -189,6 +190,16 @@ export default class DragScroll {
         this.resizeObserver = new ResizeObserver(this.onResize);
         this.resizeObserver.observe(this.el);
         Array.from(this.el.children).forEach((child) => this.resizeObserver.observe(child));
+    }
+
+    // Room the element's scroll-padding keeps either side of an element scrolled into view, as for a fade
+    scrollPadding() {
+        const style = getComputedStyle(this.el),
+            read = (side) => parseFloat(style.getPropertyValue('scroll-padding-' + side)) || 0;
+
+        return this.options.vertical
+            ? { before: read('top'), after: read('bottom') }
+            : { before: read('left'), after: read('right') };
     }
 
     // Element position along the scroll axis, in content coordinates
@@ -545,18 +556,27 @@ export default class DragScroll {
             prop = vertical ? 'scrollTop' : 'scrollLeft',
             current = this.el[prop],
             size = vertical ? this.el.clientHeight : this.el.clientWidth,
+            max = (vertical ? this.el.scrollHeight : this.el.scrollWidth) - size,
             { start, end } = this.itemBounds(target),
+            { before, after } = this.scrollPadding(),
             // Leave an item's height of room after a vertical target
             room = vertical && params.alignBottom ? end - start : 0;
 
-        let destination = null;
+        let offset = null;
 
-        if (start < current) {
-            destination = { [prop]: start };
+        if (start - before < current) {
+            offset = start - before;
         }
-        else if (end + room > current + size) {
-            destination = { [prop]: end + room - size };
+        else if (end + after + room > current + size) {
+            offset = end + after + room - size;
         }
+
+        // Stops at the ends, where the padding has no more to give
+        if (offset !== null) {
+            offset = Math.max(0, Math.min(offset, max));
+        }
+
+        const destination = offset === null || Math.abs(offset - current) < 1 ? null : { [prop]: offset };
 
         if (!destination) {
             if (callback !== undefined) {

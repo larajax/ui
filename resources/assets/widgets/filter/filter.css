@@ -31,19 +31,19 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    /* Match the list header's line, vertical padding and collapsed border. */
-    min-height: calc(1lh + 1.375rem + var(--bs-border-width));
+    /* Match a list row's line and padding, inside both borders */
+    min-height: calc(1lh + 1.25rem + 2 * var(--bs-border-width));
 
     .filter-row {
         display: flex;
         align-items: center;
         min-width: 0;
-        min-height: calc(1lh + 1.375rem - var(--bs-border-width));
+        min-height: calc(1lh + 1.25rem);
     }
 
     .filter-primary {
         position: relative;
-        min-height: calc(1lh + 1.375rem + var(--bs-border-width));
+        min-height: calc(1lh + 1.25rem + var(--bs-border-width));
         border-bottom: var(--bs-border-width) solid var(--oc-filter-border);
 
         > .filter-list-controls {

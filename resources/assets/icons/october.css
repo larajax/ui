@@ -26,6 +26,14 @@ figure.rich-editor-snippet .rich-editor-icon:is([class^="icon-"], [class*=" icon
     font-size: 1.75rem;
 }
 
+table.table.data td.list-reorder span.list-reorder-handle :is([class^="icon-"], [class*=" icon-"]) {
+    display: inline;
+    position: relative;
+    top: 2px;
+    font-size: 1.6875rem;
+    line-height: 1;
+}
+
 /* Toolbar and filter actions, such as the list setup button */
 .control-toolbar .toolbar-item.toolbar-setup a > span > :is([class^="icon-"], [class*=" icon-"]),
 .control-filter .filter-action > :is([class^="icon-"], [class*=" icon-"]) {

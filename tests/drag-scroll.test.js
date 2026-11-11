@@ -61,6 +61,37 @@ describe('drag scroll', () => {
         scroll.dispose();
     });
 
+    test('goToElement leaves the room the row keeps with scroll-padding, as for a fade at its edges', () => {
+        const { row, place } = makeRow();
+        row.style.setProperty('scroll-padding-left', '42px');
+        row.style.setProperty('scroll-padding-right', '42px');
+
+        const scroll = new DragScroll(row, {});
+
+        scroll.goToElement(place('b', 600, 100), undefined, { duration: 0 });
+        expect(row.scrollLeft).toBe(442);
+
+        scroll.goToElement(place('a', 100, 80), undefined, { duration: 0 });
+        expect(row.scrollLeft).toBe(58);
+        scroll.dispose();
+    });
+
+    test('goToElement stops at the ends of the row where the padding would reach past them', () => {
+        const { row, place } = makeRow();
+        row.style.setProperty('scroll-padding-left', '42px');
+        row.style.setProperty('scroll-padding-right', '42px');
+
+        const scroll = new DragScroll(row, {});
+
+        // The last item lands the row at its end, which has nothing more to fade
+        scroll.goToElement(place('b', 900, 100), undefined, { duration: 0 });
+        expect(row.scrollLeft).toBe(700);
+
+        scroll.goToElement(place('a', 10, 70), undefined, { duration: 0 });
+        expect(row.scrollLeft).toBe(0);
+        scroll.dispose();
+    });
+
     test('the wheel scrolls the row, and leaves zoom gestures to the browser', () => {
         const { row } = makeRow();
         const scroll = new DragScroll(row, {});

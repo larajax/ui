@@ -14,7 +14,8 @@
  * - SortableJS (vendor/sortablejs/sortable.esm.js)
  *
  * Tree node toggling posts through plain data-request attributes; this
- * control implements the drag reorder interaction on SortableJS.
+ * control flips the caret and hides a collapsed branch at once, and
+ * implements the drag reorder interaction on SortableJS.
  */
 'use strict';
 
@@ -54,6 +55,10 @@ export function registerListStructureWidget(jax) {
 
         connect() {
             this.tableBody = this.element.querySelector('table > tbody');
+
+            if (this.toBool(this.config.useTree)) {
+                this.listen('click', this.onToggleTreeNode);
+            }
 
             if (this.toBool(this.config.useReorder)) {
                 this.initReorder();
@@ -334,6 +339,23 @@ export function registerListStructureWidget(jax) {
         // Tree structure
         //
 
+        // onToggleTreeNode flips the caret and branch before the postback
+        onToggleTreeNode(ev) {
+            const link = ev.target.closest('.tree-expand-collapse');
+            if (!link || !this.element.contains(link)) {
+                return;
+            }
+
+            const row = link.closest('tr'),
+                isExpanded = link.classList.toggle('is-expanded');
+
+            row.dataset.treeExpanded = String(isExpanded);
+
+            this.getChildren(row).forEach((child) => {
+                child.style.display = isExpanded ? '' : 'none';
+            });
+        }
+
         getChildren(row) {
             const children = [],
                 targetLevel = this.getTreeLevel(row);
@@ -452,12 +474,7 @@ export function registerListStructureWidget(jax) {
 
             const treeCell = [...item.children].find((cell) => cell.classList.contains('list-cell-tree'));
             if (treeCell) {
-                const indent = this.getIndentStartSize(indentLevel) + 'px';
-
-                // The guides and the toggle are placed from the level and indent
-                treeCell.style.paddingLeft = indent;
-                treeCell.style.setProperty('--tree-pad', indent);
-                treeCell.style.setProperty('--tree-level', String(indentLevel));
+                treeCell.style.paddingLeft = this.getIndentStartSize(indentLevel) + 'px';
             }
         }
 

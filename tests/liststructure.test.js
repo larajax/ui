@@ -281,6 +281,64 @@ describe('tree structure', () => {
     });
 });
 
+// Adds a row's expand and collapse toggle, as the tree partial renders it
+function addToggle(id, expanded) {
+    const link = document.createElement('a');
+    link.className = 'tree-expand-collapse nolink' + (expanded ? ' is-expanded' : '');
+    link.setAttribute('data-request', 'onToggleTreeNode');
+    link.innerHTML = '<span><i class="tree-icon-expand"></i><i class="tree-icon-collapse"></i></span>';
+    row(id).querySelector('td.list-cell-tree').prepend(link);
+    return link;
+}
+
+describe('tree toggle', () => {
+    test('collapsing hides the branch and flips the caret before the postback', async () => {
+        await mount(makeList([[1, 0], [2, 1], [3, 2], [4, 0]]));
+        const link = addToggle(1, true);
+
+        link.querySelector('i').click();
+
+        expect(link.classList.contains('is-expanded')).toBe(false);
+        expect(row(1).dataset.treeExpanded).toBe('false');
+        expect(row(2).style.display).toBe('none');
+        expect(row(3).style.display).toBe('none');
+        expect(row(4).style.display).toBe('');
+    });
+
+    test('expanding shows a branch still on the page', async () => {
+        await mount(makeList([[1, 0], [2, 1], [3, 2], [4, 0]]));
+        const link = addToggle(1, true);
+
+        link.click();
+        link.click();
+
+        expect(link.classList.contains('is-expanded')).toBe(true);
+        expect(row(1).dataset.treeExpanded).toBe('true');
+        expect(row(2).style.display).toBe('');
+        expect(row(3).style.display).toBe('');
+    });
+
+    test('expanding a branch the server has not rendered only flips the caret', async () => {
+        await mount(makeList([{ id: 1, level: 0, collapsed: true, childCount: 2 }, [4, 0]]));
+        const link = addToggle(1, false);
+
+        link.click();
+
+        expect(link.classList.contains('is-expanded')).toBe(true);
+        expect(row(4).style.display).toBe('');
+    });
+
+    test('a list without a tree leaves the toggle alone', async () => {
+        await mount(makeList([[1, 0], [2, 1]], { 'data-use-tree': '' }));
+        const link = addToggle(1, true);
+
+        link.click();
+
+        expect(link.classList.contains('is-expanded')).toBe(true);
+        expect(row(2).style.display).toBe('');
+    });
+});
+
 describe('indent boundaries', () => {
     test('the next row sets the minimum and the previous row allows one level deeper', async () => {
         const { control } = await mount(makeList([[1, 0], [2, 1], [3, 2], [4, 0], [5, 0]]));

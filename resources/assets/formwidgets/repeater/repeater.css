@@ -12,7 +12,7 @@
     --oc-repeater-body-border: var(--bs-border-color);
     --oc-repeater-body-inner-bg: var(--bs-bg-body);
     --oc-repeater-item-bg: var(--oc-form-control-bg);
-    --oc-repeater-menu-bg: var(--bs-bg-2);
+    --oc-repeater-menu-bg: var(--bs-bg-1);
     --oc-repeater-radius: 0.5rem;
 }
 

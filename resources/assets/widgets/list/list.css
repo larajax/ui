@@ -14,7 +14,6 @@
         color-mix(in oklab, var(--bs-fg-body) 3%, var(--bs-bg-body)),
         color-mix(in oklab, var(--bs-fg-body) 7%, var(--bs-bg-body))
     );
-    --oc-list-row-selected-bg: color-mix(in oklch, var(--bs-primary-base) 8%, var(--bs-bg-body));
 }
 
 /*
@@ -81,10 +80,12 @@ table.table.data {
             vertical-align: middle;
             background-color: inherit;
 
+            /* Body line height keeps the head as tall as a row */
             > a, > span {
                 position: relative;
                 display: block;
                 padding: 0.625rem 1.125rem;
+                line-height: calc(1rem * var(--bs-body-line-height));
                 color: var(--oc-list-head-color);
                 text-decoration: none;
             }
@@ -158,7 +159,7 @@ table.table.data {
         }
 
         td, th {
-            padding: 0.75rem 1.125rem;
+            padding: 0.625rem 1.125rem;
             color: var(--bs-table-color);
             border-top: 1px solid var(--bs-table-border-color);
             font-variant-numeric: tabular-nums;
@@ -179,8 +180,8 @@ table.table.data {
                 div.bar {
                     position: absolute;
                     left: -1.125rem;
-                    top: -0.75rem;
-                    bottom: -0.75rem;
+                    top: -0.625rem;
+                    bottom: -0.625rem;
                     background: var(--bs-primary-base);
                     opacity: .2;
                 }
@@ -197,14 +198,12 @@ table.table.data {
             }
         }
 
-        tr.active:not(.no-data) td {
-            color: var(--bs-table-color);
-            background-color: var(--oc-table-active-bg);
-        }
-
-        tr.selected:not(.no-data) td {
-            color: var(--bs-table-color);
-            background-color: var(--oc-list-row-selected-bg);
+        tr.active,
+        tr.selected {
+            &:not(.no-data) td {
+                color: var(--bs-table-hover-color);
+                background-color: var(--oc-table-active-bg);
+            }
         }
 
         &:not(.tree-drag-mode) {
@@ -342,7 +341,7 @@ table.table.data {
         }
         td, th {
             border-color: var(--bs-border-color);
-            padding: 0.75rem 1.125rem;
+            padding: 0.625rem 1.125rem;
         }
     }
 
@@ -613,10 +612,10 @@ table.table.data {
      * Checkbox
      */
 
-    /* Column shrinks to the checkbox */
     .list-checkbox {
-        width: 1px;
+        width: 3.25rem;
         vertical-align: top;
+        border-right: 1px solid var(--bs-table-border-color);
 
         /* Check aligns with the first text line */
         .check {
@@ -625,14 +624,13 @@ table.table.data {
     }
 
     tbody tr td.list-checkbox {
-        padding-left: 1.125rem;
-        padding-right: 0;
+        padding-inline: 1rem;
     }
 
     /* Head checkbox centred with its labels */
     thead tr th.list-checkbox {
         vertical-align: middle;
-        padding: 0 0 0 1.125rem;
+        padding: 0 1rem;
     }
 }
 
