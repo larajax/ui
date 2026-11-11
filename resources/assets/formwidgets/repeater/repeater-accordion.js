@@ -21,6 +21,9 @@ export function registerRepeaterAccordion(jax) {
         connect() {
             super.connect();
 
+            // Initial titles
+            this.refreshItemTitles();
+
             // Next tick to let other controls initialize
             setTimeout(() => {
                 this.applyExpandedItems();
@@ -101,15 +104,12 @@ export function registerRepeaterAccordion(jax) {
 
         collapse(item) {
             item.classList.add('collapsed');
-
-            const title = item.querySelector(':scope > .repeater-header > .repeater-item-title');
-            if (title) {
-                title.textContent = this.getCollapseTitle(item);
-            }
+            this.eventUpdateItemTitle(item);
         }
 
         expand(item) {
             item.classList.remove('collapsed');
+            this.eventUpdateItemTitle(item);
 
             // Relayout controls revealed by expanding, as the framework render cycle does
             jax.Events.dispatch('render');
@@ -128,6 +128,16 @@ export function registerRepeaterAccordion(jax) {
 
         eventOnDuplicateItem(fromItem) {
             this.eventOnAddItem();
+        }
+
+        // eventUpdateItemTitle shows the field title when collapsed, the group name when open
+        eventUpdateItemTitle(item) {
+            const title = item.querySelector(':scope > .repeater-header > .repeater-item-title');
+            if (title) {
+                title.textContent = item.classList.contains('collapsed')
+                    ? this.getCollapseTitle(item)
+                    : (item.dataset.itemTitle || '');
+            }
         }
 
         eventMenuFilter(item, list) {

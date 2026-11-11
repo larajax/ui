@@ -87,18 +87,19 @@ export function registerRepeaterBuilder(jax) {
         }
 
         setCollapsedTitles() {
-            this.itemContainer.querySelectorAll(':scope > .field-repeater-item').forEach((item) => {
-                const groupItem = this.sidebar.querySelector(
-                    ':scope > li[data-repeater-index="' + item.dataset.repeaterIndex + '"]'
-                );
+            this.refreshItemTitles();
+        }
 
-                if (groupItem) {
-                    const title = groupItem.querySelector('[data-group-title]');
-                    if (title) {
-                        title.textContent = this.getCollapseTitle(item);
-                    }
-                }
-            });
+        // eventUpdateItemTitle titles the item's sidebar card
+        eventUpdateItemTitle(item) {
+            const groupItem = this.sidebar && this.sidebar.querySelector(
+                ':scope > li[data-repeater-index="' + item.dataset.repeaterIndex + '"]'
+            );
+            const title = groupItem && groupItem.querySelector('[data-group-title]');
+
+            if (title) {
+                title.textContent = this.getCollapseTitle(item);
+            }
         }
 
         transferBuilderItemHeaders() {

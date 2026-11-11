@@ -129,6 +129,145 @@ describe('repeater relayout', () => {
     });
 });
 
+const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => resolve()));
+
+// titledItem is an accordion item whose first text field gives its title, collapsed or open, with an optional group name
+const titledItem = (index, value, { collapsed = true, group = '' } = {}) => `<li class="field-repeater-item${collapsed ? ' collapsed' : ''}" data-repeater-index="${index}"${group ? ` data-item-title="${group}"` : ''}>
+    <div class="repeater-header"><div class="repeater-item-title"></div></div>
+    <div class="repeater-content"><div data-field-name="question"><input type="text" value="${value}"></div></div>
+</li>`;
+
+const typeInto = (input, value, eventName = 'input') => {
+    input.value = value;
+    input.dispatchEvent(new Event(eventName, { bubbles: true }));
+};
+
+const titleOf = (item) => item.querySelector(':scope > .repeater-header .repeater-item-title').textContent;
+
+describe('repeater item titles', () => {
+    test('a collapsed accordion item shows the title its fields give, from the start', () => {
+        const { element } = connect('repeateraccordion', `<div class="field-repeater">
+            <ul class="field-repeater-items">${titledItem(0, 'Which bulbs?')}</ul>
+        </div>`);
+
+        expect(titleOf(element.querySelector('.field-repeater-item'))).toBe('Which bulbs?');
+    });
+
+    test('an open grouped item shows its group name, and the title its fields give once collapsed', () => {
+        const { element } = connect('repeateraccordion', `<div class="field-repeater">
+            <ul class="field-repeater-items">${titledItem(0, 'Designed for reading', { collapsed: false, group: 'Text' })}</ul>
+        </div>`);
+        const item = element.querySelector('.field-repeater-item');
+
+        expect(titleOf(item)).toBe('Text');
+
+        item.querySelector('.repeater-item-title').click();
+        expect(item.classList.contains('collapsed')).toBe(true);
+        expect(titleOf(item)).toBe('Text');
+
+        item.querySelector('.repeater-item-title').click();
+        expect(titleOf(item)).toBe('Text');
+    });
+
+    test('an open singular item leaves its title to the strip, empty', () => {
+        const { element } = connect('repeateraccordion', `<div class="field-repeater">
+            <ul class="field-repeater-items">${titledItem(0, 'Which bulbs?', { collapsed: false })}</ul>
+        </div>`);
+
+        expect(titleOf(element.querySelector('.field-repeater-item'))).toBe('');
+    });
+
+    test('a collapsed item\'s title follows its field when it changes, once a frame', async () => {
+        const { element } = connect('repeateraccordion', `<div class="field-repeater">
+            <ul class="field-repeater-items">${titledItem(0, 'Which bulbs?')}${titledItem(1, 'Can it clamp?')}</ul>
+        </div>`);
+        const [first, second] = element.querySelectorAll('.field-repeater-item');
+
+        typeInto(first.querySelector('input'), 'Is it');
+        typeInto(first.querySelector('input'), 'Is it dimmable?');
+        expect(titleOf(first)).toBe('Which bulbs?');
+
+        await nextFrame();
+        expect(titleOf(first)).toBe('Is it dimmable?');
+        expect(titleOf(second)).toBe('Can it clamp?');
+    });
+
+    test('a changed field retitles its item too, as a select reports', async () => {
+        const { element } = connect('repeateraccordion', `<div class="field-repeater">
+            <ul class="field-repeater-items">${titledItem(0, 'Before')}</ul>
+        </div>`);
+
+        typeInto(element.querySelector('input'), 'After', 'change');
+        await nextFrame();
+
+        expect(titleOf(element.querySelector('.field-repeater-item'))).toBe('After');
+    });
+
+    test('an item added to the list takes its title', async () => {
+        const { element } = connect('repeateraccordion', `<div class="field-repeater">
+            <ul class="field-repeater-items">${titledItem(0, 'First')}</ul>
+        </div>`);
+
+        element.querySelector('.field-repeater-items').insertAdjacentHTML('beforeend', titledItem(1, 'Added'));
+
+        // The observer reports the new item in a microtask, which then waits a frame to title it
+        await Promise.resolve();
+        await nextFrame();
+
+        expect(titleOf(element.querySelectorAll('.field-repeater-items > .field-repeater-item')[1])).toBe('Added');
+    });
+
+    test('a field in a nested repeater retitles the outer item holding it, never the inner header', async () => {
+        const { element } = connect('repeateraccordion', `<div class="field-repeater outer">
+            <ul class="field-repeater-items">
+                <li class="field-repeater-item collapsed" data-repeater-index="0">
+                    <div class="repeater-header"><div class="repeater-item-title"></div></div>
+                    <div class="repeater-content">
+                        <div class="field-repeater inner">
+                            <ul class="field-repeater-items">${titledItem(0, 'Inner')}</ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>`);
+        const outerItem = element.querySelector(':scope > .field-repeater-items > li'),
+            innerItem = element.querySelector('.inner .field-repeater-item');
+
+        expect(titleOf(outerItem)).toBe('Inner');
+
+        typeInto(element.querySelector('.inner input'), 'Renamed');
+        await nextFrame();
+
+        expect(titleOf(outerItem)).toBe('Renamed');
+        expect(titleOf(innerItem)).toBe('');
+    });
+
+    test('a builder card title follows its item\'s field', async () => {
+        const { element } = connect('repeaterbuilder', `<div class="field-repeater">
+            <div class="field-repeater-builder">
+                <ul class="field-repeater-groups"></ul>
+            </div>
+            <script type="text/template" data-group-template>
+                <li class="field-repeater-group">
+                    <div class="group-controls" data-group-controls></div>
+                    <span class="group-image" data-group-image><i></i></span>
+                    <span class="group-title" data-group-title></span>
+                    <span class="group-description" data-group-description></span>
+                </li>
+            </script>
+            <ul class="field-repeater-items">${titledItem(0, 'Light that follows you')}</ul>
+        </div>`);
+        const cardTitle = element.querySelector('.field-repeater-groups [data-group-title]');
+
+        expect(cardTitle.textContent).toBe('Light that follows you');
+
+        typeInto(element.querySelector('.field-repeater-items input'), 'Light that bends with you');
+        await nextFrame();
+
+        expect(cardTitle.textContent).toBe('Light that bends with you');
+    });
+});
+
 const itemMenuTemplate = `<script type="text/template" data-item-menu-template>
     <a data-repeater-duplicate class="menu-item" role="menuitem" href="javascript:;">Duplicate</a>
     <hr class="menu-divider">

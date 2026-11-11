@@ -13,6 +13,7 @@
     --oc-repeater-body-inner-bg: var(--bs-bg-body);
     --oc-repeater-item-bg: var(--oc-form-control-bg);
     --oc-repeater-menu-bg: var(--bs-bg-2);
+    --oc-repeater-radius: 0.5rem;
 }
 
 .field-repeater {
@@ -27,7 +28,7 @@
     > ul > li.field-repeater-item {
         padding: 0;
         margin: 0;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
         list-style: none;
     }
 
@@ -49,37 +50,40 @@
 
     a.repeater-item-menu,
     a.repeater-item-handle {
+        display: grid;
+        place-items: center;
         width: var(--oc-repeater-icon-size);
         height: var(--oc-repeater-icon-size);
-        line-height: var(--oc-repeater-icon-size);
-        display: block;
-        color: var(--oc-toolbar-color);
+        color: var(--bs-fg-3);
         text-decoration: none;
-        border-radius: 0.1875rem;
-        text-align: center;
-        margin: -2px 2px;
+        border-radius: 0.25rem;
+        margin: 0;
+        transition: color 0.15s, background-color 0.15s;
 
         i {
-            font-size: 1.3125rem;
-            vertical-align: middle;
+            font-size: 1.125rem;
+            line-height: 1;
         }
     }
 
     a.repeater-item-handle {
-        cursor: move;
+        cursor: grab;
+
+        &:hover {
+            color: var(--bs-fg-body);
+            background: var(--oc-toolbar-hover-bg);
+        }
+
         &:active {
+            cursor: grabbing;
             background: var(--oc-toolbar-hover-bg);
         }
     }
 
-    .repeater-item-dropdown.show a.repeater-item-menu,
+    .repeater-item-dropdown:has(.show) a.repeater-item-menu,
     a.repeater-item-menu:hover {
-        color: var(--oc-toolbar-hover-color);
+        color: var(--bs-fg-body);
         background: var(--oc-toolbar-hover-bg);
-    }
-
-    .repeater-item-dropdown {
-        padding-right: 0.1875rem;
     }
 }
 

@@ -62,8 +62,21 @@ export function createRepeaterFormWidgetBase(jax) {
 
             // Items
             this.listen('change', this.onElementChange);
+            this.listen('input', this.onElementInput);
             this.listen('click', this.onElementClick);
             this.listen('show.bs.menu', this.onShowItemMenu);
+
+            // Title added items
+            if (this.itemContainer) {
+                this.itemObserver = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === Node.ELEMENT_NODE && node.matches('.field-repeater-item')) {
+                            this.queueItemTitle(node);
+                        }
+                    }));
+                });
+                this.itemObserver.observe(this.itemContainer, { childList: true });
+            }
 
             // Toolbar add button posts through its own data-request attribute
             this.listen('ajax:done', this.onAjaxDone);
@@ -75,6 +88,16 @@ export function createRepeaterFormWidgetBase(jax) {
         disconnect() {
             if (this.sortable) {
                 this.sortable.destroy();
+            }
+
+            if (this.itemObserver) {
+                this.itemObserver.disconnect();
+                this.itemObserver = null;
+            }
+
+            if (this.titleFrame) {
+                cancelAnimationFrame(this.titleFrame);
+                this.titleFrame = null;
             }
 
             this.itemContainer = null;
@@ -171,7 +194,66 @@ export function createRepeaterFormWidgetBase(jax) {
         onElementChange(ev) {
             if (ev.target.matches('.repeater-header input[type=checkbox]') && this.ownsElement(ev.target)) {
                 this.clickItemCheckbox(ev);
+                return;
             }
+
+            this.queueItemTitle(ev.target);
+        }
+
+        onElementInput(ev) {
+            this.queueItemTitle(ev.target);
+        }
+
+        // queueItemTitle updates the item's title on the next frame
+        queueItemTitle(el) {
+            const item = this.findOwnItem(el);
+            if (!item) {
+                return;
+            }
+
+            this.pendingTitles = this.pendingTitles || new Set();
+            this.pendingTitles.add(item);
+
+            if (this.titleFrame) {
+                return;
+            }
+
+            this.titleFrame = requestAnimationFrame(() => {
+                const items = this.pendingTitles;
+                this.titleFrame = null;
+                this.pendingTitles = new Set();
+
+                items.forEach((pending) => {
+                    if (pending.isConnected) {
+                        this.eventUpdateItemTitle(pending);
+                    }
+                });
+            });
+        }
+
+        // findOwnItem returns this repeater's item for the element, skipping nested repeaters
+        findOwnItem(el) {
+            if (!this.itemContainer) {
+                return null;
+            }
+
+            let item = el.closest('.field-repeater-item');
+            while (item && item.parentElement !== this.itemContainer) {
+                item = item.parentElement ? item.parentElement.closest('.field-repeater-item') : null;
+            }
+
+            return item;
+        }
+
+        // refreshItemTitles updates every item's title
+        refreshItemTitles() {
+            if (!this.itemContainer) {
+                return;
+            }
+
+            this.itemContainer.querySelectorAll(':scope > .field-repeater-item').forEach((item) => {
+                this.eventUpdateItemTitle(item);
+            });
         }
 
         onAjaxDone(ev) {
@@ -568,6 +650,9 @@ export function createRepeaterFormWidgetBase(jax) {
         }
 
         eventMenuFilter() {
+        }
+
+        eventUpdateItemTitle(item) {
         }
     }
 
