@@ -78,6 +78,7 @@
 .ts-dropdown {
     overflow: hidden;
     font-size: var(--custom-select-font-size);
+    line-height: var(--bs-btn-input-line-height);
     color: var(--bs-fg-body);
     background-color: var(--custom-select-dropdown-bg);
     border: 1px solid var(--custom-select-dropdown-border);

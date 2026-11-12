@@ -15,8 +15,8 @@
 
 .ts-wrapper,
 .ts-dropdown {
-    /* Options */
-    --custom-select-option-padding-y: 0.625rem;
+    /* Options, as tall as the field: its padding and border */
+    --custom-select-option-padding-y: calc(var(--bs-btn-input-padding-y) + var(--bs-border-width));
     --custom-select-option-padding-x: 0.875rem;
     --custom-select-option-radius: 0.25rem;
     --custom-select-hover-bg: light-dark(#f5f5f5, var(--bs-bg-3));
