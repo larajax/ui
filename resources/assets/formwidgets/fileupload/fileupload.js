@@ -376,7 +376,7 @@ export function registerFileUpload(jax) {
                 size.textContent = filesize.size + ' ' + filesize.units;
             }
 
-            // Remove any exisiting objects for single variety
+            // Remove any existing objects for single variety
             if (!this.config.isMulti) {
                 this.removeFileFromElement(siblingsOf(preview));
             }

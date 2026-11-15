@@ -765,7 +765,7 @@ class Filter extends WidgetBase implements FilterElement
             $result['#' . $scope->getId('group')] = $this->makePartial('scope', ['scope' => $scope]);
         }
 
-        // Reset dependant scopes
+        // Reset dependent scopes
         if ($dependScopes = $this->getDependScopes($scope)) {
             foreach ($dependScopes as $dScope) {
                 $this->putScopeValue($dScope, null);
