@@ -31,6 +31,8 @@
     --oc-backdrop-opacity:       0.5;
     /* Stacked popup tint */
     --oc-backdrop-stacked-opacity: 0.15;
+    /* Popups sit 2:3 down the free space, the optical centre */
+    --oc-popup-position-y:       40%;
 
     --oc-accent:                 var(--bs-primary-base);
     --oc-selection:              var(--bs-primary-base);
