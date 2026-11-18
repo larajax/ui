@@ -7,6 +7,7 @@
 .control-popup {
     --bs-dialog-width: 42.75rem;
     --bs-dialog-backdrop-bg: rgba(0, 0, 0, var(--oc-backdrop-opacity));
+    --bs-dialog-backdrop-blur: 0px;
     background-color: var(--oc-popup-bg);
     border: var(--oc-popup-border);
     border-radius: 0.625rem;
@@ -24,7 +25,6 @@
     /* Stacked popups only add a light tint */
     &.popup-stacked {
         --bs-dialog-backdrop-bg: rgba(0, 0, 0, var(--oc-backdrop-stacked-opacity));
-        --bs-dialog-backdrop-blur: 0px;
     }
 
     /* Scale in on open, out while loading */
@@ -159,19 +159,16 @@
     z-index: var(--oc-zindex-modal-background);
     color: inherit;
     background-color: rgba(0, 0, 0, var(--oc-backdrop-opacity));
-    backdrop-filter: blur(var(--bs-dialog-backdrop-blur, 8px));
     opacity: 1;
 
     /* Loading over another popup, takes the stacked tint */
     &.popup-backdrop-stacked {
         background-color: rgba(0, 0, 0, var(--oc-backdrop-stacked-opacity));
-        backdrop-filter: none;
     }
 
     /* Over its own open popup, already dimmed */
     &.popup-backdrop-clear {
         background-color: transparent;
-        backdrop-filter: none;
         pointer-events: none;
     }
 

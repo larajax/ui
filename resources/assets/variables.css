@@ -29,7 +29,7 @@
     --oc-popup-bg:               var(--bs-bg-body);
     --oc-popup-border:           var(--bs-border-width) solid var(--bs-border-color-translucent);
     --oc-backdrop-opacity:       0.5;
-    /* Stacked popup tint, no blur */
+    /* Stacked popup tint */
     --oc-backdrop-stacked-opacity: 0.15;
 
     --oc-accent:                 var(--bs-primary-base);
