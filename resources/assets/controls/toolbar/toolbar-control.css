@@ -42,36 +42,6 @@
             position: relative;
             flex: 1 1 auto;
             min-width: 0;
-
-            &::after,
-            &::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                width: 0.75rem;
-                z-index: 2;
-                opacity: 0;
-                transition: opacity 0.1s ease-out;
-            }
-
-            &::before {
-                background: transparent linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0) 100%);
-                left: -0.1875rem;
-            }
-
-            &::after {
-                background: transparent linear-gradient(270deg, #000 0%, rgba(0, 0, 0, 0) 100%);
-                right: 0.875rem;
-            }
-
-            &.scroll-before::before {
-                opacity: .15;
-            }
-
-            &.scroll-after::after {
-                opacity: .15;
-            }
         }
 
         /* Setup button */

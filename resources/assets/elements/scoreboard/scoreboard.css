@@ -17,6 +17,7 @@ div.scoreboard {
     --scoreboard-sparkline-color: var(--bs-primary-base);
     --scoreboard-link-color: var(--bs-link-color);
     --scoreboard-fade-size: 2rem;
+    --drag-scroll-fade-size: var(--scoreboard-fade-size);
 
     position: relative;
     padding: 0;
@@ -24,19 +25,6 @@ div.scoreboard {
     > [data-control~=toolbar] {
         display: flex;
         align-items: stretch;
-    }
-
-    /* The row fades out at an edge with more to scroll to */
-    &.scroll-before > [data-control~=toolbar] {
-        mask-image: linear-gradient(to right, transparent, #000 var(--scoreboard-fade-size));
-    }
-
-    &.scroll-after > [data-control~=toolbar] {
-        mask-image: linear-gradient(to left, transparent, #000 var(--scoreboard-fade-size));
-    }
-
-    &.scroll-before.scroll-after > [data-control~=toolbar] {
-        mask-image: linear-gradient(to right, transparent, #000 var(--scoreboard-fade-size), #000 calc(100% - var(--scoreboard-fade-size)), transparent);
     }
 
     /* Scoreboard items, a thin line apart */

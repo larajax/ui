@@ -56,7 +56,8 @@ export function registerTab(jax) {
             this.tabs().forEach((li) => this.initTab(li));
 
             this.dragScroll = new DragScroll(this.nav, {
-                scrollClassContainer: this.element
+                scrollClassContainer: this.element,
+                useFade: this.element.classList.contains('content-tabs')
             });
 
             this.showHashedAnchorTab();

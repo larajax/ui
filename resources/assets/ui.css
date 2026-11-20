@@ -15,6 +15,7 @@
 @import "./elements/status-list/status-list.css";
 
 /* Controls */
+@import "./controls/drag-scroll/drag-scroll.css";
 @import "./controls/datepicker/datepicker.css";
 @import "./controls/loader-container/loader-container-control.css";
 @import "./controls/load-indicator/load-indicator.css";

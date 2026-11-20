@@ -164,6 +164,17 @@ describe('tab setup', () => {
         control.disconnect();
         expect(control.dragScroll).toBeNull();
     });
+
+    test('content tabs enable fading on their nav without fading their panels', async () => {
+        document.body.innerHTML = `<div class="control-tabs content-tabs" data-control="tab">${TABS_MARKUP}</div>`;
+        const element = document.querySelector('[data-control~="tab"]');
+        connectControl(element);
+
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        expect(element.querySelector('ul.nav-tabs').hasAttribute('data-drag-scroll-fade')).toBe(true);
+        expect(element.hasAttribute('data-drag-scroll-fade')).toBe(false);
+        expect(element.querySelector('.tab-content').hasAttribute('data-drag-scroll-fade')).toBe(false);
+    });
 });
 
 describe('tab shown', () => {

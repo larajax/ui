@@ -71,7 +71,8 @@ export function registerFilterWidget(jax) {
             this.scrollable = this.element.querySelector('.filter-scopes');
             if (this.scrollable) {
                 this.dragScroll = new DragScroll(this.scrollable, {
-                    scrollClassContainer: this.scrollable.parentNode
+                    scrollClassContainer: this.scrollable.parentNode,
+                    useFade: true
                 });
             }
 
@@ -80,7 +81,8 @@ export function registerFilterWidget(jax) {
             if (primaryGroup?.querySelector('.scope-tabs')) {
                 this.primaryScrollable = primaryGroup;
                 this.primaryDragScroll = new DragScroll(primaryGroup, {
-                    scrollClassContainer: primaryGroup.parentNode
+                    scrollClassContainer: primaryGroup.parentNode,
+                    useFade: true
                 });
                 this.revealActiveTab();
             }

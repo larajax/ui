@@ -149,6 +149,10 @@
             width: 18.25rem;
             min-width: 0;
 
+            &:has(.form-control.is-growable) {
+                width: auto;
+            }
+
             .form-control {
                 --bs-control-min-height: 2rem;
                 --bs-control-padding-y: 0;
@@ -160,6 +164,7 @@
 
             /* Compact search grows left when focused */
             .form-control.is-growable {
+                max-width: 100%;
                 margin-inline-start: auto;
             }
         }
@@ -220,51 +225,6 @@
             overflow: hidden;
             padding: 0.25rem;
             margin: -0.25rem;
-        }
-    }
-
-    /* Edge shadows while more can scroll */
-    .filter-row > .filter-scroll,
-    .filter-primary {
-        &::before,
-        &::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 0.75rem;
-            z-index: 2;
-            opacity: 0;
-            transition: opacity 0.1s ease-out;
-            pointer-events: none;
-        }
-
-        &::before {
-            background: transparent linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0) 100%);
-            left: -0.1875rem;
-        }
-
-        &::after {
-            background: transparent linear-gradient(270deg, #000 0%, rgba(0, 0, 0, 0) 100%);
-            right: -0.1875rem;
-        }
-
-        &.scroll-before::before {
-            opacity: .15;
-        }
-
-        &.scroll-after::after {
-            opacity: .15;
-        }
-    }
-
-    .filter-row.filter-primary {
-        &::before {
-            left: 0;
-        }
-
-        &::after {
-            right: 0;
         }
     }
 

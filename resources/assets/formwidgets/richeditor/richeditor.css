@@ -32,6 +32,13 @@
         outline: 0;
     }
 
+    /* Size fixes the body height; stretch and fullscreen use the available space. */
+    &:not(.is-stretch) .rich-editor:not(.is-fullscreen) .rich-editor-body {
+        flex: none;
+        height: var(--rich-editor-min-height);
+        overflow: auto;
+    }
+
     &.is-stretch {
         height: 100%;
 

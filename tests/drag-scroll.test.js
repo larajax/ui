@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
+import { readFileSync } from 'node:fs';
 import DragScroll from '../resources/assets/controls/drag-scroll/drag-scroll.js';
 import { registerDragScroll } from '../resources/assets/controls/drag-scroll/drag-scroll-control.js';
 
@@ -33,6 +34,122 @@ afterEach(() => {
 });
 
 describe('drag scroll', () => {
+    test('revealing an item immediately leaves room for the configured horizontal fade', () => {
+        const style = document.createElement('style');
+        style.textContent = readFileSync(new URL('../resources/assets/controls/drag-scroll/drag-scroll.css', import.meta.url), 'utf8');
+        document.head.appendChild(style);
+
+        const { row, place } = makeRow();
+        row.style.setProperty('--drag-scroll-fade-size', '24px');
+        const scroll = new DragScroll(row, { useFade: true });
+
+        try {
+            scroll.goToElement(place('b', 600, 100), undefined, { duration: 0 });
+            expect(row.scrollLeft).toBe(424);
+
+            scroll.goToElement(place('a', 100, 80), undefined, { duration: 0 });
+            expect(row.scrollLeft).toBe(76);
+
+            // At either end there is no fade, so reaching the edge is enough
+            scroll.goToElement(place('b', 900, 100), undefined, { duration: 0 });
+            expect(row.scrollLeft).toBe(700);
+            scroll.goToElement(place('a', 0, 80), undefined, { duration: 0 });
+            expect(row.scrollLeft).toBe(0);
+        }
+        finally {
+            scroll.dispose();
+            style.remove();
+        }
+    });
+
+    test('revealing a vertical item leaves room for its configured fade', () => {
+        const style = document.createElement('style');
+        style.textContent = readFileSync(new URL('../resources/assets/controls/drag-scroll/drag-scroll.css', import.meta.url), 'utf8');
+        document.head.appendChild(style);
+
+        const { row } = makeRow();
+        row.style.setProperty('--drag-scroll-fade-size', '40px');
+        Object.defineProperties(row, {
+            clientHeight: { configurable: true, value: 200 },
+            scrollHeight: { configurable: true, value: 600 }
+        });
+        const item = document.getElementById('b');
+        item.getBoundingClientRect = () => ({ left: 50, top: 500 - row.scrollTop, width: 100, height: 50 });
+        const scroll = new DragScroll(row, { useFade: true, vertical: true });
+
+        try {
+            scroll.goToElement(item, undefined, { duration: 0 });
+            expect(row.scrollTop).toBe(390);
+        }
+        finally {
+            scroll.dispose();
+            style.remove();
+        }
+    });
+
+    test('fading is opt-in and leaves the existing scroll indicators available', async () => {
+        const { row } = makeRow();
+        const wrap = document.getElementById('wrap');
+        const scroll = new DragScroll(row, { scrollClassContainer: wrap });
+
+        await sleep(50);
+        expect(row.hasAttribute('data-drag-scroll-fade')).toBe(false);
+        expect(wrap.classList.contains('scroll-after')).toBe(true);
+        scroll.dispose();
+    });
+
+    test('the fade follows each overflowing edge on the scroller, not its container', async () => {
+        const { row } = makeRow();
+        const wrap = document.getElementById('wrap');
+        const scroll = new DragScroll(row, { scrollClassContainer: wrap, useFade: true });
+
+        await sleep(50);
+        expect(row.getAttribute('data-drag-scroll-fade')).toBe('horizontal after');
+        expect(wrap.hasAttribute('data-drag-scroll-fade')).toBe(false);
+
+        row.scrollLeft = 300;
+        row.dispatchEvent(new Event('scroll'));
+        await sleep(50);
+        expect(row.getAttribute('data-drag-scroll-fade')).toBe('horizontal before after');
+
+        row.scrollLeft = 700;
+        row.dispatchEvent(new Event('scroll'));
+        await sleep(50);
+        expect(row.getAttribute('data-drag-scroll-fade')).toBe('horizontal before');
+
+        scroll.dispose();
+        expect(row.hasAttribute('data-drag-scroll-fade')).toBe(false);
+    });
+
+    test('vertical fades work when container scroll classes are disabled', async () => {
+        const { row } = makeRow();
+        Object.defineProperties(row, {
+            clientHeight: { configurable: true, value: 200 },
+            scrollHeight: { configurable: true, value: 600 }
+        });
+
+        const scroll = new DragScroll(row, { vertical: true, useFade: true, noScrollClasses: true });
+
+        await sleep(50);
+        expect(row.getAttribute('data-drag-scroll-fade')).toBe('vertical after');
+        expect(row.classList.contains('scroll-after')).toBe(false);
+
+        row.scrollTop = 400;
+        row.dispatchEvent(new Event('scroll'));
+        await sleep(50);
+        expect(row.getAttribute('data-drag-scroll-fade')).toBe('vertical before');
+        scroll.dispose();
+    });
+
+    test('disposing before a pending update does not leave a fade behind', async () => {
+        const { row } = makeRow();
+        const scroll = new DragScroll(row, { useFade: true });
+        scroll.dispose();
+
+        await sleep(50);
+        expect(row.hasAttribute('data-drag-scroll-fade')).toBe(false);
+    });
+
     test('goToElement measures an item from its box, whatever its offset parent', () => {
         const { row, place } = makeRow();
         const item = place('b', 600, 100);
@@ -220,19 +337,22 @@ describe('drag scroll', () => {
             const wrap = document.getElementById('wrap');
             Object.defineProperty(row, 'scrollWidth', { configurable: true, value: 300 });
 
-            const scroll = new DragScroll(row, { scrollClassContainer: wrap });
+            const scroll = new DragScroll(row, { scrollClassContainer: wrap, useFade: true });
             await sleep(50);
             expect(observed).toEqual([row, document.getElementById('a'), document.getElementById('b')]);
             expect(wrap.classList.contains('scroll-after')).toBe(false);
+            expect(row.getAttribute('data-drag-scroll-fade')).toBe('horizontal');
 
             // The content grows, as when a font loads, without the window changing
             Object.defineProperty(row, 'scrollWidth', { configurable: true, value: 800 });
             notify();
             await sleep(50);
             expect(wrap.classList.contains('scroll-after')).toBe(true);
+            expect(row.getAttribute('data-drag-scroll-fade')).toBe('horizontal after');
 
             scroll.dispose();
             expect(observed).toEqual([]);
+            expect(row.hasAttribute('data-drag-scroll-fade')).toBe(false);
         }
         finally {
             globalThis.ResizeObserver = original;
@@ -262,6 +382,22 @@ describe('drag scroll control', () => {
             }
         };
     }
+
+    test('data-use-fade enables the shared fade on the standalone control', async () => {
+        const { row } = makeRow();
+        row.dataset.useFade = 'true';
+
+        const jax = makeFakeJax();
+        registerDragScroll(jax);
+        const control = new (jax.controls.get('drag-scroll'))(row);
+        control.init();
+        control.connect();
+
+        await sleep(50);
+        expect(row.getAttribute('data-drag-scroll-fade')).toBe('horizontal after');
+        control.disconnect();
+        expect(row.hasAttribute('data-drag-scroll-fade')).toBe(false);
+    });
 
     test('scrollToActive brings the active item into view when the control connects', () => {
         const { row, place } = makeRow();

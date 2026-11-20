@@ -29,6 +29,7 @@ export function registerToolbar(jax) {
 
             this.instance = new DragScroll(this.element, {
                 scrollClassContainer: this.scrollClassContainer,
+                useFade: true,
                 useDrag: !noDragSupport,
                 useNative: this.config.useNativeDrag,
                 vertical: this.config.vertical,

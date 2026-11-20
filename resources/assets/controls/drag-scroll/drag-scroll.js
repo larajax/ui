@@ -27,6 +27,8 @@
  *   markers (span elements indicating whether scrolling is possible)
  * - useDrag - determines if dragging is allowed, true by default
  * - useNative - if native CSS is enabled via "mobile" on the HTML tag, false by default
+ * - useFade - fades overflowing edges into the background, false by default; the CSS custom
+ *   property --drag-scroll-fade-size sets the width, 1.5rem by default
  * - useScroll - determines if mouse wheel scrolling is allowed, true by default
  * - useComboScroll - determines if horizontal scroll should act as vertical, and vice versa, true by default
  * - dragSelector - restrict drag events to this selector
@@ -50,6 +52,7 @@ export default class DragScroll {
         useDrag: true,
         useScroll: true,
         useNative: false,
+        useFade: false,
         useComboScroll: true,
         scrollClassContainer: false,
         scrollMarkerContainer: false,
@@ -82,6 +85,10 @@ export default class DragScroll {
         this.wheelUpdateTimer = null;
         this.markers = [];
         this.listeners = [];
+
+        if (this.options.useFade) {
+            this.el.setAttribute('data-drag-scroll-fade', this.options.vertical ? 'vertical' : 'horizontal');
+        }
 
         // Inject scroll markers
         if (this.options.scrollMarkerContainer) {
@@ -127,7 +134,7 @@ export default class DragScroll {
         // Suppress item clicks while dragging
         this.listen(element, 'click', this.onClickCapture, true);
 
-        if (!this.options.noScrollClasses) {
+        if (!this.options.noScrollClasses || this.options.useFade) {
             this.listen(element, 'scroll', this.onScroll);
             this.observeSize();
         }
@@ -153,6 +160,10 @@ export default class DragScroll {
 
         this.markers.forEach((marker) => marker.remove());
         this.markers = [];
+
+        if (this.options.useFade && this.el) {
+            this.el.removeAttribute('data-drag-scroll-fade');
+        }
 
         this.scrollClassContainer = null;
         this.scrollTarget = null;
@@ -452,7 +463,7 @@ export default class DragScroll {
     // Public
 
     fixScrollClasses(isThrottle) {
-        if (this.options.noScrollClasses) {
+        if (this.options.noScrollClasses && !this.options.useFade) {
             return;
         }
 
@@ -475,11 +486,21 @@ export default class DragScroll {
             const isStart = this.isStart(),
                 isEnd = this.isEnd();
 
-            this.scrollClassContainer.classList.toggle('scroll-before', !isStart);
-            this.scrollClassContainer.classList.toggle('scroll-after', !isEnd);
+            if (!this.options.noScrollClasses) {
+                this.scrollClassContainer.classList.toggle('scroll-before', !isStart);
+                this.scrollClassContainer.classList.toggle('scroll-after', !isEnd);
 
-            this.scrollClassContainer.classList.toggle('scroll-active-before', this.isActiveBefore());
-            this.scrollClassContainer.classList.toggle('scroll-active-after', this.isActiveAfter());
+                this.scrollClassContainer.classList.toggle('scroll-active-before', this.isActiveBefore());
+                this.scrollClassContainer.classList.toggle('scroll-active-after', this.isActiveAfter());
+            }
+
+            if (this.options.useFade) {
+                const fade = [this.options.vertical ? 'vertical' : 'horizontal'];
+                if (!isStart) fade.push('before');
+                if (!isEnd) fade.push('after');
+                this.el.setAttribute('data-drag-scroll-fade', fade.join(' '));
+            }
+
             this.isScrollable = !isStart || !isEnd;
         }, 30);
     }

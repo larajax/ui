@@ -665,7 +665,9 @@
 
 .form-widget {
     display: flex;
+    flex: 1;
     flex-direction: column;
+    min-height: 0;
     height: 100%;
 }
 
@@ -675,10 +677,26 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    min-height: 0;
+}
+
+.form-tab-pane.is-stretch {
+    min-height: 0;
 }
 
 .form-group.form-field-stretch {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     height: 100%;
+
+    /* Labels and help text keep their natural height; the control fills the remainder. */
+    > [data-control],
+    > .form-control {
+        flex: 1;
+        min-height: 0;
+        height: auto;
+    }
 }
 
 /*

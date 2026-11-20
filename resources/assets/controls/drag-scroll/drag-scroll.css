@@ -1,0 +1,35 @@
+/* Opt-in fades follow the scrollable element's own overflow state */
+[data-drag-scroll-fade] {
+    --drag-scroll-fade-direction: 90deg;
+    --drag-scroll-fade-start: #000;
+    --drag-scroll-fade-end: #000;
+}
+
+[data-drag-scroll-fade~="horizontal"] {
+    scroll-padding-left: var(--drag-scroll-fade-size, 1.5rem);
+    scroll-padding-right: var(--drag-scroll-fade-size, 1.5rem);
+}
+
+[data-drag-scroll-fade~="vertical"] {
+    --drag-scroll-fade-direction: 180deg;
+    scroll-padding-top: var(--drag-scroll-fade-size, 1.5rem);
+    scroll-padding-bottom: var(--drag-scroll-fade-size, 1.5rem);
+}
+
+[data-drag-scroll-fade~="before"] {
+    --drag-scroll-fade-start: transparent;
+}
+
+[data-drag-scroll-fade~="after"] {
+    --drag-scroll-fade-end: transparent;
+}
+
+[data-drag-scroll-fade~="before"],
+[data-drag-scroll-fade~="after"] {
+    mask-image: linear-gradient(var(--drag-scroll-fade-direction),
+        var(--drag-scroll-fade-start),
+        #000 var(--drag-scroll-fade-size, 1.5rem),
+        #000 calc(100% - var(--drag-scroll-fade-size, 1.5rem)),
+        var(--drag-scroll-fade-end)
+    );
+}
