@@ -70,7 +70,7 @@
     --oc-tab-color:              var(--bs-fg-3);
     --oc-tab-active-color:       var(--bs-fg-body);
     --oc-tab-border:             var(--bs-border-color);
-    --oc-tab-hover-bg:           var(--bs-bg-2);
+    --oc-tab-hover-bg:           light-dark(rgba(215, 225, 234, 0.7), rgba(215, 225, 234, 0.2));
 
     --oc-dropdown-trigger-border: var(--bs-border-color);
     --oc-dropdown-trigger-color:  var(--bs-fg-body);
