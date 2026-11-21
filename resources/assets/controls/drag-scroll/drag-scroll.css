@@ -33,3 +33,8 @@
         var(--drag-scroll-fade-end)
     );
 }
+
+/* A mask clips fixed menus too, so it lifts while one is open */
+[data-drag-scroll-fade]:has([aria-expanded="true"]) {
+    mask-image: none;
+}

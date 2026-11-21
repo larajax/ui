@@ -141,6 +141,38 @@ describe('drag scroll', () => {
         scroll.dispose();
     });
 
+    test('the fade lifts while a menu inside the scroller is open', async () => {
+        const style = document.createElement('style');
+        style.textContent = readFileSync(new URL('../resources/assets/controls/drag-scroll/drag-scroll.css', import.meta.url), 'utf8');
+        document.head.appendChild(style);
+
+        // happy-dom keeps a computed style through a descendant's change, so each state is its own row
+        const fadeWith = async (expanded) => {
+            const { row } = makeRow(`<button type="button" aria-expanded="${expanded}">Menu</button>`);
+            const scroll = new DragScroll(row, { useFade: true });
+
+            await sleep(50);
+            const fade = row.getAttribute('data-drag-scroll-fade'),
+                mask = getComputedStyle(row).maskImage;
+
+            scroll.dispose();
+            return { fade, mask };
+        };
+
+        try {
+            const closed = await fadeWith(false);
+            expect(closed.fade).toBe('horizontal after');
+            expect(closed.mask).toContain('linear-gradient');
+
+            const open = await fadeWith(true);
+            expect(open.fade).toBe('horizontal after');
+            expect(open.mask).toBe('none');
+        }
+        finally {
+            style.remove();
+        }
+    });
+
     test('disposing before a pending update does not leave a fade behind', async () => {
         const { row } = makeRow();
         const scroll = new DragScroll(row, { useFade: true });
