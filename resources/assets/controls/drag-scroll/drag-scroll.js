@@ -496,8 +496,12 @@ export default class DragScroll {
 
             if (this.options.useFade) {
                 const fade = [this.options.vertical ? 'vertical' : 'horizontal'];
-                if (!isStart) fade.push('before');
-                if (!isEnd) fade.push('after');
+                if (!isStart) {
+                    fade.push('before');
+                }
+                if (!isEnd) {
+                    fade.push('after');
+                }
                 this.el.setAttribute('data-drag-scroll-fade', fade.join(' '));
             }
 

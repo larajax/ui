@@ -558,10 +558,6 @@
         div.padded-container,
         div.toolbar-widget {
             background: var(--tab-content-active-bg);
-        }
-
-        div.list-header,
-        div.padded-container {
             padding-top: 1.375rem;
         }
 

@@ -49,6 +49,6 @@
 
     /* Content tabs specific */
     --tab-content-bg: var(--oc-content-tab-content-bg, #e9edf3);
-    --tab-content-active-bg: var(--bs-bg-body);
+    --tab-content-active-bg: var(--tab-surface, var(--bs-bg-body));
     --tab-content-border: var(--bs-border-color);
 }
