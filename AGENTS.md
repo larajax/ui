@@ -345,6 +345,11 @@ Extend `Larajax\Ui\Classes\ListWidgetBase`, register the class under a code, and
 column's `type`. The list makes one widget for the column and calls `renderValue()` for each row. A
 built-in column type keeps its code, so pick a code of your own.
 
+A list widget can have AJAX handlers. Its alias is the list's alias with the column name added, such
+as `listViews`, and `$this->getEventHandler('onShowValue')` returns the full name for the partial.
+Post the row's key, not its values, and read the record with `$this->findRecord($key)`, which looks it
+up through the list's own query so a handler cannot reach rows the list does not show.
+
 ```php
 // app/ListWidgets/Meter.php
 namespace App\ListWidgets;

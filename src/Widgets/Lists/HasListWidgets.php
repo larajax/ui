@@ -19,12 +19,16 @@ trait HasListWidgets
 
     /**
      * makeListColumnWidget returns the list widget that renders a column, made once for
-     * each column, or null when the column type is not a list widget.
+     * each column, or null when the column type is a built-in type or not a list widget.
      */
     public function makeListColumnWidget(ListColumn $column): ?ListWidgetBase
     {
         if (isset($this->listWidgets[$column->columnName])) {
             return $this->listWidgets[$column->columnName];
+        }
+
+        if (method_exists($this, 'eval'. Str::studly((string) $column->type) .'TypeValue')) {
+            return null;
         }
 
         $widgetClass = $this->resolveListWidgetClass($column->type);
@@ -38,6 +42,17 @@ trait HasListWidgets
         $widgetConfig->parentList = $this;
 
         return $this->listWidgets[$column->columnName] = new $widgetClass($this->controller, $column, $widgetConfig);
+    }
+
+    /**
+     * processListWidgetColumns makes the list widget of each column that has one and binds
+     * it to the controller, so its AJAX handlers can be reached.
+     */
+    protected function processListWidgetColumns(array $columns): void
+    {
+        foreach ($columns as $column) {
+            $this->makeListColumnWidget($column)?->bindToController();
+        }
     }
 
     /**

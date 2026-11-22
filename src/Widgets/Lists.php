@@ -138,6 +138,16 @@ class Lists extends WidgetBase implements ListElement
     protected $allColumns;
 
     /**
+     * @var bool columnsDefined is true once the list has defined its columns.
+     */
+    protected $columnsDefined = false;
+
+    /**
+     * @var bool definingColumns is true while the list defines its columns.
+     */
+    protected $definingColumns = false;
+
+    /**
      * @var array columnOverride default columns with supplied key names.
      */
     protected $columnOverride;
@@ -881,42 +891,94 @@ class Lists extends WidgetBase implements ListElement
      */
     protected function defineListColumns(): array
     {
-        if (!isset($this->columns) || !is_array($this->columns)) {
-            $this->columns = [];
+        $this->definingColumns = true;
+
+        try {
+            if (!isset($this->columns) || !is_array($this->columns)) {
+                $this->columns = [];
+            }
+
+            if ($this->columns) {
+                $this->addColumns($this->columns);
+            }
+            else {
+                $this->addColumnsFromModel();
+            }
+
+            if (!$this->allColumns) {
+                $class = get_class($this->model instanceof Model ? $this->model : $this->controller);
+                throw new ApplicationException(Lang::get('List used in :class has no list columns defined.', compact('class')));
+            }
+
+            $this->eventExtendColumns();
+
+            $this->processPermissionCheck($this->allColumns);
+            $this->processAutoOrder($this->allColumns);
+            $this->processHiddenColumns($this->allColumns);
+            $this->processUserColumnOrders($this->allColumns, $this->getUserPreference('order'));
+            $this->processColumnTypeModifiers($this->allColumns);
+            $this->processListWidgetColumns($this->allColumns);
+        }
+        finally {
+            $this->definingColumns = false;
         }
 
-        if ($this->columns) {
-            $this->addColumns($this->columns);
-        }
-        else {
-            $this->addColumnsFromModel();
-        }
-
-        if (!$this->allColumns) {
-            $class = get_class($this->model instanceof Model ? $this->model : $this->controller);
-            throw new ApplicationException(Lang::get('List used in :class has no list columns defined.', compact('class')));
-        }
-
-        $this->eventExtendColumns();
-
-        $this->processPermissionCheck($this->allColumns);
-        $this->processAutoOrder($this->allColumns);
-        $this->processHiddenColumns($this->allColumns);
-        $this->processUserColumnOrders($this->allColumns, $this->getUserPreference('order'));
-        $this->processColumnTypeModifiers($this->allColumns);
+        $this->columnsDefined = true;
 
         return $this->allColumns;
     }
 
     /**
      * addColumns programmatically add columns, used internally and for extensibility.
+     * Columns added once the list has defined its columns, such as after make(), are
+     * checked for permissions and bound to the controller with their list widgets
+     * straight away, and take their place in the column order when the list renders.
      * @param array $columns Column definitions
      */
     public function addColumns(array $columns)
     {
+        $added = [];
+
         foreach ($columns as $columnName => $config) {
-            $this->allColumns[$columnName] = $this->makeListColumn($columnName, $config);
+            $this->allColumns[$columnName] = $added[$columnName] = $this->makeListColumn($columnName, $config);
         }
+
+        if (!$this->columnsDefined || $this->definingColumns) {
+            return;
+        }
+
+        $this->processPermissionCheck($added);
+        $this->processHiddenColumns($added);
+
+        $added = array_intersect_key($this->allColumns, $added);
+
+        $this->processColumnTypeModifiers($added);
+        $this->processListWidgetColumns($added);
+    }
+
+    /**
+     * bindEvent binds a local event. A `list.extendColumns` listener bound once the list
+     * has defined its columns, such as after make(), also runs straight away, so the
+     * columns it adds have their list widgets bound before an AJAX handler is called.
+     */
+    public function bindEvent($event, $callback, $priority = 0)
+    {
+        parent::bindEvent($event, $callback, $priority);
+
+        if ($event === 'list.extendColumns' && $this->columnsDefined && !$this->definingColumns) {
+            $callback();
+        }
+    }
+
+    /**
+     * bindToController defines the columns, which binds their list widgets so their AJAX
+     * handlers can be reached, then binds the list itself.
+     */
+    public function bindToController()
+    {
+        $this->defineListColumns();
+
+        parent::bindToController();
     }
 
     /**

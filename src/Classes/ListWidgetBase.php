@@ -4,7 +4,9 @@ use October\Contracts\Database\AttachmentInterface;
 
 /**
  * ListWidgetBase class contains widgets that render the cells of a list column. A list
- * makes one instance for each column, then calls renderValue() for each row.
+ * makes one instance for each column and binds it to the controller when it defines its
+ * columns, so its AJAX handlers are reached by its alias, then calls renderValue() for
+ * each row.
  *
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
@@ -87,6 +89,24 @@ abstract class ListWidgetBase extends WidgetBase
     public function getParentList()
     {
         return $this->parentList;
+    }
+
+    /**
+     * findRecord returns a record of the list by its key, found through the list's own
+     * query with its filters and search applied, so a handler cannot reach a record the
+     * list would not show. Returns null when there is no such record.
+     * @param mixed $key
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function findRecord($key)
+    {
+        $list = $this->getParentList();
+
+        if (!$list || !is_scalar($key) || $key === '') {
+            return null;
+        }
+
+        return $list->prepareQuery()->find($key);
     }
 
     /**
