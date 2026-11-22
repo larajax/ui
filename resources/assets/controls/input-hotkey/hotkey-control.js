@@ -85,6 +85,10 @@ export function registerInputHotkey(jax) {
                     return;
                 }
 
+                if (this.element.matches(':disabled, .disabled, .control-disabled')) {
+                    return;
+                }
+
                 // No stacker: the last open dialog is topmost
                 var activeContainer = jax.popupStacker
                     ? jax.popupStacker.getFirstPopup()
@@ -104,6 +108,13 @@ export function registerInputHotkey(jax) {
         }
 
         isVisible(el) {
+            // An item of a closed menu counts as visible while the toggle that opens it is
+            const menu = el.closest('.menu');
+            if (menu && !(menu.offsetWidth > 0)) {
+                const toggle = menu.parentElement && menu.parentElement.querySelector(':scope > [data-bs-toggle="menu"], :scope > .menu-item');
+                return toggle && toggle !== el ? this.isVisible(toggle) : false;
+            }
+
             return el.offsetWidth > 0 && el.offsetHeight > 0;
         }
 

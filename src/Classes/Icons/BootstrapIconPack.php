@@ -11,6 +11,7 @@ class BootstrapIconPack implements IconPack
             'search.clear' => 'bi bi-x',
 
             'dropdown.caret' => 'bi bi-chevron-down',
+            'dropdown.check' => 'bi bi-check2',
 
             'filter.menu' => 'bi bi-funnel',
             'filter.clear' => 'bi bi-eraser',

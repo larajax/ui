@@ -10,6 +10,13 @@
             <?= $controlPanel ?>
         </div>
 
+        <!-- End Buttons -->
+        <?php if ($endPanel): ?>
+            <div class="toolbar-item toolbar-end">
+                <?= $endPanel ?>
+            </div>
+        <?php endif ?>
+
         <!-- List Search -->
         <?php if ($search): ?>
             <div class="toolbar-item">

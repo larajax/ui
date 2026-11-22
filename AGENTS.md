@@ -19,7 +19,8 @@ A hand-written table or form looks unlike the rest of the application and has no
   `<select>` or `<textarea>` elements, or markup for validation messages.
 - **Filtering a list** uses `Filter` with a `scopes.yaml`. Do not write filter inputs or read the query
   string yourself.
-- **Buttons and a search box above a list** use `Toolbar`.
+- **Buttons, menus and a search box above a list** use `Toolbar`. Its YAML declares dropdown menus,
+  split buttons and button groups as well as plain buttons.
 - **A tree, or a list reordered by dragging,** uses `ListStructure`.
 - **Buttons, dropdown menus, popups, callouts, scoreboards and charts** in your own views come from the
   `Ui` facade, such as `Ui::ajaxButton()`.
@@ -221,9 +222,10 @@ Check these before you write anything of your own. Each `make()` method in
   See https://ui.larajax.org/lists/columns.
 - **Scope types:** `checkbox`, `switch`, `dropdown`, `group`, `date`, `text`, `number`, `trashed`.
   See https://ui.larajax.org/filters/scopes.
-- **`Ui` facade:** `button`, `ajaxButton`, `popupButton`, `iconButton`, `dropdownButton`,
-  `dropdownItem`, `dropdownDivider`, `callout`, `searchInput`, `scoreboard`, `scoreboardItem`,
-  `scoreboardThumbnail`, `pieChart`, `barChart`, `lineChart`, `statusList`, `statusItem`, `icon`.
+- **`Ui` facade:** `button`, `ajaxButton`, `popupButton`, `iconButton`, `buttonGroup`, `dropdownButton`,
+  `splitButton`, `dropdownItem`, `dropdownHeader`, `dropdownDivider`, `callout`, `searchInput`,
+  `scoreboard`, `scoreboardItem`, `scoreboardThumbnail`, `pieChart`, `barChart`, `lineChart`,
+  `statusList`, `statusItem`, `icon`.
   See https://ui.larajax.org/ui/buttons and the pages beside it.
 
 A `partial` field or column renders a view of your own inside the form or list, which is enough for a

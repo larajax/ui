@@ -11,6 +11,7 @@ class OctoberIconPack implements IconPack
             'search.clear' => 'icon-times',
 
             'dropdown.caret' => 'icon-angle-down',
+            'dropdown.check' => 'icon-check',
 
             'filter.menu' => 'ph ph-funnel-simple',
             'filter.clear' => 'icon-eraser',

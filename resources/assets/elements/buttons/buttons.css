@@ -127,6 +127,11 @@
     }
 }
 
+/* The caret half of a split button is narrower than a button */
+.split-button > .split-toggle {
+    --bs-btn-padding-x: 0.5rem;
+}
+
 :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-link, .btn-icon),
 .btn-group {
     &.offset-right {

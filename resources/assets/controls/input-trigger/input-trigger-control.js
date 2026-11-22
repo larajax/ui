@@ -38,6 +38,11 @@ export function registerInputTrigger(jax) {
                 this.triggerCondition = 'value';
                 this.triggerConditionValue = match ? match.map(m => m.slice(1, -1)) : [""];
             }
+            // checked[2] holds while exactly that many triggers are checked
+            else if (this.config.triggerCondition.indexOf('checked[') == 0) {
+                this.triggerCondition = 'checked';
+                this.triggerConditionCount = parseInt(this.config.triggerCondition.slice(8), 10);
+            }
 
             this.conditionValid = this.triggerCondition == 'checked' ||
                 this.triggerCondition == 'unchecked' ||
@@ -128,7 +133,10 @@ export function registerInputTrigger(jax) {
 
         onConditionChanged() {
             if (this.triggerCondition == 'checked') {
-                this.updateTarget(!!this.findTriggers(':checked').length);
+                var checkedCount = this.findTriggers(':checked').length;
+                this.updateTarget(this.triggerConditionCount !== undefined
+                    ? checkedCount === this.triggerConditionCount
+                    : !!checkedCount);
             }
             else if (this.triggerCondition == 'unchecked') {
                 this.updateTarget(!this.findTriggers(':checked').length);

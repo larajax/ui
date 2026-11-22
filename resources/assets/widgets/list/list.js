@@ -18,7 +18,8 @@
  *
  * Toolbar buttons inside a [data-list-linkage] container:
  * - data-list-checked-trigger - enabled through the trigger API while rows are checked,
- *   a [data-list-checked-counter] element inside shows the count
+ *   or with the value "single" while exactly one is, a [data-list-checked-counter] element
+ *   inside shows the count
  * - data-list-checked-request - AJAX requests include the checked row values as "checked"
  *
  * The list setup form:
@@ -308,7 +309,7 @@ export function registerListWidget(jax) {
         }
 
         buttonEl.dataset.triggerAction = 'enable';
-        buttonEl.dataset.triggerCondition = 'checked';
+        buttonEl.dataset.triggerCondition = buttonEl.dataset.listCheckedTrigger === 'single' ? 'checked[1]' : 'checked';
         buttonEl.dataset.trigger = '#' + listId + ' > .control-list tbody .list-checkbox input[type=checkbox]';
 
         if (!buttonEl.matches('[data-control~="input-trigger"]')) {

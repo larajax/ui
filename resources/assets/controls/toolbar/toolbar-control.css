@@ -44,6 +44,11 @@
             min-width: 0;
         }
 
+        /* Buttons at the end line up with the scrolling row */
+        &.toolbar-end {
+            align-self: center;
+        }
+
         /* Setup button */
         &.toolbar-setup {
             width: 2rem;

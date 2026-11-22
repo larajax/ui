@@ -45,7 +45,7 @@ $('#mybutton').triggerOn({
 |---|---|
 | `data-trigger` | CSS selector for the trigger element(s) |
 | `data-trigger-action` | Action(s): `show`, `hide`, `enable`, `disable`, `empty`, `fill[value]`. Pipe-delimited for multiple: `hide\|empty` |
-| `data-trigger-condition` | Condition: `checked`, `unchecked`, or `value[val1][val2]` with wildcard support |
+| `data-trigger-condition` | Condition: `checked`, `checked[n]` for exactly n checked, `unchecked`, or `value[val1][val2]` with wildcard support |
 | `data-trigger-closest-parent` | CSS selector for a common parent scope |
 
 ### Events

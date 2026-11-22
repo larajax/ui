@@ -1,49 +1,20 @@
 <?php
 /**
- * Renders a single toolbar button definition through the Ui factory, dispatched
- * on its configuration: handler+popup → popup button, handler → AJAX button,
- * otherwise a plain (link) button.
+ * Renders a single toolbar button definition, dispatched on its configuration to the
+ * partial that draws it: a host partial, a divider, a group, a split button, a dropdown
+ * or a plain button.
  */
-$attributes = (array) $button->attributes;
-
-if ($button->confirm) {
-    $attributes['data-request-confirm'] = __($button->confirm);
-}
-
-// Link the button to the checked rows of the bound list widget
-if ($button->checked) {
-    $attributes['data-list-checked-trigger'] = true;
-    if ($button->handler) {
-        $attributes['data-list-checked-request'] = true;
-    }
-}
-
-$args = [
-    'label' => $button->label ? __($button->label) : '',
-    'icon' => $button->icon ?: '',
-    'primary' => $button->type === 'primary',
-    'secondary' => $button->type === 'secondary',
-    'danger' => $button->type === 'danger',
-    'success' => $button->type === 'success',
-    'warning' => $button->type === 'warning',
-    'info' => $button->type === 'info',
-    'hotkey' => $button->hotkey ?: '',
-];
-
-if ($button->handler) {
-    $args['handler'] = $button->handler;
-    $args['requestData'] = (array) $button->requestData;
-}
-elseif ($button->url) {
-    $args['href'] = app('larajax.ui')->url($button->url);
-}
-
-$args += $attributes;
 ?>
-<?php if ($button->handler && $button->popup): ?>
-    <?= \Larajax\Ui\Facades\Ui::popupButton(...$args) ?>
-<?php elseif ($button->handler): ?>
-    <?= \Larajax\Ui\Facades\Ui::ajaxButton(...$args) ?>
+<?php if ($button->partial): ?>
+    <?= $this->controller->makePartial($button->partial, ['button' => $button, 'toolbar' => $this]) ?>
+<?php elseif ($button->isDivider()): ?>
+    <span class="toolbar-divider"></span>
+<?php elseif ($button->isGroup()): ?>
+    <?= $this->makePartial('button_group', ['button' => $button]) ?>
+<?php elseif ($button->isSplit()): ?>
+    <?= $this->makePartial('button_split', ['button' => $button]) ?>
+<?php elseif ($button->isDropdown()): ?>
+    <?= $this->makePartial('button_dropdown', ['button' => $button]) ?>
 <?php else: ?>
-    <?= \Larajax\Ui\Facades\Ui::button(...$args) ?>
+    <?= $this->makePartial('button_single', ['button' => $button]) ?>
 <?php endif ?>

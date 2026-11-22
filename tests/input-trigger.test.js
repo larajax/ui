@@ -69,3 +69,37 @@ describe('input trigger value condition', () => {
         expect(mountTrigger(checkbox(true), 'value[1]')()).toBe(true);
     });
 });
+
+describe('input trigger checked count condition', () => {
+    // Renders a button enabled while the given condition holds over three checkboxes
+    function mountChecked(checkedCount, condition) {
+        const boxes = [0, 1, 2].map((i) => `<input type="checkbox" name="rows[]" value="${i}" ${i < checkedCount ? 'checked' : ''} />`).join('');
+
+        document.body.innerHTML = `
+            <form>
+                ${boxes}
+                <button id="target" data-control="input-trigger" data-trigger="[name='rows[]']" data-trigger-action="enable" data-trigger-condition="${condition}" data-trigger-closest-parent="form">
+                    Show
+                </button>
+            </form>
+        `;
+
+        jax.connectAll();
+
+        return document.getElementById('target');
+    }
+
+    test('checked[1] holds only while exactly one box is checked', () => {
+        expect(mountChecked(0, 'checked[1]').disabled).toBe(true);
+        jax.disconnectAll();
+        expect(mountChecked(1, 'checked[1]').disabled).toBe(false);
+        jax.disconnectAll();
+        expect(mountChecked(2, 'checked[1]').disabled).toBe(true);
+    });
+
+    test('plain checked still holds for any number of checked boxes', () => {
+        expect(mountChecked(0, 'checked').disabled).toBe(true);
+        jax.disconnectAll();
+        expect(mountChecked(2, 'checked').disabled).toBe(false);
+    });
+});
