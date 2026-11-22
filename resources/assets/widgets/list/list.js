@@ -5,6 +5,10 @@
  * - data-control="listwidget" - enables the list widget
  * - data-checkbox-selector - selector of the row checkboxes, default: .list-checkbox input[type="checkbox"]
  *
+ * A table wider than the list scrolls sideways with the scrollbar below it, or by dragging the
+ * header or turning the mouse wheel over it. The list gets the scroll-before and scroll-after
+ * classes while there is more to see, which draw shadows on the header's edges.
+ *
  * JavaScript API:
  * jax.fetchControl(element, 'listwidget')
  * jax.fetchControl(el.closest('.control-list'), 'listwidget').getChecked() - values of the checked rows
@@ -32,6 +36,7 @@
 'use strict';
 
 import { Popup } from '../../controls/popup/popup.js';
+import DragScroll from '../../controls/drag-scroll/drag-scroll.js';
 
 export function registerListWidget(jax) {
     // Opens a record form in a popup via onLoadPopupForm
@@ -64,13 +69,33 @@ export function registerListWidget(jax) {
             this.listen('click', this.onClickCheckbox);
             this.listen('change', this.onChangeCheckbox);
 
+            this.bindScrollableContent();
             this.updateUi();
         }
 
         disconnect() {
+            if (this.dragScroll) {
+                this.dragScroll.dispose();
+                this.dragScroll = null;
+            }
+
             this.head = null;
             this.body = null;
             this.pageChange = null;
+        }
+
+        // Drags and wheels the table sideways from its header, leaving the body to the page
+        bindScrollableContent() {
+            const content = this.element.querySelector(':scope > .list-content');
+            if (!content) {
+                return;
+            }
+
+            this.dragScroll = new DragScroll(content, {
+                scrollClassContainer: this.element,
+                scrollSelector: 'thead',
+                dragSelector: 'thead'
+            });
         }
 
         // Shows a page change in progress

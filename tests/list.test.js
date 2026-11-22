@@ -387,3 +387,52 @@ describe('updating state', () => {
         expect(list.hasAttribute('aria-busy')).toBe(false);
     });
 });
+
+describe('scrolling a wide table', () => {
+    // Renders a list whose table is wider than its content box, measured as a browser lays it out
+    function renderWideList() {
+        renderList();
+        jax.disconnectAll();
+
+        const content = document.querySelector('.list-content');
+        Object.defineProperties(content, {
+            clientWidth: { configurable: true, value: 300 },
+            offsetWidth: { configurable: true, value: 300 },
+            scrollWidth: { configurable: true, value: 1000 }
+        });
+
+        return { content, control: jax.connect('listwidget', document.querySelector('.control-list')) };
+    }
+
+    function wheel(el) {
+        const ev = new WheelEvent('wheel', { deltaY: 100, bubbles: true, cancelable: true });
+        el.dispatchEvent(ev);
+        return ev.defaultPrevented;
+    }
+
+    test('the list marks the side with more columns to see', async () => {
+        renderWideList();
+
+        await sleep(50);
+        expect(document.querySelector('.control-list').classList.contains('scroll-after')).toBe(true);
+    });
+
+    test('the wheel scrolls the table over its header and leaves the body to the page', () => {
+        const { content } = renderWideList();
+
+        expect(wheel(document.querySelector('tbody td'))).toBe(false);
+        expect(content.scrollLeft).toBe(0);
+
+        expect(wheel(document.querySelector('thead th'))).toBe(true);
+        expect(content.scrollLeft).toBeGreaterThan(0);
+    });
+
+    test('disconnecting the list releases the header', () => {
+        const { content } = renderWideList();
+
+        jax.disconnectAll();
+
+        expect(wheel(document.querySelector('thead th'))).toBe(false);
+        expect(content.scrollLeft).toBe(0);
+    });
+});
