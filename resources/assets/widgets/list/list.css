@@ -394,15 +394,20 @@ table.table.data {
         padding-block: 0.5rem 0;
     }
 
+    /* A library button made square and small enough to keep the row height */
     .list-actions-toggle {
-        display: inline-flex;
-        align-items: center;
+        --bs-btn-padding-x: 0;
+        --bs-btn-padding-y: 0;
         justify-content: center;
-        width: 1.75rem;
-        height: 1.75rem;
-        padding: 0;
-        font-size: 1.25rem;
+        width: var(--oc-toolbar-action-size);
+        height: var(--oc-toolbar-action-size);
+        min-height: 0;
         vertical-align: middle;
+
+        > i {
+            top: 0;
+            font-size: 1.125rem;
+        }
     }
 
     /*
