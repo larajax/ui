@@ -167,6 +167,10 @@ class ViewComponent implements Htmlable
             if ($value === true && str_starts_with($key, 'data-')) {
                 $value = 'true';
             }
+            // The attribute bag prints its own values as they are, so they are escaped here as Blade escapes component attributes
+            elseif (is_string($value)) {
+                $value = e($value);
+            }
 
             $kebabAttributes[$key] = $value;
         }

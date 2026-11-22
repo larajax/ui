@@ -32,6 +32,7 @@ class Lists extends WidgetBase implements ListElement
     use \Larajax\Ui\Widgets\Lists\HasListSetup;
     use \Larajax\Ui\Widgets\Lists\HasListEvents;
     use \Larajax\Ui\Widgets\Lists\HasValueProcessor;
+    use \Larajax\Ui\Widgets\Lists\HasListWidgets;
     use \Larajax\Ui\Widgets\Lists\HasSorting;
     use \Larajax\Ui\Widgets\Lists\HasSearch;
     use \Larajax\Ui\Traits\PreferenceMaker;
@@ -977,6 +978,15 @@ class Lists extends WidgetBase implements ListElement
 
         $columnType = $config['type'] ?? null;
 
+        // A list widget's column defaults apply where the column does not set them
+        if (
+            $columnType &&
+            !method_exists($this, 'eval'. Str::studly($columnType) .'TypeValue') &&
+            ($widgetClass = $this->resolveListWidgetClass($columnType))
+        ) {
+            $config += $widgetClass::columnDefaults();
+        }
+
         $column = new ListColumn([
             'columnName' => $name,
             'label' => $label
@@ -1129,9 +1139,12 @@ class Lists extends WidgetBase implements ListElement
             $value = $value->name;
         }
 
-        // Apply filters
+        // Apply filters, where a built-in type wins over a list widget of the same code
         if (method_exists($this, 'eval'. Str::studly($column->type) .'TypeValue')) {
             $value = $this->{'eval'. Str::studly($column->type) .'TypeValue'}($record, $column, $value);
+        }
+        elseif ($listWidget = $this->makeListColumnWidget($column)) {
+            $value = $listWidget->renderValue($record, $value);
         }
         else {
             $value = $this->evalCustomListType($column->type, $record, $column, $value);
@@ -1242,7 +1255,7 @@ class Lists extends WidgetBase implements ListElement
      * isColumnRelated checks if column refers to a relation of the model, with a toggle
      * switch for checking only relationships with multiple records.
      */
-    protected function isColumnRelated(ListColumn $column, bool $isMulti = false): bool
+    public function isColumnRelated(ListColumn $column, bool $isMulti = false): bool
     {
         if (!$column->relation || $this->isColumnPivot($column)) {
             return false;

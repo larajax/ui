@@ -13,7 +13,7 @@ if ($item->type && $item->type !== 'default') {
 }
 ?>
 <?php if ($item->partial): ?>
-    <?= $this->controller->makePartial($item->partial, ['button' => $item, 'toolbar' => $this]) ?>
+    <?= $this->controller->makePartial($item->partial, ['button' => $item, 'toolbar' => $this, 'record' => $this->getRecord()]) ?>
 <?php elseif ($item->isDivider()): ?>
     <?= \Larajax\Ui\Facades\Ui::dropdownDivider() ?>
 <?php elseif ($item->isHeader()): ?>
@@ -31,7 +31,7 @@ if ($item->type && $item->type !== 'default') {
         'handler' => $item->handler ?: '',
         'href' => $item->handler ? '' : $this->getButtonUrl($item),
         'popup' => (bool) $item->popup,
-        'requestData' => (array) $item->requestData,
+        'requestData' => $this->getButtonRequestData($item),
         'hotkey' => $item->hotkey ?: '',
         'selected' => $this->isButtonActive($item),
         'disabled' => $this->isButtonDisabled($item),

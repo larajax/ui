@@ -12,7 +12,7 @@ $args = [
 
 if ($button->handler) {
     $args['handler'] = $button->handler;
-    $args['requestData'] = (array) $button->requestData;
+    $args['requestData'] = $this->getButtonRequestData($button);
 }
 else {
     $args['href'] = $this->getButtonUrl($button);

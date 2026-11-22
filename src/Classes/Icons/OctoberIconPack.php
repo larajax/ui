@@ -163,6 +163,7 @@ class OctoberIconPack implements IconPack
             'repeater.item.default' => 'icon-sticky-note',
             'repeater.group.default' => 'icon-square',
 
+            'list.actions' => 'icon-ellipsis-v',
             'list.reorder' => 'icon-list-reorder',
             'list.setup' => 'icon-text-format-ul',
             'list.structure' => 'icon-sitemap',

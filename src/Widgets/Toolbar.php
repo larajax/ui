@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Gate;
 use Larajax\Ui\Classes\ToolbarButton;
 use Larajax\Ui\Classes\WidgetBase;
+use Larajax\Ui\Helpers\Url as UrlHelper;
 use October\Rain\Exception\SystemException;
 
 /**
@@ -62,6 +63,12 @@ class Toolbar extends WidgetBase
     protected $allButtons;
 
     /**
+     * @var object|null record the buttons act on, given to renderMenuItems() by a list
+     * for each row of an actions column.
+     */
+    protected $record;
+
+    /**
      * make the toolbar widget from named arguments, other configuration keys pass
      * through the variadic tail.
      *
@@ -116,6 +123,32 @@ class Toolbar extends WidgetBase
     {
         $this->prepareVars();
         return $this->makePartial('toolbar');
+    }
+
+    /**
+     * renderMenuItems renders the visible buttons as the items of a menu, acting on the
+     * given record: its attributes fill `:name` placeholders, and button state methods
+     * receive it. A list's actions column calls it for each row.
+     */
+    public function renderMenuItems($record = null): string
+    {
+        $this->record = $record;
+
+        $html = '';
+
+        foreach ($this->getButtons() as $item) {
+            $html .= $this->makePartial('menu_item', ['item' => $item]);
+        }
+
+        return $html;
+    }
+
+    /**
+     * getRecord returns the record the buttons act on, if any.
+     */
+    public function getRecord()
+    {
+        return $this->record;
     }
 
     /**
@@ -392,7 +425,7 @@ class Toolbar extends WidgetBase
 
     /**
      * resolveButtonState reads a boolean config value, calling the host controller
-     * method of that name, with the button, when it is given as a string.
+     * method of that name, with the button and the record, when it is given as a string.
      */
     protected function resolveButtonState(ToolbarButton $button, string $key): bool
     {
@@ -406,15 +439,60 @@ class Toolbar extends WidgetBase
             throw new SystemException("The {$key} method [{$value}] for toolbar button [{$button->name}] is not found on the controller.");
         }
 
-        return (bool) $this->controller->{$value}($button);
+        return (bool) $this->controller->{$value}($button, $this->record);
     }
 
     /**
-     * getButtonUrl returns the address of a link button.
+     * resolvePlaceholders fills `:name` placeholders from the attributes of the record,
+     * leaving the text as it is without one, and a placeholder without a matching
+     * attribute as it is.
+     */
+    public function resolvePlaceholders(string $value): string
+    {
+        if (!$this->record) {
+            return $value;
+        }
+
+        return preg_replace_callback('/:(\w+)/', function ($matches) {
+            $attribute = $this->record->{$matches[1]} ?? null;
+
+            if (is_scalar($attribute) || (is_object($attribute) && method_exists($attribute, '__toString'))) {
+                return (string) $attribute;
+            }
+
+            return $matches[0];
+        }, $value);
+    }
+
+    /**
+     * getButtonUrl returns the address of a link button, its placeholders filled with
+     * encoded values.
      */
     public function getButtonUrl(ToolbarButton $button): string
     {
-        return $button->url ? app('larajax.ui')->url($button->url) : '';
+        if (!$button->url) {
+            return '';
+        }
+
+        $url = $this->record ? UrlHelper::replaceParameters($this->record, $button->url) : $button->url;
+
+        return UrlHelper::to($url);
+    }
+
+    /**
+     * getButtonRequestData returns the data a button sends, its placeholders filled.
+     */
+    public function getButtonRequestData(ToolbarButton $button): array
+    {
+        $resolve = function ($value) use (&$resolve) {
+            if (is_array($value)) {
+                return array_map($resolve, $value);
+            }
+
+            return is_string($value) ? $this->resolvePlaceholders($value) : $value;
+        };
+
+        return array_map($resolve, (array) $button->requestData);
     }
 
     /**
@@ -447,7 +525,7 @@ class Toolbar extends WidgetBase
         $classes = array_filter([$attributes['class'] ?? null]);
 
         if ($button->confirm) {
-            $attributes['data-request-confirm'] = __($button->confirm);
+            $attributes['data-request-confirm'] = $this->resolvePlaceholders(__($button->confirm));
         }
 
         if ($button->checked) {

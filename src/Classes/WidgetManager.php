@@ -9,6 +9,7 @@ class WidgetManager
 {
     use \Larajax\Ui\Classes\WidgetManager\HasFormWidgets;
     use \Larajax\Ui\Classes\WidgetManager\HasFilterWidgets;
+    use \Larajax\Ui\Classes\WidgetManager\HasListWidgets;
 
     /**
      * @var \Larajax\Ui\Classes\WidgetManager|null parent manager that this

@@ -113,5 +113,14 @@ class UiServiceProvider extends ServiceProvider
             $manager->registerFilterWidget(\Larajax\Ui\FilterWidgets\Number::class, 'number');
             $manager->registerFilterWidget(\Larajax\Ui\FilterWidgets\Trashed::class, 'trashed');
         });
+
+        app('system.widgets')->registerListWidgets(function ($manager) {
+            $manager->registerListWidget(\Larajax\Ui\ListWidgets\SwitchColumn::class, 'switch');
+            $manager->registerListWidget(\Larajax\Ui\ListWidgets\Image::class, 'image');
+            $manager->registerListWidget(\Larajax\Ui\ListWidgets\File::class, 'file');
+            $manager->registerListWidget(\Larajax\Ui\ListWidgets\Linkage::class, 'linkage');
+            $manager->registerListWidget(\Larajax\Ui\ListWidgets\Selectable::class, 'selectable');
+            $manager->registerListWidget(\Larajax\Ui\ListWidgets\Actions::class, 'actions');
+        });
     }
 }

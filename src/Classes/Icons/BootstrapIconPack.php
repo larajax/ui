@@ -163,6 +163,7 @@ class BootstrapIconPack implements IconPack
             'repeater.item.default' => 'bi bi-sticky',
             'repeater.group.default' => 'bi bi-square',
 
+            'list.actions' => 'bi bi-three-dots-vertical',
             'list.reorder' => 'bi bi-grip-vertical',
             'list.setup' => 'bi bi-sliders',
             'list.structure' => 'bi bi-diagram-3',

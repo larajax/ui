@@ -218,8 +218,8 @@ Check these before you write anything of your own. Each `make()` method in
   `nestedform`, `datatable`, `fileupload`, `datepicker`, `colorpicker`, `richeditor`, `markdown`,
   `phone`, `sensitive`. Each has a page, such as https://ui.larajax.org/form-widgets/relation.
 - **Column types:** `text`, `number`, `switch`, `date`, `datetime`, `time`, `timesince`, `timetense`,
-  `selectable`, `summary`, `image`, `file`, `linkage`, `colorpicker`, `partial`.
-  See https://ui.larajax.org/lists/columns.
+  `selectable`, `summary`, `image`, `file`, `linkage`, `colorpicker`, `partial`, and `actions` for a
+  menu on each row from toolbar button definitions. See https://ui.larajax.org/lists/columns.
 - **Scope types:** `checkbox`, `switch`, `dropdown`, `group`, `date`, `text`, `number`, `trashed`.
   See https://ui.larajax.org/filters/scopes.
 - **`Ui` facade:** `button`, `ajaxButton`, `popupButton`, `iconButton`, `buttonGroup`, `dropdownButton`,
@@ -234,7 +234,7 @@ one-off piece of markup.
 ## When nothing fits
 
 Write a widget. A widget is a PHP class with its own partials and AJAX handlers, so it works on every
-page that uses it. Both kinds are walked through, with running code, at
+page that uses it. Each kind is walked through, with running code, at
 https://ui.larajax.org/extending/custom-widgets.
 
 ### A form widget, for a new kind of field
@@ -339,9 +339,46 @@ $feed = ActivityFeed::make(record: $post, pageSize: 10);
   `Ui::ajaxButton(label: 'Show more', handler: $this->getEventHandler('onLoadMore'), requestData: ['shown' => count($items)])`.
 - Partials are plain PHP and escape nothing, so pass every value through `e()`.
 
+### A list widget, for a new kind of column
+
+Extend `Larajax\Ui\Classes\ListWidgetBase`, register the class under a code, and name the code as a
+column's `type`. The list makes one widget for the column and calls `renderValue()` for each row. A
+built-in column type keeps its code, so pick a code of your own.
+
+```php
+// app/ListWidgets/Meter.php
+namespace App\ListWidgets;
+
+use Larajax\Ui\Classes\ListWidgetBase;
+
+class Meter extends ListWidgetBase
+{
+    public $max = 100;
+
+    public function init(): void
+    {
+        $this->fillFromConfig(['max']);
+    }
+
+    public function renderValue($record, $value): string
+    {
+        return $this->makePartial('meter', [
+            'percent' => $this->max > 0 ? (int) min(100, round($value / $this->max * 100)) : 0,
+        ]);
+    }
+}
+```
+
+```php
+// app/Providers/AppServiceProvider.php, in boot()
+app('system.widgets')->registerListWidgets(function ($manager) {
+    $manager->registerListWidget(\App\ListWidgets\Meter::class, 'meter');
+});
+```
+
 ### Assets
 
-Either kind of widget adds its own files in `loadAssets()`, with `$this->addCss('css/widgets/rating.css')`
+Every kind of widget adds its own files in `loadAssets()`, with `$this->addCss('css/widgets/rating.css')`
 and `$this->addJs('js/widgets/rating.js')`. A relative path is under `public`. The layout prints them
 with `{{ Ui::renderAssets() }}` in its `<head>`. Scripts register a control with
 `jax.registerControl()`, which the markup starts with a `data-control` attribute.

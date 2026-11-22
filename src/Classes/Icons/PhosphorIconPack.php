@@ -163,6 +163,7 @@ class PhosphorIconPack implements IconPack
             'repeater.item.default' => 'ph ph-note',
             'repeater.group.default' => 'ph ph-square',
 
+            'list.actions' => 'ph ph-dots-three-vertical',
             'list.reorder' => 'ph ph-dots-six-vertical',
             'list.setup' => 'ph ph-sliders-horizontal',
             'list.structure' => 'ph ph-tree-structure',

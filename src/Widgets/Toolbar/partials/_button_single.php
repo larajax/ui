@@ -11,7 +11,7 @@ $args = [
 
 if ($button->handler) {
     $args['handler'] = $button->handler;
-    $args['requestData'] = (array) $button->requestData;
+    $args['requestData'] = $this->getButtonRequestData($button);
 }
 elseif ($button->url) {
     $args['href'] = $this->getButtonUrl($button);
