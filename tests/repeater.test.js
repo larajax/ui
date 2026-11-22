@@ -658,3 +658,134 @@ describe('repeater sorting', () => {
         expect(selected).toEqual([]);
     });
 });
+
+describe('repeater in a page toolbar', () => {
+    const toolbarMarkup = `<div class="field-repeater">
+        <div class="field-repeater-builder">
+            <div class="field-repeater-toolbar">
+                <button type="button" data-repeater-cmd="add-group"><i class="icon-add"></i> Add a Block</button>
+            </div>
+            <ul class="field-repeater-groups"></ul>
+        </div>
+        <script type="text/template" data-group-template>
+            <li class="field-repeater-group">
+                <span class="group-title" data-group-title></span>
+            </li>
+        </script>
+        <script type="text/template" data-group-loading-template>
+            <li class="field-repeater-group is-placeholder"></li>
+        </script>
+        <script type="text/template" data-group-palette-template>
+            <ul>
+                <li><a data-repeater-add data-repeater-add-group="hero"><i class="list-icon icon-laptop"></i><span class="title">Hero</span></a></li>
+                <li><a data-repeater-add data-repeater-add-group="quote"><i class="list-icon icon-quote"></i><span class="title">Quote</span></a></li>
+            </ul>
+        </script>
+        <ul class="field-repeater-items"></ul>
+    </div>`;
+
+    // Stands in for the page's Vue application: its event bus and toolbar extension point
+    function mountPageToolbar() {
+        const handlers = {},
+            state = [],
+            bus = {
+                emitted: [],
+                on: (name, fn) => (handlers[name] = handlers[name] || []).push(fn),
+                off: (name, fn) => { handlers[name] = (handlers[name] || []).filter((item) => item !== fn); },
+                emit(name, ...args) {
+                    this.emitted.push(name);
+                    (handlers[name] || []).forEach((fn) => fn(...args));
+                }
+            };
+
+        window.oc = { vueUtils: { getToolbarExtensionPoint: () => ({ bus, state }) } };
+
+        return { bus, state };
+    }
+
+    afterEach(() => {
+        delete window.oc;
+        delete jax.request;
+    });
+
+    test('puts its add button in the page toolbar while in view, with the groups as a menu', async () => {
+        const { bus, state } = mountPageToolbar();
+        const { element } = await connectWith('repeaterbuilder', toolbarMarkup, { externalToolbarBus: 'document' });
+
+        element.getClientRects = () => [{}];
+        bus.emit('extendapptoolbar');
+
+        expect(state).toEqual([
+            { type: 'separator' },
+            {
+                type: 'dropdown',
+                icon: 'icon-add',
+                label: 'Add a Block',
+                command: 'repeater-toolbar-add-group',
+                disabled: false,
+                menuitems: [
+                    { type: 'text', label: 'Hero', icon: 'list-icon icon-laptop', command: 'repeater-toolbar-add-group:hero' },
+                    { type: 'text', label: 'Quote', icon: 'list-icon icon-quote', command: 'repeater-toolbar-add-group:quote' }
+                ]
+            }
+        ]);
+
+        element.getClientRects = () => [];
+        state.length = 0;
+        bus.emit('extendapptoolbar');
+
+        expect(state).toEqual([]);
+    });
+
+    test('a group menu item adds that group\'s item while the page shows it loading', async () => {
+        const { bus } = mountPageToolbar();
+        const { element } = await connectWith('repeaterbuilder', toolbarMarkup, { externalToolbarBus: 'document' });
+        const requests = [];
+
+        jax.request = (el, handler, options) => {
+            requests.push([handler, options.data]);
+            el.dispatchEvent(new CustomEvent('ajax:promise', { bubbles: true }));
+
+            return Promise.resolve().then(() => {
+                element.querySelector('.field-repeater-items').insertAdjacentHTML('beforeend', sortItem(0, 'Quote'));
+                options.afterUpdate({});
+            });
+        };
+
+        expect(element.classList.contains('repeater-empty')).toBe(true);
+
+        element.getClientRects = () => [{}];
+        bus.emit('toolbarcmd', { command: 'repeater-toolbar-add-group:quote' });
+        await flush();
+
+        expect(requests).toEqual([['onAddItem', { _repeater_group: 'quote' }]]);
+        expect(bus.emitted.filter((name) => name.startsWith('document'))).toEqual(['documentloadingstart', 'documentloadingend']);
+        expect(element.classList.contains('repeater-empty')).toBe(false);
+
+        // Out of view, the command is left to the field in view
+        element.getClientRects = () => [];
+        bus.emit('toolbarcmd', { command: 'repeater-toolbar-add-group:hero' });
+
+        expect(requests.length).toBe(1);
+    });
+
+    test('the add button is disabled once the repeater holds its most items', async () => {
+        const { bus, state } = mountPageToolbar();
+        const { control, element } = await connectWith('repeateraccordion', `<div class="field-repeater">
+            <div class="field-repeater-toolbar">
+                <button type="button" data-repeater-cmd="add" data-request="onAddItem"><i class="icon-add"></i> Add Item</button>
+            </div>
+            <ul class="field-repeater-items"></ul>
+        </div>`, { externalToolbarBus: 'document', maxItems: 1 });
+
+        element.getClientRects = () => [{}];
+        bus.emit('extendapptoolbar');
+
+        expect(state[1]).toMatchObject({ type: 'button', label: 'Add Item', command: 'repeater-toolbar-add', disabled: false });
+
+        element.querySelector('.field-repeater-items').insertAdjacentHTML('beforeend', sortItem(0, 'One'));
+        control.onAddItemSuccess();
+
+        expect(state[1].disabled).toBe(true);
+    });
+});

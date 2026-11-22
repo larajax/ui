@@ -161,10 +161,11 @@ export function registerFileUpload(jax) {
             this.externalToolbarEventBusObj.off('extendapptoolbar', this.proxy(this.extendExternalToolbar));
         }
 
+        // Every field on the bus hears a command, the one in view runs it
         onToolbarExternalCommand(ev) {
             const cmdPrefix = 'fileupload-toolbar-';
 
-            if (ev.command.substring(0, cmdPrefix.length) != cmdPrefix) {
+            if (ev.command.substring(0, cmdPrefix.length) != cmdPrefix || !this.element.getClientRects().length) {
                 return;
             }
 

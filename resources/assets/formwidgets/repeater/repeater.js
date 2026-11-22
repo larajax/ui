@@ -83,9 +83,22 @@ export function createRepeaterFormWidgetBase(jax) {
 
             this.countItems();
             this.togglePrompt();
+
+            // External toolbar
+            setTimeout(() => {
+                if (!this.toolbar) {
+                    return;
+                }
+
+                this.initToolbarExtensionPoint();
+                this.mountExternalToolbarEventBusEvents();
+                this.extendExternalToolbar();
+            }, 0);
         }
 
         disconnect() {
+            this.unmountExternalToolbarEventBusEvents();
+
             if (this.sortable) {
                 this.sortable.destroy();
             }
@@ -104,6 +117,125 @@ export function createRepeaterFormWidgetBase(jax) {
             this.toolbar = null;
             this.sortableBody = null;
             this.sortable = null;
+            this.toolbarExtensionPoint = null;
+            this.externalToolbarEventBusObj = null;
+        }
+
+        //
+        // External toolbar
+        //
+
+        initToolbarExtensionPoint() {
+            const vueUtils = window.oc && window.oc.vueUtils;
+            if (!this.config.externalToolbarBus || !vueUtils) {
+                return;
+            }
+
+            const point = vueUtils.getToolbarExtensionPoint(this.config.externalToolbarBus, this.element);
+
+            if (point) {
+                this.toolbarExtensionPoint = point.state;
+                this.externalToolbarEventBusObj = point.bus;
+            }
+        }
+
+        mountExternalToolbarEventBusEvents() {
+            if (!this.externalToolbarEventBusObj) {
+                return;
+            }
+
+            this.externalToolbarEventBusObj.on('toolbarcmd', this.proxy(this.onToolbarExternalCommand));
+            this.externalToolbarEventBusObj.on('extendapptoolbar', this.proxy(this.extendExternalToolbar));
+        }
+
+        unmountExternalToolbarEventBusEvents() {
+            if (!this.externalToolbarEventBusObj) {
+                return;
+            }
+
+            this.externalToolbarEventBusObj.off('toolbarcmd', this.proxy(this.onToolbarExternalCommand));
+            this.externalToolbarEventBusObj.off('extendapptoolbar', this.proxy(this.extendExternalToolbar));
+        }
+
+        // Every field on the bus hears a command, the one in view runs it
+        onToolbarExternalCommand(ev) {
+            const prefix = 'repeater-toolbar-';
+
+            if (typeof ev.command !== 'string' || !ev.command.startsWith(prefix) || !this.element.getClientRects().length) {
+                return;
+            }
+
+            const cmd = ev.command.substring(prefix.length);
+
+            // A group menu item names its group
+            if (cmd.startsWith('add-group:')) {
+                this.addGroupFromExternalToolbar(cmd.substring('add-group:'.length));
+                return;
+            }
+
+            const button = this.toolbar && this.toolbar.querySelector(':scope > [data-repeater-cmd="' + cmd + '"]');
+            if (button) {
+                button.click();
+            }
+        }
+
+        addGroupFromExternalToolbar(group) {
+            const request = this.requestAddGroupItem(group),
+                bus = this.externalToolbarEventBusObj;
+
+            if (request && bus) {
+                bus.emit('documentloadingstart');
+                request.finally(() => bus.emit('documentloadingend')).catch(() => {});
+            }
+        }
+
+        extendExternalToolbar() {
+            if (!this.toolbar || !this.toolbarExtensionPoint || !this.element.getClientRects().length) {
+                return;
+            }
+
+            this.toolbarExtensionPoint.splice(0, this.toolbarExtensionPoint.length);
+
+            this.toolbarExtensionPoint.push({
+                type: 'separator'
+            });
+
+            this.toolbar.querySelectorAll(':scope > button').forEach((button) => {
+                const icon = button.querySelector('i'),
+                    isAddGroup = button.dataset.repeaterCmd === 'add-group';
+
+                this.toolbarExtensionPoint.push({
+                    type: isAddGroup ? 'dropdown' : 'button',
+                    icon: icon ? icon.getAttribute('class') : '',
+                    label: button.textContent.trim(),
+                    command: 'repeater-toolbar-' + button.dataset.repeaterCmd,
+                    disabled: button.disabled || !this.canAdd,
+                    menuitems: isAddGroup ? this.getGroupMenuItems() : false
+                });
+            });
+        }
+
+        // getGroupMenuItems lists the groups of the palette template as menu items
+        getGroupMenuItems() {
+            const template = this.element.querySelector(':scope > [data-group-palette-template]');
+            if (!template) {
+                return [];
+            }
+
+            const palette = document.createElement('template');
+            palette.innerHTML = template.innerHTML;
+
+            return Array.from(palette.content.querySelectorAll('[data-repeater-add]')).map((link) => {
+                const icon = link.querySelector('.list-icon'),
+                    title = link.querySelector('.title');
+
+                return {
+                    type: 'text',
+                    label: title ? title.textContent.trim() : '',
+                    icon: icon ? icon.getAttribute('class') : undefined,
+                    command: 'repeater-toolbar-add-group:' + link.dataset.repeaterAddGroup
+                };
+            });
         }
 
         bindSorting() {
@@ -426,7 +558,7 @@ export function createRepeaterFormWidgetBase(jax) {
         }
 
         onAddItemSuccess(ev) {
-            this.itemCount++;
+            this.countItems();
             this.triggerChange();
         }
 
@@ -465,6 +597,18 @@ export function createRepeaterFormWidgetBase(jax) {
                 this.palettePopover = null;
             }
 
+            const request = this.requestAddGroupItem(target.dataset.repeaterAddGroup);
+
+            // Prevent adding new items until the last one is finished
+            const addButton = this.addGroupButton;
+            if (request && addButton) {
+                addButton.classList.add('oc-loading');
+                request.finally(() => addButton.classList.remove('oc-loading')).catch(() => {});
+            }
+        }
+
+        // requestAddGroupItem adds an item of the group, returning the request once it is sent
+        requestAddGroupItem(group) {
             this.eventOnAddItem();
 
             // ajax:promise fires synchronously only when the request is actually sent
@@ -477,22 +621,17 @@ export function createRepeaterFormWidgetBase(jax) {
 
             const request = jax.request(this.element, this.config.addHandler, {
                 data: {
-                    _repeater_group: target.dataset.repeaterAddGroup
+                    _repeater_group: group
                 },
                 afterUpdate: () => {
-                    this.itemCount++;
+                    this.countItems();
                     this.triggerChange();
                 }
             });
 
             this.element.removeEventListener('ajax:promise', onSent);
 
-            // Prevent adding new items until the last one is finished
-            const addButton = this.addGroupButton;
-            if (isSent && addButton) {
-                addButton.classList.add('oc-loading');
-                request.finally(() => addButton.classList.remove('oc-loading')).catch(() => {});
-            }
+            return isSent ? request : null;
         }
 
         //
@@ -521,6 +660,8 @@ export function createRepeaterFormWidgetBase(jax) {
             if (this.toolbar) {
                 this.toolbar.style.display = this.canAdd ? '' : 'none';
             }
+
+            this.extendExternalToolbar();
 
             const pointerInput = this.element.querySelector(':scope > [data-repeater-pointer-input]');
             if (pointerInput) {

@@ -96,10 +96,10 @@
         overflow: auto;
     }
 
+    /* Fills the field with inset, which a stretch field's height: auto leaves in place */
     &.size-adaptive {
         position: absolute;
-        height: 100%;
-        width: 100%;
+        inset: 0;
         background: var(--bs-bg-body);
 
         .uploader-control-container {

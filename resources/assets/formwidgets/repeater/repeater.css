@@ -87,6 +87,12 @@
     }
 }
 
+/* Shown when an adaptive repeater has no items */
+.field-repeater > .empty-state {
+    display: none;
+    color: var(--bs-border-color);
+}
+
 .form-group.span-adaptive {
     > .field-repeater {
         position: absolute;
@@ -109,6 +115,14 @@
                     padding-top: 0 !important;
                 }
             }
+        }
+
+        &.repeater-empty > .empty-state {
+            display: block;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
         }
     }
 }

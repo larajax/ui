@@ -520,3 +520,33 @@ describe('file upload', () => {
         expect(dropzones.length).toBe(0);
     });
 });
+
+describe('file upload in a page toolbar', () => {
+    afterEach(() => {
+        delete window.oc;
+    });
+
+    test('a toolbar command runs only on the field in view', async () => {
+        const handlers = {},
+            bus = {
+                on: (name, fn) => (handlers[name] = handlers[name] || []).push(fn),
+                off: () => {},
+                emit: (name, ...args) => (handlers[name] || []).forEach((fn) => fn(...args))
+            };
+        window.oc = { vueUtils: { getToolbarExtensionPoint: () => ({ bus, state: [] }) } };
+
+        const { element } = await connect({ attributes: 'data-external-toolbar-bus="document"' });
+        await flush();
+
+        let clicks = 0;
+        element.querySelector('.toolbar-upload-button').addEventListener('click', () => clicks++);
+
+        element.getClientRects = () => [];
+        bus.emit('toolbarcmd', { command: 'fileupload-toolbar-toolbar-upload-button' });
+        expect(clicks).toBe(0);
+
+        element.getClientRects = () => [{}];
+        bus.emit('toolbarcmd', { command: 'fileupload-toolbar-toolbar-upload-button' });
+        expect(clicks).toBe(1);
+    });
+});

@@ -19,6 +19,10 @@
     <input type="hidden" name="<?= $name ?>" value="" data-repeater-pointer-input <?= count($formWidgets) ? 'disabled' : '' ?> />
     <input type="hidden" name="<?= $this->alias ?>_loaded" value="1" />
 
+    <div class="empty-state">
+        <?= $this->makePartial('empty_state') ?>
+    </div>
+
     <?php if ($displayMode === 'builder'): ?>
         <?= $this->makePartial('mode_builder') ?>
     <?php else: ?>
