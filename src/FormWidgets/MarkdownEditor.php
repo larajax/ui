@@ -123,7 +123,6 @@ class MarkdownEditor extends FormWidgetBase
             ['name' => 'image', 'icon' => 'image'],
             ['name' => 'table', 'icon' => 'table'],
             ['name' => 'horizontal-rule', 'icon' => 'horizontalRule'],
-            '|',
             ['name' => 'preview', 'icon' => 'preview'],
             ['name' => 'side-by-side', 'icon' => 'sideBySide'],
             ['name' => 'fullscreen', 'icon' => 'fullscreen'],

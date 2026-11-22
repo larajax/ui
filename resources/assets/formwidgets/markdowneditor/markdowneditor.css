@@ -248,9 +248,72 @@
 
     .editor-preview,
     .editor-preview-side {
+        padding: 1.125rem;
         background: var(--oc-form-control-bg);
         color: var(--bs-fg-body);
         border-color: var(--bs-border-color);
+        font-family: "Helvetica", sans-serif;
+        line-height: 180%;
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 1.375rem;
+            font-weight: bold;
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+
+        h1 {
+            font-size: 2.125rem;
+        }
+
+        h2 {
+            font-size: 1.875rem;
+        }
+
+        h3 {
+            font-size: 1.6875rem;
+        }
+
+        h4 {
+            font-size: 1.5625rem;
+        }
+
+        h5 {
+            font-size: 1.4375rem;
+        }
+
+        h6 {
+            font-size: 1.3125rem;
+        }
+
+        p,
+        ol,
+        ul {
+            font-size: 1rem;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        ol,
+        ul {
+            margin-bottom: 1.125rem;
+        }
+
+        *:last-child {
+            margin-bottom: 0;
+        }
 
         pre {
             padding: 0.75rem;
@@ -264,6 +327,7 @@
         }
 
         img {
+            display: block;
             max-width: 100%;
             height: auto;
         }

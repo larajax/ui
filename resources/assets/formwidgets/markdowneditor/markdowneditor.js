@@ -148,6 +148,8 @@ export function registerMarkdownEditor(jax) {
                 cancelAnimationFrame(this.updateFrame);
             }
 
+            clearTimeout(this.sideBySideTimer);
+
             if (this.textarea) {
                 this.textarea.removeEventListener('change', this.onTextareaChangeHandler);
             }
@@ -199,6 +201,7 @@ export function registerMarkdownEditor(jax) {
 
             if (this.config.viewMode === 'split') {
                 this.editor.toggleSideBySide();
+                this.scheduleSideBySideUpdate();
             }
 
             this.element.dispatchEvent(new CustomEvent('markdowneditor:ready', { bubbles: true, detail: { markdownEditor: this } }));
@@ -319,6 +322,13 @@ export function registerMarkdownEditor(jax) {
             });
         }
 
+        // EasyMDE opens the side preview on a 1ms timer, and a timer with the same delay set after
+        // it runs after it, so the update sees the preview open
+        scheduleSideBySideUpdate() {
+            clearTimeout(this.sideBySideTimer);
+            this.sideBySideTimer = setTimeout(() => this.scheduleUpdate(), 1);
+        }
+
         /**
          * getToolbarItems lists the toolbar as separator and button items.
          */
@@ -406,7 +416,13 @@ export function registerMarkdownEditor(jax) {
             }
 
             this.EasyMDE[BUTTON_ACTIONS[code]](this.editor);
-            this.scheduleUpdate();
+
+            if (code === 'side-by-side') {
+                this.scheduleSideBySideUpdate();
+            }
+            else {
+                this.scheduleUpdate();
+            }
         }
 
         getEditorObject() {
@@ -443,7 +459,7 @@ export function registerMarkdownEditor(jax) {
             }
 
             this.editor.toggleSideBySide();
-            this.scheduleUpdate();
+            this.scheduleSideBySideUpdate();
         }
 
         toggleFullscreen() {

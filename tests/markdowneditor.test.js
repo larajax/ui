@@ -28,10 +28,22 @@ class FakeEasyMDE {
     markdown(text) { return `<p>${text}</p>`; }
     getState() { return this.state || {}; }
     isPreviewActive() { return !!this.previewActive; }
-    isSideBySideActive() { return false; }
+    isSideBySideActive() { return !!this.sideBySideActive; }
     isFullscreenActive() { return false; }
     togglePreview() { this.calls.push('togglePreview'); this.previewActive = !this.previewActive; }
-    toggleSideBySide() { this.calls.push('toggleSideBySide'); }
+
+    // Like EasyMDE, opens the side preview on a 1ms timer and closes it at once
+    toggleSideBySide() {
+        this.calls.push('toggleSideBySide');
+
+        if (this.sideBySideActive) {
+            this.sideBySideActive = false;
+        }
+        else {
+            setTimeout(() => { this.sideBySideActive = true; }, 1);
+        }
+    }
+
     toggleFullScreen() { this.calls.push('toggleFullScreen'); }
     toTextArea() { this.calls.push('toTextArea'); }
     cleanup() { this.calls.push('cleanup'); }
@@ -299,6 +311,28 @@ describe('markdown editor with a toolbar drawn by the page', () => {
 
         expect(editor.calls).toContain('toggleBold');
         expect(updates).toBeGreaterThan(0);
+    });
+
+    test('announces an update once EasyMDE has opened the side preview', async () => {
+        const states = [];
+        const onReady = (event) => {
+            const control = event.detail.markdownEditor;
+            const editor = control.getEditorObject();
+
+            states.push(editor.isSideBySideActive());
+            control.on('update', () => states.push(editor.isSideBySideActive()));
+        };
+        document.addEventListener('markdowneditor:ready', onReady);
+
+        try {
+            await connect('data-external-toolbar="true" data-view-mode="split"');
+            await new Promise((resolve) => setTimeout(resolve, 50));
+
+            expect(states).toEqual([false, true]);
+        }
+        finally {
+            document.removeEventListener('markdowneditor:ready', onReady);
+        }
     });
 
     test('takes a value set on the textarea from outside', async () => {
