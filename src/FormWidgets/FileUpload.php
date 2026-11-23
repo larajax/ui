@@ -44,12 +44,13 @@ class FileUpload extends FormWidgetBase
     //
 
     /**
-     * @var int imageWidth for preview
+     * @var int imageWidth with imageHeight, the size the preview thumbnail is made at
+     * and the shape it shows in. They follow cropWidth and cropHeight when neither is set.
      */
     public $imageWidth = 190;
 
     /**
-     * @var int imageHeight for preview
+     * @var int imageHeight see imageWidth
      */
     public $imageHeight = 190;
 
@@ -131,8 +132,34 @@ class FileUpload extends FormWidgetBase
             $this->deferredBinding = false;
         }
 
+        // The preview follows the crop when the field gives it no size of its own
+        if (
+            (int) $this->cropWidth > 0 &&
+            (int) $this->cropHeight > 0 &&
+            $this->getConfig('imageWidth') === null &&
+            $this->getConfig('imageHeight') === null
+        ) {
+            $this->applyCropPreviewSize();
+        }
+
         if ($this->formField->disabled) {
             $this->previewMode = true;
+        }
+    }
+
+    /**
+     * applyCropPreviewSize gives the preview the shape of the crop, by lengthening
+     * its longer side from the default size
+     */
+    protected function applyCropPreviewSize()
+    {
+        $ratio = $this->cropWidth / $this->cropHeight;
+
+        if ($ratio >= 1) {
+            $this->imageWidth = (int) round($this->imageHeight * $ratio);
+        }
+        else {
+            $this->imageHeight = (int) round($this->imageWidth / $ratio);
         }
     }
 
@@ -168,6 +195,7 @@ class FileUpload extends FormWidgetBase
         $this->vars['emptyIcon'] = \Larajax\Ui\Facades\Ui::iconClass($this->getConfig('emptyIcon', 'fileupload.upload'));
         $this->vars['imageHeight'] = $this->imageHeight;
         $this->vars['imageWidth'] = $this->imageWidth;
+        $this->vars['imageRatio'] = $this->getImageRatio();
         $this->vars['useCrop'] = $this->hasImageCrop() && !$this->previewMode;
         $this->vars['cropWidth'] = (int) $this->cropWidth;
         $this->vars['cropHeight'] = (int) $this->cropHeight;
@@ -302,6 +330,24 @@ class FileUpload extends FormWidgetBase
         }
 
         return $cssDimensions;
+    }
+
+    /**
+     * getImageRatio returns the shape the preview shows in, as the width over the
+     * height, or null for the square it takes when either is not set
+     */
+    protected function getImageRatio(): ?float
+    {
+        // A field that sets one side alone leaves the shape open
+        if (($this->getConfig('imageWidth') === null) !== ($this->getConfig('imageHeight') === null)) {
+            return null;
+        }
+
+        if ((int) $this->imageWidth < 1 || (int) $this->imageHeight < 1) {
+            return null;
+        }
+
+        return round($this->imageWidth / $this->imageHeight, 4);
     }
 
     /**

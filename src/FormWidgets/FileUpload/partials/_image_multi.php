@@ -47,7 +47,7 @@
         </div>
 
         <!-- Existing files -->
-        <div class="upload-files-container">
+        <div class="upload-files-container" <?php if ($imageRatio): ?>style="--fileupload-image-ratio: <?= $imageRatio ?>"<?php endif ?>>
             <?php foreach ($fileList as $file): ?>
                 <div class="server-file"
                     data-id="<?= $file->id ?>"

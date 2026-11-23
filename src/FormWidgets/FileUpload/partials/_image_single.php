@@ -50,7 +50,7 @@
         </div>
 
         <!-- Existing file -->
-        <div class="upload-files-container">
+        <div class="upload-files-container" <?php if ($imageRatio): ?>style="--fileupload-image-ratio: <?= $imageRatio ?>"<?php endif ?>>
             <?php if ($singleFile): ?>
                 <div class="server-file"
                     data-id="<?= $singleFile->id ?>"

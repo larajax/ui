@@ -383,17 +383,22 @@
     .upload-object.upload-object-image {
         .file-data-container {
             .file-data-container-inner {
-                padding-left: 7.375rem;
+                display: flow-root;
                 min-height: 6.75rem;
             }
         }
 
+        /*
+         * The preview takes the shape of imageWidth and imageHeight, a square by default. Its
+         * shorter side is the tile's size, and it narrows to the field keeping the shape.
+         */
         .icon-container {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 6.75rem;
-            height: 6.75rem;
+            position: relative;
+            float: left;
+            width: min(100%, calc(6.75rem * max(1, var(--fileupload-image-ratio, 1))));
+            aspect-ratio: var(--fileupload-image-ratio, 1);
+            max-height: 20.25rem;
+            margin-right: 0.625rem;
             overflow: hidden;
             border: 1px solid var(--bs-border-color);
             border-radius: 0.25rem;
@@ -408,6 +413,13 @@
                 max-height: 100%;
                 max-width: 100%;
             }
+        }
+
+        /* The file's details sit beside the preview, or beneath it where there is no room */
+        .info,
+        .meta {
+            display: flow-root;
+            min-width: 9rem;
         }
 
         &.mode-multi {
