@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'bun:test';
-import { ImageCropper, cropImageFile } from '../resources/assets/controls/image-cropper/image-cropper.js';
+import { ImageCropper, cropImageFile, isImageShape } from '../resources/assets/controls/image-cropper/image-cropper.js';
 import { registerPopup } from '../resources/assets/controls/popup/popup.js';
 import { fakeImages, imageFile } from './support/fake-image.js';
 
@@ -433,6 +433,11 @@ describe('cropping a picked file', () => {
         const file = imageFile('banner.png', 'image/png');
 
         expect(await cropImageFile(file, options)).toBe(file);
+
+        expect(isImageShape(2400, 1000, 1200, 500)).toBe(true);
+        expect(isImageShape(600, 302, 800, 400)).toBe(true);
+        expect(isImageShape(600, 310, 800, 400)).toBe(false);
+        expect(isImageShape(500, 1200, 1200, 500)).toBe(false);
     });
 
     test('an image the shape and larger is scaled down to the size', async () => {

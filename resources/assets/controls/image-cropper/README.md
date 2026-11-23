@@ -40,6 +40,8 @@ It resolves with:
 
 It rejects when the browser cannot read the file as an image.
 
+`isImageShape(imageWidth, imageHeight, width, height)` makes the same test of shape on its own, for a page that crops another way, such as on the server.
+
 ## Behavior
 
 - The frame is the shape of the target size. The image always covers it.

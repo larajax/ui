@@ -631,8 +631,7 @@ export async function cropImageFile(file, options) {
         return file;
     }
 
-    const ratio = width / height,
-        isShape = Math.abs(image.naturalWidth / image.naturalHeight - ratio) / ratio <= SHAPE_TOLERANCE,
+    const isShape = isImageShape(image.naturalWidth, image.naturalHeight, width, height),
         fits = image.naturalWidth <= width && image.naturalHeight <= height,
         isAnimated = file.type === 'image/gif';
 
@@ -648,6 +647,15 @@ export async function cropImageFile(file, options) {
     }
 
     return cropInPopup(image, file, options);
+}
+
+/**
+ * isImageShape tells whether an image of a size is the shape of a target size, within a hundredth.
+ */
+export function isImageShape(imageWidth, imageHeight, width, height) {
+    const ratio = width / height;
+
+    return Math.abs(imageWidth / imageHeight - ratio) / ratio <= SHAPE_TOLERANCE;
 }
 
 /**
