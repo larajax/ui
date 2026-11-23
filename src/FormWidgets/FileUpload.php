@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Larajax\Ui\Classes\FormField;
 use Larajax\Ui\Classes\FormWidgetBase;
+use October\Contracts\Database\SortableInterface;
 use October\Rain\Filesystem\Definitions as FileDefinitions;
 use October\Rain\Exception\ApplicationException;
 use October\Rain\Exception\ValidationException;
@@ -143,6 +144,7 @@ class FileUpload extends FormWidgetBase
         $this->vars['singleFile'] = $fileList->first();
         $this->vars['size'] = $this->formField->size;
         $this->vars['displayMode'] = $this->getDisplayMode();
+        $this->vars['isSortable'] = $this->isSortable();
         $this->vars['emptyIcon'] = \Larajax\Ui\Facades\Ui::iconClass($this->getConfig('emptyIcon', 'fileupload.upload'));
         $this->vars['imageHeight'] = $this->imageHeight;
         $this->vars['imageWidth'] = $this->imageWidth;
@@ -158,6 +160,16 @@ class FileUpload extends FormWidgetBase
             'responseError' => __('Server responded with {{statusCode}} code.'),
             'removeFile' => __('Remove file'),
         ];
+    }
+
+    /**
+     * isSortable reports whether this editable field can persist the order it displays.
+     */
+    protected function isSortable(): bool
+    {
+        return !$this->previewMode
+            && str_ends_with($this->getDisplayMode(), '-multi')
+            && app('model.inspector')->isInstanceOf($this->getRelationModel(), SortableInterface::class);
     }
 
     /**
@@ -342,7 +354,7 @@ class FileUpload extends FormWidgetBase
      */
     public function onSortAttachments()
     {
-        if ($this->previewMode) {
+        if ($this->previewMode || !$this->isSortable()) {
             throw new ForbiddenException;
         }
 

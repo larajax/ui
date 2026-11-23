@@ -472,6 +472,20 @@ describe('file upload', () => {
         expect(sortables[0].options).toMatchObject({ draggable: 'div.upload-object.is-success', handle: '.drag-handle' });
     });
 
+    test('multiple uploads without sorting support do not initialise Sortable', async () => {
+        const { dropzone } = await connect({ classes: 'is-multi' });
+
+        expect(dropzone).toBeDefined();
+        expect(sortables).toHaveLength(0);
+    });
+
+    test('an explicit sorting opt-out does not initialise Sortable', async () => {
+        const { dropzone } = await connect({ attributes: 'data-is-sortable="false"' });
+
+        expect(dropzone).toBeDefined();
+        expect(sortables).toHaveLength(0);
+    });
+
     test('dragging files over the field highlights it, unless reordering', async () => {
         const { element, dropzone } = await connect();
 

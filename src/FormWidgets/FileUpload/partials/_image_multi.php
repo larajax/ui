@@ -1,12 +1,12 @@
 <div
     id="<?= $this->getId() ?>"
-    class="field-fileupload size-<?= $size ?> is-image is-multi is-grid is-sortable <?= count($fileList) ? 'is-populated' : '' ?> <?= $this->previewMode ? 'is-preview' : '' ?>"
+    class="field-fileupload size-<?= $size ?> is-image is-multi is-grid <?= $isSortable ? 'is-sortable' : '' ?> <?= count($fileList) ? 'is-populated' : '' ?> <?= $this->previewMode ? 'is-preview' : '' ?>"
     data-control="fileupload"
     data-upload-handler="<?= $this->getEventHandler('onUpload') ?>"
     data-template="#<?= $this->getId('template') ?>"
     data-error-template="#<?= $this->getId('errorTemplate') ?>"
     data-error-icon="<?= e(\Larajax\Ui\Facades\Ui::iconClass('fileupload.error')) ?>"
-    data-sort-handler="<?= $this->getEventHandler('onSortAttachments') ?>"
+    <?php if ($isSortable): ?>data-sort-handler="<?= $this->getEventHandler('onSortAttachments') ?>"<?php endif ?>
     data-unique-id="<?= $this->getId() ?>"
     data-max-filesize="<?= $maxFilesize ?>"
     data-messages="<?= e(json_encode($uploadMessages)) ?>"

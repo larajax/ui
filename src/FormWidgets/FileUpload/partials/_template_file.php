@@ -10,6 +10,8 @@
                     value=""
                 />
             </div>
+        <?php endif ?>
+        <?php if (isset($modeMulti) && $isSortable): ?>
             <div class="drag-handle">
                 <?= \Larajax\Ui\Facades\Ui::icon('fileupload.reorder') ?>
             </div>
