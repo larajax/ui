@@ -11,6 +11,11 @@
     data-thumbnail-height="<?= $imageHeight ?: '0' ?>"
     data-max-filesize="<?= $maxFilesize ?>"
     data-messages="<?= e(json_encode($uploadMessages)) ?>"
+    <?php if ($useCrop): ?>
+        data-crop-width="<?= $cropWidth ?>"
+        data-crop-height="<?= $cropHeight ?>"
+        data-crop-template="#<?= $this->getId('cropTemplate') ?>"
+    <?php endif ?>
     <?php if ($externalToolbarBus): ?>data-external-toolbar-bus="<?= e($externalToolbarBus)?>"<?php endif ?>
     <?php if ($acceptedFileTypes): ?>data-file-types="<?= $acceptedFileTypes ?>"<?php endif ?>
     <?= $this->formField->getAttributes() ?>
@@ -62,3 +67,7 @@
 </div>
 
 <?= $this->makePartial('template_image') ?>
+
+<?php if ($useCrop): ?>
+    <?= $this->makePartial('crop_template') ?>
+<?php endif ?>

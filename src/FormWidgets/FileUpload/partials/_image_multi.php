@@ -10,6 +10,11 @@
     data-unique-id="<?= $this->getId() ?>"
     data-max-filesize="<?= $maxFilesize ?>"
     data-messages="<?= e(json_encode($uploadMessages)) ?>"
+    <?php if ($useCrop): ?>
+        data-crop-width="<?= $cropWidth ?>"
+        data-crop-height="<?= $cropHeight ?>"
+        data-crop-template="#<?= $this->getId('cropTemplate') ?>"
+    <?php endif ?>
     <?php if ($externalToolbarBus): ?>data-external-toolbar-bus="<?= e($externalToolbarBus)?>"<?php endif ?>
     <?php if ($maxFiles): ?>data-max-files="<?= $maxFiles ?>"<?php endif ?>
     <?php if ($acceptedFileTypes): ?>data-file-types="<?= $acceptedFileTypes ?>"<?php endif ?>
@@ -60,3 +65,7 @@
 
 <!-- Template for new files -->
 <?= $this->makePartial('template_image', ['modeMulti' => true]) ?>
+
+<?php if ($useCrop): ?>
+    <?= $this->makePartial('crop_template') ?>
+<?php endif ?>

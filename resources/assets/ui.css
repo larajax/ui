@@ -33,6 +33,7 @@
 @import "./controls/toolbar/toolbar-buttons.css";
 @import "./controls/tooltip/tooltip.css";
 @import "./controls/chart/chart.css";
+@import "./controls/image-cropper/image-cropper.css";
 
 /* Widgets */
 @import "./widgets/form/form.css";

@@ -1,5 +1,7 @@
-import { afterEach, beforeAll, describe, expect, mock, test } from 'bun:test';
+import { afterAll, afterEach, beforeAll, describe, expect, mock, test } from 'bun:test';
 import { fakeSortableModule, sortables, resetFakeSortable } from './support/fake-sortable.js';
+import { fakeImages, imageFile } from './support/fake-image.js';
+import { registerPopup } from '../resources/assets/controls/popup/popup.js';
 
 const dropzones = [];
 const requests = [];
@@ -12,8 +14,25 @@ class FakeDropzone {
         this.files = [];
         this.handlers = {};
         this.removed = [];
+        this.added = [];
         this.calls = [];
         dropzones.push(this);
+    }
+
+    // Accepts by extension, as Dropzone does for a list of them
+    static isValidFile(file, acceptedFiles) {
+        return !acceptedFiles || acceptedFiles.split(',').some((type) => file.name.toLowerCase().endsWith(type.trim()));
+    }
+
+    // Takes a picked file, accepting it
+    addFile(file) {
+        file.accepted = true;
+        this.files.push(file);
+        this.added.push(file);
+    }
+
+    getAcceptedFiles() {
+        return this.files.filter((file) => file.accepted);
     }
 
     on(name, handler) {
@@ -532,6 +551,202 @@ describe('file upload', () => {
         await flush();
 
         expect(dropzones.length).toBe(0);
+    });
+});
+
+describe('file upload with a crop size', () => {
+    let images;
+
+    const CROP_TEMPLATE = `
+        <script type="text/template" id="files-crop-template">
+            <div data-popup-size="large">
+                <h4 class="dialog-title">Crop Image</h4>
+                <div data-cropper-stage></div>
+                <button type="button" data-cropper-apply>Crop</button>
+                <button type="button" data-dismiss="popup">Cancel</button>
+            </div>
+        </script>
+    `;
+
+    const CROP = 'data-crop-width="800" data-crop-height="400" data-crop-template="#files-crop-template"';
+
+    const popup = () => document.querySelector('dialog.control-popup');
+
+    // Waits for something a picked file leads to, such as the popup or the file reaching Dropzone
+    async function until(check) {
+        for (let tries = 0; tries < 200 && !check(); tries++) {
+            await new Promise((resolve) => setTimeout(resolve, 5));
+        }
+
+        return check();
+    }
+
+    async function connectCropped(options = {}) {
+        const connected = await connect({ ...options, attributes: `${CROP} ${options.attributes || ''}` });
+        document.body.insertAdjacentHTML('beforeend', CROP_TEMPLATE);
+        return connected;
+    }
+
+    beforeAll(() => {
+        images = fakeImages();
+
+        registerPopup({
+            registerControl() {},
+            ControlBase: class {},
+            Events: { dispatch() {} }
+        });
+    });
+
+    afterAll(() => {
+        images.restore();
+    });
+
+    afterEach(() => {
+        images.reset();
+    });
+
+    test('a field without a crop size leaves Dropzone taking files itself', async () => {
+        const { dropzone } = await connect();
+
+        expect(dropzone.addFile).toBe(FakeDropzone.prototype.addFile);
+    });
+
+    test('files that are not images, vectors and types the field refuses go straight to Dropzone', async () => {
+        const { dropzone } = await connectCropped({ attributes: 'data-file-types=".jpg,.svg,.pdf"' });
+        const files = [
+            imageFile('notes.pdf', 'application/pdf'),
+            imageFile('logo.svg', 'image/svg+xml'),
+            imageFile('photo.png', 'image/png')
+        ];
+
+        files.forEach((file) => dropzone.addFile(file));
+
+        expect(dropzone.added).toEqual(files);
+    });
+
+    test('an image the shape already goes to Dropzone as it is', async () => {
+        images.size = [800, 400];
+        const { dropzone } = await connectCropped();
+        const file = imageFile('banner.jpg');
+
+        dropzone.addFile(file);
+        expect(dropzone.added).toEqual([]);
+
+        await until(() => dropzone.added.length);
+
+        expect(dropzone.added).toEqual([file]);
+        expect(popup()).toBeNull();
+    });
+
+    test('another shape is cropped in the popup, and the cropped file goes to Dropzone', async () => {
+        images.size = [1000, 1000];
+        const { dropzone } = await connectCropped();
+
+        dropzone.addFile(imageFile('square.jpg'));
+        await until(popup);
+
+        expect(popup().querySelector('.dialog-title').textContent).toBe('Crop Image');
+        expect(dropzone.added).toEqual([]);
+
+        popup().querySelector('[data-cropper-apply]').click();
+        await until(() => dropzone.added.length);
+
+        expect(images.draws).toEqual([{ size: [800, 400], part: [0, 250, 1000, 500] }]);
+        expect(dropzone.added.length).toBe(1);
+        expect(dropzone.added[0].name).toBe('square.jpg');
+    });
+
+    test('closing the popup leaves the field as it was', async () => {
+        images.size = [1000, 1000];
+        const { element, dropzone } = await connectCropped({ classes: '', files: serverFile(7, 'banner.jpg') });
+
+        dropzone.addFile(imageFile('square.jpg'));
+        await until(popup);
+
+        popup().querySelector('[data-dismiss="popup"]').click();
+        await until(() => !popup());
+        await flush();
+
+        expect(dropzone.added).toEqual([]);
+        expect(dropzone.removed).toEqual([]);
+        expect(element.querySelectorAll('.upload-object').length).toBe(1);
+    });
+
+    test('several images are cropped one at a time, counted in the title', async () => {
+        images.size = [1000, 1000];
+        const { dropzone } = await connectCropped();
+
+        dropzone.addFile(imageFile('first.jpg'));
+        dropzone.addFile(imageFile('second.jpg'));
+        await until(popup);
+
+        expect(document.querySelectorAll('dialog.control-popup').length).toBe(1);
+        expect(popup().querySelector('.dialog-title').textContent).toBe('Crop Image (1/2)');
+
+        popup().querySelector('[data-cropper-apply]').click();
+        await until(() => popup() && popup().querySelector('.dialog-title').textContent.includes('2/2'));
+
+        expect(dropzone.added.map((file) => file.name)).toEqual(['first.jpg']);
+
+        popup().querySelector('[data-dismiss="popup"]').click();
+        await until(() => !popup());
+        await flush();
+
+        expect(dropzone.added.map((file) => file.name)).toEqual(['first.jpg']);
+
+        // The count starts again once the queue is empty
+        dropzone.addFile(imageFile('third.jpg'));
+        await until(popup);
+        expect(popup().querySelector('.dialog-title').textContent).toBe('Crop Image');
+        popup().querySelector('[data-dismiss="popup"]').click();
+        await until(() => !popup());
+    });
+
+    test('a file that cannot be read as an image goes to Dropzone as it is', async () => {
+        images.size = false;
+        const { dropzone } = await connectCropped();
+        const file = imageFile('broken.jpg');
+
+        dropzone.addFile(file);
+        await until(() => dropzone.added.length);
+
+        expect(dropzone.added).toEqual([file]);
+
+        // And the next image is still cropped
+        images.size = [800, 400];
+        const next = imageFile('banner.jpg');
+        dropzone.addFile(next);
+        await until(() => dropzone.added.length === 2);
+
+        expect(dropzone.added).toEqual([file, next]);
+    });
+
+    test('images over the file limit go straight to Dropzone, which refuses them', async () => {
+        images.size = [800, 400];
+        const { dropzone } = await connectCropped({ attributes: 'data-max-files="2"', files: serverFile(7, 'a.jpg') });
+        dropzone.files[0].accepted = true;
+
+        const first = imageFile('b.jpg'), second = imageFile('c.jpg');
+        dropzone.addFile(first);
+        dropzone.addFile(second);
+
+        // The second would make three, so it is not held for cropping
+        expect(dropzone.added).toEqual([second]);
+
+        await until(() => dropzone.added.length === 2);
+        expect(dropzone.added).toEqual([second, first]);
+    });
+
+    test('a single file field crops each image picked', async () => {
+        images.size = [800, 400];
+        const { dropzone } = await connectCropped({ classes: '', files: serverFile(7, 'banner.jpg') });
+        dropzone.files[0].accepted = true;
+        const file = imageFile('new.jpg');
+
+        dropzone.addFile(file);
+        await until(() => dropzone.added.length);
+
+        expect(dropzone.added).toEqual([file]);
     });
 });
 

@@ -10,6 +10,9 @@
  * - data-error-icon - icon CSS classes to add to failed previews
  * - data-sort-handler - AJAX handler for sorting postbacks
  * - data-messages - the upload messages, as JSON
+ * - data-crop-width, data-crop-height - crops a picked image to the shape of this size before it
+ *   uploads, and scales it down to the size when it is larger, see controls/image-cropper
+ * - data-crop-template - the crop popup's template, needed to crop
  *
  * JavaScript API:
  * jax.fetchControl(element, 'fileupload')
@@ -25,6 +28,7 @@
 'use strict';
 
 import { Popover } from '../../controls/popover/popover.js';
+import { cropImageFile } from '../../controls/image-cropper/image-cropper.js';
 
 // Messages shown by Dropzone when the field supplies none
 const DEFAULT_MESSAGES = {
@@ -37,6 +41,9 @@ const DEFAULT_MESSAGES = {
 
 // Dropzone and SortableJS, shared and loaded on first use
 let dependenciesPromise = null;
+
+// Crop popups show one at a time, across every field on the page
+let cropQueue = Promise.resolve();
 
 export function registerFileUpload(jax) {
     jax.registerControl('fileupload', class extends jax.ControlBase {
@@ -278,7 +285,77 @@ export function registerFileUpload(jax) {
             this.dropzone.on('dragend', this.proxy(this.onDragEnd));
             this.dropzone.on('drop', this.proxy(this.onDragEnd));
 
+            if (Number(this.config.cropWidth) > 0 && Number(this.config.cropHeight) > 0) {
+                this.bindCropper(Dropzone);
+            }
+
             this.loadExistingFiles();
+        }
+
+        //
+        // Cropping
+        //
+
+        // Picked images are cropped before Dropzone takes them, so closing the crop popup leaves
+        // the field as it was, and the file that uploads has the cropped image's name and size
+        bindCropper(Dropzone) {
+            const addFile = this.dropzone.addFile.bind(this.dropzone);
+
+            this.cropPending = 0;
+            this.cropTotal = 0;
+
+            this.dropzone.addFile = (file) => {
+                if (!this.isCroppable(file, Dropzone)) {
+                    addFile(file);
+                    return;
+                }
+
+                const position = ++this.cropTotal,
+                    crop = cropQueue.then(() => this.cropFile(file, position));
+
+                this.cropPending++;
+
+                // The queue carries on after a failure
+                cropQueue = crop.catch(() => {});
+
+                // A file the browser cannot read as an image uploads as it is, for the server to judge
+                crop.catch(() => file).then((cropped) => {
+                    if (--this.cropPending === 0) {
+                        this.cropTotal = 0;
+                    }
+
+                    if (cropped && this.dropzone) {
+                        addFile(cropped);
+                    }
+                });
+            };
+        }
+
+        // Images the field takes are cropped, anything else goes to Dropzone as it is
+        isCroppable(file, Dropzone) {
+            if (!/^image\//.test(file.type) || file.type === 'image/svg+xml') {
+                return false;
+            }
+
+            if (!Dropzone.isValidFile(file, this.uploaderOptions.acceptedFiles)) {
+                return false;
+            }
+
+            // Over the limit, Dropzone says why it refuses the file
+            const maxFiles = this.config.isMulti ? this.uploaderOptions.maxFiles : null;
+
+            return !maxFiles || this.dropzone.getAcceptedFiles().length + this.cropPending < maxFiles;
+        }
+
+        cropFile(file, position) {
+            const template = this.config.cropTemplate ? document.querySelector(this.config.cropTemplate) : null;
+
+            return cropImageFile(file, {
+                width: Number(this.config.cropWidth),
+                height: Number(this.config.cropHeight),
+                template: template ? template.innerHTML : null,
+                titleSuffix: this.cropTotal > 1 ? `${position}/${this.cropTotal}` : null
+            });
         }
 
         loadExistingFiles() {

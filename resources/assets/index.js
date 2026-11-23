@@ -78,6 +78,7 @@ export { Popup } from './controls/popup/popup.js';
 export { PopupStacker } from './controls/popup/popup-stacker.js';
 export { LoadIndicator } from './controls/load-indicator/load-indicator.js';
 export { default as DragScroll } from './controls/drag-scroll/drag-scroll.js';
+export { ImageCropper, cropImageFile } from './controls/image-cropper/image-cropper.js';
 export { richEditor } from './formwidgets/richeditor/richeditor-api.js';
 export { markdownEditor } from './formwidgets/markdowneditor/markdowneditor.js';
 

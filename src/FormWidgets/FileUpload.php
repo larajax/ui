@@ -19,9 +19,16 @@ use Larajax\Ui\Helpers\Input;
  *
  * Supported options:
  *
-  *    file:
+ *    file:
  *        label: Some file
  *        type: fileupload
+ *
+ *    banner:
+ *        label: Banner
+ *        type: fileupload
+ *        mode: image
+ *        cropWidth: 1674
+ *        cropHeight: 696
  *
  * @package larajax\ui
  * @author Alexey Bobkov, Samuel Georges
@@ -45,6 +52,17 @@ class FileUpload extends FormWidgetBase
      * @var int imageHeight for preview
      */
     public $imageHeight = 190;
+
+    /**
+     * @var int cropWidth with cropHeight, crops an uploaded image to the shape of this
+     * size, and scales it down to the size when it is larger. Image mode only.
+     */
+    public $cropWidth;
+
+    /**
+     * @var int cropHeight see cropWidth
+     */
+    public $cropHeight;
 
     /**
      * @var mixed fileTypes accepted
@@ -97,6 +115,8 @@ class FileUpload extends FormWidgetBase
         $this->fillFromConfig([
             'imageWidth',
             'imageHeight',
+            'cropWidth',
+            'cropHeight',
             'fileTypes',
             'maxFilesize',
             'maxFiles',
@@ -148,6 +168,9 @@ class FileUpload extends FormWidgetBase
         $this->vars['emptyIcon'] = \Larajax\Ui\Facades\Ui::iconClass($this->getConfig('emptyIcon', 'fileupload.upload'));
         $this->vars['imageHeight'] = $this->imageHeight;
         $this->vars['imageWidth'] = $this->imageWidth;
+        $this->vars['useCrop'] = $this->hasImageCrop() && !$this->previewMode;
+        $this->vars['cropWidth'] = (int) $this->cropWidth;
+        $this->vars['cropHeight'] = (int) $this->cropHeight;
         $this->vars['acceptedFileTypes'] = $this->getAcceptedFileTypes(true);
         $this->vars['maxFilesize'] = $this->maxFilesize;
         $this->vars['maxFiles'] = $this->maxFiles;
@@ -282,6 +305,47 @@ class FileUpload extends FormWidgetBase
     }
 
     /**
+     * hasImageCrop returns true when uploaded images are cropped to a size
+     */
+    protected function hasImageCrop(): bool
+    {
+        return (int) $this->cropWidth > 0
+            && (int) $this->cropHeight > 0
+            && str_starts_with($this->getDisplayMode(), 'image');
+    }
+
+    /**
+     * validateImageCrop checks an uploaded image has the shape of the crop size, which
+     * the browser crops it to before it uploads. A pixel or one percent out passes, as
+     * does the shape on its side, since a photo can be turned by its Exif data.
+     */
+    protected function validateImageCrop($uploadedFile)
+    {
+        if (!$this->hasImageCrop()) {
+            return;
+        }
+
+        // Not an image with a pixel size, such as a vector
+        $size = @getimagesize($uploadedFile->getPathname());
+        if (!$size || !$size[0] || !$size[1]) {
+            return;
+        }
+
+        $ratio = $this->cropWidth / $this->cropHeight;
+        $isShape = function ($width, $height) use ($ratio) {
+            $expected = $width / $ratio;
+            return abs($height - $expected) <= max(1, $expected * 0.01);
+        };
+
+        if (!$isShape($size[0], $size[1]) && !$isShape($size[1], $size[0])) {
+            throw new ApplicationException(__('The image must be cropped to the shape of :width x :height pixels.', [
+                'width' => (int) $this->cropWidth,
+                'height' => (int) $this->cropHeight
+            ]));
+        }
+    }
+
+    /**
      * getAcceptedFileTypes returns the specified accepted file types, or the
      * default based on the mode. Image mode will return:
      * - jpg,jpeg,bmp,png,gif,svg
@@ -412,6 +476,8 @@ class FileUpload extends FormWidgetBase
             if (!$uploadedFile->isValid()) {
                 throw new ApplicationException('File is not valid');
             }
+
+            $this->validateImageCrop($uploadedFile);
 
             // Check and clean vector files
             // @deprecated v4 this should be moved to a post processing method on the file model
