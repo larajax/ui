@@ -81,7 +81,7 @@
     -webkit-appearance: none;
 
     /* Block flow for preview values, not flex */
-    &:not(input, select, textarea, button, .form-adorn) {
+    &:not(input, select, textarea, button, .form-adorn, .ts-control) {
         display: block;
     }
 
